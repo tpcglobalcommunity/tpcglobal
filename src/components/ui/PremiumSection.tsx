@@ -9,6 +9,8 @@ interface PremiumSectionProps {
   className?: string;
   centered?: boolean;
   variant?: 'default' | 'compact' | 'dense' | 'tight';
+  padTop?: 'none' | 'sm' | 'md' | 'lg';
+  padBottom?: 'none' | 'sm' | 'md' | 'lg';
 }
 
 export const PremiumSection = ({
@@ -19,6 +21,8 @@ export const PremiumSection = ({
   className = '',
   centered = false,
   variant = 'default',
+  padTop,
+  padBottom,
 }: PremiumSectionProps) => {
   const spacingClass = variant === 'compact'
     ? layout.spacing.section.yCompact
@@ -28,10 +32,22 @@ export const PremiumSection = ({
     ? layout.spacing.section.yTight
     : layout.spacing.section.y;
 
+  const padTopClass = padTop === 'none' ? 'pt-0'
+    : padTop === 'sm' ? 'pt-6 md:pt-8'
+    : padTop === 'md' ? 'pt-10 md:pt-12'
+    : padTop === 'lg' ? 'pt-14 md:pt-16'
+    : '';
+
+  const padBottomClass = padBottom === 'none' ? 'pb-0'
+    : padBottom === 'sm' ? 'pb-6 md:pb-8'
+    : padBottom === 'md' ? 'pb-10 md:pb-12'
+    : padBottom === 'lg' ? 'pb-14 md:pb-16'
+    : '';
+
   const headerMargin = variant === 'tight' ? 'mb-4 md:mb-5' : 'mb-5 md:mb-6';
 
   return (
-    <section className={`${spacingClass} px-4 sm:px-6 ${className}`}>
+    <section className={`${spacingClass} ${padTopClass} ${padBottomClass} px-4 sm:px-6 ${className}`}>
       <div className={layout.spacing.container}>
         {(title || subtitle || eyebrow) && (
           <div className={`${headerMargin} ${centered ? 'text-center' : ''}`}>
