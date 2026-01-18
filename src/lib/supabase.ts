@@ -32,6 +32,16 @@ export interface Referral {
   created_at: string;
 }
 
+export interface MemberVerification {
+  username: string | null;
+  full_name: string | null;
+  role: string;
+  is_verified: boolean;
+  created_at: string;
+  avatar_url: string | null;
+  referral_code: string;
+}
+
 export const validateReferralCode = async (code: string): Promise<boolean> => {
   const { data, error } = await supabase
     .from('profiles')
@@ -75,4 +85,17 @@ export const getReferrals = async (userId: string): Promise<Referral[]> => {
   }
 
   return data || [];
+};
+
+export const verifyMember = async (identifier: string): Promise<MemberVerification | null> => {
+  const { data, error } = await supabase.rpc('verify_member', {
+    identifier: identifier.trim(),
+  });
+
+  if (error) {
+    console.error('Error verifying member:', error);
+    return null;
+  }
+
+  return data;
 };

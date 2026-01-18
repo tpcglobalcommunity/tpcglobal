@@ -18,6 +18,7 @@ import Faq from './pages/Faq';
 import SignUp from './pages/auth/SignUp';
 import SignIn from './pages/auth/SignIn';
 import Dashboard from './pages/member/Dashboard';
+import VerifyPage from './pages/VerifyPage';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -76,6 +77,8 @@ function App() {
         return <SignIn lang={lang} />;
       case '/member/dashboard':
         return <Dashboard lang={lang} />;
+      case '/verify':
+        return <VerifyPage lang={lang} />;
       default:
         return <Home lang={lang} />;
     }
