@@ -278,6 +278,9 @@ export const translations = {
             'You control your data and can request deletion where applicable',
             'Cookies are used for essential functionality and analytics',
             'We implement security measures to protect collected data',
+            'We may use privacy-friendly analytics to understand site usage patterns',
+            'We do not sell personal data or use it to identify individuals',
+            'You can limit tracking using browser settings or ad blockers',
           ],
         },
         cookies: {
@@ -289,6 +292,9 @@ export const translations = {
             'Preference cookies to remember your settings (e.g., language)',
             'You can disable non-essential cookies in your browser settings',
             'Disabling cookies may limit certain platform features',
+            'Analytics may set minimal measurement signals for site performance',
+            'We do not use analytics to identify individuals',
+            'If you disable scripts, the site will still function normally',
           ],
         },
         support: {
@@ -899,6 +905,9 @@ export const translations = {
             'Anda mengontrol data Anda dan dapat meminta penghapusan jika berlaku',
             'Cookie digunakan untuk fungsionalitas esensial dan analitik',
             'Kami menerapkan langkah keamanan untuk melindungi data yang dikumpulkan',
+            'Kami dapat menggunakan analytics yang ramah privasi untuk memahami penggunaan situs',
+            'Kami tidak menjual data pribadi atau menggunakannya untuk mengidentifikasi individu',
+            'Anda dapat membatasi pelacakan lewat pengaturan browser atau ad blocker',
           ],
         },
         cookies: {
@@ -910,6 +919,9 @@ export const translations = {
             'Cookie preferensi untuk mengingat pengaturan Anda (mis., bahasa)',
             'Anda dapat menonaktifkan cookie non-esensial di pengaturan browser',
             'Menonaktifkan cookie dapat membatasi fitur platform tertentu',
+            'Analytics dapat digunakan untuk pengukuran minimal performa situs',
+            'Kami tidak menggunakan analytics untuk mengidentifikasi individu',
+            'Jika script dinonaktifkan, situs tetap bisa diakses dengan normal',
           ],
         },
         support: {
