@@ -172,13 +172,16 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                 aria-modal="true"
               >
                 <div className="p-4">
-                  {/* AUTH BLOCK - Premium styling */}
-                  <div className="rounded-3xl border border-white/10 bg-white/5 p-4 relative overflow-hidden mb-4">
-                    <div className="absolute inset-0 bg-[#F0B90B]/10 blur-2xl" />
-                    <div className="relative z-10">
-                      <div className="text-sm font-semibold text-white mb-3">Member Access</div>
-                      <HeaderAuthActions lang={lang} />
+                  {/* AUTH BLOCK */}
+                  <div className="rounded-3xl border border-white/10 bg-white/5 p-4 mb-4">
+                    <div className="text-xs uppercase tracking-wide text-white/60 mb-3">
+                      Member Access
                     </div>
+                    <HeaderAuthActions
+                      lang={lang}
+                      variant="mobileMenu"
+                      onAfterAction={() => setMobileMenuOpen(false)}
+                    />
                   </div>
 
                   {/* NAV LINKS - Premium card style */}

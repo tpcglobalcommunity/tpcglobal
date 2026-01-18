@@ -38,9 +38,20 @@ async function doLogout() {
   window.location.href = "/";
 }
 
-export function HeaderAuthActions({ lang }: { lang?: Language }) {
+interface HeaderAuthActionsProps {
+  lang?: Language;
+  variant?: "default" | "mobileMenu";
+  onAfterAction?: () => void;
+}
+
+export function HeaderAuthActions({ lang, variant = "default", onAfterAction }: HeaderAuthActionsProps) {
   const { language, t } = useI18n(lang || "en");
   const { loading, isAuthed } = useSession();
+
+  const handleAction = (action: () => void) => {
+    action();
+    onAfterAction?.();
+  };
 
   if (loading) {
     return <div className="w-[220px] h-10" />;
@@ -48,19 +59,27 @@ export function HeaderAuthActions({ lang }: { lang?: Language }) {
 
   if (!isAuthed) {
     return (
-      <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full">
-        <Link to={getLangPath(language, "/signin")} className="flex-1">
+      <div className={`flex ${variant === "mobileMenu" ? "flex-col" : "flex-col md:flex-row"} items-stretch md:items-center gap-2 w-full`}>
+        <Link
+          to={getLangPath(language, "/signin")}
+          className="flex-1"
+          onClick={onAfterAction}
+        >
           <PremiumButton type="button" variant="secondary" className="h-10 px-4 whitespace-nowrap text-sm w-full">
             <LogIn className="w-4 h-4 mr-2" />
-            <span className="hidden lg:inline">{t("auth.signin.signIn")}</span>
-            <span className="lg:hidden">Sign In</span>
+            <span className={variant === "mobileMenu" ? "" : "hidden lg:inline"}>{t("auth.signin.signIn")}</span>
+            {variant !== "mobileMenu" && <span className="lg:hidden">Sign In</span>}
           </PremiumButton>
         </Link>
-        <Link to={getLangPath(language, "/signup")} className="flex-1">
+        <Link
+          to={getLangPath(language, "/signup")}
+          className="flex-1"
+          onClick={onAfterAction}
+        >
           <PremiumButton type="button" className="h-10 px-4 whitespace-nowrap text-sm w-full">
             <UserPlus className="w-4 h-4 mr-2" />
-            <span className="hidden lg:inline">{t("auth.signup.createAccount")}</span>
-            <span className="lg:hidden">Create</span>
+            <span className={variant === "mobileMenu" ? "" : "hidden lg:inline"}>{t("auth.signup.createAccount")}</span>
+            {variant !== "mobileMenu" && <span className="lg:hidden">Create</span>}
           </PremiumButton>
         </Link>
       </div>
@@ -68,23 +87,27 @@ export function HeaderAuthActions({ lang }: { lang?: Language }) {
   }
 
   return (
-    <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full">
-      <Link to={getLangPath(language, "/member/dashboard")} className="flex-1">
+    <div className={`flex ${variant === "mobileMenu" ? "flex-col" : "flex-col md:flex-row"} items-stretch md:items-center gap-2 w-full`}>
+      <Link
+        to={getLangPath(language, "/member/dashboard")}
+        className="flex-1"
+        onClick={onAfterAction}
+      >
         <PremiumButton type="button" className="h-10 px-4 whitespace-nowrap text-sm w-full">
           <LayoutDashboard className="w-4 h-4 mr-2" />
-          <span className="hidden lg:inline">{t("member.dashboard.title")}</span>
-          <span className="lg:hidden">Dashboard</span>
+          <span className={variant === "mobileMenu" ? "" : "hidden lg:inline"}>{t("member.dashboard.title")}</span>
+          {variant !== "mobileMenu" && <span className="lg:hidden">Dashboard</span>}
         </PremiumButton>
       </Link>
       <PremiumButton
         type="button"
         variant="secondary"
-        className="h-10 px-4 whitespace-nowrap text-sm w-full md:w-auto"
-        onClick={doLogout}
+        className={`h-10 px-4 whitespace-nowrap text-sm ${variant === "mobileMenu" ? "w-full" : "w-full md:w-auto"}`}
+        onClick={() => handleAction(doLogout)}
       >
         <LogOut className="w-4 h-4 mr-2" />
-        <span className="hidden lg:inline">{t("auth.signout")}</span>
-        <span className="lg:hidden">Sign Out</span>
+        <span className={variant === "mobileMenu" ? "" : "hidden lg:inline"}>{t("auth.signout")}</span>
+        {variant !== "mobileMenu" && <span className="lg:hidden">Sign Out</span>}
       </PremiumButton>
     </div>
   );
