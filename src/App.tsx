@@ -9,6 +9,7 @@ import DAOLite from './pages/DAOLite';
 import Transparency from './pages/Transparency';
 import CommunityFund from './pages/CommunityFund';
 import Legal from './pages/Legal';
+import LaunchChecklist from './pages/LaunchChecklist';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -49,6 +50,8 @@ function App() {
         return <CommunityFund lang={lang} />;
       case '/legal':
         return <Legal lang={lang} />;
+      case '/launch':
+        return <LaunchChecklist lang={lang} />;
       default:
         return <Home lang={lang} />;
     }

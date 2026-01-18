@@ -325,6 +325,182 @@ export const translations = {
       copyright: '© 2026 TPC. All rights reserved.',
       madeWith: 'Built with transparency',
     },
+    launch: {
+      header: {
+        pill: 'Launch Readiness',
+        title: 'Launch Checklist Dashboard',
+        subtitle: 'Comprehensive verification of routing, SEO, trust pages, i18n health, and community readiness before official launch.',
+        noticeTitle: 'Pre-Launch Status',
+        noticeBody: 'This page tracks all critical components required for a professional, trust-first launch. Items are verified manually and updated regularly.',
+      },
+      links: {
+        docs: 'Documentation',
+        transparency: 'Transparency',
+        legal: 'Legal',
+        community: 'Community',
+      },
+      status: {
+        ready: 'Ready',
+        review: 'Review',
+        pending: 'Pending',
+      },
+      summary: {
+        title: 'Launch Summary',
+        readyLabel: 'Ready',
+        reviewLabel: 'In Review',
+        pendingLabel: 'Pending',
+        lastUpdatedLabel: 'Last Updated',
+      },
+      groups: [
+        {
+          id: 'routing',
+          title: 'Routing & Navigation',
+          items: [
+            {
+              label: 'SPA deep link refresh works correctly',
+              status: 'ready',
+              note: 'Vite SPA fallback configured with _redirects file',
+            },
+            {
+              label: '/en and /id root paths redirect to /home',
+              status: 'ready',
+              note: 'Automatic redirects implemented in App.tsx',
+            },
+            {
+              label: 'All internal links use getLangPath helper',
+              status: 'ready',
+            },
+            {
+              label: 'Mobile bottom nav routing functional',
+              status: 'ready',
+            },
+          ],
+        },
+        {
+          id: 'seo',
+          title: 'SEO & Meta Tags',
+          items: [
+            {
+              label: 'sitemap.xml accessible and valid',
+              status: 'ready',
+              note: 'Generated with build date timestamp',
+            },
+            {
+              label: 'robots.txt points to sitemap',
+              status: 'ready',
+            },
+            {
+              label: 'Per-page OG images prerendered',
+              status: 'ready',
+              note: 'Static SVG OG images for all routes',
+            },
+            {
+              label: 'Canonical URLs and hreflang tags',
+              status: 'ready',
+            },
+            {
+              label: 'Page titles localized',
+              status: 'ready',
+            },
+          ],
+        },
+        {
+          id: 'content',
+          title: 'Content & i18n',
+          items: [
+            {
+              label: 'No raw translation keys visible',
+              status: 'ready',
+              note: 'All pages use t() helper consistently',
+            },
+            {
+              label: 'English content complete',
+              status: 'ready',
+            },
+            {
+              label: 'Indonesian content complete',
+              status: 'ready',
+            },
+            {
+              label: 'Trust section on Home page',
+              status: 'ready',
+            },
+          ],
+        },
+        {
+          id: 'trust',
+          title: 'Trust & Legal Pages',
+          items: [
+            {
+              label: 'Docs page complete with FAQ',
+              status: 'ready',
+            },
+            {
+              label: 'Transparency hub with wallet tracking',
+              status: 'ready',
+              note: 'Live data integration pending launch',
+            },
+            {
+              label: 'Legal page with terms, risks, privacy',
+              status: 'ready',
+            },
+            {
+              label: 'All disclaimers present',
+              status: 'ready',
+            },
+          ],
+        },
+        {
+          id: 'performance',
+          title: 'Performance & Quality',
+          items: [
+            {
+              label: 'TypeScript build passes with no errors',
+              status: 'ready',
+            },
+            {
+              label: 'Production build optimized',
+              status: 'ready',
+              note: 'Vite code splitting enabled',
+            },
+            {
+              label: 'Lighthouse basic audit',
+              status: 'review',
+              note: 'Manual review recommended before launch',
+            },
+            {
+              label: 'Mobile responsiveness verified',
+              status: 'ready',
+            },
+          ],
+        },
+        {
+          id: 'community',
+          title: 'Community & Links',
+          items: [
+            {
+              label: 'Telegram link verified',
+              status: 'ready',
+              note: 'https://t.me/tpcglobalcommunity',
+            },
+            {
+              label: 'Community CTAs on all pages',
+              status: 'ready',
+            },
+            {
+              label: 'External links open in new tabs',
+              status: 'ready',
+            },
+          ],
+        },
+      ],
+      cta: {
+        title: 'Review Trust Resources',
+        subtitle: 'Verify transparency data and legal compliance before launch.',
+        primary: 'View Transparency',
+        secondary: 'Read Legal',
+      },
+    },
   },
   id: {
     nav: {
@@ -651,6 +827,182 @@ export const translations = {
       },
       copyright: '© 2026 TPC. Hak cipta dilindungi.',
       madeWith: 'Dibangun dengan transparansi',
+    },
+    launch: {
+      header: {
+        pill: 'Kesiapan Peluncuran',
+        title: 'Dashboard Checklist Peluncuran',
+        subtitle: 'Verifikasi komprehensif terhadap routing, SEO, halaman trust, kesehatan i18n, dan kesiapan komunitas sebelum peluncuran resmi.',
+        noticeTitle: 'Status Pra-Peluncuran',
+        noticeBody: 'Halaman ini melacak semua komponen kritis yang diperlukan untuk peluncuran profesional berbasis kepercayaan. Item diverifikasi secara manual dan diperbarui secara berkala.',
+      },
+      links: {
+        docs: 'Dokumentasi',
+        transparency: 'Transparansi',
+        legal: 'Legal',
+        community: 'Komunitas',
+      },
+      status: {
+        ready: 'Siap',
+        review: 'Ditinjau',
+        pending: 'Menunggu',
+      },
+      summary: {
+        title: 'Ringkasan Peluncuran',
+        readyLabel: 'Siap',
+        reviewLabel: 'Dalam Tinjauan',
+        pendingLabel: 'Menunggu',
+        lastUpdatedLabel: 'Terakhir Diperbarui',
+      },
+      groups: [
+        {
+          id: 'routing',
+          title: 'Routing & Navigasi',
+          items: [
+            {
+              label: 'Refresh deep link SPA berfungsi dengan benar',
+              status: 'ready',
+              note: 'Fallback SPA Vite dikonfigurasi dengan file _redirects',
+            },
+            {
+              label: 'Path root /en dan /id redirect ke /home',
+              status: 'ready',
+              note: 'Redirect otomatis diimplementasikan di App.tsx',
+            },
+            {
+              label: 'Semua link internal menggunakan helper getLangPath',
+              status: 'ready',
+            },
+            {
+              label: 'Routing navigasi bawah mobile berfungsi',
+              status: 'ready',
+            },
+          ],
+        },
+        {
+          id: 'seo',
+          title: 'SEO & Meta Tag',
+          items: [
+            {
+              label: 'sitemap.xml dapat diakses dan valid',
+              status: 'ready',
+              note: 'Dihasilkan dengan timestamp tanggal build',
+            },
+            {
+              label: 'robots.txt mengarah ke sitemap',
+              status: 'ready',
+            },
+            {
+              label: 'Gambar OG per halaman telah dirender',
+              status: 'ready',
+              note: 'Gambar OG SVG statis untuk semua route',
+            },
+            {
+              label: 'URL canonical dan tag hreflang',
+              status: 'ready',
+            },
+            {
+              label: 'Judul halaman dilokalkan',
+              status: 'ready',
+            },
+          ],
+        },
+        {
+          id: 'content',
+          title: 'Konten & i18n',
+          items: [
+            {
+              label: 'Tidak ada kunci terjemahan mentah yang terlihat',
+              status: 'ready',
+              note: 'Semua halaman menggunakan helper t() secara konsisten',
+            },
+            {
+              label: 'Konten bahasa Inggris lengkap',
+              status: 'ready',
+            },
+            {
+              label: 'Konten bahasa Indonesia lengkap',
+              status: 'ready',
+            },
+            {
+              label: 'Bagian trust di halaman Home',
+              status: 'ready',
+            },
+          ],
+        },
+        {
+          id: 'trust',
+          title: 'Halaman Trust & Legal',
+          items: [
+            {
+              label: 'Halaman Docs lengkap dengan FAQ',
+              status: 'ready',
+            },
+            {
+              label: 'Hub transparansi dengan pelacakan dompet',
+              status: 'ready',
+              note: 'Integrasi data live menunggu peluncuran',
+            },
+            {
+              label: 'Halaman Legal dengan syarat, risiko, privasi',
+              status: 'ready',
+            },
+            {
+              label: 'Semua disclaimer hadir',
+              status: 'ready',
+            },
+          ],
+        },
+        {
+          id: 'performance',
+          title: 'Performa & Kualitas',
+          items: [
+            {
+              label: 'Build TypeScript lulus tanpa error',
+              status: 'ready',
+            },
+            {
+              label: 'Build produksi dioptimalkan',
+              status: 'ready',
+              note: 'Code splitting Vite diaktifkan',
+            },
+            {
+              label: 'Audit dasar Lighthouse',
+              status: 'review',
+              note: 'Tinjauan manual direkomendasikan sebelum peluncuran',
+            },
+            {
+              label: 'Responsivitas mobile diverifikasi',
+              status: 'ready',
+            },
+          ],
+        },
+        {
+          id: 'community',
+          title: 'Komunitas & Link',
+          items: [
+            {
+              label: 'Link Telegram diverifikasi',
+              status: 'ready',
+              note: 'https://t.me/tpcglobalcommunity',
+            },
+            {
+              label: 'CTA komunitas di semua halaman',
+              status: 'ready',
+            },
+            {
+              label: 'Link eksternal terbuka di tab baru',
+              status: 'ready',
+            },
+          ],
+        },
+      ],
+      cta: {
+        title: 'Tinjau Sumber Daya Trust',
+        subtitle: 'Verifikasi data transparansi dan kepatuhan legal sebelum peluncuran.',
+        primary: 'Lihat Transparansi',
+        secondary: 'Baca Legal',
+      },
     },
   },
 };
