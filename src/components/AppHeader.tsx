@@ -168,7 +168,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
               {/* Panel (bottom sheet) */}
               <div
-                className="md:hidden fixed left-1/2 -translate-x-1/2 top-3 bottom-3 w-[92vw] max-w-[420px]
+                className="md:hidden fixed left-1/2 -translate-x-1/2 top-3 bottom-3 w-[88vw] max-w-[360px]
                            bg-[#0B0E11] z-[10000]
                            rounded-3xl border border-white/12 shadow-2xl shadow-black/70 overflow-hidden isolate"
                 role="dialog"
@@ -181,7 +181,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
                 <div className="h-full flex flex-col min-h-0">
                   {/* Panel Header */}
-                  <div className="relative flex items-center justify-between px-5 py-3 border-b border-white/10 shrink-0">
+                  <div className="relative flex items-center justify-between px-4 py-2.5 border-b border-white/10 shrink-0">
                     <div className="flex items-center gap-3">
                       <div className="relative">
                         <div className="absolute inset-0 bg-gradient-to-br from-[#F0B90B] to-[#f8d12f] rounded-xl blur-lg opacity-45" />
@@ -203,7 +203,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                   </div>
 
                   {/* Scrollable Nav (CRITICAL: min-h-0 + flex-1) */}
-                  <nav className="flex-1 min-h-0 px-4 pt-4 pb-3 space-y-[8px] overflow-y-auto overflow-x-hidden">
+                  <nav className="flex-1 min-h-0 px-3 pt-3 pb-2 space-y-[6px] overflow-y-auto overflow-x-hidden">
                     {navItems.map((item) => {
                       const isActive = currentPath === item.path;
                       return (
@@ -211,8 +211,8 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                           key={item.path}
                           to={item.path}
                           onClick={() => setMobileMenuOpen(false)}
-                          className={`group relative flex items-center px-4 py-3 rounded-2xl
-                            text-[15px] font-semibold tracking-wide transition-all duration-200
+                          className={`group relative flex items-center px-3 py-2 rounded-xl
+                            text-[14px] font-semibold tracking-wide transition-all duration-200
                             ${isActive
                               ? 'bg-white/[0.06] border border-white/12 text-white'
                               : 'bg-transparent border border-transparent text-white/80 hover:text-white hover:bg-white/[0.05]'}
@@ -235,7 +235,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
                   {/* Footer CTA (sticky-like, fixed height) */}
                   <div
-                    className="px-4 pt-2 pb-3 border-t border-white/10 bg-[#0B0E11]/95 backdrop-blur-xl shrink-0"
+                    className="px-3 pt-2 pb-2 border-t border-white/10 bg-[#0B0E11]/95 backdrop-blur-xl shrink-0"
                     style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 14px)' }}
                   >
                     <a
@@ -243,7 +243,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block text-center bg-gradient-to-r from-[#F0B90B] to-[#F8D568]
-                                 text-black font-bold rounded-2xl px-5 py-4 text-[15px]
+                                 text-black font-bold rounded-2xl px-4 py-3 text-[14px]
                                  border border-black/10 transition-all duration-200 active:scale-[0.98]
                                  shadow-xl shadow-[#F0B90B]/20 hover:shadow-2xl hover:shadow-[#F0B90B]/25"
                       onClick={() => setMobileMenuOpen(false)}
@@ -251,7 +251,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                       Join Community
                     </a>
 
-                    <p className="mt-3 text-center text-[11px] text-white/45">
+                    <p className="mt-2 text-center text-[10px] text-white/50">
                       Education-first. Risk-aware. No guarantees.
                     </p>
                   </div>
