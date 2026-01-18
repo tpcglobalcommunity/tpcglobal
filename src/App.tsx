@@ -24,6 +24,7 @@ import Dashboard from './pages/member/Dashboard';
 import SecurityPage from './pages/member/SecurityPage';
 import ProfilePage from './pages/member/ProfilePage';
 import AnnouncementsPage from './pages/member/AnnouncementsPage';
+import ReferralsPage from './pages/member/ReferralsPage';
 import VerifyPage from './pages/VerifyPage';
 import NewsPage from './pages/NewsPage';
 import NewsDetailPage from './pages/NewsDetailPage';
@@ -143,6 +144,8 @@ function App() {
         return <ProfilePage lang={lang} />;
       case '/member/announcements':
         return <AnnouncementsPage lang={lang} />;
+      case '/member/referrals':
+        return <ReferralsPage lang={lang} />;
       case '/verify':
         return <VerifyPage lang={lang} />;
       case '/news':

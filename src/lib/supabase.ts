@@ -308,6 +308,66 @@ export const getReferrals = async (userId: string): Promise<Referral[]> => {
   return data || [];
 };
 
+export interface ReferralItem {
+  username: string;
+  full_name: string;
+  avatar_url: string | null;
+  joined_at: string;
+  is_verified: boolean;
+}
+
+export interface ReferralAnalytics {
+  my_referral_code: string;
+  my_referral_count: number;
+  can_invite: boolean;
+  referred_by: string | null;
+  invited_last_7_days: number;
+  invited_last_30_days: number;
+  recent_invites: ReferralItem[];
+}
+
+export const getMyReferralAnalytics = async (): Promise<ReferralAnalytics | null> => {
+  try {
+    const { data, error } = await supabase.rpc('get_my_referral_analytics');
+
+    if (error) {
+      console.error('Error fetching referral analytics:', error);
+      return null;
+    }
+
+    return data as ReferralAnalytics;
+  } catch (err) {
+    console.error('Error in getMyReferralAnalytics:', err);
+    return null;
+  }
+};
+
+export interface LeaderboardItem {
+  username: string;
+  full_name: string;
+  avatar_url: string | null;
+  referral_count: number;
+  is_verified: boolean;
+}
+
+export const getReferralLeaderboard = async (limit: number = 10): Promise<LeaderboardItem[]> => {
+  try {
+    const { data, error } = await supabase.rpc('get_referral_leaderboard', {
+      p_limit: limit,
+    });
+
+    if (error) {
+      console.error('Error fetching referral leaderboard:', error);
+      return [];
+    }
+
+    return (data || []) as LeaderboardItem[];
+  } catch (err) {
+    console.error('Error in getReferralLeaderboard:', err);
+    return [];
+  }
+};
+
 export const verifyMember = async (identifier: string): Promise<MemberVerification | null> => {
   const { data, error } = await supabase.rpc('verify_member', {
     identifier: identifier.trim(),

@@ -291,7 +291,7 @@ const Dashboard = ({ lang }: DashboardProps) => {
 
         <div className="grid gap-6 lg:grid-cols-3 mb-8">
           <PremiumCard>
-            <div className="flex items-start gap-4">
+            <div className="flex items-start gap-4 mb-3">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#F0B90B]/20 to-[#F0B90B]/5 border border-[#F0B90B]/20 flex items-center justify-center flex-shrink-0">
                 <Users className="w-6 h-6 text-[#F0B90B]" />
               </div>
@@ -304,6 +304,13 @@ const Dashboard = ({ lang }: DashboardProps) => {
                 </p>
               </div>
             </div>
+            <button
+              onClick={() => window.location.href = getLangPath(lang, '/member/referrals')}
+              className="w-full px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white text-sm font-medium transition-all flex items-center justify-center gap-2"
+            >
+              <ExternalLink className="w-4 h-4" />
+              View Analytics
+            </button>
           </PremiumCard>
 
           <PremiumCard>
