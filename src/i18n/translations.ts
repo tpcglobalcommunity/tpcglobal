@@ -1083,6 +1083,7 @@ export const translations = {
       },
     },
     auth: {
+      reassurance: 'Your data is protected. We never share personal information.',
       common: {
         or: 'or',
         backHome: 'Back to Home',
@@ -1147,6 +1148,7 @@ export const translations = {
         signIn: 'Sign In',
         noAccount: 'Don\'t have an account?',
         goSignup: 'Create account',
+        createAccount: 'Create account',
         forgot: 'Forgot password?',
         emailLabel: 'Email Address',
         passwordLabel: 'Password',
@@ -2530,6 +2532,7 @@ export const translations = {
       },
     },
     auth: {
+      reassurance: 'Data Anda terlindungi. Kami tidak pernah membagikan informasi pribadi.',
       common: {
         or: 'atau',
         backHome: 'Kembali ke Beranda',
@@ -2594,6 +2597,7 @@ export const translations = {
         signIn: 'Masuk',
         noAccount: 'Belum punya akun?',
         goSignup: 'Buat akun',
+        createAccount: 'Buat akun',
         forgot: 'Lupa kata sandi?',
         emailLabel: 'Alamat Email',
         passwordLabel: 'Kata Sandi',

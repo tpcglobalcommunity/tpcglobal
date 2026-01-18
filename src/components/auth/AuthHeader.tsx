@@ -22,7 +22,7 @@ export default function AuthHeader({ lang }: AuthHeaderProps) {
           className="flex items-center gap-2.5 group"
           aria-label="TPC Home"
         >
-          <TPMonogram size={28} />
+          <TPMonogram size={26} />
           <div className="flex flex-col" style={{ gap: '1px' }}>
             <span className="text-base font-bold tracking-tight text-white">TPC</span>
             <span className="hidden sm:block text-[10px] text-white/60 tracking-wide leading-none">
@@ -31,10 +31,10 @@ export default function AuthHeader({ lang }: AuthHeaderProps) {
           </div>
         </Link>
 
-        <div className="flex items-center rounded-full bg-white/12 backdrop-blur-lg border border-white/15 p-[3px]">
+        <div className="flex items-center rounded-2xl bg-white/12 backdrop-blur-lg border border-white/15 h-9 p-[3px]">
           <button
             onClick={() => handleLanguageChange('en')}
-            className={`px-3 py-1 text-[11px] sm:text-[12px] font-semibold rounded-full transition-all duration-200 ${
+            className={`px-2 sm:px-3 py-1 text-xs font-semibold rounded-2xl transition-all duration-200 ${
               lang === 'en'
                 ? 'bg-[#F0B90B] text-black shadow-md shadow-[#F0B90B]/20'
                 : 'text-white/60 hover:text-white/80'
@@ -45,7 +45,7 @@ export default function AuthHeader({ lang }: AuthHeaderProps) {
           </button>
           <button
             onClick={() => handleLanguageChange('id')}
-            className={`px-3 py-1 text-[11px] sm:text-[12px] font-semibold rounded-full transition-all duration-200 ${
+            className={`px-2 sm:px-3 py-1 text-xs font-semibold rounded-2xl transition-all duration-200 ${
               lang === 'id'
                 ? 'bg-[#F0B90B] text-black shadow-md shadow-[#F0B90B]/20'
                 : 'text-white/60 hover:text-white/80'

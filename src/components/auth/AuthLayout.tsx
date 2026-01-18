@@ -11,6 +11,11 @@ export default function AuthLayout({ lang, children }: AuthLayoutProps) {
     <div className="min-h-screen flex flex-col bg-black">
       <AuthHeader lang={lang} />
 
+      <div className="relative border-b border-white/10">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F0B90B]/10 via-transparent to-transparent opacity-60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
+      </div>
+
       <main className="flex-1 relative">
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#F0B90B]/5 via-transparent to-transparent" />
