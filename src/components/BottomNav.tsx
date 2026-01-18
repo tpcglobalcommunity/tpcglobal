@@ -2,6 +2,7 @@ import { Home, FileText, Users, Eye, DollarSign, Scale } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Language, useTranslations, getLangPath } from '../i18n';
 import { Link } from './Router';
+import { BottomAuthItems } from './auth/BottomAuthItems';
 
 interface BottomNavProps {
   lang: Language;
@@ -37,33 +38,38 @@ const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
 
   return (
     <nav
-      className="bottom-nav md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-black/80 border-t border-white/10 z-50 h-[72px] transition-all duration-200"
+      className="bottom-nav md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-black/80 border-t border-white/10 z-50 transition-all duration-200"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
-      <div className="flex justify-around items-center px-2 h-full">
-        {navItems.slice(0, 4).map((item) => {
-          const Icon = item.icon;
-          const isActive = currentPath === item.path;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`relative flex flex-col items-center px-3 py-2 rounded-lg transition-all duration-200 ${
-                isActive
-                  ? 'text-[#F0B90B]'
-                  : 'text-white/55 active:scale-95'
-              }`}
-            >
-              {isActive && (
-                <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#F0B90B] rounded-full"></span>
-              )}
-              <Icon className="w-5 h-5" />
-              <span className="text-[10px] mt-1 font-medium">
-                {item.label}
-              </span>
-            </Link>
-          );
-        })}
+      <div className="flex flex-col">
+        <div className="flex justify-around items-center px-2 h-[72px]">
+          {navItems.slice(0, 4).map((item) => {
+            const Icon = item.icon;
+            const isActive = currentPath === item.path;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`relative flex flex-col items-center px-3 py-2 rounded-lg transition-all duration-200 ${
+                  isActive
+                    ? 'text-[#F0B90B]'
+                    : 'text-white/55 active:scale-95'
+                }`}
+              >
+                {isActive && (
+                  <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#F0B90B] rounded-full"></span>
+                )}
+                <Icon className="w-5 h-5" />
+                <span className="text-[10px] mt-1 font-medium">
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+        <div className="px-3 pb-3 border-t border-white/5">
+          <BottomAuthItems lang={lang} />
+        </div>
       </div>
     </nav>
   );
