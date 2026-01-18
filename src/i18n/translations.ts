@@ -1417,6 +1417,29 @@ export const translations = {
         submittedDesc: 'Your vendor application has been submitted and is pending review by our team. We will notify you once it has been reviewed.',
       },
     },
+    trust: {
+      verified: 'Verified',
+      invitesEnabled: 'Invites Enabled',
+      invitesRevoked: 'Invites Revoked',
+      vendorApproved: 'Approved Vendor',
+      vendorPending: 'Vendor Pending',
+      role: {
+        super_admin: 'Super Admin',
+        admin: 'Admin',
+        moderator: 'Moderator',
+        member: 'Member',
+      },
+    },
+    profile: {
+      vendor: {
+        applyCta: 'Become a Vendor',
+        applyDesc: 'List your business in the TPC Marketplace and reach our community.',
+        approvedAs: 'Approved Vendor',
+        approvedDesc: 'Your vendor listing is live in the marketplace.',
+        status: 'Vendor Application Pending',
+        pendingDesc: 'Your vendor application is under review.',
+      },
+    },
     admin: {
       vendors: {
         title: 'Manage Vendors',
@@ -3036,6 +3059,29 @@ export const translations = {
         submitting: 'Mengirim...',
         submittedTitle: 'Aplikasi Terkirim',
         submittedDesc: 'Aplikasi vendor Anda telah dikirim dan sedang menunggu review dari tim kami. Kami akan memberi tahu Anda setelah direview.',
+      },
+    },
+    trust: {
+      verified: 'Terverifikasi',
+      invitesEnabled: 'Undangan Aktif',
+      invitesRevoked: 'Undangan Dinonaktifkan',
+      vendorApproved: 'Vendor Disetujui',
+      vendorPending: 'Vendor Menunggu',
+      role: {
+        super_admin: 'Super Admin',
+        admin: 'Admin',
+        moderator: 'Moderator',
+        member: 'Anggota',
+      },
+    },
+    profile: {
+      vendor: {
+        applyCta: 'Menjadi Vendor',
+        applyDesc: 'Daftarkan bisnis Anda di Marketplace TPC dan jangkau komunitas kami.',
+        approvedAs: 'Vendor Disetujui',
+        approvedDesc: 'Daftar vendor Anda sudah aktif di marketplace.',
+        status: 'Aplikasi Vendor Menunggu',
+        pendingDesc: 'Aplikasi vendor Anda sedang direview.',
       },
     },
     admin: {

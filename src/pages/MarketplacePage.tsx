@@ -4,6 +4,7 @@ import { Language, useTranslations, getLangPath } from '../i18n';
 import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from '../components/ui';
 import { getPublicVendors, PublicVendor } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { TrustBadges } from '../components/trust/TrustBadges';
 
 interface MarketplacePageProps {
   lang: Language;
@@ -133,6 +134,18 @@ const MarketplacePage = ({ lang }: MarketplacePageProps) => {
                     <span className="px-2 py-1 text-xs bg-white/10 text-white/70 rounded border border-white/20">
                       {t.marketplace.categories[vendor.category] || vendor.category.charAt(0).toUpperCase() + vendor.category.slice(1)}
                     </span>
+                  </div>
+
+                  <div className="mb-3">
+                    <TrustBadges
+                      role={vendor.role as any}
+                      is_verified={vendor.is_verified}
+                      can_invite={false}
+                      vendor_status="approved"
+                      vendor_brand_name={vendor.brand_name}
+                      mode="public"
+                      lang={lang}
+                    />
                   </div>
 
                   <p className="text-sm text-white/70 mb-4 line-clamp-3">

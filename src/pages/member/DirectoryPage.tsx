@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Users, Search, MapPin, CheckCircle, User, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Users, Search, MapPin, User, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Language, useTranslations, getLangPath } from '../../i18n';
 import { PremiumShell, PremiumCard } from '../../components/ui';
 import MemberGuard from '../../components/guards/MemberGuard';
 import { getMemberDirectory, DirectoryMemberItem } from '../../lib/supabase';
+import { TrustBadges } from '../../components/trust/TrustBadges';
 
 interface DirectoryPageProps {
   lang: Language;
@@ -154,11 +155,6 @@ const DirectoryPage = ({ lang }: DirectoryPageProps) => {
                               <User className="w-8 h-8 text-[#F0B90B]" />
                             </div>
                           )}
-                          {member.is_verified && (
-                            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-[#1a1a1a]">
-                              <CheckCircle className="w-4 h-4 text-white" />
-                            </div>
-                          )}
                         </div>
 
                         <div className="flex-1 min-w-0">
@@ -166,16 +162,14 @@ const DirectoryPage = ({ lang }: DirectoryPageProps) => {
                             {member.full_name}
                           </h3>
                           <p className="text-sm text-white/60 mb-2">@{member.username}</p>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className={`text-xs px-2 py-1 rounded border ${getRoleBadgeColor(member.role)}`}>
-                              {getRoleLabel(member.role)}
-                            </span>
-                            {member.is_verified && (
-                              <span className="text-xs px-2 py-1 bg-green-500/10 text-green-400 rounded border border-green-500/20">
-                                {t.member.directory.verified}
-                              </span>
-                            )}
-                          </div>
+                          <TrustBadges
+                            role={member.role as any}
+                            is_verified={member.is_verified}
+                            can_invite={false}
+                            vendor_status={member.vendor_status as any}
+                            mode="public"
+                            lang={lang}
+                          />
                         </div>
                       </div>
 

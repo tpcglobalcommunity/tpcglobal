@@ -23,6 +23,7 @@ export interface Profile {
   can_invite: boolean;
   created_at: string;
   updated_at: string;
+  vendor_status?: 'approved' | 'pending' | 'rejected' | 'none';
 }
 
 export interface Referral {
@@ -41,6 +42,7 @@ export interface MemberVerification {
   created_at: string;
   avatar_url: string | null;
   referral_code: string;
+  vendor_status?: string;
 }
 
 export interface AdminAction {
@@ -377,6 +379,7 @@ export interface DirectoryMemberItem {
   created_at: string;
   bio: string | null;
   country: string | null;
+  vendor_status: string;
   total_count?: number;
 }
 
@@ -466,6 +469,8 @@ export interface PublicVendor {
   website_url: string | null;
   contact_telegram: string | null;
   created_at: string;
+  role: string;
+  is_verified: boolean;
 }
 
 export interface VendorApplication {
@@ -573,6 +578,41 @@ export const updateVendorApplicationStatus = async (
   } catch (err) {
     console.error('Error in updateVendorApplicationStatus:', err);
     return false;
+  }
+};
+
+export interface TrustSnapshot {
+  username: string;
+  full_name: string;
+  avatar_url: string | null;
+  role: 'member' | 'moderator' | 'admin' | 'super_admin';
+  is_verified: boolean;
+  can_invite: boolean;
+  created_at: string;
+  show_in_directory: boolean;
+  vendor_status: 'approved' | 'pending' | 'rejected' | 'none';
+  vendor_brand_name: string | null;
+}
+
+export const getTrustSnapshot = async (identifier: string): Promise<TrustSnapshot | null> => {
+  try {
+    const { data, error } = await supabase.rpc('get_trust_snapshot', {
+      identifier: identifier.trim(),
+    });
+
+    if (error) {
+      console.error('Error getting trust snapshot:', error);
+      return null;
+    }
+
+    if (!data || data.length === 0) {
+      return null;
+    }
+
+    return data[0] as TrustSnapshot;
+  } catch (err) {
+    console.error('Error in getTrustSnapshot:', err);
+    return null;
   }
 };
 

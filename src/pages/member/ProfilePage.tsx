@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { User, Save, CheckCircle, AlertCircle, Upload, Loader2, Check, X, Shield, Tag, Users, Globe } from 'lucide-react';
-import { Language, useTranslations } from '../../i18n';
+import { User, Save, CheckCircle, AlertCircle, Upload, Loader2, Check, X, Shield, Tag, Users, Globe, Store } from 'lucide-react';
+import { Language, useTranslations, getLangPath } from '../../i18n';
 import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from '../../components/ui';
 import MemberGuard from '../../components/guards/MemberGuard';
 import { supabase, getProfile, Profile, updateProfileSafe, uploadAvatar, checkUsernameAvailable, updateDirectorySettings } from '../../lib/supabase';
+import { TrustBadges } from '../../components/trust/TrustBadges';
 
 interface ProfilePageProps {
   lang: Language;
@@ -379,36 +380,61 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
               <Shield className="w-5 h-5 text-[#F0B90B]" />
               {t.member.profile.sectionStatus}
             </h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium text-white/60 mb-2">{t.member.profile.role}</label>
-                <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg">
-                  <p className="text-white/80 capitalize">{profile.role}</p>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-white/60 mb-2">{t.member.profile.verified}</label>
-                <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg flex items-center gap-2">
-                  {profile.is_verified ? (
-                    <>
-                      <CheckCircle className="w-4 h-4 text-green-400" />
-                      <p className="text-white/80">Verified</p>
-                    </>
-                  ) : (
-                    <p className="text-white/80">Member</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-white/60 mb-2">{t.member.profile.canInvite}</label>
-                <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg">
-                  <p className="text-white/80">{profile.can_invite ? 'Can invite new members' : 'Invite disabled'}</p>
-                </div>
-              </div>
-            </div>
+            <TrustBadges
+              role={profile.role}
+              is_verified={profile.is_verified}
+              can_invite={profile.can_invite}
+              vendor_status={profile.vendor_status || 'none'}
+              mode="member"
+              lang={lang}
+            />
           </PremiumCard>
+
+          {profile.vendor_status === 'none' && (
+            <PremiumCard className="mb-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-[#F0B90B]/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Store className="w-6 h-6 text-[#F0B90B]" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-white mb-2">{t.profile.vendor.applyCta}</h3>
+                  <p className="text-white/70 text-sm mb-4">{t.profile.vendor.applyDesc}</p>
+                  <PremiumButton onClick={() => window.location.href = getLangPath(lang, '/member/vendor/apply')}>
+                    <Store className="w-4 h-4" />
+                    {t.marketplace.applyAsVendor}
+                  </PremiumButton>
+                </div>
+              </div>
+            </PremiumCard>
+          )}
+
+          {profile.vendor_status === 'approved' && (
+            <PremiumCard className="mb-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="w-6 h-6 text-green-400" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-white mb-2">{t.profile.vendor.approvedAs}</h3>
+                  <p className="text-white/70 text-sm">{t.profile.vendor.approvedDesc}</p>
+                </div>
+              </div>
+            </PremiumCard>
+          )}
+
+          {profile.vendor_status === 'pending' && (
+            <PremiumCard className="mb-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-yellow-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-6 h-6 text-yellow-400" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-white mb-2">{t.profile.vendor.status}</h3>
+                  <p className="text-white/70 text-sm">{t.profile.vendor.pendingDesc}</p>
+                </div>
+              </div>
+            </PremiumCard>
+          )}
 
           <PremiumCard>
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { User, MapPin, Calendar, CheckCircle, AlertCircle, ExternalLink, MessageCircle } from 'lucide-react';
+import { User, MapPin, Calendar, CheckCircle, AlertCircle } from 'lucide-react';
 import { Language, useTranslations, getLangPath } from '../i18n';
 import { PremiumShell, PremiumCard, PremiumButton } from '../components/ui';
 import { getPublicProfileByUsername, DirectoryMemberItem } from '../lib/supabase';
+import { TrustBadges } from '../components/trust/TrustBadges';
 
 interface PublicProfilePageProps {
   lang: Language;
@@ -148,16 +149,15 @@ const PublicProfilePage = ({ lang, username }: PublicProfilePageProps) => {
             </h1>
             <p className="text-xl text-white/60 mb-4">@{profile.username}</p>
 
-            <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-              <span className={`text-sm px-3 py-1.5 rounded-lg border ${getRoleBadgeColor(profile.role)}`}>
-                {getRoleLabel(profile.role)}
-              </span>
-              {profile.is_verified && (
-                <span className="text-sm px-3 py-1.5 bg-green-500/10 text-green-400 rounded-lg border border-green-500/20 flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4" />
-                  Verified Member
-                </span>
-              )}
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
+              <TrustBadges
+                role={profile.role as any}
+                is_verified={profile.is_verified}
+                can_invite={false}
+                vendor_status={profile.vendor_status as any}
+                mode="public"
+                lang={lang}
+              />
             </div>
 
             {profile.bio && (

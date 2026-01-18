@@ -4,6 +4,7 @@ import { Language, useTranslations, getLangPath } from '../i18n';
 import { PremiumShell, NoticeBox, PremiumButton, PremiumCard } from '../components/ui';
 import { Link } from '../components/Router';
 import { supabase, verifyMember, getProfile, MemberVerification, Profile } from '../lib/supabase';
+import { TrustBadges } from '../components/trust/TrustBadges';
 
 interface VerifyPageProps {
   lang: Language;
@@ -272,33 +273,18 @@ const VerifyPage = ({ lang }: VerifyPageProps) => {
                     <p className="text-white/70 mb-4">@{verificationResult.username}</p>
                   )}
 
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div>
-                      <p className="text-sm text-white/60 mb-1">{t.verify.result.roleLabel}</p>
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold bg-gradient-to-r ${getRoleBadgeColor(verificationResult.role)} text-white`}>
-                        <Award className="w-4 h-4" />
-                        {formatRole(verificationResult.role)}
-                      </span>
-                    </div>
+                  <div className="mb-6">
+                    <TrustBadges
+                      role={verificationResult.role as any}
+                      is_verified={verificationResult.is_verified}
+                      can_invite={false}
+                      vendor_status={(verificationResult.vendor_status || 'none') as any}
+                      mode="public"
+                      lang={lang}
+                    />
+                  </div>
 
-                    <div>
-                      <p className="text-sm text-white/60 mb-1">
-                        {verificationResult.is_verified ? t.verify.result.verifiedLabel : t.verify.result.notVerifiedLabel}
-                      </p>
-                      <div className="flex items-center gap-2">
-                        {verificationResult.is_verified ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold bg-green-500/20 border border-green-500/30 text-green-400">
-                            <CheckCircle className="w-4 h-4" />
-                            {t.verify.result.verifiedLabel}
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold bg-white/5 border border-white/20 text-white/70">
-                            <XCircle className="w-4 h-4" />
-                            {t.verify.result.notVerifiedLabel}
-                          </span>
-                        )}
-                      </div>
-                    </div>
+                  <div className="grid gap-4 md:grid-cols-2">
 
                     <div className="md:col-span-2">
                       <p className="text-sm text-white/60 mb-1">{t.verify.result.joinedLabel}</p>
