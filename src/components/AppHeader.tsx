@@ -168,7 +168,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
               {/* Panel (bottom sheet) */}
               <div
-                className="md:hidden fixed left-1/2 -translate-x-1/2 top-8 bottom-8 w-[86vw] max-w-[360px]
+                className="md:hidden fixed left-1/2 -translate-x-1/2 top-16 bottom-16 w-[78vw] max-w-[300px]
                            bg-[#0B0E11] z-[10000]
                            rounded-3xl border border-white/12 shadow-2xl shadow-black/70 overflow-hidden isolate"
                 role="dialog"
@@ -186,7 +186,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
                 <div className="h-full flex flex-col min-h-0 relative">
                   {/* Header */}
-                  <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 shrink-0">
+                  <div className="flex items-center justify-between px-3 py-2 border-b border-white/10 shrink-0">
                     <div className="flex items-center gap-3">
                       <div className="relative">
                         <div className="absolute inset-0 bg-gradient-to-br from-[#F0B90B] to-[#f8d12f] rounded-2xl blur-lg opacity-40" />
@@ -210,7 +210,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                   </div>
 
                   {/* Nav */}
-                  <nav className="flex-1 min-h-0 px-4 pt-3 pb-2 space-y-2 overflow-y-auto overflow-x-hidden mx-1 max-h-[52vh]">
+                  <nav className="px-3 pt-2 pb-1 space-y-1 overflow-y-auto overflow-x-hidden mx-2 max-h-[42vh]">
                     {navItems.map((item) => {
                       const isActive = currentPath === item.path;
                       const Icon = item.icon;
@@ -220,7 +220,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                           key={item.path}
                           to={item.path}
                           onClick={() => setMobileMenuOpen(false)}
-                          className={`group relative flex items-center justify-between px-3 py-2 rounded-xl mx-1
+                          className={`group relative flex items-center justify-between px-2.5 py-1.5 rounded-lg mx-2
                             transition-all duration-200
                             ${isActive
                               ? 'bg-gradient-to-r from-[#F0B90B]/16 via-white/[0.06] to-transparent border border-[#F0B90B]/25 shadow-[0_14px_40px_rgba(0,0,0,0.45)]'
@@ -238,20 +238,20 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
                           <div className="flex items-center gap-3 min-w-0">
                             <div
-                              className={`grid place-items-center w-8 h-8 rounded-xl border transition-all duration-200
+                              className={`grid place-items-center w-7 h-7 rounded-lg border transition-all duration-200
                                 ${isActive
                                   ? 'bg-[#F0B90B]/12 border-[#F0B90B]/25'
                                   : 'bg-white/[0.03] border-white/10 group-hover:bg-white/[0.06] group-hover:border-white/15'}
                               `}
                             >
-                              <Icon className={`w-4 h-4 ${isActive ? 'text-[#F0B90B]' : 'text-white/70 group-hover:text-white/85'}`} />
+                              <Icon className={`w-[14px] h-[14px] ${isActive ? 'text-[#F0B90B]' : 'text-white/70 group-hover:text-white/85'}`} />
                             </div>
 
                             <div className="min-w-0">
-                              <div className={`text-[13px] font-semibold tracking-wide truncate ${isActive ? 'text-white' : 'text-white/85'}`}>
+                              <div className={`text-[12px] font-semibold tracking-wide truncate ${isActive ? 'text-white' : 'text-white/85'}`}>
                                 {item.label}
                               </div>
-                              <div className="text-[10px] text-white/40 truncate">
+                              <div className="text-[9px] text-white/40 truncate">
                                 {isActive ? 'You are here' : 'Open section'}
                               </div>
                             </div>
@@ -268,7 +268,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
                   {/* Footer CTA */}
                   <div
-                    className="px-4 pt-2 pb-2 border-t border-white/10 bg-[#0B0E11]/92 backdrop-blur-xl shrink-0"
+                    className="px-3 pt-1.5 pb-1.5 border-t border-white/10 bg-[#0B0E11]/92 backdrop-blur-xl shrink-0"
                     style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 14px)' }}
                   >
                     <a
@@ -277,7 +277,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                       rel="noopener noreferrer"
                       onClick={() => setMobileMenuOpen(false)}
                       className="relative overflow-hidden block text-center bg-gradient-to-r from-[#F0B90B] to-[#F8D568]
-                                 text-black font-extrabold rounded-xl px-4 py-2.5 text-[13px]
+                                 text-black font-extrabold rounded-lg px-3 py-2 text-[12px]
                                  border border-black/10 shadow-2xl shadow-[#F0B90B]/25
                                  transition-all duration-200 active:scale-[0.98] hover:shadow-[#F0B90B]/35"
                     >
