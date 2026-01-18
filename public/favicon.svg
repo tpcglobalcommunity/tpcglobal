@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F0B90B"/>
+      <stop offset="1" stop-color="#F8D568"/>
+    </linearGradient>
+    <radialGradient id="r" cx="50%" cy="35%" r="70%">
+      <stop offset="0" stop-color="#F0B90B" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="256" height="256" rx="56" fill="#0B0E11"/>
+  <rect x="16" y="16" width="224" height="224" rx="48" fill="url(#r)"/>
+  <rect x="16" y="16" width="224" height="224" rx="48" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="2"/>
+
+  <!-- TPC monogram -->
+  <g fill="url(#g)">
+    <!-- T -->
+    <path d="M56 72h92c6 0 10 4 10 10v8c0 6-4 10-10 10H116v88c0 6-4 10-10 10h-12c-6 0-10-4-10-10V100H56c-6 0-10-4-10-10v-8c0-6 4-10 10-10z"/>
+    <!-- P -->
+    <path d="M164 72h18c24 0 38 14 38 36s-14 36-38 36h-18v44c0 6-4 10-10 10h-10c-6 0-10-4-10-10V82c0-6 4-10 10-10zm18 48c10 0 16-6 16-12s-6-12-16-12h-18v24h18z"/>
+  </g>
+
+  <!-- subtle top highlight -->
+  <path d="M32 78c18-28 54-46 96-46s78 18 96 46" fill="none" stroke="rgba(240,185,11,0.35)" stroke-width="3" stroke-linecap="round"/>
+</svg>

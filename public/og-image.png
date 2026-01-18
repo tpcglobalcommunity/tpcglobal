@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0B0E11;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#131619;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F0B90B"/>
+      <stop offset="1" stop-color="#F8D568"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="60%">
+      <stop offset="0" stop-color="#F0B90B" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#0B0E11" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- Decorative grid -->
+  <g opacity="0.03" stroke="white" stroke-width="1">
+    <line x1="0" y1="157.5" x2="1200" y2="157.5"/>
+    <line x1="0" y1="315" x2="1200" y2="315"/>
+    <line x1="0" y1="472.5" x2="1200" y2="472.5"/>
+    <line x1="300" y1="0" x2="300" y2="630"/>
+    <line x1="600" y1="0" x2="600" y2="630"/>
+    <line x1="900" y1="0" x2="900" y2="630"/>
+  </g>
+
+  <!-- TPC Logo -->
+  <g transform="translate(100, 180)">
+    <rect width="120" height="120" rx="28" fill="#0B0E11"/>
+    <rect x="8" y="8" width="104" height="104" rx="24" fill="url(#goldGrad)" opacity="0.12"/>
+    <rect x="8" y="8" width="104" height="104" rx="24" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+    <!-- T -->
+    <path d="M28 42h42c3 0 5 2 5 5v4c0 3-2 5-5 5H56v40c0 3-2 5-5 5h-6c-3 0-5-2-5-5V56H28c-3 0-5-2-5-5v-4c0-3 2-5 5-5z" fill="url(#goldGrad)"/>
+    <!-- P -->
+    <path d="M80 42h9c11 0 18 6 18 16s-6 16-18 16h-9v22c0 3-2 5-5 5h-5c-3 0-5-2-5-5V47c0-3 2-5 5-5zm9 24c5 0 8-3 8-6s-3-6-8-6h-9v12h9z" fill="url(#goldGrad)"/>
+  </g>
+
+  <!-- Text Content -->
+  <g fill="white">
+    <!-- TPC -->
+    <text x="260" y="270" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="800" letter-spacing="-2">TPC GLOBAL</text>
+
+    <!-- Subtitle -->
+    <text x="260" y="320" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="600" fill="#F0B90B">Trader Professional Community</text>
+
+    <!-- Description -->
+    <text x="260" y="380" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="400" fill="rgba(255,255,255,0.70)">Education-First Trading Community</text>
+    <text x="260" y="420" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="400" fill="rgba(255,255,255,0.70)">Built on Transparency & DAO Governance</text>
+  </g>
+
+  <!-- Bottom accent line -->
+  <rect x="260" y="460" width="680" height="3" fill="url(#goldGrad)" opacity="0.5" rx="1.5"/>
+
+  <!-- Border -->
+  <rect x="1" y="1" width="1198" height="628" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2" rx="8"/>
+</svg>
