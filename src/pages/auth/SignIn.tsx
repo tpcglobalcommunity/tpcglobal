@@ -56,17 +56,22 @@ export default function SignIn({ lang }: SignInProps) {
 
   return (
     <PremiumShell>
-      <PremiumSection className="pt-8 md:pt-12 pb-24 md:pb-28">
-        <div className="max-w-2xl mx-auto px-4">
-          <div className="text-center mb-6 md:mb-8">
-            <div className="mx-auto w-14 h-14 rounded-2xl bg-white/5 border border-white/10 grid place-items-center relative overflow-hidden">
+      <PremiumSection className="pt-10 md:pt-14 pb-32">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#F0B90B]/5 via-transparent to-transparent" />
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#F0B90B]/8 rounded-full blur-[120px] opacity-30" />
+        </div>
+
+        <div className="relative max-w-md lg:max-w-lg mx-auto px-4">
+          <div className="text-center mb-6">
+            <div className="mx-auto w-16 h-16 rounded-2xl bg-white/5 border border-white/10 grid place-items-center relative overflow-hidden">
               <div className="absolute inset-0 bg-[#F0B90B]/10 blur-2xl" />
               <Shield className="w-7 h-7 text-[#F0B90B] relative z-10" />
             </div>
-            <h1 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight text-white">
+            <h1 className="mt-5 text-[clamp(2rem,8vw,3rem)] font-bold tracking-tight text-white leading-tight">
               {t("auth.signin.title")}
             </h1>
-            <p className="mt-2 text-white/65 text-sm md:text-base">
+            <p className="mt-3 text-white/65 text-sm md:text-base max-w-[42ch] mx-auto">
               {t("auth.signin.subtitle")}
             </p>
           </div>
@@ -74,10 +79,12 @@ export default function SignIn({ lang }: SignInProps) {
           <NoticeBox
             title={t("auth.signin.noticeTitle")}
             description={t("auth.signin.noticeDesc")}
+            className="rounded-2xl border-[#F0B90B]/20 bg-[#F0B90B]/8"
           />
 
-          <PremiumCard className="mt-4 md:mt-6">
-            <form onSubmit={onSubmit} className="p-5 md:p-7 space-y-4">
+          <div className="mt-6 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#F0B90B]/30 to-transparent" />
+            <form onSubmit={onSubmit} className="p-6 md:p-8 space-y-5">
               <Field
                 icon={<Mail className="w-4 h-4" />}
                 label={t("auth.signin.email")}
@@ -96,12 +103,12 @@ export default function SignIn({ lang }: SignInProps) {
               />
 
               {error ? (
-                <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3.5 text-sm text-red-200">
                   {error}
                 </div>
               ) : null}
 
-              <PremiumButton className="w-full" type="submit" disabled={submitting || !email.trim() || password.length < 1}>
+              <PremiumButton className="w-full h-12" type="submit" disabled={submitting || !email.trim() || password.length < 1}>
                 {submitting ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -115,19 +122,19 @@ export default function SignIn({ lang }: SignInProps) {
                 )}
               </PremiumButton>
 
-              <div className="flex items-center justify-between text-sm text-white/65">
-                <Link to={getLangPath(L, "/forgot")} className="hover:underline text-[#F0B90B]">
+              <div className="flex items-center justify-between gap-4 text-sm text-white/65 pt-2">
+                <Link to={getLangPath(L, "/forgot")} className="hover:underline text-[#F0B90B] hover:text-[#F0B90B]/90 transition-colors">
                   {t("auth.signin.forgot")}
                 </Link>
-                <div>
-                  {t("auth.signin.noAccount")}{" "}
-                  <Link to={getLangPath(L, "/signup")} className="text-[#F0B90B] hover:underline">
+                <div className="text-right">
+                  <span className="text-white/50">{t("auth.signin.noAccount")}</span>{" "}
+                  <Link to={getLangPath(L, "/signup")} className="text-[#F0B90B] hover:underline font-medium">
                     {t("auth.signin.goSignup")}
                   </Link>
                 </div>
               </div>
             </form>
-          </PremiumCard>
+          </div>
         </div>
       </PremiumSection>
     </PremiumShell>
@@ -146,15 +153,15 @@ function Field(props: {
 
   return (
     <div>
-      <label className="block text-sm font-semibold text-white/85 mb-2">{label}</label>
-      <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-3 focus-within:border-[#F0B90B]/40 focus-within:bg-white/7 transition">
-        <div className="text-white/60">{icon}</div>
+      <label className="block text-sm font-semibold text-white/80 mb-2.5">{label}</label>
+      <div className="flex items-center gap-3 h-12 rounded-2xl border border-white/10 bg-white/5 px-4 focus-within:border-[#F0B90B]/45 focus-within:bg-white/7 focus-within:ring-2 focus-within:ring-[#F0B90B]/10 transition-all">
+        <div className="text-white/55 shrink-0">{icon}</div>
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           type={type || "text"}
-          className="flex-1 bg-transparent outline-none text-white placeholder:text-white/35 text-sm"
+          className="flex-1 bg-transparent outline-none text-white placeholder:text-white/30 text-sm"
           autoComplete="off"
         />
       </div>

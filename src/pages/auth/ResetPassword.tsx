@@ -1,7 +1,8 @@
 import { useState, FormEvent } from 'react';
-import { Lock, AlertCircle, CheckCircle } from 'lucide-react';
-import { Language, useTranslations } from '../../i18n';
-import { PremiumShell, PremiumButton } from '../../components/ui';
+import { Lock, ArrowRight, CheckCircle } from 'lucide-react';
+import { Language, useTranslations, getLangPath } from '../../i18n';
+import { PremiumShell, PremiumSection, PremiumButton } from '../../components/ui';
+import { Link } from '../../components/Router';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface ResetPasswordProps {
@@ -60,103 +61,130 @@ const ResetPassword = ({ lang }: ResetPasswordProps) => {
   if (success) {
     return (
       <PremiumShell>
-        <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
-          <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-10 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500/20 to-green-500/5 border border-green-500/20 mb-6">
-              <CheckCircle className="w-8 h-8 text-green-400" />
-            </div>
-            <h1 className="text-3xl font-bold text-white mb-4">
-              {t.auth.reset.successTitle}
-            </h1>
-            <p className="text-white/70 mb-8">
-              {t.auth.reset.successDesc}
-            </p>
-            <a href={`/${lang}/signin`}>
-              <PremiumButton className="w-full">
-                {t.auth.signup.signInLink}
-              </PremiumButton>
-            </a>
+        <PremiumSection className="pt-10 md:pt-14 pb-32">
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#F0B90B]/5 via-transparent to-transparent" />
+            <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#F0B90B]/8 rounded-full blur-[120px] opacity-30" />
           </div>
-        </div>
+
+          <div className="relative max-w-md lg:max-w-lg mx-auto px-4">
+            <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 relative overflow-hidden p-6 md:p-8">
+              <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#F0B90B]/30 to-transparent" />
+
+              <div className="text-center">
+                <div className="mx-auto w-16 h-16 rounded-2xl bg-green-500/10 border border-green-500/20 grid place-items-center mb-6">
+                  <CheckCircle className="w-8 h-8 text-green-400" />
+                </div>
+                <h1 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                  {t.auth.reset.successTitle}
+                </h1>
+                <p className="text-white/65 mb-8 leading-relaxed">
+                  {t.auth.reset.successDesc}
+                </p>
+                <Link to={getLangPath(lang, '/signin')}>
+                  <PremiumButton className="w-full h-12">
+                    {t.auth.signup.signInLink}
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </PremiumButton>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </PremiumSection>
       </PremiumShell>
     );
   }
 
   return (
     <PremiumShell>
-      <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
-        <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-10">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#F0B90B]/20 to-[#F0B90B]/5 border border-[#F0B90B]/20 mb-4">
-              <Lock className="w-8 h-8 text-[#F0B90B]" />
+      <PremiumSection className="pt-10 md:pt-14 pb-32">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#F0B90B]/5 via-transparent to-transparent" />
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#F0B90B]/8 rounded-full blur-[120px] opacity-30" />
+        </div>
+
+        <div className="relative max-w-md lg:max-w-lg mx-auto px-4">
+          <div className="text-center mb-6">
+            <div className="mx-auto w-16 h-16 rounded-2xl bg-white/5 border border-white/10 grid place-items-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-[#F0B90B]/10 blur-2xl" />
+              <Lock className="w-7 h-7 text-[#F0B90B] relative z-10" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            <h1 className="mt-5 text-[clamp(2rem,8vw,3rem)] font-bold tracking-tight text-white leading-tight">
               {t.auth.reset.title}
             </h1>
-            <p className="text-white/70">
+            <p className="mt-3 text-white/65 text-sm md:text-base max-w-[42ch] mx-auto">
               {t.auth.reset.subtitle}
             </p>
           </div>
 
-          {error && (
-            <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-              <p className="text-red-400 text-sm">{error}</p>
-            </div>
-          )}
+          <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#F0B90B]/30 to-transparent" />
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label htmlFor="newPassword" className="block text-sm font-medium text-white/90 mb-2">
-                {t.auth.reset.newPassword}
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-                <input
-                  type="password"
-                  id="newPassword"
-                  value={formData.newPassword}
-                  onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                  placeholder={t.auth.signup.passwordPlaceholder}
-                  className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#F0B90B]/50 focus:ring-2 focus:ring-[#F0B90B]/20 transition-all"
-                  required
-                  minLength={6}
-                  disabled={isSubmitting}
-                />
+            <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-5">
+              {error && (
+                <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3.5 text-sm text-red-200">
+                  {error}
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="newPassword" className="block text-sm font-semibold text-white/80 mb-2.5">
+                  {t.auth.reset.newPassword}
+                </label>
+                <div className="flex items-center gap-3 h-12 rounded-2xl border border-white/10 bg-white/5 px-4 focus-within:border-[#F0B90B]/45 focus-within:bg-white/7 focus-within:ring-2 focus-within:ring-[#F0B90B]/10 transition-all">
+                  <Lock className="w-4 h-4 text-white/55 shrink-0" />
+                  <input
+                    type="password"
+                    id="newPassword"
+                    value={formData.newPassword}
+                    onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+                    placeholder={t.auth.signup.passwordPlaceholder}
+                    className="flex-1 bg-transparent outline-none text-white placeholder:text-white/30 text-sm"
+                    required
+                    minLength={6}
+                    disabled={isSubmitting}
+                  />
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-white/90 mb-2">
-                {t.auth.reset.confirmPassword}
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  placeholder={t.auth.reset.confirmPassword}
-                  className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#F0B90B]/50 focus:ring-2 focus:ring-[#F0B90B]/20 transition-all"
-                  required
-                  minLength={6}
-                  disabled={isSubmitting}
-                />
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-semibold text-white/80 mb-2.5">
+                  {t.auth.reset.confirmPassword}
+                </label>
+                <div className="flex items-center gap-3 h-12 rounded-2xl border border-white/10 bg-white/5 px-4 focus-within:border-[#F0B90B]/45 focus-within:bg-white/7 focus-within:ring-2 focus-within:ring-[#F0B90B]/10 transition-all">
+                  <Lock className="w-4 h-4 text-white/55 shrink-0" />
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    placeholder={t.auth.reset.confirmPassword}
+                    className="flex-1 bg-transparent outline-none text-white placeholder:text-white/30 text-sm"
+                    required
+                    minLength={6}
+                    disabled={isSubmitting}
+                  />
+                </div>
               </div>
-            </div>
 
-            <PremiumButton
-              variant="primary"
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full"
-            >
-              {isSubmitting ? t.auth.reset.updating : t.auth.reset.update}
-            </PremiumButton>
-          </form>
+              <PremiumButton
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full h-12"
+              >
+                {isSubmitting ? t.auth.reset.updating : t.auth.reset.update}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </PremiumButton>
+
+              <div className="text-center text-sm text-white/65 pt-2">
+                <Link to={getLangPath(lang, '/signin')} className="text-[#F0B90B] hover:underline font-medium">
+                  Back to Sign In
+                </Link>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
+      </PremiumSection>
     </PremiumShell>
   );
 };
