@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Shield, KeyRound, Mail, User2, AtSign, Lock, Check, X, Loader2, ArrowRight } from "lucide-react";
 import { useI18n, type Language, getLangPath } from "../../i18n";
 import { Link } from "../../components/Router";
-import { PremiumShell, PremiumSection, PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
 import { validateReferralCode, signUpInviteOnly } from "../../lib/supabase";
 
 type ReferralState = "idle" | "checking" | "valid" | "invalid";
@@ -106,66 +105,68 @@ export default function SignUp({ lang }: SignUpProps) {
   };
 
   return (
-    <PremiumShell>
-      <PremiumSection className="pt-10 md:pt-14 pb-32">
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#F0B90B]/5 via-transparent to-transparent" />
-          <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#F0B90B]/8 rounded-full blur-[120px] opacity-30" />
+    <div className="max-w-md lg:max-w-lg mx-auto px-4">
+      <div className="text-center mb-6">
+        <div className="mx-auto w-16 h-16 rounded-2xl bg-white/5 border border-white/10 grid place-items-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-[#F0B90B]/10 blur-2xl" />
+          <Shield className="w-7 h-7 text-[#F0B90B] relative z-10" />
         </div>
+        <h1 className="mt-5 text-[clamp(2rem,8vw,3rem)] font-bold tracking-tight text-white leading-[1.08]">
+          {t("auth.signup.title")}
+        </h1>
+        <p className="mt-3 text-white/65 text-sm md:text-base max-w-[42ch] mx-auto">
+          {t("auth.signup.subtitle")}
+        </p>
+      </div>
 
-        <div className="relative max-w-md lg:max-w-lg mx-auto px-4">
-          <div className="text-center mb-6">
-            <div className="mx-auto w-16 h-16 rounded-2xl bg-white/5 border border-white/10 grid place-items-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-[#F0B90B]/10 blur-2xl" />
-              <Shield className="w-7 h-7 text-[#F0B90B] relative z-10" />
-            </div>
-            <h1 className="mt-5 text-[clamp(2rem,8vw,3rem)] font-bold tracking-tight text-white leading-tight">
-              {t("auth.signup.title")}
-            </h1>
-            <p className="mt-3 text-white/65 text-sm md:text-base max-w-[42ch] mx-auto">
-              {t("auth.signup.subtitle")}
-            </p>
-          </div>
+      <div className="rounded-2xl border-[#F0B90B]/20 bg-[#F0B90B]/8 p-4 mb-6">
+        <div className="text-sm font-semibold text-white mb-1">
+          {t("auth.signup.noticeTitle")}
+        </div>
+        <div className="text-xs text-white/70 leading-relaxed">
+          {t("auth.signup.noticeDesc")}
+        </div>
+      </div>
 
-          <NoticeBox
-            title={t("auth.signup.noticeTitle")}
-            description={t("auth.signup.noticeDesc")}
-            className="rounded-2xl border-[#F0B90B]/20 bg-[#F0B90B]/8"
-          />
-
-          <div className="mt-6 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#F0B90B]/30 to-transparent" />
-            {done ? (
-              <div className="p-6 md:p-8">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-[#F0B90B]/10 border border-[#F0B90B]/20 grid place-items-center shrink-0">
-                    <Check className="w-6 h-6 text-[#F0B90B]" />
-                  </div>
-                  <div className="flex-1">
-                    <h2 className="text-xl font-bold text-white">
-                      {done.checkEmail ? t("auth.signup.checkEmailTitle") : t("auth.signup.successTitle")}
-                    </h2>
-                    <p className="text-white/65 mt-2 text-sm leading-relaxed">
-                      {done.checkEmail ? t("auth.signup.checkEmailDesc") : t("auth.signup.successDesc")}
-                    </p>
-                    <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                      <Link to={getLangPath(L, "/signin")} className="flex-1">
-                        <PremiumButton className="w-full h-12" type="button">
-                          {t("common.backToSignIn")}
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </PremiumButton>
-                      </Link>
-                      <Link to={getLangPath(L, "/")} className="flex-1">
-                        <PremiumButton className="w-full h-12" variant="secondary" type="button">
-                          {t("common.backHome")}
-                        </PremiumButton>
-                      </Link>
-                    </div>
-                  </div>
+      <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#F0B90B]/40 to-transparent" />
+        {done ? (
+          <div className="p-6 md:p-8">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#F0B90B]/10 border border-[#F0B90B]/20 grid place-items-center shrink-0">
+                <Check className="w-6 h-6 text-[#F0B90B]" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-xl font-bold text-white">
+                  {done.checkEmail ? t("auth.signup.checkEmailTitle") : t("auth.signup.successTitle")}
+                </h2>
+                <p className="text-white/65 mt-2 text-sm leading-relaxed">
+                  {done.checkEmail ? t("auth.signup.checkEmailDesc") : t("auth.signup.successDesc")}
+                </p>
+                <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                  <Link to={getLangPath(L, "/signin")} className="flex-1">
+                    <button
+                      type="button"
+                      className="w-full h-12 rounded-2xl font-semibold bg-gradient-to-r from-[#F0B90B] to-[#F8D568] text-black transition-all duration-200 hover:shadow-lg hover:shadow-[#F0B90B]/25 active:translate-y-[1px] flex items-center justify-center gap-2"
+                    >
+                      {t("common.backToSignIn")}
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </Link>
+                  <Link to={getLangPath(L, "/")} className="flex-1">
+                    <button
+                      type="button"
+                      className="w-full h-12 rounded-2xl font-semibold bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all duration-200 active:translate-y-[1px]"
+                    >
+                      {t("common.backHome")}
+                    </button>
+                  </Link>
                 </div>
               </div>
-            ) : (
-              <form onSubmit={onSubmit} className="p-6 md:p-8 space-y-5">
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={onSubmit} className="p-6 md:p-8 space-y-4">
                 <Field
                   icon={<KeyRound className="w-4 h-4" />}
                   label={t("auth.signup.referral")}
@@ -232,43 +233,45 @@ export default function SignUp({ lang }: SignUpProps) {
                   helperTone="muted"
                 />
 
-                {error ? (
-                  <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3.5 text-sm text-red-200">
-                    {error}
-                  </div>
-                ) : null}
+          {error ? (
+            <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3.5 text-sm text-red-200">
+              {error}
+            </div>
+          ) : null}
 
-                <div className="pt-2">
-                  <PremiumButton className="w-full h-12" type="submit" disabled={!canSubmit}>
-                    {submitting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                        {t("auth.signup.creating")}
-                      </>
-                    ) : (
-                      <>
-                        {t("auth.signup.createAccount")}
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </>
-                    )}
-                  </PremiumButton>
-                  <p className="mt-3 text-center text-xs text-white/40">
-                    Invite-only. Referral required.
-                  </p>
-                </div>
-
-                <div className="text-center text-sm text-white/65 pt-2">
-                  <span className="text-white/50">{t("auth.signup.haveAccount")}</span>{" "}
-                  <Link to={getLangPath(L, "/signin")} className="text-[#F0B90B] hover:underline font-medium">
-                    {t("auth.signup.goLogin")}
-                  </Link>
-                </div>
-              </form>
-            )}
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              className="w-full h-12 rounded-2xl font-semibold bg-gradient-to-r from-[#F0B90B] to-[#F8D568] text-black transition-all duration-200 hover:shadow-lg hover:shadow-[#F0B90B]/25 active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2"
+            >
+              {submitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  {t("auth.signup.creating")}
+                </>
+              ) : (
+                <>
+                  {t("auth.signup.createAccount")}
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+            <p className="mt-3 text-center text-xs text-white/40">
+              {t("auth.signup.inviteOnly")}
+            </p>
           </div>
-        </div>
-      </PremiumSection>
-    </PremiumShell>
+
+          <div className="text-center text-sm pt-3">
+            <span className="text-white/50">{t("auth.signup.haveAccount")}</span>{" "}
+            <Link to={getLangPath(L, "/signin")} className="text-[#F0B90B] hover:underline font-medium">
+              {t("auth.signup.goLogin")}
+            </Link>
+          </div>
+        </form>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -295,7 +298,7 @@ function Field(props: {
   return (
     <div>
       <label className="block text-sm font-semibold text-white/80 mb-2.5">{label}</label>
-      <div className="flex items-center gap-3 h-12 rounded-2xl border border-white/10 bg-white/5 px-4 focus-within:border-[#F0B90B]/45 focus-within:bg-white/7 focus-within:ring-2 focus-within:ring-[#F0B90B]/10 transition-all">
+      <div className="flex items-center gap-3 h-12 rounded-2xl border border-white/10 bg-white/5 px-4 focus-within:border-[#F0B90B]/45 focus-within:bg-white/7 focus-within:ring-1 focus-within:ring-[#F0B90B]/25 transition-all">
         <div className="text-white/55 shrink-0">{icon}</div>
         <input
           value={value}

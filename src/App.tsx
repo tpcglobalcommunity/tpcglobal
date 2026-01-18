@@ -3,6 +3,7 @@ import { getLanguageFromPath } from './i18n';
 import AppHeader from './components/AppHeader';
 import LegalFooter from './components/LegalFooter';
 import BottomNav from './components/BottomNav';
+import AuthLayout from './components/auth/AuthLayout';
 import Home from './pages/Home';
 import Docs from './pages/Docs';
 import DAOLite from './pages/DAOLite';
@@ -152,6 +153,14 @@ function App() {
         return <Home lang={lang} />;
     }
   };
+
+  if (isAuthPage(currentPath)) {
+    return (
+      <AuthLayout lang={lang}>
+        {renderPage()}
+      </AuthLayout>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
