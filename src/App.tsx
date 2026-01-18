@@ -10,6 +10,8 @@ import Transparency from './pages/Transparency';
 import CommunityFund from './pages/CommunityFund';
 import Legal from './pages/Legal';
 import LaunchChecklist from './pages/LaunchChecklist';
+import Security from './pages/Security';
+import Support from './pages/Support';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -52,6 +54,10 @@ function App() {
         return <Legal lang={lang} />;
       case '/launch':
         return <LaunchChecklist lang={lang} />;
+      case '/security':
+        return <Security lang={lang} />;
+      case '/support':
+        return <Support lang={lang} />;
       default:
         return <Home lang={lang} />;
     }

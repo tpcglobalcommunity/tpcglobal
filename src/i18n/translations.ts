@@ -325,6 +325,124 @@ export const translations = {
       copyright: '© 2026 TPC. All rights reserved.',
       madeWith: 'Built with transparency',
     },
+    security: {
+      header: {
+        pill: 'Security Notice',
+        title: 'Anti-Scam & Security',
+        subtitle: 'Verify official links, protect your assets, and report suspicious activity. TPC never asks for private keys or guarantees profit.',
+        noticeTitle: 'Stay Alert',
+        noticeBody: 'Scammers impersonate official accounts. Always verify links on this page and our Transparency hub before trusting any communication.',
+      },
+      official: {
+        title: 'Official Links Only',
+        items: [
+          { label: 'Website', value: 'https://tpcglobal.io', type: 'external' },
+          { label: 'Telegram', value: 'https://t.me/tpcglobalcommunity', type: 'external' },
+          { label: 'Documentation', value: '/docs', type: 'internal' },
+          { label: 'Transparency Hub', value: '/transparency', type: 'internal' },
+        ],
+      },
+      rules: {
+        title: 'We Never Do This',
+        items: [
+          {
+            title: 'No unsolicited DMs',
+            desc: 'TPC team never initiates direct messages first. Treat all unsolicited DMs as scams.',
+          },
+          {
+            title: 'Never ask for keys',
+            desc: 'We never ask for seed phrases, private keys, or passwords. Anyone asking is a scammer.',
+          },
+          {
+            title: 'No verification payments',
+            desc: 'We never ask you to send funds to verify your wallet or unlock features.',
+          },
+          {
+            title: 'No profit guarantees',
+            desc: 'TPC Token is a utility token. We never promise returns, profits, or price predictions.',
+          },
+          {
+            title: 'Verify wallet addresses',
+            desc: 'All official wallets are published on our Transparency page. Verify before sending any funds.',
+          },
+          {
+            title: 'Report suspicious accounts',
+            desc: 'If someone claims to be TPC team, verify on our Support page and report impersonators immediately.',
+          },
+        ],
+      },
+      verify: {
+        title: 'Verify Wallet Addresses',
+        body: [
+          'Only trust wallet addresses published on our official Transparency page. Use blockchain explorers to verify transactions.',
+          'Beware of look-alike domains, fake social media accounts, and impersonators. Always cross-check with this Security page.',
+          'If you receive a wallet address via DM, Telegram, or email, assume it is a scam unless verified on /transparency.',
+        ],
+        ctaTransparency: 'View Transparency',
+        ctaLegal: 'Read Legal Terms',
+      },
+      report: {
+        title: 'Report Scam or Suspicious Activity',
+        subtitle: 'If you encounter impersonators, phishing attempts, or suspicious requests, report them immediately.',
+        ctaSupport: 'Go to Support',
+        ctaCommunity: 'Join Community',
+      },
+    },
+    support: {
+      header: {
+        pill: 'Official Support',
+        title: 'Support & Contact',
+        subtitle: 'Official support channels, response expectations, and how to report scams or issues.',
+        noticeTitle: 'Best-Effort Support',
+        noticeBody: 'TPC provides community-driven support on a best-effort basis. We do not guarantee response times or issue resolution. Only contact us via official channels listed here.',
+      },
+      channels: {
+        title: 'Official Support Channels',
+        items: [
+          {
+            label: 'Telegram Community',
+            desc: 'Primary community support and announcements. Active moderation for scam prevention.',
+            value: 'https://t.me/tpcglobalcommunity',
+            status: 'active',
+          },
+          {
+            label: 'Email Support',
+            desc: 'For formal inquiries and detailed reports. Response time may vary.',
+            value: 'support@tpcglobal.io',
+            status: 'comingSoon',
+          },
+        ],
+      },
+      badges: {
+        active: 'Active',
+        comingSoon: 'Coming Soon',
+      },
+      reportSteps: {
+        title: 'How to Report Scams or Issues',
+        steps: [
+          'Provide the username, handle, or account name of the suspected scammer.',
+          'Include screenshots of suspicious messages or requests.',
+          'Share links or message IDs if available.',
+          'Never share your private keys, seed phrases, or passwords in any report.',
+        ],
+      },
+      expectations: {
+        title: 'Response Expectations',
+        bullets: [
+          'TPC provides best-effort community support with no guaranteed response times.',
+          'Scam reports and security issues receive priority attention.',
+          'General inquiries may take several days to address based on community resources.',
+          'We do not provide technical support for third-party wallets, exchanges, or platforms.',
+          'Legal or compliance questions should reference our Legal page for official terms.',
+        ],
+      },
+      actions: {
+        title: 'Quick Actions',
+        security: 'Security Notice',
+        transparency: 'Transparency Hub',
+        legal: 'Legal Terms',
+      },
+    },
     launch: {
       header: {
         pill: 'Launch Readiness',
@@ -827,6 +945,124 @@ export const translations = {
       },
       copyright: '© 2026 TPC. Hak cipta dilindungi.',
       madeWith: 'Dibangun dengan transparansi',
+    },
+    security: {
+      header: {
+        pill: 'Pemberitahuan Keamanan',
+        title: 'Anti-Penipuan & Keamanan',
+        subtitle: 'Verifikasi tautan resmi, lindungi aset Anda, dan laporkan aktivitas mencurigakan. TPC tidak pernah meminta private key atau menjanjikan profit.',
+        noticeTitle: 'Tetap Waspada',
+        noticeBody: 'Penipu menyamar sebagai akun resmi. Selalu verifikasi tautan di halaman ini dan hub Transparansi kami sebelum mempercayai komunikasi apa pun.',
+      },
+      official: {
+        title: 'Hanya Tautan Resmi',
+        items: [
+          { label: 'Website', value: 'https://tpcglobal.io', type: 'external' },
+          { label: 'Telegram', value: 'https://t.me/tpcglobalcommunity', type: 'external' },
+          { label: 'Dokumentasi', value: '/docs', type: 'internal' },
+          { label: 'Hub Transparansi', value: '/transparency', type: 'internal' },
+        ],
+      },
+      rules: {
+        title: 'Kami Tidak Pernah Melakukan Ini',
+        items: [
+          {
+            title: 'Tidak ada DM tanpa diminta',
+            desc: 'Tim TPC tidak pernah memulai pesan langsung terlebih dahulu. Perlakukan semua DM tanpa diminta sebagai penipuan.',
+          },
+          {
+            title: 'Tidak pernah meminta kunci',
+            desc: 'Kami tidak pernah meminta seed phrase, private key, atau password. Siapa pun yang meminta adalah penipu.',
+          },
+          {
+            title: 'Tidak ada pembayaran verifikasi',
+            desc: 'Kami tidak pernah meminta Anda mengirim dana untuk memverifikasi dompet atau membuka fitur.',
+          },
+          {
+            title: 'Tidak ada jaminan profit',
+            desc: 'TPC Token adalah token utilitas. Kami tidak pernah menjanjikan keuntungan, profit, atau prediksi harga.',
+          },
+          {
+            title: 'Verifikasi alamat dompet',
+            desc: 'Semua dompet resmi dipublikasikan di halaman Transparansi kami. Verifikasi sebelum mengirim dana apa pun.',
+          },
+          {
+            title: 'Laporkan akun mencurigakan',
+            desc: 'Jika seseorang mengklaim sebagai tim TPC, verifikasi di halaman Support kami dan laporkan penyamar segera.',
+          },
+        ],
+      },
+      verify: {
+        title: 'Verifikasi Alamat Dompet',
+        body: [
+          'Hanya percayai alamat dompet yang dipublikasikan di halaman Transparansi resmi kami. Gunakan blockchain explorer untuk memverifikasi transaksi.',
+          'Waspadai domain tiruan, akun media sosial palsu, dan penyamar. Selalu periksa silang dengan halaman Keamanan ini.',
+          'Jika Anda menerima alamat dompet melalui DM, Telegram, atau email, anggap itu penipuan kecuali diverifikasi di /transparency.',
+        ],
+        ctaTransparency: 'Lihat Transparansi',
+        ctaLegal: 'Baca Ketentuan Legal',
+      },
+      report: {
+        title: 'Laporkan Penipuan atau Aktivitas Mencurigakan',
+        subtitle: 'Jika Anda menemukan penyamar, upaya phishing, atau permintaan mencurigakan, laporkan segera.',
+        ctaSupport: 'Ke Halaman Support',
+        ctaCommunity: 'Bergabung dengan Komunitas',
+      },
+    },
+    support: {
+      header: {
+        pill: 'Support Resmi',
+        title: 'Support & Kontak',
+        subtitle: 'Saluran support resmi, ekspektasi respons, dan cara melaporkan penipuan atau masalah.',
+        noticeTitle: 'Support Upaya Terbaik',
+        noticeBody: 'TPC menyediakan support berbasis komunitas dengan upaya terbaik. Kami tidak menjamin waktu respons atau resolusi masalah. Hubungi kami hanya melalui saluran resmi yang tercantum di sini.',
+      },
+      channels: {
+        title: 'Saluran Support Resmi',
+        items: [
+          {
+            label: 'Komunitas Telegram',
+            desc: 'Support komunitas utama dan pengumuman. Moderasi aktif untuk pencegahan penipuan.',
+            value: 'https://t.me/tpcglobalcommunity',
+            status: 'active',
+          },
+          {
+            label: 'Support Email',
+            desc: 'Untuk pertanyaan formal dan laporan terperinci. Waktu respons dapat bervariasi.',
+            value: 'support@tpcglobal.io',
+            status: 'comingSoon',
+          },
+        ],
+      },
+      badges: {
+        active: 'Aktif',
+        comingSoon: 'Segera Hadir',
+      },
+      reportSteps: {
+        title: 'Cara Melaporkan Penipuan atau Masalah',
+        steps: [
+          'Berikan username, handle, atau nama akun dari penipu yang dicurigai.',
+          'Sertakan screenshot pesan atau permintaan mencurigakan.',
+          'Bagikan tautan atau ID pesan jika tersedia.',
+          'Jangan pernah bagikan private key, seed phrase, atau password dalam laporan apa pun.',
+        ],
+      },
+      expectations: {
+        title: 'Ekspektasi Respons',
+        bullets: [
+          'TPC menyediakan support komunitas upaya terbaik tanpa jaminan waktu respons.',
+          'Laporan penipuan dan masalah keamanan mendapat perhatian prioritas.',
+          'Pertanyaan umum mungkin memerlukan beberapa hari untuk ditangani berdasarkan sumber daya komunitas.',
+          'Kami tidak menyediakan support teknis untuk dompet pihak ketiga, exchange, atau platform.',
+          'Pertanyaan legal atau kepatuhan harus merujuk halaman Legal kami untuk ketentuan resmi.',
+        ],
+      },
+      actions: {
+        title: 'Aksi Cepat',
+        security: 'Pemberitahuan Keamanan',
+        transparency: 'Hub Transparansi',
+        legal: 'Ketentuan Legal',
+      },
     },
     launch: {
       header: {
