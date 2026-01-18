@@ -1,5 +1,6 @@
 import { Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Language, useTranslations, setLanguage, getLangPath } from '../i18n';
 import { Link } from './Router';
 import TPMonogram from './brand/TPMonogram';
@@ -156,115 +157,110 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
         </div>
       </div>
 
-      {mobileMenuOpen && (
-        <>
-          {/* Overlay (fully blocks background) */}
-          <div
-            className="fixed inset-0 bg-black/90 z-[999] animate-[fadeIn_0.18s_ease-out]"
-            onClick={() => setMobileMenuOpen(false)}
-          />
+      {mobileMenuOpen
+        ? createPortal(
+            <>
+              {/* Overlay */}
+              <div
+                className="fixed inset-0 bg-black/90 z-[9999]"
+                onClick={() => setMobileMenuOpen(false)}
+              />
 
-          {/* Bottom Sheet Panel */}
-          <div
-            className="md:hidden fixed left-1/2 -translate-x-1/2 top-3 bottom-3 w-[92vw] max-w-[420px]
-                       bg-[#0B0E11] z-[1000]
-                       rounded-3xl border border-white/12 shadow-2xl shadow-black/70
-                       animate-[scaleIn_0.22s_ease-out] isolate overflow-hidden"
-            role="dialog"
-            aria-modal="true"
-          >
-            {/* Premium highlight line */}
-            <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#F0B90B]/45 to-transparent" />
-            {/* Glow blob */}
-            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[520px] bg-[#F0B90B]/10 rounded-full blur-[120px] opacity-60 pointer-events-none" />
-            {/* Top handle */}
-            <div className="absolute left-1/2 top-2 -translate-x-1/2 w-12 h-1 rounded-full bg-white/10" />
-            {/* Inner stroke */}
-            <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/10" />
+              {/* Panel (bottom sheet) */}
+              <div
+                className="md:hidden fixed left-1/2 -translate-x-1/2 top-3 bottom-3 w-[92vw] max-w-[420px]
+                           bg-[#0B0E11] z-[10000]
+                           rounded-3xl border border-white/12 shadow-2xl shadow-black/70 overflow-hidden isolate"
+                role="dialog"
+                aria-modal="true"
+              >
+                {/* Top highlight + subtle glow */}
+                <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#F0B90B]/45 to-transparent" />
+                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[520px] bg-[#F0B90B]/10 rounded-full blur-[120px] opacity-60 pointer-events-none" />
+                <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/10" />
 
-            {/* Full height flex container */}
-            <div className="h-full flex flex-col min-h-0">
-              {/* Header */}
-              <div className="relative flex items-center justify-between px-5 py-3 border-b border-white/10 shrink-0">
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#F0B90B] to-[#f8d12f] rounded-xl blur-lg opacity-45" />
-                    <TPMonogram size={24} />
+                <div className="h-full flex flex-col min-h-0">
+                  {/* Panel Header */}
+                  <div className="relative flex items-center justify-between px-5 py-3 border-b border-white/10 shrink-0">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#F0B90B] to-[#f8d12f] rounded-xl blur-lg opacity-45" />
+                        <TPMonogram size={24} />
+                      </div>
+                      <div className="flex flex-col leading-none">
+                        <span className="text-[15px] font-bold tracking-tight text-white">TPC</span>
+                        <span className="text-[11px] text-white/55 tracking-wide mt-1">Navigation</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="p-2 rounded-xl bg-white/[0.06] border border-white/10 text-white/85 hover:bg-white/[0.08] transition-all duration-200"
+                      aria-label="Close menu"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
                   </div>
-                  <div className="flex flex-col leading-none">
-                    <span className="text-[15px] font-bold tracking-tight text-white">TPC</span>
-                    <span className="text-[11px] text-white/55 tracking-wide mt-1">Navigation</span>
+
+                  {/* Scrollable Nav (CRITICAL: min-h-0 + flex-1) */}
+                  <nav className="flex-1 min-h-0 px-4 pt-4 pb-3 space-y-[8px] overflow-y-auto overflow-x-hidden">
+                    {navItems.map((item) => {
+                      const isActive = currentPath === item.path;
+                      return (
+                        <Link
+                          key={item.path}
+                          to={item.path}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={`group relative flex items-center px-4 py-3 rounded-2xl
+                            text-[15px] font-semibold tracking-wide transition-all duration-200
+                            ${isActive
+                              ? 'bg-white/[0.06] border border-white/12 text-white'
+                              : 'bg-transparent border border-transparent text-white/80 hover:text-white hover:bg-white/[0.05]'}
+                          `}
+                        >
+                          <span
+                            className={`absolute left-2 top-1/2 -translate-y-1/2 h-6 w-[3px] rounded-full transition-all duration-200
+                              ${isActive
+                                ? 'bg-[#F0B90B] shadow-[0_0_14px_rgba(240,185,11,0.35)]'
+                                : 'bg-transparent group-hover:bg-white/15'}
+                            `}
+                          />
+                          <span className={`${isActive ? 'text-[#F0B90B]' : 'text-white/80 group-hover:text-white'}`}>
+                            {item.label}
+                          </span>
+                        </Link>
+                      );
+                    })}
+                  </nav>
+
+                  {/* Footer CTA (sticky-like, fixed height) */}
+                  <div
+                    className="px-4 pt-2 pb-3 border-t border-white/10 bg-[#0B0E11]/95 backdrop-blur-xl shrink-0"
+                    style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 14px)' }}
+                  >
+                    <a
+                      href="https://t.me/tpcglobalcommunity"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-center bg-gradient-to-r from-[#F0B90B] to-[#F8D568]
+                                 text-black font-bold rounded-2xl px-5 py-4 text-[15px]
+                                 border border-black/10 transition-all duration-200 active:scale-[0.98]
+                                 shadow-xl shadow-[#F0B90B]/20 hover:shadow-2xl hover:shadow-[#F0B90B]/25"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Join Community
+                    </a>
+
+                    <p className="mt-3 text-center text-[11px] text-white/45">
+                      Education-first. Risk-aware. No guarantees.
+                    </p>
                   </div>
                 </div>
-
-                <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 rounded-xl bg-white/[0.06] border border-white/10 text-white/85 hover:bg-white/[0.08] transition-all duration-200"
-                  aria-label="Close menu"
-                >
-                  <X className="w-4 h-4" />
-                </button>
               </div>
-
-              {/* Scrollable nav area */}
-              <nav className="flex-1 min-h-0 px-4 pt-4 pb-3 space-y-[8px] overflow-y-auto overflow-x-hidden">
-                {navItems.map((item) => {
-                  const isActive = currentPath === item.path;
-                  return (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`group relative flex items-center px-4 py-3 rounded-2xl
-                        text-[15px] font-semibold tracking-wide transition-all duration-200
-                        ${isActive
-                          ? 'bg-white/[0.06] border border-white/12 text-white'
-                          : 'bg-transparent border border-transparent text-white/80 hover:text-white hover:bg-white/[0.05]'}
-                      `}
-                    >
-                      {/* Active indicator */}
-                      <span
-                        className={`absolute left-2 top-1/2 -translate-y-1/2 h-6 w-[3px] rounded-full transition-all duration-200
-                          ${isActive
-                            ? 'bg-[#F0B90B] shadow-[0_0_14px_rgba(240,185,11,0.35)]'
-                            : 'bg-transparent group-hover:bg-white/15'}
-                        `}
-                      />
-                      <span className={`${isActive ? 'text-[#F0B90B]' : 'text-white/80 group-hover:text-white'}`}>
-                        {item.label}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </nav>
-
-              {/* Footer CTA */}
-              <div
-                className="relative px-4 pt-2 pb-3 border-t border-white/10 bg-[#0B0E11]/95 backdrop-blur-xl shrink-0"
-                style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 14px)' }}
-              >
-                <a
-                  href="https://t.me/tpcglobalcommunity"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-center bg-gradient-to-r from-[#F0B90B] to-[#F8D568]
-                             text-black font-bold rounded-2xl px-5 py-4 text-[15px]
-                             border border-black/10
-                             transition-all duration-200 active:scale-[0.98]
-                             shadow-xl shadow-[#F0B90B]/20 hover:shadow-2xl hover:shadow-[#F0B90B]/25"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Join Community
-                </a>
-
-                <p className="mt-3 text-center text-[11px] text-white/45">
-                  Education-first. Risk-aware. No guarantees.
-                </p>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+            </>,
+            document.body
+          )
+        : null}
     </header>
   );
 };
