@@ -15,7 +15,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
 
   return (
     <footer
-      className="relative bg-black/60 border-t border-white/10 mt-0 backdrop-blur-2xl overflow-hidden"
+      className="relative bg-black/60 border-t border-white/10 mt-0 backdrop-blur-2xl overflow-hidden max-h-[260px] md:max-h-[220px]"
     >
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#F0B90B]/30 to-transparent"></div>
 
@@ -23,27 +23,27 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.2)_0%,transparent_100%)] pointer-events-none"></div>
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 pt-5 md:pt-6 pb-3 md:pb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3 pt-3 md:pt-4 pb-2 md:pb-3">
           <div className="relative opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]">
             <div className="absolute -top-12 -left-12 w-48 h-48 bg-gradient-radial from-[#F0B90B]/15 via-transparent to-transparent blur-[100px] opacity-20"></div>
 
-            <div className="relative flex items-center space-x-3 mb-2">
+            <div className="relative flex items-center space-x-2.5 mb-1.5">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#F0B90B] to-[#f8d12f] rounded-xl blur-lg opacity-50"></div>
-                <TPMonogram size={28} />
+                <TPMonogram size={24} />
               </div>
-              <span className="text-xl font-bold tracking-tight text-white">TPC</span>
+              <span className="text-lg font-bold tracking-tight text-white">TPC</span>
             </div>
-            <p className="text-xs text-white/65 mb-0.5 font-medium">{t.footer.brand}</p>
+            <p className="text-[11px] text-white/65 mb-0.5 font-medium">{t.footer.brand}</p>
             <p className="text-xs text-white/50 leading-relaxed max-w-[38ch]">{t.footer.tagline}</p>
           </div>
 
           <div className="opacity-0 animate-[fadeInUp_0.6s_ease-out_0.1s_forwards]">
-            <div className="mb-2">
-              <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-white/70 mb-1.5">{t.footer.quickLinks}</h3>
+            <div className="mb-1.5">
+              <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-white/70 mb-1">{t.footer.quickLinks}</h3>
               <div className="w-10 h-[2px] bg-gradient-to-r from-[#F0B90B] to-transparent opacity-90 blur-[1px]"></div>
             </div>
-            <ul className="space-y-1.5">
+            <ul className="space-y-1">
               <li>
                 <Link
                   to={getLangPath(lang, '/home')}
@@ -75,11 +75,11 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
           </div>
 
           <div className="opacity-0 animate-[fadeInUp_0.6s_ease-out_0.2s_forwards]">
-            <div className="mb-2">
-              <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-white/70 mb-1.5">{t.footer.links.community}</h3>
+            <div className="mb-1.5">
+              <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-white/70 mb-1">{t.footer.links.community}</h3>
               <div className="w-10 h-[2px] bg-gradient-to-r from-[#F0B90B] to-transparent opacity-90 blur-[1px]"></div>
             </div>
-            <ul className="space-y-1.5">
+            <ul className="space-y-1">
               <li>
                 <a
                   href="https://t.me/tpcglobalcommunity"
@@ -95,15 +95,15 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
           </div>
         </div>
 
-        <div className="relative mt-2 pt-2 border-t border-white/10">
+        <div className="relative mt-1.5 pt-1.5 border-t border-white/10">
           <div className="absolute left-1/2 -translate-x-1/2 -top-px w-[180px] h-[1px] bg-[#F0B90B]/50 blur-[2px]"></div>
           <div className="absolute left-1/2 -translate-x-1/2 -top-px w-[180px] h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent"></div>
           <div className="absolute left-1/2 -translate-x-1/2 -top-px w-[80px] h-[1px] bg-[#F0B90B]/80 animate-[shimmer_3s_ease-in-out_infinite]"></div>
 
-          <div className="flex flex-col md:flex-row justify-between items-center gap-2 pb-2">
-            <div className="flex flex-col md:flex-row items-center gap-1.5 md:gap-3">
-              <p className="text-[10px] text-white/60 font-medium tracking-wide">{copyrightText}</p>
-              <div className="hidden md:flex items-center gap-2.5 text-[10px] text-white/45 tracking-wide">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-1 pb-1.5">
+            <div className="flex flex-col md:flex-row items-center gap-1 md:gap-2">
+              <p className="text-[9px] text-white/60 font-medium tracking-wide">{copyrightText}</p>
+              <div className="hidden md:flex items-center gap-2 text-[9px] text-white/45 tracking-wide">
                 <span className="w-1 h-1 rounded-full bg-[#F0B90B]/60"></span>
                 <span>Education First</span>
                 <span className="w-1 h-1 rounded-full bg-[#F0B90B]/60"></span>
@@ -112,7 +112,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
                 <span>DAO Driven</span>
               </div>
             </div>
-            <p className="text-[10px] text-white/45 tracking-wide">{t.footer.madeWith}</p>
+            <p className="text-[9px] text-white/45 tracking-wide">{t.footer.madeWith}</p>
           </div>
         </div>
 

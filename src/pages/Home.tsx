@@ -143,7 +143,7 @@ const Home = ({ lang }: HomeProps) => {
         </PremiumCard>
       </PremiumSection>
 
-      <div className="relative h-px mx-auto max-w-6xl px-4 sm:px-6 mt-8 md:mt-10">
+      <div className="relative h-px mx-auto max-w-6xl px-4 sm:px-6 mt-2 md:mt-3">
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#F0B90B]/20 to-transparent blur-md"></div>
       </div>
