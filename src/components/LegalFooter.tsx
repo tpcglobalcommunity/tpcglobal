@@ -15,7 +15,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
 
   return (
     <footer
-      className="relative bg-black/60 border-t border-white/10 -mt-4 md:-mt-6 backdrop-blur-2xl overflow-hidden"
+      className="relative bg-black/60 border-t border-white/10 -mt-8 md:-mt-12 backdrop-blur-2xl overflow-hidden"
     >
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#F0B90B]/30 to-transparent"></div>
 
@@ -23,7 +23,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.2)_0%,transparent_100%)] pointer-events-none"></div>
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pb-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3 pt-3 md:pt-4 pb-2 md:pb-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3 pt-6 md:pt-8 pb-2 md:pb-3">
           <div className="relative opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]">
             <div className="absolute -top-12 -left-12 w-48 h-48 bg-gradient-radial from-[#F0B90B]/15 via-transparent to-transparent blur-[100px] opacity-20"></div>
 

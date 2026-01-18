@@ -41,14 +41,17 @@ export const PremiumSection = ({
     : '';
 
   const padBottomClass = isLast
-    ? 'pb-8 md:pb-10'
+    ? 'pb-4 md:pb-6'
     : padBottom === 'none' ? 'pb-0'
     : padBottom === 'sm' ? 'pb-6 md:pb-8'
     : padBottom === 'md' ? 'pb-10 md:pb-12'
     : padBottom === 'lg' ? 'pb-14 md:pb-16'
     : '';
 
-  const headerMargin = variant === 'tight' ? 'mb-4 md:mb-5' : 'mb-5 md:mb-6';
+  const headerMargin = isLast
+    ? 'mb-3 md:mb-4'
+    : variant === 'tight' ? 'mb-4 md:mb-5'
+    : 'mb-5 md:mb-6';
 
   return (
     <section className={`${spacingClass} ${padTopClass} ${padBottomClass} px-4 sm:px-6 ${className}`}>
