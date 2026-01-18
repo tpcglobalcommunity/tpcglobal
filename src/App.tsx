@@ -14,6 +14,7 @@ import Security from './pages/Security';
 import Support from './pages/Support';
 import Whitepaper from './pages/Whitepaper';
 import Roadmap from './pages/Roadmap';
+import Faq from './pages/Faq';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -58,6 +59,8 @@ function App() {
         return <Whitepaper lang={lang} />;
       case '/roadmap':
         return <Roadmap lang={lang} />;
+      case '/faq':
+        return <Faq lang={lang} />;
       case '/launch':
         return <LaunchChecklist lang={lang} />;
       case '/security':

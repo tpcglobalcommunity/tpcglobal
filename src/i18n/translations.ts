@@ -926,6 +926,162 @@ export const translations = {
         tertiary: 'Join Community',
       },
     },
+    faq: {
+      hero: {
+        badge: 'Frequently Asked Questions',
+        title: 'FAQ',
+        subtitle: 'Find answers to common questions about TPC, membership, security, and governance',
+        noticeTitle: 'Transparency First',
+        noticeDesc: 'All information provided is for educational purposes. TPC does not provide financial advice or investment recommendations. Always conduct your own research and consult professionals.',
+      },
+      nav: {
+        general: 'General',
+        membership: 'Membership',
+        security: 'Security',
+        transparency: 'Transparency',
+        token: 'Token',
+        support: 'Support',
+      },
+      sections: {
+        general: {
+          title: 'General Information',
+          desc: 'Learn about TPC mission, purpose, and core values',
+        },
+        membership: {
+          title: 'Membership & Access',
+          desc: 'Understand how to join and participate in the community',
+        },
+        security: {
+          title: 'Website & Security',
+          desc: 'Information about data handling and platform security',
+        },
+        transparency: {
+          title: 'Transparency & Governance',
+          desc: 'How TPC maintains accountability and community decision-making',
+        },
+        token: {
+          title: 'Token Utility',
+          desc: 'Understanding TPC token purpose and ecosystem role',
+        },
+        support: {
+          title: 'Support & Resources',
+          desc: 'Get help and access documentation',
+        },
+      },
+      items: {
+        general: {
+          q1: {
+            q: 'What is TPC?',
+            a: 'TPC (Trading Pro Community) is a community-driven platform focused on education, transparency, and collaboration in the trading space. We are not a broker, investment fund, or financial advisor.\n\nOur mission is to build a transparent ecosystem where members can access educational content, participate in governance, and engage with verified tools and resources. Everything we do is centered on community values and accountability.',
+          },
+          q2: {
+            q: 'Is TPC a broker or investment fund?',
+            a: 'No. TPC is not a broker, investment fund, financial advisor, or money manager. We do not handle client funds, execute trades, or provide investment advice.\n\nWe are an educational and community platform. Members are responsible for their own trading decisions and outcomes.',
+          },
+          q3: {
+            q: 'What makes TPC different?',
+            a: 'TPC prioritizes transparency and accountability above all. We publish wallet addresses, governance proposals, treasury operations, and operational updates publicly.\n\nWe operate on principles of community governance, clear disclaimers, and educational focus—not profit promises or unrealistic claims.',
+          },
+          q4: {
+            q: 'Who is TPC for?',
+            a: 'TPC is for traders and crypto enthusiasts who value transparency, education, and community-driven initiatives. Whether you\'re learning or experienced, our platform offers resources, governance participation, and a space for collaboration.\n\nWe welcome anyone committed to personal responsibility and continuous learning.',
+          },
+        },
+        membership: {
+          q1: {
+            q: 'How do I join TPC?',
+            a: 'Joining TPC will involve creating an account in the member area (currently in development as Phase 2 of our roadmap). The public website is accessible to everyone without registration.\n\nOnce member authentication is live, you\'ll be able to sign up, verify your account, and access member-only features.',
+          },
+          q2: {
+            q: 'What is the difference between Public and Member area?',
+            a: 'The Public area includes pages like Home, Docs, Transparency, Legal, and this FAQ—accessible without an account.\n\nThe Member area (upcoming) will require authentication and provide access to community announcements, advanced educational content, governance participation, and member-verified features.',
+          },
+          q3: {
+            q: 'How does verification work?',
+            a: 'Member verification is a planned feature to ensure community integrity. Verified members may gain access to additional features, voting rights, and community recognition.\n\nDetails on verification criteria will be published as the system is developed.',
+          },
+          q4: {
+            q: 'What are roles (member/mod/admin)?',
+            a: 'TPC uses role-based access:\n\n• Member: Standard access to community features and content\n• Moderator: Trusted members who help maintain community standards\n• Admin: TPC team members responsible for operations and governance\n\nRoles ensure proper access control and transparent accountability.',
+          },
+        },
+        security: {
+          q1: {
+            q: 'Do I need an account to access the website?',
+            a: 'No. The public-facing website (Home, Docs, Transparency, Legal, FAQ, etc.) is accessible without creating an account.\n\nAn account is only required for the member area, which includes authentication-protected features.',
+          },
+          q2: {
+            q: 'How is user data handled?',
+            a: 'TPC follows privacy-first principles. We use Supabase for secure authentication and database management with row-level security policies.\n\nWe collect only essential data for account functionality and never sell user information. Full details are in our Legal and Privacy pages.',
+          },
+          q3: {
+            q: 'What should I do if I see suspicious activity?',
+            a: 'Report any suspicious activity immediately through our official support channels or Telegram community admins.\n\nAlways verify you\'re on the official domain (tpcglobal.io) and be cautious of phishing attempts. TPC will never ask for private keys or passwords.',
+          },
+          q4: {
+            q: 'Why do you use analytics?',
+            a: 'We use web analytics to understand how visitors use our site, identify issues, and improve user experience. This helps us optimize content, navigation, and features.\n\nAnalytics data is anonymized and used solely for operational improvement.',
+          },
+        },
+        transparency: {
+          q1: {
+            q: 'Where can I see official wallets and updates?',
+            a: 'All official wallet addresses, treasury information, and operational updates are published on our Transparency page.\n\nYou can verify on-chain activity directly using blockchain explorers. We maintain full public disclosure of all community-related wallets.',
+          },
+          q2: {
+            q: 'What is the transparency policy?',
+            a: 'TPC operates on radical transparency. We publish:\n\n• Treasury wallet addresses and balances\n• Governance proposals and voting results\n• Operational updates and milestone progress\n• Financial operations (buyback, burn, allocations)\n\nTransparency builds trust and accountability.',
+          },
+          q3: {
+            q: 'What is DAO-lite governance?',
+            a: 'DAO-lite is our simplified governance model (planned for Phase 4). It allows token holders to submit and vote on proposals without the complexity of full DAO infrastructure.\n\nThis approach balances community participation with operational efficiency.',
+          },
+          q4: {
+            q: 'How are community decisions made?',
+            a: 'Community decisions are made through structured governance proposals. Token holders can vote on:\n\n• Feature priorities\n• Resource allocation\n• Partnership approvals\n• Policy updates\n\nVoting weight is typically based on token holdings, with safeguards against centralization.',
+          },
+        },
+        token: {
+          q1: {
+            q: 'Is TPC token an investment?',
+            a: 'No. TPC token is a utility token designed for ecosystem participation—not an investment, security, or profit-sharing instrument.\n\nThere are no guarantees of value, returns, or financial gains. The token provides access to features, governance rights, and community participation.',
+          },
+          q2: {
+            q: 'What is the token used for?',
+            a: 'TPC token serves multiple utility functions:\n\n• Governance voting rights\n• Access to premium educational content\n• Unlocking advanced tools and features\n• Community recognition and reputation\n• Ecosystem participation rewards\n\nAll uses are functional, not speculative.',
+          },
+          q3: {
+            q: 'How do buyback & burn work?',
+            a: 'Buyback and burn is a token management policy where TPC uses operational revenue to purchase tokens from the market and permanently remove them from circulation.\n\nThis is a deflationary mechanism, not a profit promise. All buyback and burn activity is published on the Transparency page.',
+          },
+          q4: {
+            q: 'Where can I verify on-chain activity?',
+            a: 'All on-chain activity can be verified using blockchain explorers (e.g., BSCScan for Binance Smart Chain).\n\nOfficial contract addresses and wallet addresses are listed on our Transparency page. Always verify independently—never trust, always verify.',
+          },
+        },
+        support: {
+          q1: {
+            q: 'How can I contact support?',
+            a: 'You can reach TPC support through:\n\n• Support page: Detailed contact information\n• Telegram: Official community channel\n• Documentation: Self-service guides and FAQs\n\nResponse times vary based on inquiry complexity.',
+          },
+          q2: {
+            q: 'Where are the docs / guides?',
+            a: 'Comprehensive documentation is available on our Docs page. This includes:\n\n• Platform overview\n• Membership guides\n• Security best practices\n• Governance procedures\n• Legal and compliance information',
+          },
+          q3: {
+            q: 'Where are official community channels?',
+            a: 'Official TPC channels:\n\n• Website: tpcglobal.io\n• Telegram: t.me/tpcglobalcommunity\n• Transparency Hub: On-chain verification\n\nBeware of impersonators. Always verify URLs and admin identities.',
+          },
+        },
+      },
+      cta: {
+        title: 'Still Have Questions?',
+        desc: 'Explore our documentation or reach out to the community',
+        primary: 'Read Documentation',
+        secondary: 'View Transparency',
+        tertiary: 'Join Community',
+      },
+    },
   },
   id: {
     nav: {
@@ -1850,6 +2006,162 @@ export const translations = {
         title: 'Pelajari Lebih Lanjut Tentang TPC',
         subtitle: 'Jelajahi whitepaper dan laporan transparansi kami',
         primary: 'Baca Whitepaper',
+        secondary: 'Lihat Transparansi',
+        tertiary: 'Gabung Komunitas',
+      },
+    },
+    faq: {
+      hero: {
+        badge: 'Pertanyaan yang Sering Diajukan',
+        title: 'FAQ',
+        subtitle: 'Temukan jawaban atas pertanyaan umum tentang TPC, keanggotaan, keamanan, dan tata kelola',
+        noticeTitle: 'Transparansi Pertama',
+        noticeDesc: 'Semua informasi yang diberikan adalah untuk tujuan edukasi. TPC tidak memberikan nasihat keuangan atau rekomendasi investasi. Selalu lakukan riset sendiri dan konsultasi dengan profesional.',
+      },
+      nav: {
+        general: 'Umum',
+        membership: 'Keanggotaan',
+        security: 'Keamanan',
+        transparency: 'Transparansi',
+        token: 'Token',
+        support: 'Dukungan',
+      },
+      sections: {
+        general: {
+          title: 'Informasi Umum',
+          desc: 'Pelajari tentang misi, tujuan, dan nilai inti TPC',
+        },
+        membership: {
+          title: 'Keanggotaan & Akses',
+          desc: 'Pahami cara bergabung dan berpartisipasi dalam komunitas',
+        },
+        security: {
+          title: 'Website & Keamanan',
+          desc: 'Informasi tentang penanganan data dan keamanan platform',
+        },
+        transparency: {
+          title: 'Transparansi & Tata Kelola',
+          desc: 'Bagaimana TPC menjaga akuntabilitas dan pengambilan keputusan komunitas',
+        },
+        token: {
+          title: 'Utilitas Token',
+          desc: 'Memahami tujuan token TPC dan peran ekosistem',
+        },
+        support: {
+          title: 'Dukungan & Sumber Daya',
+          desc: 'Dapatkan bantuan dan akses dokumentasi',
+        },
+      },
+      items: {
+        general: {
+          q1: {
+            q: 'Apa itu TPC?',
+            a: 'TPC (Trading Pro Community) adalah platform berbasis komunitas yang berfokus pada edukasi, transparansi, dan kolaborasi dalam bidang trading. Kami bukan broker, dana investasi, atau penasihat keuangan.\n\nMisi kami adalah membangun ekosistem transparan di mana anggota dapat mengakses konten edukasi, berpartisipasi dalam tata kelola, dan terlibat dengan alat dan sumber daya terverifikasi. Semua yang kami lakukan berpusat pada nilai dan akuntabilitas komunitas.',
+          },
+          q2: {
+            q: 'Apakah TPC broker atau dana investasi?',
+            a: 'Tidak. TPC bukan broker, dana investasi, penasihat keuangan, atau manajer uang. Kami tidak menangani dana klien, mengeksekusi perdagangan, atau memberikan nasihat investasi.\n\nKami adalah platform edukasi dan komunitas. Anggota bertanggung jawab atas keputusan dan hasil trading mereka sendiri.',
+          },
+          q3: {
+            q: 'Apa yang membuat TPC berbeda?',
+            a: 'TPC mengutamakan transparansi dan akuntabilitas di atas segalanya. Kami mempublikasikan alamat wallet, proposal tata kelola, operasi treasury, dan update operasional secara publik.\n\nKami beroperasi berdasarkan prinsip tata kelola komunitas, disclaimer yang jelas, dan fokus edukasi—bukan janji keuntungan atau klaim yang tidak realistis.',
+          },
+          q4: {
+            q: 'TPC untuk siapa?',
+            a: 'TPC untuk trader dan penggemar crypto yang menghargai transparansi, edukasi, dan inisiatif berbasis komunitas. Baik Anda belajar atau berpengalaman, platform kami menawarkan sumber daya, partisipasi tata kelola, dan ruang untuk kolaborasi.\n\nKami menyambut siapa saja yang berkomitmen pada tanggung jawab pribadi dan pembelajaran berkelanjutan.',
+          },
+        },
+        membership: {
+          q1: {
+            q: 'Bagaimana cara bergabung dengan TPC?',
+            a: 'Bergabung dengan TPC akan melibatkan pembuatan akun di area member (saat ini dalam pengembangan sebagai Fase 2 roadmap kami). Website publik dapat diakses oleh semua orang tanpa registrasi.\n\nSetelah autentikasi member aktif, Anda akan dapat mendaftar, memverifikasi akun, dan mengakses fitur khusus member.',
+          },
+          q2: {
+            q: 'Apa perbedaan antara area Publik dan Member?',
+            a: 'Area Publik mencakup halaman seperti Home, Docs, Transparency, Legal, dan FAQ ini—dapat diakses tanpa akun.\n\nArea Member (segera hadir) akan memerlukan autentikasi dan memberikan akses ke pengumuman komunitas, konten edukasi lanjutan, partisipasi tata kelola, dan fitur terverifikasi member.',
+          },
+          q3: {
+            q: 'Bagaimana verifikasi bekerja?',
+            a: 'Verifikasi member adalah fitur yang direncanakan untuk memastikan integritas komunitas. Member terverifikasi dapat memperoleh akses ke fitur tambahan, hak voting, dan pengakuan komunitas.\n\nDetail tentang kriteria verifikasi akan dipublikasikan seiring sistem dikembangkan.',
+          },
+          q4: {
+            q: 'Apa itu peran (member/mod/admin)?',
+            a: 'TPC menggunakan akses berbasis peran:\n\n• Member: Akses standar ke fitur dan konten komunitas\n• Moderator: Anggota terpercaya yang membantu menjaga standar komunitas\n• Admin: Anggota tim TPC yang bertanggung jawab atas operasi dan tata kelola\n\nPeran memastikan kontrol akses yang tepat dan akuntabilitas yang transparan.',
+          },
+        },
+        security: {
+          q1: {
+            q: 'Apakah saya perlu akun untuk mengakses website?',
+            a: 'Tidak. Website publik (Home, Docs, Transparency, Legal, FAQ, dll.) dapat diakses tanpa membuat akun.\n\nAkun hanya diperlukan untuk area member, yang mencakup fitur yang dilindungi autentikasi.',
+          },
+          q2: {
+            q: 'Bagaimana data pengguna ditangani?',
+            a: 'TPC mengikuti prinsip privacy-first. Kami menggunakan Supabase untuk autentikasi aman dan manajemen database dengan kebijakan row-level security.\n\nKami hanya mengumpulkan data penting untuk fungsionalitas akun dan tidak pernah menjual informasi pengguna. Detail lengkap ada di halaman Legal dan Privacy kami.',
+          },
+          q3: {
+            q: 'Apa yang harus saya lakukan jika melihat aktivitas mencurigakan?',
+            a: 'Laporkan aktivitas mencurigakan segera melalui saluran support resmi kami atau admin komunitas Telegram.\n\nSelalu verifikasi bahwa Anda berada di domain resmi (tpcglobal.io) dan berhati-hati terhadap upaya phishing. TPC tidak akan pernah meminta private key atau password.',
+          },
+          q4: {
+            q: 'Mengapa Anda menggunakan analytics?',
+            a: 'Kami menggunakan web analytics untuk memahami bagaimana pengunjung menggunakan situs kami, mengidentifikasi masalah, dan meningkatkan pengalaman pengguna. Ini membantu kami mengoptimalkan konten, navigasi, dan fitur.\n\nData analytics dianonimkan dan digunakan semata-mata untuk peningkatan operasional.',
+          },
+        },
+        transparency: {
+          q1: {
+            q: 'Di mana saya bisa melihat wallet resmi dan update?',
+            a: 'Semua alamat wallet resmi, informasi treasury, dan update operasional dipublikasikan di halaman Transparency kami.\n\nAnda dapat memverifikasi aktivitas on-chain secara langsung menggunakan blockchain explorer. Kami menjaga pengungkapan publik penuh dari semua wallet terkait komunitas.',
+          },
+          q2: {
+            q: 'Apa kebijakan transparansi?',
+            a: 'TPC beroperasi dengan transparansi radikal. Kami mempublikasikan:\n\n• Alamat wallet treasury dan saldo\n• Proposal tata kelola dan hasil voting\n• Update operasional dan progress milestone\n• Operasi keuangan (buyback, burn, alokasi)\n\nTransparansi membangun kepercayaan dan akuntabilitas.',
+          },
+          q3: {
+            q: 'Apa itu tata kelola DAO-lite?',
+            a: 'DAO-lite adalah model tata kelola sederhana kami (direncanakan untuk Fase 4). Ini memungkinkan pemegang token untuk mengajukan dan voting proposal tanpa kompleksitas infrastruktur DAO penuh.\n\nPendekatan ini menyeimbangkan partisipasi komunitas dengan efisiensi operasional.',
+          },
+          q4: {
+            q: 'Bagaimana keputusan komunitas dibuat?',
+            a: 'Keputusan komunitas dibuat melalui proposal tata kelola terstruktur. Pemegang token dapat voting tentang:\n\n• Prioritas fitur\n• Alokasi sumber daya\n• Persetujuan partnership\n• Update kebijakan\n\nBobot voting biasanya berdasarkan kepemilikan token, dengan perlindungan terhadap sentralisasi.',
+          },
+        },
+        token: {
+          q1: {
+            q: 'Apakah token TPC investasi?',
+            a: 'Tidak. Token TPC adalah token utilitas yang dirancang untuk partisipasi ekosistem—bukan investasi, sekuritas, atau instrumen bagi hasil.\n\nTidak ada jaminan nilai, return, atau keuntungan finansial. Token memberikan akses ke fitur, hak tata kelola, dan partisipasi komunitas.',
+          },
+          q2: {
+            q: 'Untuk apa token digunakan?',
+            a: 'Token TPC melayani beberapa fungsi utilitas:\n\n• Hak voting tata kelola\n• Akses ke konten edukasi premium\n• Membuka alat dan fitur lanjutan\n• Pengakuan dan reputasi komunitas\n• Reward partisipasi ekosistem\n\nSemua penggunaan bersifat fungsional, bukan spekulatif.',
+          },
+          q3: {
+            q: 'Bagaimana buyback & burn bekerja?',
+            a: 'Buyback dan burn adalah kebijakan manajemen token di mana TPC menggunakan pendapatan operasional untuk membeli token dari pasar dan menghapusnya secara permanen dari sirkulasi.\n\nIni adalah mekanisme deflasi, bukan janji keuntungan. Semua aktivitas buyback dan burn dipublikasikan di halaman Transparency.',
+          },
+          q4: {
+            q: 'Di mana saya bisa memverifikasi aktivitas on-chain?',
+            a: 'Semua aktivitas on-chain dapat diverifikasi menggunakan blockchain explorer (misalnya, BSCScan untuk Binance Smart Chain).\n\nAlamat kontrak resmi dan alamat wallet terdaftar di halaman Transparency kami. Selalu verifikasi secara independen—jangan percaya, selalu verifikasi.',
+          },
+        },
+        support: {
+          q1: {
+            q: 'Bagaimana cara menghubungi support?',
+            a: 'Anda dapat menghubungi support TPC melalui:\n\n• Halaman Support: Informasi kontak detail\n• Telegram: Channel komunitas resmi\n• Dokumentasi: Panduan self-service dan FAQ\n\nWaktu respons bervariasi berdasarkan kompleksitas pertanyaan.',
+          },
+          q2: {
+            q: 'Di mana docs / panduan?',
+            a: 'Dokumentasi komprehensif tersedia di halaman Docs kami. Ini mencakup:\n\n• Gambaran platform\n• Panduan keanggotaan\n• Praktik terbaik keamanan\n• Prosedur tata kelola\n• Informasi legal dan compliance',
+          },
+          q3: {
+            q: 'Di mana channel komunitas resmi?',
+            a: 'Channel TPC resmi:\n\n• Website: tpcglobal.io\n• Telegram: t.me/tpcglobalcommunity\n• Transparency Hub: Verifikasi on-chain\n\nWaspada terhadap penipu. Selalu verifikasi URL dan identitas admin.',
+          },
+        },
+      },
+      cta: {
+        title: 'Masih Ada Pertanyaan?',
+        desc: 'Jelajahi dokumentasi kami atau hubungi komunitas',
+        primary: 'Baca Dokumentasi',
         secondary: 'Lihat Transparansi',
         tertiary: 'Gabung Komunitas',
       },
