@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 interface PremiumButtonProps {
   children: ReactNode;
   variant?: 'primary' | 'secondary';
+  size?: 'default' | 'sm';
   href?: string;
   onClick?: () => void;
   className?: string;
@@ -16,6 +17,7 @@ interface PremiumButtonProps {
 export const PremiumButton = ({
   children,
   variant = 'primary',
+  size = 'default',
   href,
   onClick,
   className = '',
@@ -24,10 +26,13 @@ export const PremiumButton = ({
   type = 'button',
   disabled = false,
 }: PremiumButtonProps) => {
+  const sizeClasses = size === 'sm' ? 'px-4 py-2 text-sm' : 'px-6 py-3 text-base';
+
   const baseClasses = `
-    inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl
-    font-semibold text-base transition-all duration-200
+    inline-flex items-center justify-center gap-2 rounded-xl
+    font-semibold transition-all duration-200
     focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0B0E11]
+    ${sizeClasses}
   `;
 
   const primaryClasses = `

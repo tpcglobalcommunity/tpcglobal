@@ -1,4 +1,4 @@
-import { Home, BookOpen, Shield, BadgeCheck, Wallet, Scale } from 'lucide-react';
+import { Home, BookOpen, Shield, BadgeCheck, Wallet, Scale, Store } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Language, useTranslations, setLanguage, getLangPath } from '../i18n';
@@ -44,6 +44,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
     { label: t.nav.home, path: getLangPath(lang, '/home'), icon: Home },
     { label: t.nav.docs, path: getLangPath(lang, '/docs'), icon: BookOpen },
     { label: t.nav.dao, path: getLangPath(lang, '/dao'), icon: Shield },
+    { label: t.nav.marketplace, path: getLangPath(lang, '/marketplace'), icon: Store },
     { label: t.nav.transparency, path: getLangPath(lang, '/transparency'), icon: BadgeCheck },
     { label: t.nav.fund, path: getLangPath(lang, '/fund'), icon: Wallet },
     { label: t.nav.legal, path: getLangPath(lang, '/legal'), icon: Scale },

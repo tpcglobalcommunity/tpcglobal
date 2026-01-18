@@ -35,6 +35,9 @@ import NewsAdminListPage from './pages/admin/NewsAdminListPage';
 import AnnouncementsAdminListPage from './pages/admin/AnnouncementsAdminListPage';
 import AnnouncementEditorPage from './pages/admin/AnnouncementEditorPage';
 import AuthLogsPage from './pages/admin/AuthLogsPage';
+import VendorsAdminPage from './pages/admin/VendorsAdminPage';
+import VendorApplyPage from './pages/member/VendorApplyPage';
+import MarketplacePage from './pages/MarketplacePage';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -155,12 +158,18 @@ function App() {
         return <ReferralsPage lang={lang} />;
       case '/member/directory':
         return <DirectoryPage lang={lang} />;
+      case '/member/vendor/apply':
+        return <VendorApplyPage lang={lang} />;
+      case '/marketplace':
+        return <MarketplacePage lang={lang} />;
       case '/verify':
         return <VerifyPage lang={lang} />;
       case '/news':
         return <NewsPage />;
       case '/admin/auth-logs':
         return <AuthLogsPage lang={lang} />;
+      case '/admin/vendors':
+        return <VendorsAdminPage lang={lang} />;
       default:
         return <Home lang={lang} />;
     }

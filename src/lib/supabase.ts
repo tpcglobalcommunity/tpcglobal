@@ -457,6 +457,125 @@ export const getPublicProfileByUsername = async (username: string): Promise<Dire
   }
 };
 
+export interface PublicVendor {
+  id: string;
+  brand_name: string;
+  description_en: string;
+  description_id: string;
+  category: string;
+  website_url: string | null;
+  contact_telegram: string | null;
+  created_at: string;
+}
+
+export interface VendorApplication {
+  id: string;
+  user_id: string;
+  username: string;
+  brand_name: string;
+  description_en: string;
+  description_id: string;
+  category: string;
+  website_url: string | null;
+  contact_telegram: string | null;
+  contact_email: string | null;
+  status: 'pending' | 'approved' | 'rejected';
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export const getPublicVendors = async (category?: string): Promise<PublicVendor[]> => {
+  try {
+    const { data, error } = await supabase.rpc('get_public_vendors', {
+      p_category: category || null,
+    });
+
+    if (error) {
+      console.error('Error fetching public vendors:', error);
+      return [];
+    }
+
+    return (data || []) as PublicVendor[];
+  } catch (err) {
+    console.error('Error in getPublicVendors:', err);
+    return [];
+  }
+};
+
+export const submitVendorApplication = async (params: {
+  brand_name: string;
+  description_en: string;
+  description_id: string;
+  category: string;
+  website_url?: string;
+  contact_telegram?: string;
+  contact_email?: string;
+}): Promise<string | null> => {
+  try {
+    const { data, error } = await supabase.rpc('submit_vendor_application', {
+      p_brand_name: params.brand_name,
+      p_description_en: params.description_en,
+      p_description_id: params.description_id,
+      p_category: params.category,
+      p_website_url: params.website_url || null,
+      p_contact_telegram: params.contact_telegram || null,
+      p_contact_email: params.contact_email || null,
+    });
+
+    if (error) {
+      console.error('Error submitting vendor application:', error);
+      throw new Error(error.message);
+    }
+
+    return data as string;
+  } catch (err: any) {
+    console.error('Error in submitVendorApplication:', err);
+    throw err;
+  }
+};
+
+export const getVendorApplicationsAdmin = async (status?: string): Promise<VendorApplication[]> => {
+  try {
+    const { data, error } = await supabase.rpc('get_vendor_applications_admin', {
+      p_status: status || null,
+    });
+
+    if (error) {
+      console.error('Error fetching vendor applications:', error);
+      return [];
+    }
+
+    return (data || []) as VendorApplication[];
+  } catch (err) {
+    console.error('Error in getVendorApplicationsAdmin:', err);
+    return [];
+  }
+};
+
+export const updateVendorApplicationStatus = async (
+  applicationId: string,
+  status: 'pending' | 'approved' | 'rejected'
+): Promise<boolean> => {
+  try {
+    const { error } = await supabase.rpc('update_vendor_application_status', {
+      p_application_id: applicationId,
+      p_status: status,
+    });
+
+    if (error) {
+      console.error('Error updating vendor application status:', error);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Error in updateVendorApplicationStatus:', err);
+    return false;
+  }
+};
+
 export const verifyMember = async (identifier: string): Promise<MemberVerification | null> => {
   const { data, error } = await supabase.rpc('verify_member', {
     identifier: identifier.trim(),
