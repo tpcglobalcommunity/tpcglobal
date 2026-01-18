@@ -16,7 +16,6 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
   return (
     <footer
       className="relative bg-black/60 border-t border-white/10 mt-0 backdrop-blur-2xl overflow-hidden"
-      style={{ paddingBottom: 'calc(7rem + env(safe-area-inset-bottom))' }}
     >
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#F0B90B]/30 to-transparent"></div>
 
@@ -24,7 +23,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.2)_0%,transparent_100%)] pointer-events-none"></div>
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 pt-8 md:pt-10 pb-6 md:pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 pt-6 md:pt-8 pb-4 md:pb-6">
           <div className="relative opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]">
             <div className="absolute -top-12 -left-12 w-48 h-48 bg-gradient-radial from-[#F0B90B]/15 via-transparent to-transparent blur-[100px] opacity-20"></div>
 
@@ -96,12 +95,12 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
           </div>
         </div>
 
-        <div className="relative mt-5 pt-5 border-t border-white/10">
+        <div className="relative mt-4 pt-4 border-t border-white/10">
           <div className="absolute left-1/2 -translate-x-1/2 -top-px w-[180px] h-[1px] bg-[#F0B90B]/50 blur-[2px]"></div>
           <div className="absolute left-1/2 -translate-x-1/2 -top-px w-[180px] h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent"></div>
           <div className="absolute left-1/2 -translate-x-1/2 -top-px w-[80px] h-[1px] bg-[#F0B90B]/80 animate-[shimmer_3s_ease-in-out_infinite]"></div>
 
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 pb-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3 pb-2">
             <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
               <p className="text-[11px] text-white/60 font-medium tracking-wide">{copyrightText}</p>
               <div className="hidden md:flex items-center gap-2.5 text-[10px] text-white/45 tracking-wide">
@@ -116,6 +115,8 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
             <p className="text-[11px] text-white/45 tracking-wide">{t.footer.madeWith}</p>
           </div>
         </div>
+
+        <div className="h-20 md:h-0" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}></div>
       </div>
     </footer>
   );
