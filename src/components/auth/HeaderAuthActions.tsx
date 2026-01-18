@@ -50,15 +50,15 @@ export function HeaderAuthActions({ lang }: { lang?: Language }) {
     return (
       <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full">
         <Link to={getLangPath(language, "/signin")} className="flex-1">
-          <PremiumButton type="button" variant="secondary" className="h-10 px-4 w-full">
+          <PremiumButton type="button" variant="secondary" className="h-10 px-4 whitespace-nowrap text-sm w-full">
             <LogIn className="w-4 h-4 mr-2" />
-            {t("auth.signin.signIn")}
+            <span className="whitespace-nowrap">{t("auth.signin.signIn")}</span>
           </PremiumButton>
         </Link>
         <Link to={getLangPath(language, "/signup")} className="flex-1">
-          <PremiumButton type="button" className="h-10 px-4 w-full">
+          <PremiumButton type="button" className="h-10 px-4 whitespace-nowrap text-sm w-full">
             <UserPlus className="w-4 h-4 mr-2" />
-            {t("auth.signup.createAccount")}
+            <span className="whitespace-nowrap">{t("auth.signup.createAccount")}</span>
           </PremiumButton>
         </Link>
       </div>
@@ -68,19 +68,19 @@ export function HeaderAuthActions({ lang }: { lang?: Language }) {
   return (
     <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full">
       <Link to={getLangPath(language, "/member/dashboard")} className="flex-1">
-        <PremiumButton type="button" className="h-10 px-4 w-full">
+        <PremiumButton type="button" className="h-10 px-4 whitespace-nowrap text-sm w-full">
           <LayoutDashboard className="w-4 h-4 mr-2" />
-          {t("member.dashboard.title")}
+          <span className="whitespace-nowrap">{t("member.dashboard.title")}</span>
         </PremiumButton>
       </Link>
       <PremiumButton
         type="button"
         variant="secondary"
-        className="h-10 px-4 w-full md:w-auto"
+        className="h-10 px-4 whitespace-nowrap text-sm w-full md:w-auto"
         onClick={doLogout}
       >
         <LogOut className="w-4 h-4 mr-2" />
-        {t("auth.signout")}
+        <span className="whitespace-nowrap">{t("auth.signout")}</span>
       </PremiumButton>
     </div>
   );
