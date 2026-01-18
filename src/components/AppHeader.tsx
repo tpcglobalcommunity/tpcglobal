@@ -22,6 +22,19 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      window.dispatchEvent(new CustomEvent('mobile-menu-state', { detail: { open: true } }));
+    } else {
+      document.body.style.overflow = '';
+      window.dispatchEvent(new CustomEvent('mobile-menu-state', { detail: { open: false } }));
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
   const navItems = [
     { label: t.nav.home, path: getLangPath(lang, '/home') },
     { label: t.nav.docs, path: getLangPath(lang, '/docs') },
@@ -143,38 +156,61 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
       {mobileMenuOpen && (
         <>
           <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] animate-[fadeIn_0.2s_ease-out]"
             onClick={() => setMobileMenuOpen(false)}
           ></div>
-          <div className="md:hidden absolute top-full left-4 right-4 mt-2 bg-black/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 animate-[slideDown_0.3s_ease-out]">
-            <nav className="p-2" role="navigation">
-              {navItems.map((item) => {
-                const isActive = currentPath === item.path;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`block px-4 py-3 rounded-xl text-[14px] font-medium transition-all duration-200 ${
-                      isActive
-                        ? 'text-[#F0B90B] bg-[#F0B90B]/10 border border-[#F0B90B]/30'
-                        : 'text-white/75 hover:bg-white/[0.05] hover:text-white'
-                    }`}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
+          <div className="md:hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[380px] max-h-[85vh] bg-black/90 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl z-[110] animate-[scaleIn_0.3s_ease-out] flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-white/10 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#F0B90B] to-[#f8d12f] rounded-xl blur-lg opacity-50"></div>
+                  <TPMonogram size={24} />
+                </div>
+                <span className="text-lg font-bold tracking-tight text-white">TPC</span>
+              </div>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 rounded-xl bg-white/[0.06] border border-white/10 text-white/80 hover:bg-white/[0.08] transition-all duration-200"
+                aria-label="Close menu"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto">
+              <nav className="p-4 space-y-1" role="navigation">
+                {navItems.map((item) => {
+                  const isActive = currentPath === item.path;
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      className={`block px-4 py-3 rounded-2xl text-[14px] font-medium transition-all duration-200 ${
+                        isActive
+                          ? 'text-[#F0B90B] bg-[#F0B90B]/10 border border-[#F0B90B]/20'
+                          : 'text-white/80 hover:bg-white/[0.05] hover:text-white'
+                      }`}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+
+            <div className="sticky bottom-0 pt-4 pb-3 px-4 bg-gradient-to-t from-black/95 via-black/80 to-transparent shrink-0" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 12px)' }}>
+              <div className="h-px bg-white/10 mb-4"></div>
               <a
                 href="https://t.me/tpcglobalcommunity"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block mx-2 mt-2 text-center bg-gradient-to-r from-[#F0B90B] to-[#F8D568] text-black font-semibold rounded-xl px-4 py-3 text-[14px] transition-all duration-200 active:scale-[0.98]"
+                className="block text-center bg-gradient-to-r from-[#F0B90B] to-[#F8D568] text-black font-semibold rounded-2xl px-4 py-3 text-[14px] transition-all duration-200 active:scale-[0.98] shadow-lg shadow-[#F0B90B]/20"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Join Community
               </a>
-            </nav>
+            </div>
           </div>
         </>
       )}

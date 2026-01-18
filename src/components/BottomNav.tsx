@@ -1,4 +1,5 @@
 import { Home, FileText, Users, Eye, DollarSign, Scale } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { Language, useTranslations, getLangPath } from '../i18n';
 import { Link } from './Router';
 import { colors, transitions } from '../lib/designTokens';
@@ -9,7 +10,18 @@ interface BottomNavProps {
 }
 
 const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const t = useTranslations(lang);
+
+  useEffect(() => {
+    const handleMenuState = (event: CustomEvent) => {
+      setIsMenuOpen(event.detail.open);
+    };
+    window.addEventListener('mobile-menu-state', handleMenuState as EventListener);
+    return () => {
+      window.removeEventListener('mobile-menu-state', handleMenuState as EventListener);
+    };
+  }, []);
 
   const navItems = [
     { label: t.nav.home, path: getLangPath(lang, '/home'), icon: Home },
@@ -20,9 +32,13 @@ const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
     { label: t.nav.legal, path: getLangPath(lang, '/legal'), icon: Scale },
   ];
 
+  if (isMenuOpen) {
+    return null;
+  }
+
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-black/80 border-t border-white/10 z-50 h-[72px]"
+      className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-black/80 border-t border-white/10 z-50 h-[72px] transition-opacity duration-200"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="flex justify-around items-center px-2 h-full">
