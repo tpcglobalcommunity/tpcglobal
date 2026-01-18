@@ -1,6 +1,6 @@
-import { BookOpen, Target, Coins, Map, HelpCircle } from 'lucide-react';
+import { BookOpen, Target, Coins, HelpCircle, AlertCircle } from 'lucide-react';
 import { Language, useTranslations } from '../i18n';
-import { PremiumShell, PremiumSection, PremiumCard, Accordion, AccordionItem } from '../components/ui';
+import { PremiumShell, PremiumSection, PremiumCard, Accordion, AccordionItem, NoticeBox } from '../components/ui';
 
 interface DocsProps {
   lang: Language;
@@ -63,38 +63,13 @@ const Docs = ({ lang }: DocsProps) => {
 
       <PremiumSection>
         <div className="flex items-center gap-3 mb-8">
-          <Map className="w-6 h-6 text-[#F0B90B]" />
-          <h2 className="text-2xl md:text-3xl font-semibold text-white">
-            {t.docs.roadmap}
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {['Q1', 'Q2', 'Q3', 'Q4'].map((quarter, index) => (
-            <PremiumCard key={quarter}>
-              <div className="text-[#F0B90B] font-semibold text-xs uppercase tracking-wider mb-3 flex items-center gap-2">
-                <span className="w-2 h-2 bg-[#F0B90B] rounded-full"></span>
-                Phase {index + 1}
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                {t.docs[`roadmap${quarter}`]}
-              </h3>
-              <p className="text-white/75 text-sm leading-relaxed">
-                {t.docs[`roadmap${quarter}Content`]}
-              </p>
-            </PremiumCard>
-          ))}
-        </div>
-      </PremiumSection>
-
-      <PremiumSection>
-        <div className="flex items-center gap-3 mb-8">
           <HelpCircle className="w-6 h-6 text-[#F0B90B]" />
           <h2 className="text-2xl md:text-3xl font-semibold text-white">
             {t.docs.faq}
           </h2>
         </div>
         <Accordion>
-          {[1, 2, 3, 4].map((num) => (
+          {[1, 2].map((num) => (
             <AccordionItem
               key={num}
               title={t.docs[`faqQ${num}`]}
@@ -104,6 +79,15 @@ const Docs = ({ lang }: DocsProps) => {
             </AccordionItem>
           ))}
         </Accordion>
+      </PremiumSection>
+
+      <PremiumSection>
+        <NoticeBox
+          variant="info"
+          icon={<AlertCircle />}
+        >
+          {t.docs.disclaimer}
+        </NoticeBox>
       </PremiumSection>
     </PremiumShell>
   );
