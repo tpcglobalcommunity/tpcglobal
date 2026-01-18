@@ -17,12 +17,16 @@ import Roadmap from './pages/Roadmap';
 import Faq from './pages/Faq';
 import SignUp from './pages/auth/SignUp';
 import SignIn from './pages/auth/SignIn';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 import Dashboard from './pages/member/Dashboard';
+import SecurityPage from './pages/member/SecurityPage';
 import VerifyPage from './pages/VerifyPage';
 import NewsPage from './pages/NewsPage';
 import NewsDetailPage from './pages/NewsDetailPage';
 import NewsEditorPage from './pages/admin/NewsEditorPage';
 import NewsAdminListPage from './pages/admin/NewsAdminListPage';
+import AuthLogsPage from './pages/admin/AuthLogsPage';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -97,12 +101,20 @@ function App() {
         return <SignUp lang={lang} />;
       case '/signin':
         return <SignIn lang={lang} />;
+      case '/forgot':
+        return <ForgotPassword lang={lang} />;
+      case '/reset':
+        return <ResetPassword lang={lang} />;
       case '/member/dashboard':
         return <Dashboard lang={lang} />;
+      case '/member/security':
+        return <SecurityPage lang={lang} />;
       case '/verify':
         return <VerifyPage lang={lang} />;
       case '/news':
         return <NewsPage />;
+      case '/admin/auth-logs':
+        return <AuthLogsPage lang={lang} />;
       default:
         return <Home lang={lang} />;
     }

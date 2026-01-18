@@ -1,9 +1,9 @@
-import { useState, FormEvent } from 'react';
-import { LogIn, Mail, Lock, AlertCircle } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../../i18n';
+import { useState, FormEvent, useEffect } from 'react';
+import { LogIn, Mail, Lock, AlertCircle, ShieldAlert } from 'lucide-react';
+import { Language, useTranslations } from '../../i18n';
 import { PremiumShell, PremiumButton } from '../../components/ui';
-import { Link } from '../../components/Router';
-import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
+import { checkRateLimit, recordAttempt, resetRateLimit, safeRedirect, mapAuthError } from '../../lib/authHelpers';
 
 interface SignInProps {
   lang: Language;
@@ -11,6 +11,7 @@ interface SignInProps {
 
 const SignIn = ({ lang }: SignInProps) => {
   const t = useTranslations(lang);
+  const { signIn, session } = useAuth();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -19,35 +20,70 @@ const SignIn = ({ lang }: SignInProps) => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLocked, setIsLocked] = useState(false);
+
+  useEffect(() => {
+    if (session) {
+      const params = new URLSearchParams(window.location.search);
+      const next = params.get('next');
+      const redirectPath = safeRedirect(next, lang);
+      window.location.href = redirectPath;
+    }
+  }, [session, lang]);
+
+  useEffect(() => {
+    const rateLimit = checkRateLimit();
+    if (!rateLimit.allowed) {
+      setIsLocked(true);
+      setError(t.auth.signin.lockedDesc);
+    }
+  }, [t]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
 
+    const rateLimit = checkRateLimit();
+    if (!rateLimit.allowed) {
+      setIsLocked(true);
+      setError(t.auth.signin.lockedDesc);
+      return;
+    }
+
     if (!formData.email || !formData.password) {
-      setError('All fields are required');
+      setError(t.auth.errors.generic);
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const { error: authError } = await supabase.auth.signInWithPassword({
+      const { error: authError, session: newSession } = await signIn({
         email: formData.email,
         password: formData.password,
       });
 
       if (authError) {
-        if (authError.message.includes('Invalid login credentials')) {
-          throw new Error(t.auth.signin.errorInvalid);
-        }
+        recordAttempt();
         throw authError;
       }
 
-      window.location.href = getLangPath(lang, '/member/dashboard');
+      if (newSession) {
+        resetRateLimit();
+        const params = new URLSearchParams(window.location.search);
+        const next = params.get('next');
+        const redirectPath = safeRedirect(next, lang);
+        window.location.href = redirectPath;
+      }
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : t.auth.signin.errorGeneric;
+      const errorMessage = mapAuthError(err, lang);
       setError(errorMessage);
+
+      const updatedRateLimit = checkRateLimit();
+      if (!updatedRateLimit.allowed) {
+        setIsLocked(true);
+        setError(t.auth.signin.lockedDesc);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -69,7 +105,17 @@ const SignIn = ({ lang }: SignInProps) => {
             </p>
           </div>
 
-          {error && (
+          {isLocked && (
+            <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-3">
+              <ShieldAlert className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-red-400 text-sm font-semibold mb-1">{t.auth.signin.lockedTitle}</p>
+                <p className="text-red-400/80 text-xs">{t.auth.signin.lockedDesc}</p>
+              </div>
+            </div>
+          )}
+
+          {error && !isLocked && (
             <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
               <p className="text-red-400 text-sm">{error}</p>
@@ -91,7 +137,7 @@ const SignIn = ({ lang }: SignInProps) => {
                   placeholder={t.auth.signin.emailPlaceholder}
                   className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#F0B90B]/50 focus:ring-2 focus:ring-[#F0B90B]/20 transition-all"
                   required
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isLocked}
                 />
               </div>
             </div>
@@ -110,15 +156,24 @@ const SignIn = ({ lang }: SignInProps) => {
                   placeholder={t.auth.signin.passwordPlaceholder}
                   className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#F0B90B]/50 focus:ring-2 focus:ring-[#F0B90B]/20 transition-all"
                   required
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isLocked}
                 />
               </div>
+            </div>
+
+            <div className="flex items-center justify-end">
+              <a
+                href={`/${lang}/forgot`}
+                className="text-sm text-[#F0B90B] hover:text-[#F0B90B]/80 transition-colors"
+              >
+                {t.auth.signin.forgot}
+              </a>
             </div>
 
             <PremiumButton
               variant="primary"
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLocked}
               className="w-full"
             >
               {isSubmitting ? t.auth.signin.submitting : t.auth.signin.submitButton}
@@ -128,12 +183,12 @@ const SignIn = ({ lang }: SignInProps) => {
           <div className="mt-6 text-center">
             <p className="text-white/60 text-sm">
               {t.auth.signin.noAccount}{' '}
-              <Link
-                to={getLangPath(lang, '/signup')}
+              <a
+                href={`/${lang}/signup`}
                 className="text-[#F0B90B] hover:text-[#F0B90B]/80 transition-colors font-medium"
               >
-                {t.auth.signin.signUpLink}
-              </Link>
+                {t.auth.signin.goSignup}
+              </a>
             </p>
           </div>
         </div>

@@ -1,9 +1,10 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { UserPlus, Mail, Lock, User, Tag, AlertCircle, CheckCircle } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../../i18n';
+import { Language, useTranslations } from '../../i18n';
 import { PremiumShell, NoticeBox, PremiumButton } from '../../components/ui';
-import { Link } from '../../components/Router';
-import { supabase, validateReferralCode } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
+import { validateReferralCode } from '../../lib/supabase';
+import { validateUsername, mapAuthError } from '../../lib/authHelpers';
 
 interface SignUpProps {
   lang: Language;
@@ -11,6 +12,7 @@ interface SignUpProps {
 
 const SignUp = ({ lang }: SignUpProps) => {
   const t = useTranslations(lang);
+  const { signUpInviteOnly, session } = useAuth();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -24,7 +26,15 @@ const SignUp = ({ lang }: SignUpProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [checkEmail, setCheckEmail] = useState(false);
   const [referralValid, setReferralValid] = useState<boolean | null>(null);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (session && !checkEmail) {
+      window.location.href = `/${lang}/member/dashboard`;
+    }
+  }, [session, lang, checkEmail]);
 
   const handleReferralBlur = async () => {
     if (!formData.referralCode.trim()) {
@@ -45,12 +55,32 @@ const SignUp = ({ lang }: SignUpProps) => {
     setIsValidating(false);
   };
 
+  const handleUsernameBlur = () => {
+    if (!formData.username.trim()) {
+      setUsernameError(null);
+      return;
+    }
+
+    const validation = validateUsername(formData.username);
+    if (!validation.valid) {
+      setUsernameError(validation.error || t.auth.signup.usernameRules);
+    } else {
+      setUsernameError(null);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
 
     if (!formData.email || !formData.password || !formData.fullName || !formData.username || !formData.referralCode) {
-      setError('All fields are required');
+      setError(t.auth.errors.generic);
+      return;
+    }
+
+    const usernameValidation = validateUsername(formData.username);
+    if (!usernameValidation.valid) {
+      setError(usernameValidation.error || t.auth.signup.usernameRules);
       return;
     }
 
@@ -72,53 +102,56 @@ const SignUp = ({ lang }: SignUpProps) => {
     setIsSubmitting(true);
 
     try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      const { error: authError, session: newSession } = await signUpInviteOnly({
+        referralCode: formData.referralCode.trim().toUpperCase(),
         email: formData.email,
         password: formData.password,
-        options: {
-          data: {
-            full_name: formData.fullName,
-            username: formData.username,
-            referred_by: formData.referralCode.trim().toUpperCase(),
-          },
-        },
+        fullName: formData.fullName.trim(),
+        username: formData.username.trim().toLowerCase(),
       });
 
-      if (authError) throw authError;
-
-      if (authData.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: authData.user.id,
-            email: formData.email,
-            full_name: formData.fullName,
-            username: formData.username,
-            referred_by: formData.referralCode.trim().toUpperCase(),
-          });
-
-        if (profileError) {
-          console.error('Profile creation error:', profileError);
-          throw new Error(profileError.message);
-        }
+      if (authError) {
+        throw authError;
       }
 
-      setSuccess(true);
-      setFormData({
-        email: '',
-        password: '',
-        fullName: '',
-        username: '',
-        referralCode: '',
-      });
-      setReferralValid(null);
+      if (newSession) {
+        window.location.href = `/${lang}/member/dashboard`;
+      } else {
+        setCheckEmail(true);
+        setSuccess(true);
+      }
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : t.auth.signup.errorGeneric;
+      const errorMessage = mapAuthError(err, lang);
       setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  if (checkEmail) {
+    return (
+      <PremiumShell>
+        <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
+          <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-10 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500/20 to-green-500/5 border border-green-500/20 mb-6">
+              <CheckCircle className="w-8 h-8 text-green-400" />
+            </div>
+            <h1 className="text-3xl font-bold text-white mb-4">
+              {t.auth.signup.checkEmailTitle}
+            </h1>
+            <p className="text-white/70 mb-8">
+              {t.auth.signup.checkEmailDesc}
+            </p>
+            <a href={`/${lang}/signin`}>
+              <PremiumButton className="w-full">
+                {t.auth.signup.signInLink}
+              </PremiumButton>
+            </a>
+          </div>
+        </div>
+      </PremiumShell>
+    );
+  }
 
   return (
     <PremiumShell>
@@ -139,13 +172,6 @@ const SignUp = ({ lang }: SignUpProps) => {
           <NoticeBox variant="info" title={t.auth.signup.inviteNoticeTitle} className="mb-6">
             {t.auth.signup.inviteNoticeDesc}
           </NoticeBox>
-
-          {success && (
-            <div className="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-              <p className="text-green-400 text-sm">{t.auth.signup.success}</p>
-            </div>
-          )}
 
           {error && (
             <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-3">
@@ -258,20 +284,28 @@ const SignUp = ({ lang }: SignUpProps) => {
                   type="text"
                   id="username"
                   value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value.toLowerCase() })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, username: e.target.value.toLowerCase() });
+                    setUsernameError(null);
+                  }}
+                  onBlur={handleUsernameBlur}
                   placeholder={t.auth.signup.usernamePlaceholder}
                   className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#F0B90B]/50 focus:ring-2 focus:ring-[#F0B90B]/20 transition-all"
                   required
-                  pattern="[a-z0-9_]+"
+                  pattern="[a-z0-9_.]+"
                   disabled={isSubmitting}
                 />
               </div>
+              {usernameError && (
+                <p className="text-red-400 text-xs mt-1">{usernameError}</p>
+              )}
+              <p className="text-white/50 text-xs mt-1">{t.auth.signup.usernameRules}</p>
             </div>
 
             <PremiumButton
               variant="primary"
               type="submit"
-              disabled={isSubmitting || isValidating || referralValid === false}
+              disabled={isSubmitting || isValidating || referralValid === false || !!usernameError}
               className="w-full"
             >
               {isSubmitting ? t.auth.signup.submitting : t.auth.signup.submitButton}
@@ -281,12 +315,12 @@ const SignUp = ({ lang }: SignUpProps) => {
           <div className="mt-6 text-center">
             <p className="text-white/60 text-sm">
               {t.auth.signup.haveAccount}{' '}
-              <Link
-                to={getLangPath(lang, '/signin')}
+              <a
+                href={`/${lang}/signin`}
                 className="text-[#F0B90B] hover:text-[#F0B90B]/80 transition-colors font-medium"
               >
                 {t.auth.signup.signInLink}
-              </Link>
+              </a>
             </p>
           </div>
         </div>
