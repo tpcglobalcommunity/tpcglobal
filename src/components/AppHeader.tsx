@@ -1,4 +1,4 @@
-import { Menu, X, Home, BookOpen, Shield, BadgeCheck, Wallet, Scale, ChevronRight } from 'lucide-react';
+import { Home, BookOpen, Shield, BadgeCheck, Wallet, Scale } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Language, useTranslations, setLanguage, getLangPath } from '../i18n';
@@ -82,7 +82,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-7" role="navigation">
+          <nav className="hidden lg:flex items-center gap-6 text-sm font-semibold" role="navigation">
             {navItems.map((item) => {
               const isActive = currentPath === item.path;
               return (
@@ -143,11 +143,13 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg bg-white/[0.06] border border-white/10 text-white/80 hover:bg-white/[0.08] transition-all duration-200 shrink-0"
+              className="lg:hidden h-10 w-10 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition grid place-items-center shrink-0"
               aria-label="Toggle mobile menu"
               aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-white">
+                <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
             </button>
           </div>
         </div>
@@ -158,55 +160,28 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
             <>
               {/* Overlay */}
               <div
-                className="fixed inset-0 bg-black/90 z-[9999]"
+                className="lg:hidden fixed inset-0 bg-black/60 z-[9999]"
                 onClick={() => setMobileMenuOpen(false)}
               />
 
-              {/* Panel (bottom sheet) */}
+              {/* Right-side drawer */}
               <div
-                className="md:hidden fixed left-1/2 -translate-x-1/2 top-16 bottom-16 w-[78vw] max-w-[300px]
-                           bg-[#0B0E11] z-[10000]
-                           rounded-3xl border border-white/12 shadow-2xl shadow-black/70 overflow-hidden isolate"
+                className="lg:hidden fixed top-0 right-0 h-full w-[88%] max-w-sm border-l border-white/10 bg-black/80 backdrop-blur-xl z-[10000] overflow-y-auto"
                 role="dialog"
                 aria-modal="true"
               >
-                {/* Premium highlight + depth layers */}
-                <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#F0B90B]/45 to-transparent" />
-                <div className="absolute -top-28 left-1/2 -translate-x-1/2 w-[560px] h-[560px] bg-[#F0B90B]/10 rounded-full blur-[140px] opacity-70 pointer-events-none" />
-                <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/10" />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.07] via-transparent to-black/55" />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/80 via-black/35 to-transparent" />
-
-                {/* Handle */}
-                <div className="absolute left-1/2 top-2 -translate-x-1/2 w-12 h-1 rounded-full bg-white/10" />
-
-                <div className="h-full flex flex-col min-h-0 relative">
-                  {/* Header */}
-                  <div className="flex items-center justify-between px-3 py-2 border-b border-white/10 shrink-0">
-                    <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#F0B90B] to-[#f8d12f] rounded-2xl blur-lg opacity-40" />
-                        <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-2">
-                          <TPMonogram size={22} />
-                        </div>
-                      </div>
-                      <div className="flex flex-col leading-none">
-                        <span className="text-[15px] font-bold tracking-tight text-white">TPC</span>
-                        <span className="text-[11px] text-white/50 tracking-wide mt-1">Navigation</span>
-                      </div>
+                <div className="p-4">
+                  {/* AUTH BLOCK - Premium styling */}
+                  <div className="rounded-3xl border border-white/10 bg-white/5 p-4 relative overflow-hidden mb-4">
+                    <div className="absolute inset-0 bg-[#F0B90B]/10 blur-2xl" />
+                    <div className="relative z-10">
+                      <div className="text-sm font-semibold text-white mb-3">Member Access</div>
+                      <HeaderAuthActions lang={lang} />
                     </div>
-
-                    <button
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="p-2 rounded-xl bg-white/[0.04] border border-white/10 text-white/85 hover:bg-white/[0.08] hover:border-white/15 transition-all duration-200"
-                      aria-label="Close menu"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
                   </div>
 
-                  {/* Nav */}
-                  <nav className="px-3 pt-2 pb-1 space-y-1 overflow-y-auto overflow-x-hidden mx-2 max-h-[42vh]">
+                  {/* NAV LINKS - Premium card style */}
+                  <div className="grid gap-2">
                     {navItems.map((item) => {
                       const isActive = currentPath === item.path;
                       const Icon = item.icon;
@@ -216,79 +191,37 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                           key={item.path}
                           to={item.path}
                           onClick={() => setMobileMenuOpen(false)}
-                          className={`group relative flex items-center justify-between px-2.5 py-1.5 rounded-lg mx-2
-                            transition-all duration-200
-                            ${isActive
-                              ? 'bg-gradient-to-r from-[#F0B90B]/16 via-white/[0.06] to-transparent border border-[#F0B90B]/25 shadow-[0_14px_40px_rgba(0,0,0,0.45)]'
-                              : 'bg-white/[0.02] border border-white/10 hover:bg-white/[0.05] hover:border-white/15'}
-                          `}
+                          className={`rounded-2xl px-4 py-3 border transition-all duration-200 flex items-center gap-3 ${
+                            isActive
+                              ? 'bg-[#F0B90B]/10 border-[#F0B90B]/30 text-white'
+                              : 'bg-white/5 border-white/10 hover:bg-white/10 text-white/85'
+                          }`}
                         >
-                          {/* Left gold bar */}
-                          <span
-                            className={`absolute left-2 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-full transition-all duration-200
-                              ${isActive
-                                ? 'bg-[#F0B90B] shadow-[0_0_14px_rgba(240,185,11,0.35)]'
-                                : 'bg-white/10 group-hover:bg-white/20'}
-                            `}
-                          />
-
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div
-                              className={`grid place-items-center w-7 h-7 rounded-lg border transition-all duration-200
-                                ${isActive
-                                  ? 'bg-[#F0B90B]/12 border-[#F0B90B]/25'
-                                  : 'bg-white/[0.03] border-white/10 group-hover:bg-white/[0.06] group-hover:border-white/15'}
-                              `}
-                            >
-                              <Icon className={`w-[14px] h-[14px] ${isActive ? 'text-[#F0B90B]' : 'text-white/70 group-hover:text-white/85'}`} />
-                            </div>
-
-                            <div className="min-w-0">
-                              <div className={`text-[12px] font-semibold tracking-wide truncate ${isActive ? 'text-white' : 'text-white/85'}`}>
-                                {item.label}
-                              </div>
-                              <div className="text-[9px] text-white/40 truncate">
-                                {isActive ? 'You are here' : 'Open section'}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2 shrink-0">
-                            <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-[#F0B90B] shadow-[0_0_10px_rgba(240,185,11,0.35)]' : 'bg-white/10 group-hover:bg-white/20'} transition-all duration-200`} />
-                            <ChevronRight className={`w-4 h-4 transition-all duration-200 ${isActive ? 'text-white/70' : 'text-white/35 group-hover:text-white/60 group-hover:translate-x-[1px]'}`} />
-                          </div>
+                          <Icon className={`w-5 h-5 ${isActive ? 'text-[#F0B90B]' : 'text-white/70'}`} />
+                          <span className="font-semibold">{item.label}</span>
                         </Link>
                       );
                     })}
-                  </nav>
-
-                  {/* Footer CTA */}
-                  <div
-                    className="px-3 pt-1.5 pb-1.5 border-t border-white/10 bg-[#0B0E11]/92 backdrop-blur-xl shrink-0"
-                    style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 14px)' }}
-                  >
-                    <div className="mb-2">
-                      <HeaderAuthActions lang={lang} />
-                    </div>
-
-                    <a
-                      href="https://t.me/tpcglobalcommunity"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="relative overflow-hidden block text-center bg-gradient-to-r from-[#F0B90B] to-[#F8D568]
-                                 text-black font-extrabold rounded-lg px-3 py-2 text-[12px]
-                                 border border-black/10 shadow-2xl shadow-[#F0B90B]/25
-                                 transition-all duration-200 active:scale-[0.98] hover:shadow-[#F0B90B]/35"
-                    >
-                      <span className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-white/45 to-transparent opacity-60" />
-                      Join Community
-                    </a>
-
-                    <p className="mt-2 text-center text-[10px] text-white/45">
-                      Education-first. Risk-aware. No guarantees.
-                    </p>
                   </div>
+
+                  {/* Community CTA */}
+                  <a
+                    href="https://t.me/tpcglobalcommunity"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="mt-4 relative overflow-hidden block text-center bg-gradient-to-r from-[#F0B90B] to-[#F8D568]
+                               text-black font-extrabold rounded-2xl px-4 py-3 text-sm
+                               border border-black/10 shadow-lg shadow-[#F0B90B]/25
+                               transition-all duration-200 active:scale-[0.98]"
+                  >
+                    <span className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-white/45 to-transparent opacity-60" />
+                    Join Community
+                  </a>
+
+                  <p className="mt-3 text-center text-xs text-white/45">
+                    Education-first. Risk-aware. No guarantees.
+                  </p>
                 </div>
               </div>
             </>,
