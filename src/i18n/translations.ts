@@ -526,6 +526,14 @@ export const translations = {
               label: 'Page titles localized',
               status: 'ready',
             },
+            {
+              label: 'robots.txt reachable',
+              status: 'ready',
+            },
+            {
+              label: 'sitemap.xml lastmod replaced',
+              status: 'ready',
+            },
           ],
         },
         {
@@ -572,6 +580,14 @@ export const translations = {
               label: 'All disclaimers present',
               status: 'ready',
             },
+            {
+              label: 'Security page published (/security)',
+              status: 'ready',
+            },
+            {
+              label: 'Support page published (/support)',
+              status: 'ready',
+            },
           ],
         },
         {
@@ -595,6 +611,26 @@ export const translations = {
             {
               label: 'Mobile responsiveness verified',
               status: 'ready',
+            },
+          ],
+        },
+        {
+          id: 'analytics',
+          title: 'Analytics & Tracking',
+          items: [
+            {
+              label: 'Cloudflare Web Analytics script installed in index.html',
+              status: 'ready',
+            },
+            {
+              label: 'Beacon token set (CLOUDFLARE_TOKEN replaced)',
+              status: 'review',
+              note: 'Replace placeholder token with actual Cloudflare token',
+            },
+            {
+              label: 'Analytics dashboard confirms traffic after deploy',
+              status: 'pending',
+              note: 'Verify data collection post-deployment',
             },
           ],
         },
@@ -1153,6 +1189,14 @@ export const translations = {
               label: 'Judul halaman dilokalkan',
               status: 'ready',
             },
+            {
+              label: 'robots.txt dapat dijangkau',
+              status: 'ready',
+            },
+            {
+              label: 'sitemap.xml lastmod diganti',
+              status: 'ready',
+            },
           ],
         },
         {
@@ -1199,6 +1243,14 @@ export const translations = {
               label: 'Semua disclaimer hadir',
               status: 'ready',
             },
+            {
+              label: 'Halaman Security dipublikasikan (/security)',
+              status: 'ready',
+            },
+            {
+              label: 'Halaman Support dipublikasikan (/support)',
+              status: 'ready',
+            },
           ],
         },
         {
@@ -1222,6 +1274,26 @@ export const translations = {
             {
               label: 'Responsivitas mobile diverifikasi',
               status: 'ready',
+            },
+          ],
+        },
+        {
+          id: 'analytics',
+          title: 'Analytics & Pelacakan',
+          items: [
+            {
+              label: 'Script Cloudflare Web Analytics terpasang di index.html',
+              status: 'ready',
+            },
+            {
+              label: 'Token beacon diatur (CLOUDFLARE_TOKEN diganti)',
+              status: 'review',
+              note: 'Ganti token placeholder dengan token Cloudflare asli',
+            },
+            {
+              label: 'Dashboard analytics mengonfirmasi traffic setelah deploy',
+              status: 'pending',
+              note: 'Verifikasi pengumpulan data pasca-deployment',
             },
           ],
         },
