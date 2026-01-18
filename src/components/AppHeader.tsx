@@ -166,7 +166,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
           {/* Bottom Sheet Panel */}
           <div
-            className="md:hidden fixed left-1/2 -translate-x-1/2 top-16 bottom-6 w-[92vw] max-w-[420px]
+            className="md:hidden fixed left-1/2 -translate-x-1/2 top-3 bottom-3 w-[92vw] max-w-[420px]
                        bg-[#0B0E11] z-[1000]
                        rounded-3xl border border-white/12 shadow-2xl shadow-black/70
                        animate-[scaleIn_0.22s_ease-out] isolate overflow-hidden"
@@ -183,9 +183,9 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
             <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/10" />
 
             {/* Full height flex container */}
-            <div className="h-full flex flex-col">
+            <div className="h-full flex flex-col min-h-0">
               {/* Header */}
-              <div className="relative flex items-center justify-between px-5 py-4 border-b border-white/10 shrink-0">
+              <div className="relative flex items-center justify-between px-5 py-3 border-b border-white/10 shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-br from-[#F0B90B] to-[#f8d12f] rounded-xl blur-lg opacity-45" />
@@ -207,7 +207,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
               </div>
 
               {/* Scrollable nav area */}
-              <nav className="flex-1 px-4 pt-4 pb-3 space-y-[8px] overflow-y-auto overflow-x-hidden">
+              <nav className="flex-1 min-h-0 px-4 pt-4 pb-3 space-y-[8px] overflow-y-auto overflow-x-hidden">
                 {navItems.map((item) => {
                   const isActive = currentPath === item.path;
                   return (
@@ -240,7 +240,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
               {/* Footer CTA */}
               <div
-                className="relative px-4 pt-3 pb-4 border-t border-white/10 bg-[#0B0E11]/95 backdrop-blur-xl shrink-0"
+                className="relative px-4 pt-2 pb-3 border-t border-white/10 bg-[#0B0E11]/95 backdrop-blur-xl shrink-0"
                 style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 14px)' }}
               >
                 <a
