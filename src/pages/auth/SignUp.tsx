@@ -1,332 +1,301 @@
-import { useState, FormEvent, useEffect } from 'react';
-import { UserPlus, Mail, Lock, User, Tag, AlertCircle, CheckCircle } from 'lucide-react';
-import { Language, useTranslations } from '../../i18n';
-import { PremiumShell, NoticeBox, PremiumButton } from '../../components/ui';
-import { useAuth } from '../../contexts/AuthContext';
-import { validateReferralCode } from '../../lib/supabase';
-import { validateUsername, mapAuthError } from '../../lib/authHelpers';
+import React, { useEffect, useMemo, useState } from "react";
+import { Shield, KeyRound, Mail, User2, AtSign, Lock, Check, X, Loader2, ArrowRight } from "lucide-react";
+import { useI18n, type Language, getLangPath } from "../../i18n";
+import { Link } from "../../components/Router";
+import { PremiumShell, PremiumSection, PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { validateReferralCode, signUpInviteOnly } from "../../lib/supabase";
+
+type ReferralState = "idle" | "checking" | "valid" | "invalid";
 
 interface SignUpProps {
-  lang: Language;
+  lang?: Language;
 }
 
-const SignUp = ({ lang }: SignUpProps) => {
-  const t = useTranslations(lang);
-  const { signUpInviteOnly, session } = useAuth();
+const USERNAME_RE = /^[a-z0-9_.]{3,20}$/;
 
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    fullName: '',
-    username: '',
-    referralCode: '',
-  });
+export default function SignUp({ lang }: SignUpProps) {
+  const { t, language } = useI18n(lang || "en");
+  const L = language;
 
-  const [isValidating, setIsValidating] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
+  const [refState, setRefState] = useState<ReferralState>("idle");
+  const [refMsg, setRefMsg] = useState<string | null>(null);
+
+  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState<null | { checkEmail: boolean }>(null);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [checkEmail, setCheckEmail] = useState(false);
-  const [referralValid, setReferralValid] = useState<boolean | null>(null);
-  const [usernameError, setUsernameError] = useState<string | null>(null);
+
+  const normalizedReferral = useMemo(() => referralCode.trim().toUpperCase(), [referralCode]);
+  const usernameOk = useMemo(() => USERNAME_RE.test(username.trim().toLowerCase()), [username]);
+  const canSubmit = useMemo(() => {
+    if (submitting) return false;
+    if (!normalizedReferral) return false;
+    if (refState !== "valid") return false;
+    if (!fullName.trim()) return false;
+    if (!usernameOk) return false;
+    if (!email.trim()) return false;
+    if (password.length < 8) return false;
+    return true;
+  }, [submitting, normalizedReferral, refState, fullName, usernameOk, email, password]);
 
   useEffect(() => {
-    if (session && !checkEmail) {
-      window.location.href = `/${lang}/member/dashboard`;
-    }
-  }, [session, lang, checkEmail]);
+    let alive = true;
+    let timer: any;
 
-  const handleReferralBlur = async () => {
-    if (!formData.referralCode.trim()) {
-      setReferralValid(null);
-      return;
-    }
-
-    setIsValidating(true);
     setError(null);
 
-    const isValid = await validateReferralCode(formData.referralCode.trim());
-    setReferralValid(isValid);
-
-    if (!isValid) {
-      setError(t.auth.signup.referralInvalid);
-    }
-
-    setIsValidating(false);
-  };
-
-  const handleUsernameBlur = () => {
-    if (!formData.username.trim()) {
-      setUsernameError(null);
+    if (!normalizedReferral) {
+      setRefState("idle");
+      setRefMsg(null);
       return;
     }
 
-    const validation = validateUsername(formData.username);
-    if (!validation.valid) {
-      setUsernameError(validation.error || t.auth.signup.usernameRules);
-    } else {
-      setUsernameError(null);
-    }
-  };
+    setRefState("checking");
+    setRefMsg(null);
 
-  const handleSubmit = async (e: FormEvent) => {
+    timer = setTimeout(async () => {
+      try {
+        const ok = await validateReferralCode(normalizedReferral);
+        if (!alive) return;
+        setRefState(ok ? "valid" : "invalid");
+        setRefMsg(ok ? null : t("errors.referralInvalid"));
+      } catch {
+        if (!alive) return;
+        setRefState("invalid");
+        setRefMsg(t("errors.generic"));
+      }
+    }, 450);
+
+    return () => {
+      alive = false;
+      clearTimeout(timer);
+    };
+  }, [normalizedReferral, t]);
+
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (!formData.email || !formData.password || !formData.fullName || !formData.username || !formData.referralCode) {
-      setError(t.auth.errors.generic);
-      return;
-    }
+    if (!canSubmit) return;
 
-    const usernameValidation = validateUsername(formData.username);
-    if (!usernameValidation.valid) {
-      setError(usernameValidation.error || t.auth.signup.usernameRules);
-      return;
-    }
-
-    if (referralValid === false) {
-      setError(t.auth.signup.referralInvalid);
-      return;
-    }
-
-    setIsValidating(true);
-    const isValid = await validateReferralCode(formData.referralCode.trim());
-    setIsValidating(false);
-
-    if (!isValid) {
-      setError(t.auth.signup.referralInvalid);
-      setReferralValid(false);
-      return;
-    }
-
-    setIsSubmitting(true);
-
+    setSubmitting(true);
     try {
-      const { error: authError, session: newSession } = await signUpInviteOnly({
-        referralCode: formData.referralCode.trim().toUpperCase(),
-        email: formData.email,
-        password: formData.password,
-        fullName: formData.fullName.trim(),
-        username: formData.username.trim().toLowerCase(),
+      const res = await signUpInviteOnly({
+        referralCode: normalizedReferral,
+        email: email.trim(),
+        password,
+        fullName: fullName.trim(),
+        username: username.trim().toLowerCase(),
       });
 
-      if (authError) {
-        throw authError;
-      }
-
-      if (newSession) {
-        window.location.href = `/${lang}/member/dashboard`;
-      } else {
-        setCheckEmail(true);
-        setSuccess(true);
-      }
-    } catch (err: unknown) {
-      const errorMessage = mapAuthError(err, lang);
-      setError(errorMessage);
+      setDone({ checkEmail: !!res?.checkEmail });
+    } catch (err: any) {
+      const msg = String(err?.message || "");
+      if (msg.toLowerCase().includes("referral")) setError(t("errors.referralInvalid"));
+      else if (msg.toLowerCase().includes("email")) setError(t("errors.emailInUse"));
+      else if (msg.toLowerCase().includes("username")) setError(t("errors.usernameTaken"));
+      else setError(t("errors.generic"));
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
 
-  if (checkEmail) {
-    return (
-      <PremiumShell>
-        <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
-          <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-10 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500/20 to-green-500/5 border border-green-500/20 mb-6">
-              <CheckCircle className="w-8 h-8 text-green-400" />
-            </div>
-            <h1 className="text-3xl font-bold text-white mb-4">
-              {t.auth.signup.checkEmailTitle}
-            </h1>
-            <p className="text-white/70 mb-8">
-              {t.auth.signup.checkEmailDesc}
-            </p>
-            <a href={`/${lang}/signin`}>
-              <PremiumButton className="w-full">
-                {t.auth.signup.signInLink}
-              </PremiumButton>
-            </a>
-          </div>
-        </div>
-      </PremiumShell>
-    );
-  }
-
   return (
     <PremiumShell>
-      <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
-        <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-10">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#F0B90B]/20 to-[#F0B90B]/5 border border-[#F0B90B]/20 mb-4">
-              <UserPlus className="w-8 h-8 text-[#F0B90B]" />
+      <PremiumSection className="pt-8 md:pt-12 pb-24 md:pb-28">
+        <div className="max-w-2xl mx-auto px-4">
+          <div className="text-center mb-6 md:mb-8">
+            <div className="mx-auto w-14 h-14 rounded-2xl bg-white/5 border border-white/10 grid place-items-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-[#F0B90B]/10 blur-2xl" />
+              <Shield className="w-7 h-7 text-[#F0B90B] relative z-10" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-              {t.auth.signup.title}
+            <h1 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight text-white">
+              {t("auth.signup.title")}
             </h1>
-            <p className="text-white/70">
-              {t.auth.signup.subtitle}
+            <p className="mt-2 text-white/65 text-sm md:text-base">
+              {t("auth.signup.subtitle")}
             </p>
           </div>
 
-          <NoticeBox variant="info" title={t.auth.signup.inviteNoticeTitle} className="mb-6">
-            {t.auth.signup.inviteNoticeDesc}
-          </NoticeBox>
+          <NoticeBox
+            title={t("auth.signup.noticeTitle")}
+            description={t("auth.signup.noticeDesc")}
+          />
 
-          {error && (
-            <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-              <p className="text-red-400 text-sm">{error}</p>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label htmlFor="referralCode" className="block text-sm font-medium text-white/90 mb-2">
-                {t.auth.signup.referralLabel} <span className="text-red-400">*</span>
-              </label>
-              <div className="relative">
-                <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-                <input
-                  type="text"
-                  id="referralCode"
-                  value={formData.referralCode}
-                  onChange={(e) => {
-                    setFormData({ ...formData, referralCode: e.target.value.toUpperCase() });
-                    setReferralValid(null);
-                    setError(null);
-                  }}
-                  onBlur={handleReferralBlur}
-                  placeholder={t.auth.signup.referralPlaceholder}
-                  className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#F0B90B]/50 focus:ring-2 focus:ring-[#F0B90B]/20 transition-all"
-                  required
-                  disabled={isSubmitting}
-                />
-                {isValidating && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <div className="w-5 h-5 border-2 border-[#F0B90B]/30 border-t-[#F0B90B] rounded-full animate-spin" />
+          <PremiumCard className="mt-4 md:mt-6">
+            {done ? (
+              <div className="p-5 md:p-7">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#F0B90B]/10 border border-[#F0B90B]/20 grid place-items-center">
+                    <Check className="w-5 h-5 text-[#F0B90B]" />
                   </div>
-                )}
-                {!isValidating && referralValid === true && (
-                  <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-400" />
-                )}
-                {!isValidating && referralValid === false && (
-                  <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-400" />
-                )}
+                  <div className="flex-1">
+                    <h2 className="text-white font-semibold">
+                      {done.checkEmail ? t("auth.signup.checkEmailTitle") : t("auth.signup.successTitle")}
+                    </h2>
+                    <p className="text-white/65 mt-1 text-sm leading-relaxed">
+                      {done.checkEmail ? t("auth.signup.checkEmailDesc") : t("auth.signup.successDesc")}
+                    </p>
+                    <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                      <Link to={getLangPath(L, "/signin")}>
+                        <PremiumButton className="w-full" type="button">
+                          {t("common.backToSignIn")}
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </PremiumButton>
+                      </Link>
+                      <Link to={getLangPath(L, "/")}>
+                        <PremiumButton className="w-full" variant="secondary" type="button">
+                          {t("common.backHome")}
+                        </PremiumButton>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <form onSubmit={onSubmit} className="p-5 md:p-7 space-y-4">
+                <Field
+                  icon={<KeyRound className="w-4 h-4" />}
+                  label={t("auth.signup.referral")}
+                  value={referralCode}
+                  onChange={(v) => setReferralCode(v)}
+                  placeholder={t("auth.signup.referralPlaceholder")}
+                  right={
+                    refState === "checking" ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-white/60" />
+                    ) : refState === "valid" ? (
+                      <Check className="w-4 h-4 text-[#F0B90B]" />
+                    ) : refState === "invalid" ? (
+                      <X className="w-4 h-4 text-red-400" />
+                    ) : null
+                  }
+                  helper={
+                    refMsg ||
+                    (refState === "valid" ? t("auth.signup.referralValid") : t("auth.signup.referralHint"))
+                  }
+                  helperTone={refState === "invalid" ? "error" : refState === "valid" ? "ok" : "muted"}
+                />
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
-                {t.auth.signup.emailLabel} <span className="text-red-400">*</span>
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-                <input
+                <Field
+                  icon={<User2 className="w-4 h-4" />}
+                  label={t("auth.signup.fullName")}
+                  value={fullName}
+                  onChange={(v) => setFullName(v)}
+                  placeholder={t("auth.signup.fullNamePlaceholder")}
+                />
+
+                <Field
+                  icon={<AtSign className="w-4 h-4" />}
+                  label={t("auth.signup.username")}
+                  value={username}
+                  onChange={(v) => setUsername(v.toLowerCase())}
+                  placeholder={t("auth.signup.usernamePlaceholder")}
+                  helper={
+                    username
+                      ? usernameOk
+                        ? t("auth.signup.usernameOk")
+                        : t("auth.signup.usernameRules")
+                      : t("auth.signup.usernameHint")
+                  }
+                  helperTone={username ? (usernameOk ? "ok" : "error") : "muted"}
+                />
+
+                <Field
+                  icon={<Mail className="w-4 h-4" />}
+                  label={t("auth.signup.email")}
+                  value={email}
+                  onChange={(v) => setEmail(v)}
+                  placeholder="name@email.com"
                   type="email"
-                  id="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder={t.auth.signup.emailPlaceholder}
-                  className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#F0B90B]/50 focus:ring-2 focus:ring-[#F0B90B]/20 transition-all"
-                  required
-                  disabled={isSubmitting}
                 />
-              </div>
-            </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-white/90 mb-2">
-                {t.auth.signup.passwordLabel} <span className="text-red-400">*</span>
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-                <input
+                <Field
+                  icon={<Lock className="w-4 h-4" />}
+                  label={t("auth.signup.password")}
+                  value={password}
+                  onChange={(v) => setPassword(v)}
+                  placeholder="••••••••"
                   type="password"
-                  id="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder={t.auth.signup.passwordPlaceholder}
-                  className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#F0B90B]/50 focus:ring-2 focus:ring-[#F0B90B]/20 transition-all"
-                  required
-                  minLength={6}
-                  disabled={isSubmitting}
+                  helper={t("auth.signup.passwordHint")}
+                  helperTone="muted"
                 />
-              </div>
-            </div>
 
-            <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-white/90 mb-2">
-                {t.auth.signup.fullNameLabel} <span className="text-red-400">*</span>
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-                <input
-                  type="text"
-                  id="fullName"
-                  value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  placeholder={t.auth.signup.fullNamePlaceholder}
-                  className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#F0B90B]/50 focus:ring-2 focus:ring-[#F0B90B]/20 transition-all"
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-            </div>
+                {error ? (
+                  <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                    {error}
+                  </div>
+                ) : null}
 
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-white/90 mb-2">
-                {t.auth.signup.usernameLabel} <span className="text-red-400">*</span>
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-                <input
-                  type="text"
-                  id="username"
-                  value={formData.username}
-                  onChange={(e) => {
-                    setFormData({ ...formData, username: e.target.value.toLowerCase() });
-                    setUsernameError(null);
-                  }}
-                  onBlur={handleUsernameBlur}
-                  placeholder={t.auth.signup.usernamePlaceholder}
-                  className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#F0B90B]/50 focus:ring-2 focus:ring-[#F0B90B]/20 transition-all"
-                  required
-                  pattern="[a-z0-9_.]+"
-                  disabled={isSubmitting}
-                />
-              </div>
-              {usernameError && (
-                <p className="text-red-400 text-xs mt-1">{usernameError}</p>
-              )}
-              <p className="text-white/50 text-xs mt-1">{t.auth.signup.usernameRules}</p>
-            </div>
+                <PremiumButton className="w-full" type="submit" disabled={!canSubmit}>
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      {t("auth.signup.creating")}
+                    </>
+                  ) : (
+                    <>
+                      {t("auth.signup.createAccount")}
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </>
+                  )}
+                </PremiumButton>
 
-            <PremiumButton
-              variant="primary"
-              type="submit"
-              disabled={isSubmitting || isValidating || referralValid === false || !!usernameError}
-              className="w-full"
-            >
-              {isSubmitting ? t.auth.signup.submitting : t.auth.signup.submitButton}
-            </PremiumButton>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-white/60 text-sm">
-              {t.auth.signup.haveAccount}{' '}
-              <a
-                href={`/${lang}/signin`}
-                className="text-[#F0B90B] hover:text-[#F0B90B]/80 transition-colors font-medium"
-              >
-                {t.auth.signup.signInLink}
-              </a>
-            </p>
-          </div>
+                <div className="text-center text-sm text-white/65">
+                  {t("auth.signup.haveAccount")}{" "}
+                  <Link to={getLangPath(L, "/signin")} className="text-[#F0B90B] hover:underline">
+                    {t("auth.signup.goLogin")}
+                  </Link>
+                </div>
+              </form>
+            )}
+          </PremiumCard>
         </div>
-      </div>
+      </PremiumSection>
     </PremiumShell>
   );
-};
+}
 
-export default SignUp;
+function Field(props: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  type?: string;
+  right?: React.ReactNode;
+  helper?: string | null;
+  helperTone?: "muted" | "ok" | "error";
+}) {
+  const { icon, label, value, onChange, placeholder, type, right, helper, helperTone = "muted" } = props;
+
+  const helperClass =
+    helperTone === "ok"
+      ? "text-[#F0B90B]/90"
+      : helperTone === "error"
+        ? "text-red-300"
+        : "text-white/50";
+
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-white/85 mb-2">{label}</label>
+      <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-3 focus-within:border-[#F0B90B]/40 focus-within:bg-white/7 transition">
+        <div className="text-white/60">{icon}</div>
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          type={type || "text"}
+          className="flex-1 bg-transparent outline-none text-white placeholder:text-white/35 text-sm"
+          autoComplete="off"
+        />
+        {right ? <div className="text-white/70">{right}</div> : null}
+      </div>
+      {helper ? <div className={`mt-2 text-xs ${helperClass}`}>{helper}</div> : null}
+    </div>
+  );
+}

@@ -486,3 +486,48 @@ export const ensureOnboardingRow = async (): Promise<void> => {
     console.error('Error ensuring onboarding row:', error);
   }
 };
+
+export const signIn = async ({ email, password }: { email: string; password: string }): Promise<void> => {
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    throw error;
+  }
+};
+
+export const signUpInviteOnly = async ({
+  referralCode,
+  email,
+  password,
+  fullName,
+  username,
+}: {
+  referralCode: string;
+  email: string;
+  password: string;
+  fullName: string;
+  username: string;
+}): Promise<{ checkEmail?: boolean } | null> => {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+        username: username,
+        referral_code: referralCode.toUpperCase(),
+      },
+    },
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return {
+    checkEmail: data?.user?.identities?.length === 0,
+  };
+};

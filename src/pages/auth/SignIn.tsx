@@ -1,200 +1,163 @@
-import { useState, FormEvent, useEffect } from 'react';
-import { LogIn, Mail, Lock, AlertCircle, ShieldAlert } from 'lucide-react';
-import { Language, useTranslations } from '../../i18n';
-import { PremiumShell, PremiumButton } from '../../components/ui';
-import { useAuth } from '../../contexts/AuthContext';
-import { checkRateLimit, recordAttempt, resetRateLimit, safeRedirect, mapAuthError } from '../../lib/authHelpers';
+import React, { useMemo, useState } from "react";
+import { Shield, Mail, Lock, Loader2, ArrowRight } from "lucide-react";
+import { useI18n, type Language, getLangPath } from "../../i18n";
+import { Link } from "../../components/Router";
+import { PremiumShell, PremiumSection, PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { signIn } from "../../lib/supabase";
 
 interface SignInProps {
-  lang: Language;
+  lang?: Language;
 }
 
-const SignIn = ({ lang }: SignInProps) => {
-  const t = useTranslations(lang);
-  const { signIn, session } = useAuth();
+function safeNext(nextRaw: string | null, fallback: string) {
+  if (!nextRaw) return fallback;
+  try {
+    const decoded = decodeURIComponent(nextRaw);
+    if (!decoded.startsWith("/")) return fallback;
+    if (decoded.startsWith("//")) return fallback;
+    if (decoded.includes("://")) return fallback;
+    return decoded;
+  } catch {
+    return fallback;
+  }
+}
 
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+export default function SignIn({ lang }: SignInProps) {
+  const { t, language } = useI18n(lang || "en");
+  const L = language;
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isLocked, setIsLocked] = useState(false);
 
-  useEffect(() => {
-    if (session) {
-      const params = new URLSearchParams(window.location.search);
-      const next = params.get('next');
-      const redirectPath = safeRedirect(next, lang);
-      window.location.href = redirectPath;
-    }
-  }, [session, lang]);
+  const fallback = getLangPath(L, "/member/dashboard");
+  const next = useMemo(() => {
+    const params = new URLSearchParams(window.location.search);
+    return safeNext(params.get("next"), fallback);
+  }, [fallback]);
 
-  useEffect(() => {
-    const rateLimit = checkRateLimit();
-    if (!rateLimit.allowed) {
-      setIsLocked(true);
-      setError(t.auth.signin.lockedDesc);
-    }
-  }, [t]);
-
-  const handleSubmit = async (e: FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
-    const rateLimit = checkRateLimit();
-    if (!rateLimit.allowed) {
-      setIsLocked(true);
-      setError(t.auth.signin.lockedDesc);
-      return;
-    }
-
-    if (!formData.email || !formData.password) {
-      setError(t.auth.errors.generic);
-      return;
-    }
-
-    setIsSubmitting(true);
-
+    setSubmitting(true);
     try {
-      const { error: authError, session: newSession } = await signIn({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (authError) {
-        recordAttempt();
-        throw authError;
-      }
-
-      if (newSession) {
-        resetRateLimit();
-        const params = new URLSearchParams(window.location.search);
-        const next = params.get('next');
-        const redirectPath = safeRedirect(next, lang);
-        window.location.href = redirectPath;
-      }
-    } catch (err: unknown) {
-      const errorMessage = mapAuthError(err, lang);
-      setError(errorMessage);
-
-      const updatedRateLimit = checkRateLimit();
-      if (!updatedRateLimit.allowed) {
-        setIsLocked(true);
-        setError(t.auth.signin.lockedDesc);
-      }
+      await signIn({ email: email.trim(), password });
+      window.location.assign(next);
+    } catch (err: any) {
+      const msg = String(err?.message || "");
+      if (msg.toLowerCase().includes("confirm")) setError(t("errors.emailNotConfirmed"));
+      else setError(t("errors.invalidCredentials"));
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
 
   return (
     <PremiumShell>
-      <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
-        <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-10">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#F0B90B]/20 to-[#F0B90B]/5 border border-[#F0B90B]/20 mb-4">
-              <LogIn className="w-8 h-8 text-[#F0B90B]" />
+      <PremiumSection className="pt-8 md:pt-12 pb-24 md:pb-28">
+        <div className="max-w-2xl mx-auto px-4">
+          <div className="text-center mb-6 md:mb-8">
+            <div className="mx-auto w-14 h-14 rounded-2xl bg-white/5 border border-white/10 grid place-items-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-[#F0B90B]/10 blur-2xl" />
+              <Shield className="w-7 h-7 text-[#F0B90B] relative z-10" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-              {t.auth.signin.title}
+            <h1 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight text-white">
+              {t("auth.signin.title")}
             </h1>
-            <p className="text-white/70">
-              {t.auth.signin.subtitle}
+            <p className="mt-2 text-white/65 text-sm md:text-base">
+              {t("auth.signin.subtitle")}
             </p>
           </div>
 
-          {isLocked && (
-            <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-3">
-              <ShieldAlert className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-red-400 text-sm font-semibold mb-1">{t.auth.signin.lockedTitle}</p>
-                <p className="text-red-400/80 text-xs">{t.auth.signin.lockedDesc}</p>
+          <NoticeBox
+            title={t("auth.signin.noticeTitle")}
+            description={t("auth.signin.noticeDesc")}
+          />
+
+          <PremiumCard className="mt-4 md:mt-6">
+            <form onSubmit={onSubmit} className="p-5 md:p-7 space-y-4">
+              <Field
+                icon={<Mail className="w-4 h-4" />}
+                label={t("auth.signin.email")}
+                value={email}
+                onChange={(v) => setEmail(v)}
+                placeholder="name@email.com"
+                type="email"
+              />
+              <Field
+                icon={<Lock className="w-4 h-4" />}
+                label={t("auth.signin.password")}
+                value={password}
+                onChange={(v) => setPassword(v)}
+                placeholder="••••••••"
+                type="password"
+              />
+
+              {error ? (
+                <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                  {error}
+                </div>
+              ) : null}
+
+              <PremiumButton className="w-full" type="submit" disabled={submitting || !email.trim() || password.length < 1}>
+                {submitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    {t("auth.signin.signingIn")}
+                  </>
+                ) : (
+                  <>
+                    {t("auth.signin.signIn")}
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
+              </PremiumButton>
+
+              <div className="flex items-center justify-between text-sm text-white/65">
+                <Link to={getLangPath(L, "/forgot")} className="hover:underline text-[#F0B90B]">
+                  {t("auth.signin.forgot")}
+                </Link>
+                <div>
+                  {t("auth.signin.noAccount")}{" "}
+                  <Link to={getLangPath(L, "/signup")} className="text-[#F0B90B] hover:underline">
+                    {t("auth.signin.goSignup")}
+                  </Link>
+                </div>
               </div>
-            </div>
-          )}
-
-          {error && !isLocked && (
-            <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-              <p className="text-red-400 text-sm">{error}</p>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
-                {t.auth.signin.emailLabel}
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-                <input
-                  type="email"
-                  id="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder={t.auth.signin.emailPlaceholder}
-                  className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#F0B90B]/50 focus:ring-2 focus:ring-[#F0B90B]/20 transition-all"
-                  required
-                  disabled={isSubmitting || isLocked}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-white/90 mb-2">
-                {t.auth.signin.passwordLabel}
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
-                <input
-                  type="password"
-                  id="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder={t.auth.signin.passwordPlaceholder}
-                  className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-[#F0B90B]/50 focus:ring-2 focus:ring-[#F0B90B]/20 transition-all"
-                  required
-                  disabled={isSubmitting || isLocked}
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end">
-              <a
-                href={`/${lang}/forgot`}
-                className="text-sm text-[#F0B90B] hover:text-[#F0B90B]/80 transition-colors"
-              >
-                {t.auth.signin.forgot}
-              </a>
-            </div>
-
-            <PremiumButton
-              variant="primary"
-              type="submit"
-              disabled={isSubmitting || isLocked}
-              className="w-full"
-            >
-              {isSubmitting ? t.auth.signin.submitting : t.auth.signin.submitButton}
-            </PremiumButton>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-white/60 text-sm">
-              {t.auth.signin.noAccount}{' '}
-              <a
-                href={`/${lang}/signup`}
-                className="text-[#F0B90B] hover:text-[#F0B90B]/80 transition-colors font-medium"
-              >
-                {t.auth.signin.goSignup}
-              </a>
-            </p>
-          </div>
+            </form>
+          </PremiumCard>
         </div>
-      </div>
+      </PremiumSection>
     </PremiumShell>
   );
-};
+}
 
-export default SignIn;
+function Field(props: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  type?: string;
+}) {
+  const { icon, label, value, onChange, placeholder, type } = props;
+
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-white/85 mb-2">{label}</label>
+      <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-3 focus-within:border-[#F0B90B]/40 focus-within:bg-white/7 transition">
+        <div className="text-white/60">{icon}</div>
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          type={type || "text"}
+          className="flex-1 bg-transparent outline-none text-white placeholder:text-white/35 text-sm"
+          autoComplete="off"
+        />
+      </div>
+    </div>
+  );
+}

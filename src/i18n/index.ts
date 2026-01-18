@@ -60,4 +60,15 @@ export const useLanguage = () => {
   return { language, t };
 };
 
+function getNestedTranslation(obj: any, path: string): string {
+  return path.split('.').reduce((acc, part) => acc?.[part], obj) ?? path;
+}
+
+export const useI18n = (lang?: Language) => {
+  const detectedLang = lang || getLanguageFromPath();
+  const translations = useTranslations(detectedLang);
+  const t = (path: string) => getNestedTranslation(translations, path);
+  return { t, language: detectedLang };
+};
+
 export const defaultLanguage: Language = 'en';
