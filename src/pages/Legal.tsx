@@ -1,6 +1,6 @@
 import { Shield, FileText, Lock, Globe, Mail } from 'lucide-react';
 import { Language, useTranslations } from '../i18n';
-import { PremiumShell, PremiumSection, PremiumCard } from '../components/ui';
+import { PremiumShell, PremiumSection, PremiumCard, NoticeBox } from '../components/ui';
 
 interface LegalProps {
   lang: Language;
@@ -17,19 +17,21 @@ const Legal = ({ lang }: LegalProps) => {
         centered
       >
         <div className="max-w-5xl mx-auto space-y-8">
-          <div className="bg-[#F0B90B]/10 border border-[#F0B90B]/30 backdrop-blur-xl rounded-xl p-6">
+          <div>
             <div className="flex items-start gap-3 mb-4">
               <Shield className="w-6 h-6 text-[#F0B90B] flex-shrink-0 mt-0.5" />
               <h2 className="text-2xl font-semibold text-white">
                 {t.legal.disclaimer.title}
               </h2>
             </div>
-            <div className="space-y-3 text-[#F0B90B]/90 text-sm leading-relaxed">
-              <p>{t.legal.disclaimer.p1}</p>
-              <p>{t.legal.disclaimer.p2}</p>
-              <p>{t.legal.disclaimer.p3}</p>
-              <p>{t.legal.disclaimer.p4}</p>
-            </div>
+            <NoticeBox variant="warning" className="p-6">
+              <div className="space-y-3">
+                <p>{t.legal.disclaimer.p1}</p>
+                <p>{t.legal.disclaimer.p2}</p>
+                <p>{t.legal.disclaimer.p3}</p>
+                <p>{t.legal.disclaimer.p4}</p>
+              </div>
+            </NoticeBox>
           </div>
 
           <PremiumCard>
