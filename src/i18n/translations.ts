@@ -43,6 +43,41 @@ export const translations = {
       title: 'Join the Community',
       description: 'An education-based trading community built on collaboration, transparency, and shared governance.',
     },
+    home: {
+      trust: {
+        pill: 'Trust & Safety',
+        title: 'Built on Trust and Transparency',
+        subtitle: 'We prioritize education, risk awareness, and complete transparency. No promises, no guarantees—just honest community-driven growth.',
+        cards: [
+          {
+            title: 'Comprehensive Docs',
+            desc: 'Learn everything about TPC, tokenomics, and governance through clear, accessible documentation.',
+            cta: 'Read Documentation',
+          },
+          {
+            title: 'Public Transparency',
+            desc: 'Track all wallets, revenue flows, and fund allocation in real-time on our transparency hub.',
+            cta: 'View Transparency',
+          },
+          {
+            title: 'Legal Compliance',
+            desc: 'Review our terms, risk disclosures, and privacy policies. Education-first with no investment promises.',
+            cta: 'Review Legal Info',
+          },
+        ],
+        badges: [
+          'Education-First',
+          'Risk-Aware',
+          'Transparency-Driven',
+          'No Guarantees',
+        ],
+        ctaTitle: 'Ready to Learn More?',
+        ctaHelper: 'Join our community or explore our comprehensive documentation to get started.',
+        joinCommunity: 'Join Community',
+        readDocs: 'Read Documentation',
+        disclaimerLine: 'Not financial advice. Trading involves significant risk. Do your own research.',
+      },
+    },
     docs: {
       title: 'Documentation',
       subtitle: 'Everything you need to know about TPC',
@@ -334,6 +369,41 @@ export const translations = {
     cta: {
       title: 'Bergabung dengan Komunitas',
       description: 'Komunitas berbasis edukasi yang memberdayakan trader melalui kolaborasi, transparansi, dan tata kelola bersama.',
+    },
+    home: {
+      trust: {
+        pill: 'Kepercayaan & Keamanan',
+        title: 'Dibangun dengan Kepercayaan dan Transparansi',
+        subtitle: 'Kami mengutamakan edukasi, kesadaran risiko, dan transparansi penuh. Tanpa janji, tanpa jaminan—hanya pertumbuhan komunitas yang jujur.',
+        cards: [
+          {
+            title: 'Dokumentasi Lengkap',
+            desc: 'Pelajari semua tentang TPC, tokenomics, dan tata kelola melalui dokumentasi yang jelas dan mudah diakses.',
+            cta: 'Baca Dokumentasi',
+          },
+          {
+            title: 'Transparansi Publik',
+            desc: 'Lacak semua dompet, aliran pendapatan, dan alokasi dana secara real-time di pusat transparansi kami.',
+            cta: 'Lihat Transparansi',
+          },
+          {
+            title: 'Kepatuhan Legal',
+            desc: 'Tinjau syarat, pengungkapan risiko, dan kebijakan privasi kami. Edukasi pertama tanpa janji investasi.',
+            cta: 'Lihat Info Legal',
+          },
+        ],
+        badges: [
+          'Edukasi Pertama',
+          'Sadar Risiko',
+          'Transparansi Penuh',
+          'Tanpa Jaminan',
+        ],
+        ctaTitle: 'Siap Belajar Lebih Lanjut?',
+        ctaHelper: 'Bergabunglah dengan komunitas kami atau jelajahi dokumentasi lengkap untuk memulai.',
+        joinCommunity: 'Bergabung',
+        readDocs: 'Baca Dokumentasi',
+        disclaimerLine: 'Bukan nasihat keuangan. Trading mengandung risiko tinggi. Lakukan riset Anda sendiri.',
+      },
     },
     docs: {
       title: 'Dokumentasi',
