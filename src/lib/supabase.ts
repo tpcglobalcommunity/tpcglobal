@@ -65,6 +65,7 @@ export interface NewsPost {
   excerpt_id: string;
   content_id: string;
   cover_url: string | null;
+  tags: string[];
   is_pinned: boolean;
   is_published: boolean;
   published_at: string | null;
@@ -82,6 +83,7 @@ export interface NewsPostListItem {
   title_id: string;
   excerpt_id: string;
   cover_url: string | null;
+  tags: string[];
   is_pinned: boolean;
   published_at: string | null;
   created_by: string | null;
@@ -100,6 +102,7 @@ export interface NewsPostDetail {
   excerpt_id: string;
   content_id: string;
   cover_url: string | null;
+  tags: string[];
   is_pinned: boolean;
   is_published: boolean;
   published_at: string | null;

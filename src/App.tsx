@@ -22,6 +22,7 @@ import VerifyPage from './pages/VerifyPage';
 import NewsPage from './pages/NewsPage';
 import NewsDetailPage from './pages/NewsDetailPage';
 import NewsEditorPage from './pages/admin/NewsEditorPage';
+import NewsAdminListPage from './pages/admin/NewsAdminListPage';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -49,9 +50,8 @@ function App() {
   const renderPage = () => {
     const pathWithoutLang = currentPath.replace(/^\/(en|id)/, '');
 
-    if (pathWithoutLang.startsWith('/news/')) {
-      const slug = pathWithoutLang.replace('/news/', '');
-      return <NewsDetailPage slug={slug} />;
+    if (pathWithoutLang === '/admin/news') {
+      return <NewsAdminListPage />;
     }
 
     if (pathWithoutLang === '/admin/news/new') {
@@ -61,6 +61,11 @@ function App() {
     if (pathWithoutLang.startsWith('/admin/news/') && pathWithoutLang.endsWith('/edit')) {
       const postId = pathWithoutLang.replace('/admin/news/', '').replace('/edit', '');
       return <NewsEditorPage postId={postId} />;
+    }
+
+    if (pathWithoutLang.startsWith('/news/')) {
+      const slug = pathWithoutLang.replace('/news/', '');
+      return <NewsDetailPage slug={slug} />;
     }
 
     switch (pathWithoutLang) {

@@ -33,6 +33,7 @@ export default function NewsEditorPage({ postId }: NewsEditorPageProps) {
   const [excerptId, setExcerptId] = useState('');
   const [contentId, setContentId] = useState('');
   const [coverUrl, setCoverUrl] = useState('');
+  const [tags, setTags] = useState('');
   const [isPinned, setIsPinned] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
 
@@ -92,6 +93,7 @@ export default function NewsEditorPage({ postId }: NewsEditorPageProps) {
         setExcerptId(post.excerpt_id);
         setContentId(post.content_id);
         setCoverUrl(post.cover_url || '');
+        setTags(post.tags?.join(', ') || '');
         setIsPinned(post.is_pinned);
         setIsPublished(post.is_published);
       }
@@ -124,6 +126,11 @@ export default function NewsEditorPage({ postId }: NewsEditorPageProps) {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
+      const tagsArray = tags
+        .split(',')
+        .map(tag => tag.trim().toLowerCase())
+        .filter(tag => tag.length > 0);
+
       const postData = {
         slug,
         category,
@@ -134,6 +141,7 @@ export default function NewsEditorPage({ postId }: NewsEditorPageProps) {
         excerpt_id: excerptId,
         content_id: contentId,
         cover_url: coverUrl || null,
+        tags: tagsArray,
         is_pinned: isPinned,
         is_published: publish,
         published_at: publish ? new Date().toISOString() : null,
@@ -320,6 +328,22 @@ export default function NewsEditorPage({ postId }: NewsEditorPageProps) {
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                       placeholder="https://images.pexels.com/..."
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      {translations.news.editor.tags}
+                    </label>
+                    <input
+                      type="text"
+                      value={tags}
+                      onChange={(e) => setTags(e.target.value)}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                      placeholder="education, risk, transparency"
+                    />
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {translations.news.editor.tagsHelp}
+                    </p>
                   </div>
 
                   <div className="flex gap-4">
