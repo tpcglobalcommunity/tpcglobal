@@ -181,40 +181,98 @@ export const translations = {
       },
     },
     legal: {
-      title: 'Legal',
-      subtitle: 'Terms, Disclaimers & Privacy',
-      disclaimer: {
-        title: 'Disclaimer',
-        p1: 'The TPC Token is a community utility and governance token ONLY. It is not intended, designed, or offered as an investment, security, share, bond, or financial instrument of any kind.',
-        p2: 'There are no promises, guarantees, or expectations of financial profit, returns, or return on investment, either expressed or implied. The TPC Token solely provides community governance participation rights and access to TPC ecosystem features.',
-        p3: 'Cryptocurrency trading involves significant risks, including the potential loss of funds. Past performance is not indicative of future results. All users are responsible for conducting their own research before making any decisions.',
-        p4: 'TPC is not a financial advisor, investment service provider, or financial institution, and does not provide financial advice or recommendations.',
+      header: {
+        title: 'Legal & Compliance',
+        subtitle: 'Comprehensive terms, policies, and regulatory information',
+        noticeTitle: 'Educational Community Only',
+        noticeBody: 'TPC is an education-focused community. We do not provide investment advice, financial services, or guarantees of any kind. All users are responsible for their own decisions and compliance with local regulations.',
       },
-      terms: {
-        title: 'Terms of Use',
-        items: [
-          'By accessing and using TPC services, you acknowledge that you have read, understood, and agreed to these terms and conditions.',
-          'You must be at least 18 years of age and comply with all applicable laws and regulations in your jurisdiction.',
-          'You are solely responsible for securing your wallet, private keys, and personal credentials. TPC cannot recover lost access or assets resulting from user negligence.',
-          'TPC reserves the right to modify or update these terms at any time with reasonable notice provided through official community communication channels.',
-        ],
+      lastUpdated: 'Last updated',
+      quickLinks: {
+        title: 'Quick Links',
+        docs: 'Documentation',
+        transparency: 'Transparency',
+        community: 'Community',
       },
-      privacy: {
-        title: 'Privacy Policy',
-        items: [
-          'We respect and protect your privacy.',
-          'We only collect information necessary for platform operations, primarily public wallet addresses used for on-chain interactions.',
-          'We do not sell, share, or distribute personal information to third parties without consent.',
-          'Blockchain transactions and governance activities are inherently public and visible on-chain.',
-        ],
+      sections: {
+        disclaimer: {
+          title: 'Legal Disclaimer',
+          summary: 'TPC Token is a community utility and governance token only, not an investment product.',
+          points: [
+            'TPC Token is NOT an investment, security, share, or financial instrument',
+            'No guarantees or promises of profit, returns, or financial gains',
+            'Token provides governance participation rights and community access only',
+            'TPC is not a financial advisor or investment service provider',
+            'All content is for educational purposes only',
+          ],
+        },
+        risk: {
+          title: 'Risk Disclosure',
+          summary: 'Cryptocurrency and trading activities involve substantial risks that may result in total loss.',
+          points: [
+            'Cryptocurrency markets are highly volatile and unpredictable',
+            'You may lose all funds invested or contributed',
+            'Leverage and margin trading can amplify losses significantly',
+            'Past performance does not indicate future results',
+            'Regulatory changes may impact token utility or accessibility',
+            'Smart contract vulnerabilities and technical risks exist',
+            'You are solely responsible for all trading decisions and outcomes',
+          ],
+        },
+        terms: {
+          title: 'Terms of Use',
+          summary: 'By using TPC services, you agree to these terms and accept full responsibility for your actions.',
+          points: [
+            'You must be 18+ years old and legally capable of entering agreements',
+            'You agree to comply with all applicable laws in your jurisdiction',
+            'You are responsible for securing your wallet, keys, and credentials',
+            'TPC cannot recover lost funds or access due to user error',
+            'We reserve the right to modify terms with reasonable notice',
+            'Use of services is at your own risk with no warranties provided',
+            'You waive all claims against TPC for losses or damages',
+          ],
+        },
+        privacy: {
+          title: 'Privacy Policy',
+          summary: 'We respect your privacy and collect only essential data for platform operations.',
+          points: [
+            'We collect minimal data: primarily public wallet addresses',
+            'Blockchain transactions are public and permanently visible',
+            'We do not sell or share personal information with third parties',
+            'You control your data and can request deletion where applicable',
+            'Cookies are used for essential functionality and analytics',
+            'We implement security measures to protect collected data',
+          ],
+        },
+        cookies: {
+          title: 'Cookie Policy',
+          summary: 'We use cookies to improve user experience and analyze platform usage.',
+          points: [
+            'Essential cookies required for platform functionality',
+            'Analytics cookies to understand user behavior and improve services',
+            'Preference cookies to remember your settings (e.g., language)',
+            'You can disable non-essential cookies in your browser settings',
+            'Disabling cookies may limit certain platform features',
+          ],
+        },
+        support: {
+          title: 'Contact & Support',
+          summary: 'For questions, issues, or support, contact us through official channels only.',
+          points: [
+            'Official Telegram: @tpcglobalcommunity',
+            'Always verify official channels before sharing information',
+            'Beware of impersonators and scam accounts',
+            'We will never ask for your private keys or passwords',
+            'Response times may vary based on inquiry volume',
+          ],
+        },
       },
-      jurisdiction: {
-        title: 'Jurisdiction',
-        content: 'These terms are governed by generally applicable international legal principles. Users are solely responsible for ensuring compliance with local laws and regulations in their respective jurisdictions.',
-      },
-      contact: {
-        title: 'Contact',
-        content: 'For inquiries, issues, or support, please contact us via our official Telegram: @tpcglobalcommunity',
+      cta: {
+        title: 'Learn More About TPC',
+        subtitle: 'Explore our documentation and join the community',
+        docs: 'Read Documentation',
+        transparency: 'View Transparency',
+        community: 'Join Community',
       },
     },
     footer: {
@@ -414,40 +472,98 @@ export const translations = {
       },
     },
     legal: {
-      title: 'Legal',
-      subtitle: 'Ketentuan, Disclaimer & Privasi',
-      disclaimer: {
-        title: 'Disclaimer',
-        p1: 'TPC Token adalah token utilitas dan tata kelola komunitas SAJA. Token ini tidak dimaksudkan, tidak dirancang, dan tidak ditawarkan sebagai investasi, sekuritas, saham, obligasi, atau instrumen keuangan dalam bentuk apa pun.',
-        p2: 'Tidak ada janji, jaminan, atau ekspektasi keuntungan finansial, imbal hasil, atau return on investment yang diberikan, baik secara langsung maupun tersirat. TPC Token hanya memberikan hak partisipasi dalam tata kelola komunitas dan akses terhadap fitur ekosistem TPC.',
-        p3: 'Aktivitas trading aset kripto melibatkan risiko yang tinggi, termasuk kemungkinan kehilangan dana secara substansial. Kinerja masa lalu tidak pernah menjamin hasil di masa depan. Setiap pengguna wajib melakukan riset mandiri (Do Your Own Research) sebelum mengambil keputusan apa pun.',
-        p4: 'TPC bukan penasihat keuangan, bukan penyedia layanan investasi, dan tidak memberikan rekomendasi keuangan dalam bentuk apa pun.',
+      header: {
+        title: 'Legal & Kepatuhan',
+        subtitle: 'Ketentuan, kebijakan, dan informasi regulasi yang komprehensif',
+        noticeTitle: 'Komunitas Edukasi Saja',
+        noticeBody: 'TPC adalah komunitas fokus edukasi. Kami tidak menyediakan nasihat investasi, layanan keuangan, atau jaminan dalam bentuk apa pun. Semua pengguna bertanggung jawab atas keputusan sendiri dan kepatuhan terhadap regulasi lokal.',
       },
-      terms: {
-        title: 'Ketentuan Penggunaan',
-        items: [
-          'Dengan mengakses dan menggunakan layanan TPC, Anda dianggap telah membaca, memahami, dan menyetujui seluruh ketentuan yang berlaku.',
-          'Anda harus berusia minimal 18 tahun serta mematuhi seluruh hukum dan peraturan yang berlaku di yurisdiksi tempat Anda berada.',
-          'Anda sepenuhnya bertanggung jawab atas keamanan dompet digital, private key, dan kredensial pribadi Anda. TPC tidak dapat memulihkan akses atau aset yang hilang akibat kelalaian pengguna.',
-          'TPC berhak memperbarui atau mengubah ketentuan ini sewaktu-waktu dengan pemberitahuan yang wajar melalui kanal komunikasi resmi komunitas.',
-        ],
+      lastUpdated: 'Terakhir diperbarui',
+      quickLinks: {
+        title: 'Tautan Cepat',
+        docs: 'Dokumentasi',
+        transparency: 'Transparansi',
+        community: 'Komunitas',
       },
-      privacy: {
-        title: 'Kebijakan Privasi',
-        items: [
-          'Kami menghormati dan melindungi privasi setiap anggota komunitas.',
-          'Data yang dikumpulkan terbatas pada informasi yang diperlukan untuk operasional platform, terutama alamat dompet publik yang digunakan untuk interaksi on-chain.',
-          'Kami tidak menjual, membagikan, atau mendistribusikan informasi pribadi kepada pihak ketiga tanpa persetujuan.',
-          'Semua aktivitas blockchain dan tata kelola bersifat publik dan dapat terlihat secara transparan di jaringan blockchain.',
-        ],
+      sections: {
+        disclaimer: {
+          title: 'Disclaimer Legal',
+          summary: 'TPC Token adalah token utilitas dan tata kelola komunitas saja, bukan produk investasi.',
+          points: [
+            'TPC Token BUKAN investasi, sekuritas, saham, atau instrumen keuangan',
+            'Tidak ada jaminan atau janji profit, imbal hasil, atau keuntungan finansial',
+            'Token hanya memberikan hak partisipasi tata kelola dan akses komunitas',
+            'TPC bukan penasihat keuangan atau penyedia layanan investasi',
+            'Semua konten hanya untuk tujuan edukasi',
+          ],
+        },
+        risk: {
+          title: 'Pengungkapan Risiko',
+          summary: 'Aktivitas cryptocurrency dan trading melibatkan risiko substansial yang dapat mengakibatkan kehilangan total.',
+          points: [
+            'Pasar cryptocurrency sangat volatile dan tidak dapat diprediksi',
+            'Anda dapat kehilangan semua dana yang diinvestasikan atau dikontribusikan',
+            'Leverage dan margin trading dapat memperbesar kerugian secara signifikan',
+            'Kinerja masa lalu tidak menunjukkan hasil masa depan',
+            'Perubahan regulasi dapat berdampak pada utilitas atau aksesibilitas token',
+            'Kerentanan smart contract dan risiko teknis ada',
+            'Anda sepenuhnya bertanggung jawab atas semua keputusan dan hasil trading',
+          ],
+        },
+        terms: {
+          title: 'Ketentuan Penggunaan',
+          summary: 'Dengan menggunakan layanan TPC, Anda setuju dengan ketentuan ini dan menerima tanggung jawab penuh atas tindakan Anda.',
+          points: [
+            'Anda harus berusia 18+ tahun dan berkemampuan hukum untuk membuat perjanjian',
+            'Anda setuju untuk mematuhi semua hukum yang berlaku di yurisdiksi Anda',
+            'Anda bertanggung jawab mengamankan dompet, kunci, dan kredensial Anda',
+            'TPC tidak dapat memulihkan dana atau akses yang hilang karena kesalahan pengguna',
+            'Kami berhak mengubah ketentuan dengan pemberitahuan yang wajar',
+            'Penggunaan layanan adalah risiko Anda sendiri tanpa jaminan yang diberikan',
+            'Anda melepaskan semua klaim terhadap TPC atas kerugian atau kerusakan',
+          ],
+        },
+        privacy: {
+          title: 'Kebijakan Privasi',
+          summary: 'Kami menghormati privasi Anda dan hanya mengumpulkan data esensial untuk operasi platform.',
+          points: [
+            'Kami mengumpulkan data minimal: terutama alamat dompet publik',
+            'Transaksi blockchain bersifat publik dan terlihat permanen',
+            'Kami tidak menjual atau membagikan informasi pribadi kepada pihak ketiga',
+            'Anda mengontrol data Anda dan dapat meminta penghapusan jika berlaku',
+            'Cookie digunakan untuk fungsionalitas esensial dan analitik',
+            'Kami menerapkan langkah keamanan untuk melindungi data yang dikumpulkan',
+          ],
+        },
+        cookies: {
+          title: 'Kebijakan Cookie',
+          summary: 'Kami menggunakan cookie untuk meningkatkan pengalaman pengguna dan menganalisis penggunaan platform.',
+          points: [
+            'Cookie esensial diperlukan untuk fungsionalitas platform',
+            'Cookie analitik untuk memahami perilaku pengguna dan meningkatkan layanan',
+            'Cookie preferensi untuk mengingat pengaturan Anda (mis., bahasa)',
+            'Anda dapat menonaktifkan cookie non-esensial di pengaturan browser',
+            'Menonaktifkan cookie dapat membatasi fitur platform tertentu',
+          ],
+        },
+        support: {
+          title: 'Kontak & Dukungan',
+          summary: 'Untuk pertanyaan, masalah, atau dukungan, hubungi kami hanya melalui saluran resmi.',
+          points: [
+            'Telegram Resmi: @tpcglobalcommunity',
+            'Selalu verifikasi saluran resmi sebelum berbagi informasi',
+            'Waspada terhadap penipu dan akun palsu',
+            'Kami tidak akan pernah meminta private key atau password Anda',
+            'Waktu respons dapat bervariasi berdasarkan volume pertanyaan',
+          ],
+        },
       },
-      jurisdiction: {
-        title: 'Yurisdiksi',
-        content: 'Ketentuan ini diatur sesuai dengan prinsip hukum yang berlaku secara internasional. Setiap pengguna bertanggung jawab penuh untuk memastikan kepatuhan terhadap hukum dan regulasi lokal yang berlaku di wilayah masing-masing.',
-      },
-      contact: {
-        title: 'Kontak',
-        content: 'Untuk pertanyaan, dukungan, atau informasi lebih lanjut, silakan hubungi kami melalui Telegram resmi: @tpcglobalcommunity',
+      cta: {
+        title: 'Pelajari Lebih Lanjut Tentang TPC',
+        subtitle: 'Jelajahi dokumentasi dan bergabung dengan komunitas',
+        docs: 'Baca Dokumentasi',
+        transparency: 'Lihat Transparansi',
+        community: 'Bergabung dengan Komunitas',
       },
     },
     footer: {
