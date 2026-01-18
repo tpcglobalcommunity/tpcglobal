@@ -144,18 +144,38 @@ function updateMetaTags(html, lang, page) {
     `<meta name="twitter:url" content="${canonicalUrl}" />`
   );
 
-  // Replace or inject canonical link
-  if (html.includes('<link rel="canonical"')) {
-    html = html.replace(
-      /<link rel="canonical" href=".*?" \/>/,
-      `<link rel="canonical" href="${canonicalUrl}" />`
-    );
-  } else {
-    html = html.replace(
-      '</head>',
-      `  <link rel="canonical" href="${canonicalUrl}" />\n  </head>`
-    );
-  }
+  // Remove any existing canonical and hreflang links to avoid duplicates
+  html = html.replace(/<link rel="canonical"[^>]*\/>/g, '');
+  html = html.replace(/<link rel="alternate"[^>]*hreflang[^>]*\/>/g, '');
+
+  // Remove any existing og:locale tags
+  html = html.replace(/<meta property="og:locale"[^>]*\/>/g, '');
+  html = html.replace(/<meta property="og:locale:alternate"[^>]*\/>/g, '');
+
+  // Build canonical and hreflang tags
+  const enUrl = `https://tpcglobal.io/en/${page}`;
+  const idUrl = `https://tpcglobal.io/id/${page}`;
+
+  const seoLinks = [
+    `<link rel="canonical" href="${canonicalUrl}" />`,
+    `<link rel="alternate" href="${enUrl}" hreflang="en" />`,
+    `<link rel="alternate" href="${idUrl}" hreflang="id" />`,
+    `<link rel="alternate" href="${enUrl}" hreflang="x-default" />`
+  ].join('\n    ');
+
+  // Build og:locale tags
+  const ogLocale = lang === 'en' ? 'en_US' : 'id_ID';
+  const ogLocaleAlternate = lang === 'en' ? 'id_ID' : 'en_US';
+  const localeTags = [
+    `<meta property="og:locale" content="${ogLocale}" />`,
+    `<meta property="og:locale:alternate" content="${ogLocaleAlternate}" />`
+  ].join('\n    ');
+
+  // Inject canonical/hreflang and locale tags before </head>
+  html = html.replace(
+    '</head>',
+    `  ${seoLinks}\n    ${localeTags}\n  </head>`
+  );
 
   return html;
 }
