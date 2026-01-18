@@ -4,44 +4,25 @@ import { Language, useTranslations, getLangPath } from '../../i18n';
 import { PremiumShell, PremiumCard, PremiumButton } from '../../components/ui';
 import MemberGuard from '../../components/guards/MemberGuard';
 import RoleGuard from '../../components/guards/RoleGuard';
-import { listAnnouncements, upsertAnnouncement, deleteAnnouncement, Announcement, AnnouncementCategory } from '../../lib/supabase';
+import { listAnnouncementsAdmin, upsertAnnouncement, deleteAnnouncement, Announcement } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface AnnouncementsAdminListPageProps {
   lang: Language;
 }
 
-const CATEGORIES: (AnnouncementCategory | null)[] = [null, 'general', 'update', 'policy', 'security', 'release'];
-
 const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) => {
   const t = useTranslations(lang);
-  const { isSuperAdmin } = useAuth();
+  const { profile } = useAuth();
 
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<AnnouncementCategory | null>(null);
-  const [showDrafts, setShowDrafts] = useState(false);
-  const [showPinnedOnly, setShowPinnedOnly] = useState(false);
+  const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
 
   const loadAnnouncements = async () => {
     try {
       setLoading(true);
-      let data = await listAnnouncements({
-        includeDrafts: true,
-        category: selectedCategory,
-        limit: 100,
-        offset: 0,
-        pinnedFirst: true,
-      });
-
-      if (showDrafts) {
-        data = data.filter(a => !a.is_published);
-      }
-
-      if (showPinnedOnly) {
-        data = data.filter(a => a.is_pinned);
-      }
-
+      const data = await listAnnouncementsAdmin({ filter });
       setAnnouncements(data);
     } catch (err) {
       console.error('Error loading announcements:', err);
@@ -52,7 +33,7 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
 
   useEffect(() => {
     loadAnnouncements();
-  }, [selectedCategory, showDrafts, showPinnedOnly]);
+  }, [filter]);
 
   const handleTogglePublish = async (announcement: Announcement) => {
     try {
@@ -81,12 +62,15 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
   };
 
   const handleDelete = async (announcement: Announcement) => {
-    if (!isSuperAdmin()) {
-      alert('Only super admins can delete announcements');
+    const canDelete = profile?.role === 'admin' || profile?.role === 'super_admin';
+
+    if (!canDelete) {
+      alert('Only admins can delete announcements');
       return;
     }
 
-    if (!confirm(t.admin.announcements.confirmDeleteTitle + '\n\n' + announcement.title)) {
+    const confirmMsg = `${t.admin.announcements.confirmDelete}\n\n${lang === 'id' ? announcement.title_id : announcement.title_en}`;
+    if (!confirm(confirmMsg)) {
       return;
     }
 
@@ -99,24 +83,22 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
     }
   };
 
-  const getCategoryLabel = (category: AnnouncementCategory | null): string => {
-    if (category === null) return 'All';
-    switch (category) {
-      case 'general': return 'General';
-      case 'update': return 'Update';
-      case 'policy': return 'Policy';
-      case 'security': return 'Security';
-      case 'release': return 'Release';
-      default: return category;
-    }
+  const getTitle = (announcement: Announcement): string => {
+    return lang === 'id' ? announcement.title_id : announcement.title_en;
   };
+
+  const getBody = (announcement: Announcement): string => {
+    return lang === 'id' ? announcement.body_id : announcement.body_en;
+  };
+
+  const canDelete = profile?.role === 'admin' || profile?.role === 'super_admin';
 
   return (
     <MemberGuard lang={lang}>
       <RoleGuard allow={['moderator', 'admin', 'super_admin']}>
         <PremiumShell>
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
               <div>
                 <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center gap-3">
                   <Megaphone className="w-8 h-8 text-[#F0B90B]" />
@@ -134,49 +116,41 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
               </PremiumButton>
             </div>
 
-            <div className="mb-6 space-y-4">
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <Filter className="w-4 h-4 text-white/60" />
-                  <span className="text-sm font-medium text-white/80">Filter by category</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {CATEGORIES.map((cat) => (
-                    <button
-                      key={cat || 'all'}
-                      onClick={() => setSelectedCategory(cat)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                        selectedCategory === cat
-                          ? 'bg-[#F0B90B] text-black'
-                          : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/10'
-                      }`}
-                    >
-                      {getCategoryLabel(cat)}
-                    </button>
-                  ))}
-                </div>
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Filter className="w-4 h-4 text-white/60" />
+                <span className="text-sm font-medium text-white/80">Filter by status</span>
               </div>
-
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={() => setShowDrafts(!showDrafts)}
+                  onClick={() => setFilter('all')}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    showDrafts
+                    filter === 'all'
                       ? 'bg-[#F0B90B] text-black'
                       : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/10'
                   }`}
                 >
-                  {t.admin.announcements.draft} Only
+                  {t.admin.announcements.filterAll}
                 </button>
                 <button
-                  onClick={() => setShowPinnedOnly(!showPinnedOnly)}
+                  onClick={() => setFilter('published')}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    showPinnedOnly
+                    filter === 'published'
                       ? 'bg-[#F0B90B] text-black'
                       : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/10'
                   }`}
                 >
-                  Pinned Only
+                  {t.admin.announcements.filterPublished}
+                </button>
+                <button
+                  onClick={() => setFilter('draft')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    filter === 'draft'
+                      ? 'bg-[#F0B90B] text-black'
+                      : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/10'
+                  }`}
+                >
+                  {t.admin.announcements.filterDraft}
                 </button>
               </div>
             </div>
@@ -211,8 +185,8 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
                     className={announcement.is_pinned ? 'border-l-4 border-[#F0B90B]' : ''}
                   >
                     <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2 flex-wrap">
                           <span className={`inline-block px-2 py-1 text-xs font-medium rounded ${
                             announcement.is_pinned
                               ? 'bg-[#F0B90B]/20 text-[#F0B90B]'
@@ -236,25 +210,25 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
                             </span>
                           )}
                         </div>
-                        <h3 className="text-lg font-semibold text-white mb-2">
-                          {announcement.title}
+                        <h3 className="text-lg font-semibold text-white mb-2 break-words">
+                          {getTitle(announcement)}
                         </h3>
-                        <p className="text-white/60 text-sm line-clamp-2">
-                          {announcement.body}
+                        <p className="text-white/60 text-sm line-clamp-2 break-words">
+                          {getBody(announcement)}
                         </p>
                       </div>
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-2 flex-shrink-0">
                         <button
                           onClick={() => window.location.href = getLangPath(lang, `/admin/announcements/${announcement.id}/edit`)}
                           className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
-                          title={t.admin.announcements.edit}
+                          title={t.admin.announcements.actionsEdit}
                         >
                           <Edit className="w-4 h-4 text-white/70" />
                         </button>
                         <button
                           onClick={() => handleTogglePublish(announcement)}
                           className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
-                          title={announcement.is_published ? t.admin.announcements.unpublish : t.admin.announcements.publish}
+                          title={announcement.is_published ? t.admin.announcements.actionsUnpublish : t.admin.announcements.actionsPublish}
                         >
                           {announcement.is_published ? (
                             <EyeOff className="w-4 h-4 text-white/70" />
@@ -265,7 +239,7 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
                         <button
                           onClick={() => handleTogglePin(announcement)}
                           className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
-                          title={announcement.is_pinned ? t.admin.announcements.unpin : t.admin.announcements.pin}
+                          title={announcement.is_pinned ? t.admin.announcements.actionsUnpin : t.admin.announcements.actionsPin}
                         >
                           {announcement.is_pinned ? (
                             <PinOff className="w-4 h-4 text-white/70" />
@@ -273,11 +247,11 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
                             <Pin className="w-4 h-4 text-white/70" />
                           )}
                         </button>
-                        {isSuperAdmin() && (
+                        {canDelete && (
                           <button
                             onClick={() => handleDelete(announcement)}
                             className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors"
-                            title={t.admin.announcements.delete}
+                            title={t.admin.announcements.actionsDelete}
                           >
                             <Trash2 className="w-4 h-4 text-red-400" />
                           </button>

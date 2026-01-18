@@ -1,43 +1,39 @@
 import { useState, useEffect } from 'react';
-import { Megaphone, Filter } from 'lucide-react';
+import { Megaphone, Search, Calendar } from 'lucide-react';
 import { Language, useTranslations } from '../../i18n';
 import { PremiumShell, PremiumCard, PremiumButton } from '../../components/ui';
 import MemberGuard from '../../components/guards/MemberGuard';
-import { listAnnouncements, Announcement, AnnouncementCategory } from '../../lib/supabase';
+import { getPublishedAnnouncements, Announcement } from '../../lib/supabase';
 
 interface AnnouncementsPageProps {
   lang: Language;
 }
-
-const CATEGORIES: (AnnouncementCategory | null)[] = [null, 'general', 'update', 'policy', 'security', 'release'];
 
 const AnnouncementsPage = ({ lang }: AnnouncementsPageProps) => {
   const t = useTranslations(lang);
 
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<AnnouncementCategory | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [offset, setOffset] = useState(0);
-  const LIMIT = 20;
+  const PAGE_SIZE = 20;
 
   const loadAnnouncements = async (reset = false) => {
     try {
       if (reset) {
         setLoading(true);
-        setOffset(0);
+        setPage(1);
       } else {
         setLoadingMore(true);
       }
 
-      const currentOffset = reset ? 0 : offset;
-      const data = await listAnnouncements({
-        includeDrafts: false,
-        category: selectedCategory,
-        limit: LIMIT,
-        offset: currentOffset,
-        pinnedFirst: true,
+      const currentPage = reset ? 1 : page;
+      const data = await getPublishedAnnouncements({
+        page: currentPage,
+        pageSize: PAGE_SIZE,
+        query: searchQuery,
       });
 
       if (reset) {
@@ -46,8 +42,10 @@ const AnnouncementsPage = ({ lang }: AnnouncementsPageProps) => {
         setAnnouncements(prev => [...prev, ...data]);
       }
 
-      setHasMore(data.length === LIMIT);
-      setOffset(currentOffset + data.length);
+      setHasMore(data.length === PAGE_SIZE);
+      if (!reset) {
+        setPage(currentPage + 1);
+      }
     } catch (err) {
       console.error('Error loading announcements:', err);
     } finally {
@@ -57,12 +55,12 @@ const AnnouncementsPage = ({ lang }: AnnouncementsPageProps) => {
   };
 
   useEffect(() => {
-    loadAnnouncements(true);
-  }, [selectedCategory]);
+    const debounceTimer = setTimeout(() => {
+      loadAnnouncements(true);
+    }, 300);
 
-  const handleCategoryChange = (category: AnnouncementCategory | null) => {
-    setSelectedCategory(category);
-  };
+    return () => clearTimeout(debounceTimer);
+  }, [searchQuery]);
 
   const handleLoadMore = () => {
     if (!loadingMore && hasMore) {
@@ -70,16 +68,12 @@ const AnnouncementsPage = ({ lang }: AnnouncementsPageProps) => {
     }
   };
 
-  const getCategoryLabel = (category: AnnouncementCategory | null): string => {
-    if (category === null) return t.member.announcements.filterAll;
-    switch (category) {
-      case 'general': return t.member.announcements.filterGeneral;
-      case 'update': return t.member.announcements.filterUpdate;
-      case 'policy': return t.member.announcements.filterPolicy;
-      case 'security': return t.member.announcements.filterSecurity;
-      case 'release': return t.member.announcements.filterRelease;
-      default: return category;
-    }
+  const getTitle = (announcement: Announcement): string => {
+    return lang === 'id' ? announcement.title_id : announcement.title_en;
+  };
+
+  const getBody = (announcement: Announcement): string => {
+    return lang === 'id' ? announcement.body_id : announcement.body_en;
   };
 
   return (
@@ -92,29 +86,20 @@ const AnnouncementsPage = ({ lang }: AnnouncementsPageProps) => {
               {t.member.announcements.title}
             </h1>
             <p className="text-white/70 text-lg">
-              {t.member.announcements.subtitle || 'Stay updated with the latest news and important updates from TPC Global.'}
+              {t.member.announcements.subtitle}
             </p>
           </div>
 
           <div className="mb-6">
-            <div className="flex items-center gap-2 mb-3">
-              <Filter className="w-4 h-4 text-white/60" />
-              <span className="text-sm font-medium text-white/80">Filter by category</span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat || 'all'}
-                  onClick={() => handleCategoryChange(cat)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    selectedCategory === cat
-                      ? 'bg-[#F0B90B] text-black'
-                      : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/10'
-                  }`}
-                >
-                  {getCategoryLabel(cat)}
-                </button>
-              ))}
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t.member.announcements.searchPlaceholder}
+                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-[#F0B90B]/50 focus:bg-white/[0.07] transition-all"
+              />
             </div>
           </div>
 
@@ -144,7 +129,7 @@ const AnnouncementsPage = ({ lang }: AnnouncementsPageProps) => {
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-3">
+                        <div className="flex items-center gap-2 mb-3 flex-wrap">
                           <span className={`inline-block px-2 py-1 text-xs font-medium rounded ${
                             announcement.is_pinned
                               ? 'bg-[#F0B90B]/20 text-[#F0B90B]'
@@ -154,20 +139,25 @@ const AnnouncementsPage = ({ lang }: AnnouncementsPageProps) => {
                           </span>
                           {announcement.is_pinned && (
                             <span className="inline-block px-2 py-1 text-xs font-medium bg-[#F0B90B] text-black rounded">
-                              PINNED
+                              {t.member.announcements.pinned}
                             </span>
                           )}
                           {announcement.published_at && (
-                            <span className="text-xs text-white/50">
-                              {new Date(announcement.published_at).toLocaleDateString()}
+                            <span className="text-xs text-white/50 flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              {new Date(announcement.published_at).toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                              })}
                             </span>
                           )}
                         </div>
                         <h3 className="text-xl font-semibold text-white mb-3">
-                          {announcement.title}
+                          {getTitle(announcement)}
                         </h3>
                         <p className="text-white/70 leading-relaxed whitespace-pre-wrap">
-                          {announcement.body}
+                          {getBody(announcement)}
                         </p>
                       </div>
                     </div>
@@ -182,7 +172,7 @@ const AnnouncementsPage = ({ lang }: AnnouncementsPageProps) => {
                     disabled={loadingMore}
                     variant="secondary"
                   >
-                    {loadingMore ? 'Loading...' : t.member.announcements.loadMore || 'Load More'}
+                    {loadingMore ? 'Loading...' : t.member.announcements.loadMore}
                   </PremiumButton>
                 </div>
               )}

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Tag, Copy, CheckCircle, Users, LogOut, AlertCircle, Megaphone, BookOpen, MessageCircle, Shield, User, FileText, Newspaper, ExternalLink, Check } from 'lucide-react';
 import { Language, useTranslations, getLangPath } from '../../i18n';
 import { PremiumShell, PremiumCard, NoticeBox, PremiumButton } from '../../components/ui';
-import { supabase, getProfile, Profile, listAnnouncements, Announcement, getOnboardingState, upsertOnboardingState, ensureOnboardingRow, OnboardingState } from '../../lib/supabase';
+import { supabase, getProfile, Profile, getPublishedAnnouncements, Announcement, getOnboardingState, upsertOnboardingState, ensureOnboardingRow, OnboardingState } from '../../lib/supabase';
 
 interface DashboardProps {
   lang: Language;
@@ -43,19 +43,14 @@ const Dashboard = ({ lang }: DashboardProps) => {
         const onboardingData = await getOnboardingState();
         setOnboarding(onboardingData);
 
-        const pinned = await listAnnouncements({
-          includeDrafts: false,
-          limit: 3,
-          pinnedFirst: true
+        const announcements = await getPublishedAnnouncements({
+          page: 1,
+          pageSize: 10,
+          query: ''
         });
-        setPinnedAnnouncements(pinned.filter(a => a.is_pinned));
 
-        const latest = await listAnnouncements({
-          includeDrafts: false,
-          limit: 5,
-          pinnedFirst: false
-        });
-        setLatestAnnouncements(latest.filter(a => !a.is_pinned));
+        setPinnedAnnouncements(announcements.filter(a => a.is_pinned).slice(0, 3));
+        setLatestAnnouncements(announcements.filter(a => !a.is_pinned).slice(0, 5));
 
       } catch (err) {
         console.error('Error initializing dashboard:', err);
@@ -130,6 +125,14 @@ const Dashboard = ({ lang }: DashboardProps) => {
     } finally {
       setUpdatingOnboarding(false);
     }
+  };
+
+  const getAnnouncementTitle = (announcement: Announcement): string => {
+    return lang === 'id' ? announcement.title_id : announcement.title_en;
+  };
+
+  const getAnnouncementBody = (announcement: Announcement): string => {
+    return lang === 'id' ? announcement.body_id : announcement.body_en;
   };
 
   if (loading) {
@@ -357,10 +360,10 @@ const Dashboard = ({ lang }: DashboardProps) => {
                         </span>
                       </div>
                       <h3 className="text-lg font-semibold text-white mb-2">
-                        {announcement.title}
+                        {getAnnouncementTitle(announcement)}
                       </h3>
                       <p className="text-white/60 text-sm line-clamp-2">
-                        {announcement.body}
+                        {getAnnouncementBody(announcement)}
                       </p>
                     </div>
                   </div>
@@ -391,10 +394,10 @@ const Dashboard = ({ lang }: DashboardProps) => {
                         )}
                       </div>
                       <h3 className="text-lg font-semibold text-white mb-2">
-                        {announcement.title}
+                        {getAnnouncementTitle(announcement)}
                       </h3>
                       <p className="text-white/60 text-sm line-clamp-2">
-                        {announcement.body}
+                        {getAnnouncementBody(announcement)}
                       </p>
                     </div>
                   </div>

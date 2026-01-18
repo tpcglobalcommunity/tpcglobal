@@ -22,11 +22,13 @@ const AnnouncementEditorPage = ({ lang, announcementId }: AnnouncementEditorPage
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    title: '',
-    body: '',
+    title_en: '',
+    title_id: '',
+    body_en: '',
+    body_id: '',
     category: 'general' as AnnouncementCategory,
     is_pinned: false,
-    is_published: true,
+    is_published: false,
   });
 
   useEffect(() => {
@@ -48,15 +50,17 @@ const AnnouncementEditorPage = ({ lang, announcementId }: AnnouncementEditorPage
       }
 
       setFormData({
-        title: data.title,
-        body: data.body,
+        title_en: data.title_en,
+        title_id: data.title_id,
+        body_en: data.body_en,
+        body_id: data.body_id,
         category: data.category,
         is_pinned: data.is_pinned,
         is_published: data.is_published,
       });
     } catch (err) {
       console.error('Error loading announcement:', err);
-      setError(t.admin.announcementEditor.error);
+      setError('Failed to load announcement');
     } finally {
       setLoading(false);
     }
@@ -65,13 +69,23 @@ const AnnouncementEditorPage = ({ lang, announcementId }: AnnouncementEditorPage
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.title.trim()) {
-      alert('Title is required');
+    if (!formData.title_en.trim() || !formData.title_id.trim()) {
+      alert('Both English and Indonesian titles are required');
       return;
     }
 
-    if (!formData.body.trim()) {
-      alert('Body is required');
+    if (!formData.body_en.trim() || !formData.body_id.trim()) {
+      alert('Both English and Indonesian body content are required');
+      return;
+    }
+
+    if (formData.title_en.length < 5 || formData.title_id.length < 5) {
+      alert('Titles must be at least 5 characters long');
+      return;
+    }
+
+    if (formData.body_en.length < 10 || formData.body_id.length < 10) {
+      alert('Body content must be at least 10 characters long');
       return;
     }
 
@@ -81,8 +95,10 @@ const AnnouncementEditorPage = ({ lang, announcementId }: AnnouncementEditorPage
 
       await upsertAnnouncement({
         ...(announcementId && { id: announcementId }),
-        title: formData.title.trim(),
-        body: formData.body.trim(),
+        title_en: formData.title_en.trim(),
+        title_id: formData.title_id.trim(),
+        body_en: formData.body_en.trim(),
+        body_id: formData.body_id.trim(),
         category: formData.category,
         is_pinned: formData.is_pinned,
         is_published: formData.is_published,
@@ -91,7 +107,7 @@ const AnnouncementEditorPage = ({ lang, announcementId }: AnnouncementEditorPage
       window.location.href = getLangPath(lang, '/admin/announcements');
     } catch (err) {
       console.error('Error saving announcement:', err);
-      setError(t.admin.announcementEditor.error);
+      setError('Failed to save announcement');
     } finally {
       setSaving(false);
     }
@@ -152,44 +168,78 @@ const AnnouncementEditorPage = ({ lang, announcementId }: AnnouncementEditorPage
               </button>
               <div>
                 <h1 className="text-3xl md:text-4xl font-bold text-white">
-                  {isEdit ? t.admin.announcementEditor.editTitle : t.admin.announcementEditor.newTitle}
+                  {isEdit ? t.editor.announcements.titleEdit : t.editor.announcements.titleNew}
                 </h1>
               </div>
             </div>
 
             <PremiumCard>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-white/80 mb-2">
-                    {t.admin.announcementEditor.titleLabel}
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/50 focus:border-transparent transition-all"
-                    placeholder="Enter announcement title"
-                    required
-                  />
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-white/80 mb-2">
+                      {t.editor.announcements.fieldTitleEn}
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.title_en}
+                      onChange={(e) => setFormData({ ...formData, title_en: e.target.value })}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/50 focus:border-transparent transition-all"
+                      placeholder="Enter title in English"
+                      required
+                      minLength={5}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-white/80 mb-2">
+                      {t.editor.announcements.fieldTitleId}
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.title_id}
+                      onChange={(e) => setFormData({ ...formData, title_id: e.target.value })}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/50 focus:border-transparent transition-all"
+                      placeholder="Masukkan judul dalam bahasa Indonesia"
+                      required
+                      minLength={5}
+                    />
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-white/80 mb-2">
-                    {t.admin.announcementEditor.bodyLabel}
+                    {t.editor.announcements.fieldBodyEn}
                   </label>
                   <textarea
-                    value={formData.body}
-                    onChange={(e) => setFormData({ ...formData, body: e.target.value })}
-                    rows={10}
+                    value={formData.body_en}
+                    onChange={(e) => setFormData({ ...formData, body_en: e.target.value })}
+                    rows={8}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/50 focus:border-transparent transition-all resize-y"
-                    placeholder="Enter announcement content"
+                    placeholder="Enter announcement content in English"
                     required
+                    minLength={10}
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-white/80 mb-2">
-                    {t.admin.announcementEditor.categoryLabel}
+                    {t.editor.announcements.fieldBodyId}
+                  </label>
+                  <textarea
+                    value={formData.body_id}
+                    onChange={(e) => setFormData({ ...formData, body_id: e.target.value })}
+                    rows={8}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/50 focus:border-transparent transition-all resize-y"
+                    placeholder="Masukkan konten pengumuman dalam bahasa Indonesia"
+                    required
+                    minLength={10}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white/80 mb-2">
+                    {t.editor.announcements.fieldCategory}
                   </label>
                   <select
                     value={formData.category}
@@ -212,7 +262,7 @@ const AnnouncementEditorPage = ({ lang, announcementId }: AnnouncementEditorPage
                       onChange={(e) => setFormData({ ...formData, is_pinned: e.target.checked })}
                       className="w-5 h-5 rounded border-white/20 bg-white/5 text-[#F0B90B] focus:ring-2 focus:ring-[#F0B90B]/50"
                     />
-                    <span className="text-white/80">{t.admin.announcementEditor.pinnedLabel}</span>
+                    <span className="text-white/80">{t.editor.announcements.fieldPinned}</span>
                   </label>
 
                   <label className="flex items-center gap-3 cursor-pointer">
@@ -222,7 +272,7 @@ const AnnouncementEditorPage = ({ lang, announcementId }: AnnouncementEditorPage
                       onChange={(e) => setFormData({ ...formData, is_published: e.target.checked })}
                       className="w-5 h-5 rounded border-white/20 bg-white/5 text-[#F0B90B] focus:ring-2 focus:ring-[#F0B90B]/50"
                     />
-                    <span className="text-white/80">{t.admin.announcementEditor.publishedLabel}</span>
+                    <span className="text-white/80">{t.editor.announcements.fieldPublished}</span>
                   </label>
                 </div>
 
@@ -238,7 +288,7 @@ const AnnouncementEditorPage = ({ lang, announcementId }: AnnouncementEditorPage
                     disabled={saving}
                   >
                     <Save className="w-5 h-5" />
-                    {saving ? t.admin.announcementEditor.saving : t.admin.announcementEditor.save}
+                    {saving ? t.editor.announcements.saving : t.editor.announcements.save}
                   </PremiumButton>
                   <PremiumButton
                     type="button"

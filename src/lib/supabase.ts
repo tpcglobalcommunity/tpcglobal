@@ -58,13 +58,16 @@ export type AnnouncementCategory = 'general' | 'update' | 'policy' | 'security' 
 
 export interface Announcement {
   id: string;
-  title: string;
-  body: string;
+  title_en: string;
+  title_id: string;
+  body_en: string;
+  body_id: string;
   category: AnnouncementCategory;
   is_pinned: boolean;
   is_published: boolean;
   published_at: string | null;
   created_by: string | null;
+  updated_by: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -344,43 +347,69 @@ export const deleteNewsPost = async (id: string): Promise<boolean> => {
   return true;
 };
 
-export const listAnnouncements = async ({
-  includeDrafts = false,
-  category = null,
-  limit = 20,
-  offset = 0,
-  pinnedFirst = true,
+export const getPublishedAnnouncements = async ({
+  page = 1,
+  pageSize = 20,
+  query: searchQuery = '',
 }: {
-  includeDrafts?: boolean;
-  category?: AnnouncementCategory | null;
-  limit?: number;
-  offset?: number;
-  pinnedFirst?: boolean;
+  page?: number;
+  pageSize?: number;
+  query?: string;
 }): Promise<Announcement[]> => {
+  const offset = (page - 1) * pageSize;
+
   let query = supabase
     .from('announcements')
-    .select('*');
+    .select('*')
+    .eq('is_published', true);
 
-  if (!includeDrafts) {
-    query = query.eq('is_published', true);
-  }
-
-  if (category) {
-    query = query.eq('category', category);
-  }
-
-  if (pinnedFirst) {
-    query = query.order('is_pinned', { ascending: false });
+  if (searchQuery.trim()) {
+    query = query.or(`title_en.ilike.%${searchQuery}%,title_id.ilike.%${searchQuery}%`);
   }
 
   query = query
+    .order('is_pinned', { ascending: false })
     .order('published_at', { ascending: false, nullsFirst: false })
-    .range(offset, offset + limit - 1);
+    .range(offset, offset + pageSize - 1);
 
   const { data, error } = await query;
 
   if (error) {
     console.error('Error fetching announcements:', error);
+    return [];
+  }
+
+  return data || [];
+};
+
+export const listAnnouncementsAdmin = async ({
+  filter = 'all',
+  limit = 50,
+  offset = 0,
+}: {
+  filter?: 'all' | 'published' | 'draft';
+  limit?: number;
+  offset?: number;
+}): Promise<Announcement[]> => {
+  let query = supabase
+    .from('announcements')
+    .select('*');
+
+  if (filter === 'published') {
+    query = query.eq('is_published', true);
+  } else if (filter === 'draft') {
+    query = query.eq('is_published', false);
+  }
+
+  query = query
+    .order('is_pinned', { ascending: false })
+    .order('updated_at', { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('Error fetching announcements (admin):', error);
     return [];
   }
 
@@ -405,9 +434,21 @@ export const getAnnouncement = async (id: string): Promise<Announcement | null> 
 export const upsertAnnouncement = async (
   announcement: Partial<Announcement> & { id?: string }
 ): Promise<Announcement | null> => {
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error('User not authenticated');
+  }
+
+  const payload = {
+    ...announcement,
+    updated_by: user.id,
+    created_by: announcement.id ? announcement.created_by : user.id,
+  };
+
   const { data, error } = await supabase
     .from('announcements')
-    .upsert([announcement])
+    .upsert([payload])
     .select()
     .single();
 
