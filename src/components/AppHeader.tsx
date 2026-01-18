@@ -160,22 +160,27 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
         <>
           {/* Overlay (fully blocks background) */}
           <div
-            className="fixed inset-0 bg-black/85 z-[999] animate-[fadeIn_0.18s_ease-out]"
+            className="fixed inset-0 bg-black/90 z-[999] animate-[fadeIn_0.18s_ease-out]"
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          {/* Bottom Sheet Panel (never cut off) */}
+          {/* Bottom Sheet Panel (never cut off: uses top+bottom instead of max-h) */}
           <div
-            className="md:hidden fixed left-1/2 -translate-x-1/2 bottom-3 w-[92vw] max-w-[420px]
-                       max-h-[calc(100dvh-24px)] bg-[#0B0E11] z-[1000]
+            className="md:hidden fixed left-1/2 -translate-x-1/2 top-3 bottom-3 w-[92vw] max-w-[420px]
+                       bg-[#0B0E11] z-[1000]
                        rounded-3xl border border-white/12 shadow-2xl shadow-black/70 overflow-hidden
                        animate-[scaleIn_0.22s_ease-out] isolate"
             role="dialog"
             aria-modal="true"
           >
-            {/* Subtle premium highlight line */}
+            {/* Premium highlight line */}
             <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#F0B90B]/45 to-transparent" />
+            {/* Glow blob */}
             <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[520px] bg-[#F0B90B]/10 rounded-full blur-[120px] opacity-60 pointer-events-none" />
+            {/* Top handle */}
+            <div className="absolute left-1/2 top-2 -translate-x-1/2 w-12 h-1 rounded-full bg-white/10" />
+            {/* Inner stroke */}
+            <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/10" />
 
             {/* Header */}
             <div className="relative flex items-center justify-between px-5 py-4 border-b border-white/10">
@@ -199,9 +204,10 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
               </button>
             </div>
 
-            {/* Body */}
-            <div className="relative flex flex-col max-h-[calc(100dvh-140px)]">
-              <nav className="px-4 pt-4 pb-3 space-y-[8px] overflow-y-auto">
+            {/* Body + Sticky CTA */}
+            <div className="relative flex flex-col h-full">
+              {/* Scroll area */}
+              <nav className="px-4 pt-4 pb-3 space-y-[8px] overflow-y-auto flex-1">
                 {navItems.map((item) => {
                   const isActive = currentPath === item.path;
                   return (
@@ -232,9 +238,9 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                 })}
               </nav>
 
-              {/* Footer CTA (sticky, safe-area) */}
+              {/* Sticky footer CTA (always visible) */}
               <div
-                className="px-4 pt-3 pb-4 border-t border-white/10 bg-gradient-to-t from-black/60 via-black/30 to-transparent"
+                className="sticky bottom-0 px-4 pt-3 pb-4 border-t border-white/10 bg-[#0B0E11]/95 backdrop-blur-xl"
                 style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 14px)' }}
               >
                 <a
@@ -243,8 +249,9 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                   rel="noopener noreferrer"
                   className="block text-center bg-gradient-to-r from-[#F0B90B] to-[#F8D568]
                              text-black font-bold rounded-2xl px-5 py-4 text-[15px]
+                             border border-black/10
                              transition-all duration-200 active:scale-[0.98]
-                             shadow-xl shadow-[#F0B90B]/20"
+                             shadow-xl shadow-[#F0B90B]/20 hover:shadow-2xl hover:shadow-[#F0B90B]/25"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Join Community
