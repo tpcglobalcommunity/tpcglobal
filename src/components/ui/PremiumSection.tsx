@@ -11,6 +11,7 @@ interface PremiumSectionProps {
   variant?: 'default' | 'compact' | 'dense' | 'tight';
   padTop?: 'none' | 'sm' | 'md' | 'lg';
   padBottom?: 'none' | 'sm' | 'md' | 'lg';
+  isLast?: boolean;
 }
 
 export const PremiumSection = ({
@@ -23,6 +24,7 @@ export const PremiumSection = ({
   variant = 'default',
   padTop,
   padBottom,
+  isLast = false,
 }: PremiumSectionProps) => {
   const spacingClass = variant === 'compact'
     ? layout.spacing.section.yCompact
@@ -38,7 +40,9 @@ export const PremiumSection = ({
     : padTop === 'lg' ? 'pt-14 md:pt-16'
     : '';
 
-  const padBottomClass = padBottom === 'none' ? 'pb-0'
+  const padBottomClass = isLast
+    ? 'pb-8 md:pb-10'
+    : padBottom === 'none' ? 'pb-0'
     : padBottom === 'sm' ? 'pb-6 md:pb-8'
     : padBottom === 'md' ? 'pb-10 md:pb-12'
     : padBottom === 'lg' ? 'pb-14 md:pb-16'

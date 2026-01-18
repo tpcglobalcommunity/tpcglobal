@@ -15,7 +15,7 @@ const CommunityFund = ({ lang }: CommunityFundProps) => {
         title={t.fund.title}
         centered
         variant="tight"
-        padBottom="sm"
+        isLast
       >
         <div className="max-w-4xl mx-auto">
           <p className="text-white/75 text-sm max-w-[70ch] mx-auto leading-relaxed text-center mb-10">

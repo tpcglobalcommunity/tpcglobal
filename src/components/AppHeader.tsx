@@ -25,13 +25,16 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = 'hidden';
+      document.body.setAttribute('data-menu-open', 'true');
       window.dispatchEvent(new CustomEvent('mobile-menu-state', { detail: { open: true } }));
     } else {
       document.body.style.overflow = '';
+      document.body.removeAttribute('data-menu-open');
       window.dispatchEvent(new CustomEvent('mobile-menu-state', { detail: { open: false } }));
     }
     return () => {
       document.body.style.overflow = '';
+      document.body.removeAttribute('data-menu-open');
     };
   }, [mobileMenuOpen]);
 

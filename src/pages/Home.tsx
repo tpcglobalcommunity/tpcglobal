@@ -124,7 +124,7 @@ const Home = ({ lang }: HomeProps) => {
         </div>
       </PremiumSection>
 
-      <PremiumSection variant="tight" padBottom="sm">
+      <PremiumSection variant="tight" isLast>
         <PremiumCard className="text-center" hover={false}>
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3 md:mb-4">
             {t.cta.title}

@@ -38,7 +38,7 @@ const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-black/80 border-t border-white/10 z-50 h-[72px] transition-opacity duration-200"
+      className="bottom-nav md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-black/80 border-t border-white/10 z-50 h-[72px] transition-all duration-200"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="flex justify-around items-center px-2 h-full">
