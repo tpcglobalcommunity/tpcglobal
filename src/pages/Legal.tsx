@@ -22,8 +22,14 @@ const Legal = ({ lang }: LegalProps) => {
   return (
     <PremiumShell>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
-        <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-10 mb-12">
+        <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-10 mb-8">
           <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#F0B90B]/10 to-[#F0B90B]/5 border border-[#F0B90B]/20 mb-6">
+              <Shield className="w-4 h-4 text-[#F0B90B]" />
+              <span className="text-sm font-medium text-[#F0B90B]">
+                {t.legal.header.pill}
+              </span>
+            </div>
             <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
               {t.legal.header.title}
             </h1>
@@ -39,6 +45,8 @@ const Legal = ({ lang }: LegalProps) => {
             {t.legal.header.noticeBody}
           </NoticeBox>
         </div>
+
+        <div className="h-px bg-gradient-to-r from-transparent via-[#F0B90B]/30 to-transparent mb-12" />
 
         <div className="mb-12">
           <h2 className="text-xl font-semibold text-white mb-6 text-center">

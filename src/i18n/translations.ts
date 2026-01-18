@@ -182,6 +182,7 @@ export const translations = {
     },
     legal: {
       header: {
+        pill: 'Trust & Safety Hub',
         title: 'Legal & Compliance',
         subtitle: 'Comprehensive terms, policies, and regulatory information',
         noticeTitle: 'Educational Community Only',
@@ -473,6 +474,7 @@ export const translations = {
     },
     legal: {
       header: {
+        pill: 'Pusat Kepercayaan & Keamanan',
         title: 'Legal & Kepatuhan',
         subtitle: 'Ketentuan, kebijakan, dan informasi regulasi yang komprehensif',
         noticeTitle: 'Komunitas Edukasi Saja',
