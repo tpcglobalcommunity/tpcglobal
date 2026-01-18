@@ -24,7 +24,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.2)_0%,transparent_100%)] pointer-events-none"></div>
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 pt-10 md:pt-12 pb-8 md:pb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 pt-8 md:pt-10 pb-6 md:pb-8">
           <div className="relative opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]">
             <div className="absolute -top-12 -left-12 w-48 h-48 bg-gradient-radial from-[#F0B90B]/15 via-transparent to-transparent blur-[100px] opacity-20"></div>
 
@@ -40,8 +40,8 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
           </div>
 
           <div className="opacity-0 animate-[fadeInUp_0.6s_ease-out_0.1s_forwards]">
-            <div className="mb-4">
-              <h3 className="text-[11px] uppercase tracking-[0.25em] font-semibold text-white/70 mb-2.5">{t.footer.quickLinks}</h3>
+            <div className="mb-3">
+              <h3 className="text-[11px] uppercase tracking-[0.25em] font-semibold text-white/70 mb-2">{t.footer.quickLinks}</h3>
               <div className="w-10 h-[2px] bg-gradient-to-r from-[#F0B90B] to-transparent opacity-90 blur-[1px]"></div>
             </div>
             <ul className="space-y-2">
@@ -76,8 +76,8 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
           </div>
 
           <div className="opacity-0 animate-[fadeInUp_0.6s_ease-out_0.2s_forwards]">
-            <div className="mb-4">
-              <h3 className="text-[11px] uppercase tracking-[0.25em] font-semibold text-white/70 mb-2.5">{t.footer.links.community}</h3>
+            <div className="mb-3">
+              <h3 className="text-[11px] uppercase tracking-[0.25em] font-semibold text-white/70 mb-2">{t.footer.links.community}</h3>
               <div className="w-10 h-[2px] bg-gradient-to-r from-[#F0B90B] to-transparent opacity-90 blur-[1px]"></div>
             </div>
             <ul className="space-y-2">
@@ -96,7 +96,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
           </div>
         </div>
 
-        <div className="relative mt-6 pt-6 border-t border-white/10">
+        <div className="relative mt-5 pt-5 border-t border-white/10">
           <div className="absolute left-1/2 -translate-x-1/2 -top-px w-[180px] h-[1px] bg-[#F0B90B]/50 blur-[2px]"></div>
           <div className="absolute left-1/2 -translate-x-1/2 -top-px w-[180px] h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent"></div>
           <div className="absolute left-1/2 -translate-x-1/2 -top-px w-[80px] h-[1px] bg-[#F0B90B]/80 animate-[shimmer_3s_ease-in-out_infinite]"></div>

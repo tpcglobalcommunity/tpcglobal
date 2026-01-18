@@ -55,9 +55,10 @@ const Home = ({ lang }: HomeProps) => {
         title={t.about.title}
         subtitle={t.about.content}
         centered
+        variant="compact"
       />
 
-      <PremiumSection>
+      <PremiumSection variant="compact">
         <PremiumCard className="text-center" hover={false}>
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3 md:mb-4">
             {t.mission.title}
@@ -68,8 +69,8 @@ const Home = ({ lang }: HomeProps) => {
         </PremiumCard>
       </PremiumSection>
 
-      <PremiumSection title={t.principles.title} centered>
-        <div className="flex flex-wrap justify-center gap-2 mb-6 md:mb-8">
+      <PremiumSection title={t.principles.title} centered variant="compact">
+        <div className="flex flex-wrap justify-center gap-2 mb-5 md:mb-6">
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-xl bg-white/5 border border-white/10 text-sm font-medium text-white">
             <Eye className="w-3.5 h-3.5 text-[#F0B90B]" />
             {t.principles.items.transparency}
@@ -123,7 +124,7 @@ const Home = ({ lang }: HomeProps) => {
         </div>
       </PremiumSection>
 
-      <PremiumSection variant="tight">
+      <PremiumSection variant="tight" className="pb-0">
         <PremiumCard className="text-center" hover={false}>
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3 md:mb-4">
             {t.cta.title}
@@ -141,6 +142,11 @@ const Home = ({ lang }: HomeProps) => {
           </PremiumButton>
         </PremiumCard>
       </PremiumSection>
+
+      <div className="relative h-px mx-auto max-w-6xl px-4 sm:px-6 mt-8 md:mt-10">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#F0B90B]/20 to-transparent blur-md"></div>
+      </div>
     </PremiumShell>
   );
 };

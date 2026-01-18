@@ -8,7 +8,7 @@ interface PremiumSectionProps {
   eyebrow?: string;
   className?: string;
   centered?: boolean;
-  variant?: 'default' | 'dense' | 'tight';
+  variant?: 'default' | 'compact' | 'dense' | 'tight';
 }
 
 export const PremiumSection = ({
@@ -20,13 +20,15 @@ export const PremiumSection = ({
   centered = false,
   variant = 'default',
 }: PremiumSectionProps) => {
-  const spacingClass = variant === 'dense'
+  const spacingClass = variant === 'compact'
+    ? layout.spacing.section.yCompact
+    : variant === 'dense'
     ? layout.spacing.section.yDense
     : variant === 'tight'
     ? layout.spacing.section.yTight
     : layout.spacing.section.y;
 
-  const headerMargin = variant === 'tight' ? 'mb-4 md:mb-6' : 'mb-6 md:mb-8';
+  const headerMargin = variant === 'tight' ? 'mb-4 md:mb-5' : 'mb-5 md:mb-6';
 
   return (
     <section className={`${spacingClass} px-4 sm:px-6 ${className}`}>

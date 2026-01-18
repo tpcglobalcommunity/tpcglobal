@@ -66,9 +66,10 @@ export const layout = {
   },
   spacing: {
     section: {
-      y: 'py-10 md:py-14',
-      yDense: 'py-8 md:py-10',
-      yTight: 'pt-10 pb-6 md:pt-12 md:pb-8',
+      y: 'py-12 md:py-16',
+      yCompact: 'py-10 md:py-14',
+      yDense: 'py-8 md:py-12',
+      yTight: 'py-6 md:py-8',
     },
     sectionGap: {
       default: 'gap-6 md:gap-8',
