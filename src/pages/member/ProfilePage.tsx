@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { User, Save, CheckCircle, AlertCircle, Upload, Loader2, Check, X, Shield, Tag, Users } from 'lucide-react';
+import { User, Save, CheckCircle, AlertCircle, Upload, Loader2, Check, X, Shield, Tag, Users, Globe } from 'lucide-react';
 import { Language, useTranslations } from '../../i18n';
 import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from '../../components/ui';
 import MemberGuard from '../../components/guards/MemberGuard';
-import { supabase, getProfile, Profile, updateProfileSafe, uploadAvatar, checkUsernameAvailable } from '../../lib/supabase';
+import { supabase, getProfile, Profile, updateProfileSafe, uploadAvatar, checkUsernameAvailable, updateDirectorySettings } from '../../lib/supabase';
 
 interface ProfilePageProps {
   lang: Language;
@@ -25,6 +25,14 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
     username: '',
     avatar_url: '',
   });
+
+  const [directorySettings, setDirectorySettings] = useState({
+    show_in_directory: false,
+    bio: '',
+    country: '',
+  });
+  const [savingDirectory, setSavingDirectory] = useState(false);
+  const [directorySuccess, setDirectorySuccess] = useState(false);
 
   const [usernameStatus, setUsernameStatus] = useState<'checking' | 'available' | 'taken' | 'invalid' | null>(null);
   const [usernameCheckTimeout, setUsernameCheckTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -95,6 +103,11 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
         full_name: profileData.full_name || '',
         username: profileData.username || '',
         avatar_url: profileData.avatar_url || '',
+      });
+      setDirectorySettings({
+        show_in_directory: (profileData as any).show_in_directory || false,
+        bio: (profileData as any).bio || '',
+        country: (profileData as any).country || '',
       });
     } catch (err) {
       console.error('Error loading profile:', err);
@@ -419,6 +432,114 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
                   </div>
                 </div>
               )}
+            </div>
+          </PremiumCard>
+
+          <PremiumCard>
+            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <Globe className="w-5 h-5 text-[#F0B90B]" />
+              {t.member.profile.directory.title}
+            </h2>
+
+            {directorySuccess && (
+              <NoticeBox variant="success" className="mb-6">
+                {t.member.profile.directory.saved}
+              </NoticeBox>
+            )}
+
+            <div className="space-y-6">
+              <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                <p className="text-sm text-blue-300">
+                  {t.member.profile.directory.privacyNote}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-lg">
+                <div className="flex-1">
+                  <p className="font-medium text-white mb-1">{t.member.profile.directory.toggle}</p>
+                  <p className="text-sm text-white/60">Allow other members to see your profile</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setDirectorySettings({ ...directorySettings, show_in_directory: !directorySettings.show_in_directory })}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    directorySettings.show_in_directory ? 'bg-[#F0B90B]' : 'bg-white/20'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      directorySettings.show_in_directory ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white/80 mb-2">
+                  {t.member.profile.directory.bio}
+                  <span className="text-white/40 font-normal ml-2">
+                    ({directorySettings.bio.length}/160 {t.member.profile.directory.charLeft})
+                  </span>
+                </label>
+                <textarea
+                  value={directorySettings.bio}
+                  onChange={(e) => {
+                    if (e.target.value.length <= 160) {
+                      setDirectorySettings({ ...directorySettings, bio: e.target.value });
+                    }
+                  }}
+                  rows={3}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/50 focus:border-transparent transition-all resize-none"
+                  placeholder="Tell us a bit about yourself..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white/80 mb-2">
+                  {t.member.profile.directory.country}
+                  <span className="text-white/40 font-normal ml-2">(Optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={directorySettings.country}
+                  onChange={(e) => {
+                    if (e.target.value.length <= 60) {
+                      setDirectorySettings({ ...directorySettings, country: e.target.value });
+                    }
+                  }}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/50 focus:border-transparent transition-all"
+                  placeholder="e.g., Indonesia, United States"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <PremiumButton
+                  onClick={async () => {
+                    try {
+                      setSavingDirectory(true);
+                      setError(null);
+
+                      const result = await updateDirectorySettings(directorySettings);
+
+                      if (result) {
+                        setDirectorySuccess(true);
+                        setTimeout(() => setDirectorySuccess(false), 3000);
+                      } else {
+                        setError('Failed to update directory settings');
+                      }
+                    } catch (err) {
+                      console.error('Error updating directory settings:', err);
+                      setError(t.member.profile.genericError);
+                    } finally {
+                      setSavingDirectory(false);
+                    }
+                  }}
+                  disabled={savingDirectory}
+                >
+                  <Save className="w-5 h-5" />
+                  {savingDirectory ? t.member.profile.saving : t.member.profile.directory.save}
+                </PremiumButton>
+              </div>
             </div>
           </PremiumCard>
         </div>

@@ -25,7 +25,9 @@ import SecurityPage from './pages/member/SecurityPage';
 import ProfilePage from './pages/member/ProfilePage';
 import AnnouncementsPage from './pages/member/AnnouncementsPage';
 import ReferralsPage from './pages/member/ReferralsPage';
+import DirectoryPage from './pages/member/DirectoryPage';
 import VerifyPage from './pages/VerifyPage';
+import PublicProfilePage from './pages/PublicProfilePage';
 import NewsPage from './pages/NewsPage';
 import NewsDetailPage from './pages/NewsDetailPage';
 import NewsEditorPage from './pages/admin/NewsEditorPage';
@@ -103,6 +105,11 @@ function App() {
       return <AnnouncementEditorPage lang={lang} announcementId={announcementId} />;
     }
 
+    if (pathWithoutLang.startsWith('/u/')) {
+      const username = pathWithoutLang.replace('/u/', '');
+      return <PublicProfilePage lang={lang} username={username} />;
+    }
+
     switch (pathWithoutLang) {
       case '/home':
         return <Home lang={lang} />;
@@ -146,6 +153,8 @@ function App() {
         return <AnnouncementsPage lang={lang} />;
       case '/member/referrals':
         return <ReferralsPage lang={lang} />;
+      case '/member/directory':
+        return <DirectoryPage lang={lang} />;
       case '/verify':
         return <VerifyPage lang={lang} />;
       case '/news':

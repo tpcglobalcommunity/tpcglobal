@@ -368,6 +368,95 @@ export const getReferralLeaderboard = async (limit: number = 10): Promise<Leader
   }
 };
 
+export interface DirectoryMemberItem {
+  username: string;
+  full_name: string;
+  avatar_url: string | null;
+  role: string;
+  is_verified: boolean;
+  created_at: string;
+  bio: string | null;
+  country: string | null;
+  total_count?: number;
+}
+
+export interface DirectoryResult {
+  members: DirectoryMemberItem[];
+  total: number;
+}
+
+export const updateDirectorySettings = async (settings: {
+  show_in_directory: boolean;
+  bio?: string;
+  country?: string;
+}): Promise<{ show_in_directory: boolean; bio: string | null; country: string | null } | null> => {
+  try {
+    const { data, error } = await supabase.rpc('update_directory_settings', {
+      p_show: settings.show_in_directory,
+      p_bio: settings.bio || null,
+      p_country: settings.country || null,
+    });
+
+    if (error) {
+      console.error('Error updating directory settings:', error);
+      return null;
+    }
+
+    return data;
+  } catch (err) {
+    console.error('Error in updateDirectorySettings:', err);
+    return null;
+  }
+};
+
+export const getMemberDirectory = async (params: {
+  query?: string;
+  page?: number;
+  pageSize?: number;
+}): Promise<DirectoryResult> => {
+  const { query = '', page = 1, pageSize = 24 } = params;
+  const offset = (page - 1) * pageSize;
+
+  try {
+    const { data, error } = await supabase.rpc('get_member_directory', {
+      p_query: query || null,
+      p_limit: pageSize,
+      p_offset: offset,
+    });
+
+    if (error) {
+      console.error('Error fetching member directory:', error);
+      return { members: [], total: 0 };
+    }
+
+    const members = (data || []) as DirectoryMemberItem[];
+    const total = members.length > 0 ? members[0].total_count || 0 : 0;
+
+    return { members, total };
+  } catch (err) {
+    console.error('Error in getMemberDirectory:', err);
+    return { members: [], total: 0 };
+  }
+};
+
+export const getPublicProfileByUsername = async (username: string): Promise<DirectoryMemberItem | null> => {
+  try {
+    const { data, error } = await supabase.rpc('get_public_profile_by_username', {
+      p_username: username,
+    });
+
+    if (error) {
+      console.error('Error fetching public profile:', error);
+      return null;
+    }
+
+    return data as DirectoryMemberItem | null;
+  } catch (err) {
+    console.error('Error in getPublicProfileByUsername:', err);
+    return null;
+  }
+};
+
 export const verifyMember = async (identifier: string): Promise<MemberVerification | null> => {
   const { data, error } = await supabase.rpc('verify_member', {
     identifier: identifier.trim(),
