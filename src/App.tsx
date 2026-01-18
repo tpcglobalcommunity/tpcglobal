@@ -12,7 +12,7 @@ import Legal from './pages/Legal';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
-  const lang = getLanguageFromPath();
+  const lang = getLanguageFromPath(currentPath);
 
   useEffect(() => {
     const handleLocationChange = () => {

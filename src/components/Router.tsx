@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getLanguageFromPath, Language } from '../i18n';
 
-interface RouteProps {
-  component: React.ComponentType<{ lang: Language }>;
-}
-
 const Router = () => {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const lang = getLanguageFromPath();
@@ -15,7 +11,11 @@ const Router = () => {
     };
 
     window.addEventListener('popstate', handleLocationChange);
-    return () => window.removeEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
   }, []);
 
   useEffect(() => {

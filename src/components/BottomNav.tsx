@@ -2,7 +2,6 @@ import { Home, FileText, Users, Eye, DollarSign, Scale } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Language, useTranslations, getLangPath } from '../i18n';
 import { Link } from './Router';
-import { colors, transitions } from '../lib/designTokens';
 
 interface BottomNavProps {
   lang: Language;

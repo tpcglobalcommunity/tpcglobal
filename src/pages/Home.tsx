@@ -56,7 +56,9 @@ const Home = ({ lang }: HomeProps) => {
         subtitle={t.about.content}
         centered
         variant="compact"
-      />
+      >
+        <></>
+      </PremiumSection>
 
       <PremiumSection variant="compact">
         <PremiumCard className="text-center" hover={false}>

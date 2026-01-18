@@ -1,4 +1,4 @@
-import { CheckCircle, ArrowRight, AlertCircle } from 'lucide-react';
+import { CheckCircle, ArrowRight } from 'lucide-react';
 import { Language, useTranslations } from '../i18n';
 import { PremiumShell, PremiumSection, PremiumCard, NoticeBox } from '../components/ui';
 
@@ -8,6 +8,20 @@ interface DAOLiteProps {
 
 const DAOLite = ({ lang }: DAOLiteProps) => {
   const t = useTranslations(lang);
+
+  const steps = [
+    { num: 1, text: t.dao.step1 },
+    { num: 2, text: t.dao.step2 },
+    { num: 3, text: t.dao.step3 },
+    { num: 4, text: t.dao.step4 },
+  ];
+
+  const rules = [
+    t.dao.rule1,
+    t.dao.rule2,
+    t.dao.rule3,
+    t.dao.rule4,
+  ];
 
   return (
     <PremiumShell>
@@ -32,15 +46,15 @@ const DAOLite = ({ lang }: DAOLiteProps) => {
             {t.dao.howToParticipate}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((step) => (
-              <PremiumCard key={step} className="relative">
+            {steps.map((step) => (
+              <PremiumCard key={step.num} className="relative">
                 <div className="w-10 h-10 mb-4 bg-gradient-to-br from-[#F0B90B] to-[#C29409] rounded-lg flex items-center justify-center text-black font-bold text-lg">
-                  {step}
+                  {step.num}
                 </div>
                 <h3 className="text-base font-semibold text-white">
-                  {t.dao[`step${step}`]}
+                  {step.text}
                 </h3>
-                {step < 4 && (
+                {step.num < 4 && (
                   <ArrowRight className="hidden md:block absolute -right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#F0B90B]/40" />
                 )}
               </PremiumCard>
@@ -56,20 +70,17 @@ const DAOLite = ({ lang }: DAOLiteProps) => {
             </h2>
           </div>
           <div className="space-y-3">
-            {[1, 2, 3, 4].map((num) => (
-              <p key={num} className="flex items-start text-white/75 text-sm leading-relaxed">
+            {rules.map((rule, index) => (
+              <p key={index} className="flex items-start text-white/75 text-sm leading-relaxed">
                 <span className="text-[#F0B90B] mr-3 text-lg">•</span>
-                <span>{t.dao[`rule${num}`]}</span>
+                <span>{rule}</span>
               </p>
             ))}
           </div>
         </PremiumCard>
 
         <div className="pb-0">
-          <NoticeBox
-            variant="info"
-            icon={<AlertCircle />}
-          >
+          <NoticeBox variant="info">
             {t.dao.notice}
           </NoticeBox>
         </div>
