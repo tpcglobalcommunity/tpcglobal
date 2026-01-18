@@ -211,6 +211,124 @@ function generateStaticPages() {
   console.log(`\n✨ Generated ${generatedCount} static pages with per-page OG meta tags`);
 }
 
+function generateRootLanguagePages() {
+  console.log('\n🌐 Generating root language index pages with redirects...');
+
+  // Read base index.html
+  const baseHtml = fs.readFileSync(indexPath, 'utf-8');
+
+  for (const lang of languages) {
+    const targetPath = `/${lang}/home`;
+    const targetUrl = `https://tpcglobal.io${targetPath}`;
+    const data = pageData[lang].home;
+
+    let html = baseHtml;
+
+    // Replace title
+    html = html.replace(/<title>.*?<\/title>/, `<title>${data.title}</title>`);
+
+    // Replace meta description
+    html = html.replace(
+      /<meta name="description" content=".*?" \/>/,
+      `<meta name="description" content="${data.description}" />`
+    );
+
+    // Replace OG tags
+    html = html.replace(
+      /<meta property="og:title" content=".*?" \/>/,
+      `<meta property="og:title" content="${data.title}" />`
+    );
+    html = html.replace(
+      /<meta property="og:description" content=".*?" \/>/,
+      `<meta property="og:description" content="${data.description}" />`
+    );
+    html = html.replace(
+      /<meta property="og:image" content=".*?" \/>/,
+      `<meta property="og:image" content="${data.ogImage}" />`
+    );
+
+    // Replace or inject OG URL
+    if (html.includes('<meta property="og:url"')) {
+      html = html.replace(
+        /<meta property="og:url" content=".*?" \/>/,
+        `<meta property="og:url" content="${targetUrl}" />`
+      );
+    } else {
+      html = html.replace(
+        '</head>',
+        `  <meta property="og:url" content="${targetUrl}" />\n  </head>`
+      );
+    }
+
+    // Replace Twitter tags
+    html = html.replace(
+      /<meta name="twitter:title" content=".*?" \/>/,
+      `<meta name="twitter:title" content="${data.title}" />`
+    );
+    html = html.replace(
+      /<meta name="twitter:description" content=".*?" \/>/,
+      `<meta name="twitter:description" content="${data.description}" />`
+    );
+    html = html.replace(
+      /<meta name="twitter:image" content=".*?" \/>/,
+      `<meta name="twitter:image" content="${data.ogImage}" />`
+    );
+    html = html.replace(
+      /<meta name="twitter:url" content=".*?" \/>/,
+      `<meta name="twitter:url" content="${targetUrl}" />`
+    );
+
+    // Remove any existing canonical, hreflang, and locale tags
+    html = html.replace(/<link rel="canonical"[^>]*\/>/g, '');
+    html = html.replace(/<link rel="alternate"[^>]*hreflang[^>]*\/>/g, '');
+    html = html.replace(/<meta property="og:locale"[^>]*\/>/g, '');
+    html = html.replace(/<meta property="og:locale:alternate"[^>]*\/>/g, '');
+    html = html.replace(/<meta http-equiv="refresh"[^>]*>/g, '');
+
+    // Build SEO tags pointing to home
+    const enHomeUrl = 'https://tpcglobal.io/en/home';
+    const idHomeUrl = 'https://tpcglobal.io/id/home';
+
+    const seoLinks = [
+      `<meta http-equiv="refresh" content="0;url=${targetPath}">`,
+      `<link rel="canonical" href="${targetUrl}" />`,
+      `<link rel="alternate" href="${enHomeUrl}" hreflang="en" />`,
+      `<link rel="alternate" href="${idHomeUrl}" hreflang="id" />`,
+      `<link rel="alternate" href="${enHomeUrl}" hreflang="x-default" />`
+    ].join('\n    ');
+
+    const ogLocale = lang === 'en' ? 'en_US' : 'id_ID';
+    const ogLocaleAlternate = lang === 'en' ? 'id_ID' : 'en_US';
+    const localeTags = [
+      `<meta property="og:locale" content="${ogLocale}" />`,
+      `<meta property="og:locale:alternate" content="${ogLocaleAlternate}" />`
+    ].join('\n    ');
+
+    // Inject all tags before </head>
+    html = html.replace(
+      '</head>',
+      `  ${seoLinks}\n    ${localeTags}\n  </head>`
+    );
+
+    // Inject redirect script after <div id="root">
+    html = html.replace(
+      /<div id="root"><\/div>/,
+      `<div id="root"></div>\n    <script>location.replace('${targetPath}');</script>`
+    );
+
+    // Write file
+    const outputDir = path.join(distDir, lang);
+    const outputPath = path.join(outputDir, 'index.html');
+
+    fs.mkdirSync(outputDir, { recursive: true });
+    fs.writeFileSync(outputPath, html, 'utf-8');
+
+    console.log(`  ✓ /${lang}/index.html → redirects to ${targetPath}`);
+  }
+
+  console.log('✨ Root language pages generated with instant redirects');
+}
+
 function updateSitemapBuildDate() {
   console.log('\n📍 Updating sitemap.xml with build date...');
 
@@ -232,6 +350,7 @@ function updateSitemapBuildDate() {
 
 try {
   generateStaticPages();
+  generateRootLanguagePages();
   updateSitemapBuildDate();
 } catch (error) {
   console.error('❌ Error generating static pages:', error);
