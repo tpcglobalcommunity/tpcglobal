@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { Language, useTranslations, setLanguage, getLangPath } from '../i18n';
 import { Link } from './Router';
 import TPMonogram from './brand/TPMonogram';
+import { HeaderAuthActions } from './auth/HeaderAuthActions';
 
 interface AppHeaderProps {
   lang: Language;
@@ -111,6 +112,10 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
           </nav>
 
           <div className="flex items-center gap-3 ml-auto shrink-0">
+            <div className="hidden md:block">
+              <HeaderAuthActions lang={lang} />
+            </div>
+
             <div className="flex items-center rounded-full bg-white/12 backdrop-blur-lg border border-white/15 p-[3px] shrink-0 transition-all duration-200 hover:border-[#F0B90B]/40 hover:-translate-y-[0.5px]">
               <button
                 onClick={() => handleLanguageChange('en')}
@@ -135,15 +140,6 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                 ID
               </button>
             </div>
-
-            <a
-              href="https://t.me/tpcglobalcommunity"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden lg:flex items-center bg-gradient-to-r from-[#F0B90B] to-[#F8D568] text-black font-semibold rounded-full px-4 py-1.5 text-[12px] transition-all duration-200 hover:scale-[1.03] hover:shadow-xl hover:shadow-[#F0B90B]/25 active:scale-[0.98] shrink-0"
-            >
-              Join Community
-            </a>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -271,6 +267,10 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                     className="px-3 pt-1.5 pb-1.5 border-t border-white/10 bg-[#0B0E11]/92 backdrop-blur-xl shrink-0"
                     style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 14px)' }}
                   >
+                    <div className="mb-2">
+                      <HeaderAuthActions lang={lang} />
+                    </div>
+
                     <a
                       href="https://t.me/tpcglobalcommunity"
                       target="_blank"

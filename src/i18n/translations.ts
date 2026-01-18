@@ -1088,6 +1088,7 @@ export const translations = {
         backHome: 'Back to Home',
         backToSignIn: 'Back to Sign In',
       },
+      signout: 'Sign Out',
       signup: {
         title: 'Create Account',
         subtitle: 'Join the TPC community',
@@ -2533,6 +2534,7 @@ export const translations = {
         backHome: 'Kembali ke Beranda',
         backToSignIn: 'Kembali ke Masuk',
       },
+      signout: 'Keluar',
       signup: {
         title: 'Buat Akun',
         subtitle: 'Bergabung dengan komunitas TPC',
