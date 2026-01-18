@@ -9,6 +9,8 @@ interface PremiumButtonProps {
   className?: string;
   target?: string;
   rel?: string;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
 }
 
 export const PremiumButton = ({
@@ -19,6 +21,8 @@ export const PremiumButton = ({
   className = '',
   target,
   rel,
+  type = 'button',
+  disabled = false,
 }: PremiumButtonProps) => {
   const baseClasses = `
     inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl
@@ -38,7 +42,8 @@ export const PremiumButton = ({
     focus:ring-white/50
   `;
 
-  const classes = `${baseClasses} ${variant === 'primary' ? primaryClasses : secondaryClasses} ${className}`;
+  const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : '';
+  const classes = `${baseClasses} ${variant === 'primary' ? primaryClasses : secondaryClasses} ${disabledClasses} ${className}`;
 
   const motionProps = {
     whileHover: { scale: 1.02 },
@@ -62,7 +67,9 @@ export const PremiumButton = ({
 
   return (
     <motion.button
+      type={type}
       onClick={onClick}
+      disabled={disabled}
       className={classes}
       {...motionProps}
     >

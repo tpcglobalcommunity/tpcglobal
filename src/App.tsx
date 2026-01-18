@@ -15,6 +15,9 @@ import Support from './pages/Support';
 import Whitepaper from './pages/Whitepaper';
 import Roadmap from './pages/Roadmap';
 import Faq from './pages/Faq';
+import SignUp from './pages/auth/SignUp';
+import SignIn from './pages/auth/SignIn';
+import Dashboard from './pages/member/Dashboard';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -67,6 +70,12 @@ function App() {
         return <Security lang={lang} />;
       case '/support':
         return <Support lang={lang} />;
+      case '/signup':
+        return <SignUp lang={lang} />;
+      case '/signin':
+        return <SignIn lang={lang} />;
+      case '/member/dashboard':
+        return <Dashboard lang={lang} />;
       default:
         return <Home lang={lang} />;
     }
