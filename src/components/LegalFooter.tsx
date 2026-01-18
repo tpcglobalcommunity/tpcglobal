@@ -15,14 +15,14 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
 
   return (
     <footer
-      className="relative bg-black/60 border-t border-white/10 mt-0 backdrop-blur-2xl overflow-hidden max-h-[260px] md:max-h-[220px]"
+      className="relative bg-black/60 border-t border-white/10 mt-0 backdrop-blur-2xl overflow-hidden"
     >
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#F0B90B]/30 to-transparent"></div>
 
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(240,185,11,0.08),transparent_40%)]"></div>
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.2)_0%,transparent_100%)] pointer-events-none"></div>
 
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pb-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3 pt-3 md:pt-4 pb-2 md:pb-3">
           <div className="relative opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]">
             <div className="absolute -top-12 -left-12 w-48 h-48 bg-gradient-radial from-[#F0B90B]/15 via-transparent to-transparent blur-[100px] opacity-20"></div>
@@ -115,8 +115,6 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
             <p className="text-[9px] text-white/45 tracking-wide">{t.footer.madeWith}</p>
           </div>
         </div>
-
-        <div className="h-16 md:h-0" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}></div>
       </div>
     </footer>
   );

@@ -87,6 +87,14 @@ export const layout = {
     bottom: 'pb-24 md:pb-0',
     contentBottom: 'pb-[calc(96px+env(safe-area-inset-bottom))] md:pb-0',
   },
+  bottomNav: {
+    height: 72,
+    safeExtra: 14,
+    footerSpacer: 16,
+    get padding() {
+      return `calc(${this.height}px + env(safe-area-inset-bottom) + ${this.safeExtra}px)`;
+    },
+  },
 } as const;
 
 export const typography = {

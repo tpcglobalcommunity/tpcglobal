@@ -22,10 +22,10 @@ const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-black/80 border-t border-white/10 z-40"
-      style={{ paddingBottom: 'max(8px, env(safe-area-inset-bottom))' }}
+      className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl bg-black/80 border-t border-white/10 z-50 h-[72px]"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
-      <div className="flex justify-around items-center px-2 py-2">
+      <div className="flex justify-around items-center px-2 h-full">
         {navItems.slice(0, 4).map((item) => {
           const Icon = item.icon;
           const isActive = currentPath === item.path;
