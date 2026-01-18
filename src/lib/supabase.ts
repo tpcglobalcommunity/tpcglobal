@@ -246,6 +246,53 @@ export const uploadAvatar = async (file: File): Promise<string> => {
   return publicUrl;
 };
 
+export const signOutLocal = async (): Promise<void> => {
+  const { error } = await supabase.auth.signOut({ scope: 'local' });
+  if (error) {
+    console.error('Error signing out:', error);
+    throw error;
+  }
+};
+
+export const signOutAllDevices = async (): Promise<void> => {
+  const { error } = await supabase.auth.signOut({ scope: 'global' });
+  if (error) {
+    console.error('Error signing out all devices:', error);
+    throw error;
+  }
+};
+
+export const logAuthEvent = async (eventType: string, userAgent?: string): Promise<void> => {
+  try {
+    await supabase.rpc('log_member_auth_event', {
+      p_event_type: eventType,
+      p_user_agent: userAgent || navigator.userAgent || null,
+    });
+  } catch (err) {
+    console.warn('Failed to log auth event (non-blocking):', err);
+  }
+};
+
+export interface MemberAuthEvent {
+  id: string;
+  event_type: string;
+  user_agent: string | null;
+  created_at: string;
+}
+
+export const getMemberAuthEvents = async (limit: number = 10): Promise<MemberAuthEvent[]> => {
+  const { data, error } = await supabase.rpc('get_member_auth_events', {
+    p_limit: limit,
+  });
+
+  if (error) {
+    console.error('Error fetching auth events:', error);
+    return [];
+  }
+
+  return (data || []) as MemberAuthEvent[];
+};
+
 export const getReferrals = async (userId: string): Promise<Referral[]> => {
   const { data, error } = await supabase
     .from('referrals')
