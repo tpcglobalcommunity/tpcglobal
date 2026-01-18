@@ -66,15 +66,25 @@ export const layout = {
   },
   spacing: {
     section: {
-      y: 'py-8 md:py-12',
-      yLarge: 'py-12 md:py-16',
+      y: 'py-10 md:py-14',
+      yDense: 'py-8 md:py-10',
+      yTight: 'pt-10 pb-6 md:pt-12 md:pb-8',
+    },
+    sectionGap: {
+      default: 'gap-6 md:gap-8',
+      tight: 'gap-4 md:gap-6',
     },
     container: 'max-w-6xl mx-auto px-4 sm:px-6',
     containerWide: 'max-w-7xl mx-auto px-4 sm:px-6',
   },
+  footer: {
+    topPadding: 'pt-10 md:pt-12',
+    bottomPadding: 'pb-24 md:pb-12',
+    sectionGap: 'gap-6 md:gap-8',
+  },
   safeArea: {
-    bottom: 'pb-32 md:pb-36',
-    bottomWithFooter: 'pb-8 mb-8',
+    bottom: 'pb-24 md:pb-0',
+    contentBottom: 'pb-[calc(96px+env(safe-area-inset-bottom))] md:pb-0',
   },
 } as const;
 
