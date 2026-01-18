@@ -19,6 +19,9 @@ import SignUp from './pages/auth/SignUp';
 import SignIn from './pages/auth/SignIn';
 import Dashboard from './pages/member/Dashboard';
 import VerifyPage from './pages/VerifyPage';
+import NewsPage from './pages/NewsPage';
+import NewsDetailPage from './pages/NewsDetailPage';
+import NewsEditorPage from './pages/admin/NewsEditorPage';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -45,6 +48,20 @@ function App() {
 
   const renderPage = () => {
     const pathWithoutLang = currentPath.replace(/^\/(en|id)/, '');
+
+    if (pathWithoutLang.startsWith('/news/')) {
+      const slug = pathWithoutLang.replace('/news/', '');
+      return <NewsDetailPage slug={slug} />;
+    }
+
+    if (pathWithoutLang === '/admin/news/new') {
+      return <NewsEditorPage />;
+    }
+
+    if (pathWithoutLang.startsWith('/admin/news/') && pathWithoutLang.endsWith('/edit')) {
+      const postId = pathWithoutLang.replace('/admin/news/', '').replace('/edit', '');
+      return <NewsEditorPage postId={postId} />;
+    }
 
     switch (pathWithoutLang) {
       case '/home':
@@ -79,6 +96,8 @@ function App() {
         return <Dashboard lang={lang} />;
       case '/verify':
         return <VerifyPage lang={lang} />;
+      case '/news':
+        return <NewsPage />;
       default:
         return <Home lang={lang} />;
     }

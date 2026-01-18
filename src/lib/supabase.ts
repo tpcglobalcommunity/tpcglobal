@@ -52,6 +52,63 @@ export interface AdminAction {
   created_at: string;
 }
 
+export type NewsCategory = 'education' | 'update' | 'release' | 'policy' | 'transparency';
+
+export interface NewsPost {
+  id: string;
+  slug: string;
+  category: NewsCategory;
+  title_en: string;
+  excerpt_en: string;
+  content_en: string;
+  title_id: string;
+  excerpt_id: string;
+  content_id: string;
+  cover_url: string | null;
+  is_pinned: boolean;
+  is_published: boolean;
+  published_at: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface NewsPostListItem {
+  id: string;
+  slug: string;
+  category: NewsCategory;
+  title_en: string;
+  excerpt_en: string;
+  title_id: string;
+  excerpt_id: string;
+  cover_url: string | null;
+  is_pinned: boolean;
+  published_at: string | null;
+  created_by: string | null;
+  author_name: string | null;
+  created_at: string;
+}
+
+export interface NewsPostDetail {
+  id: string;
+  slug: string;
+  category: NewsCategory;
+  title_en: string;
+  excerpt_en: string;
+  content_en: string;
+  title_id: string;
+  excerpt_id: string;
+  content_id: string;
+  cover_url: string | null;
+  is_pinned: boolean;
+  is_published: boolean;
+  published_at: string | null;
+  created_by: string | null;
+  author_name: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export const validateReferralCode = async (code: string): Promise<boolean> => {
   const { data, error } = await supabase
     .from('profiles')
@@ -165,4 +222,96 @@ export const getAdminActions = async (limit: number = 50): Promise<AdminAction[]
   }
 
   return data || [];
+};
+
+export const getNewsPosts = async (
+  limit: number = 10,
+  offset: number = 0,
+  category: NewsCategory | null = null,
+  pinnedFirst: boolean = true
+): Promise<NewsPostListItem[]> => {
+  const { data, error } = await supabase.rpc('get_news_posts', {
+    p_limit: limit,
+    p_offset: offset,
+    p_category: category,
+    p_pinned_first: pinnedFirst,
+  });
+
+  if (error) {
+    console.error('Error fetching news posts:', error);
+    return [];
+  }
+
+  return data || [];
+};
+
+export const getNewsPostBySlug = async (slug: string): Promise<NewsPostDetail | null> => {
+  const { data, error } = await supabase.rpc('get_news_post_by_slug', {
+    p_slug: slug,
+  });
+
+  if (error) {
+    console.error('Error fetching news post:', error);
+    return null;
+  }
+
+  return data && data.length > 0 ? data[0] : null;
+};
+
+export const adminGetNewsPost = async (identifier: string): Promise<NewsPostDetail | null> => {
+  const { data, error } = await supabase.rpc('admin_get_news_post', {
+    p_identifier: identifier,
+  });
+
+  if (error) {
+    console.error('Error fetching news post (admin):', error);
+    throw error;
+  }
+
+  return data && data.length > 0 ? data[0] : null;
+};
+
+export const createNewsPost = async (post: Omit<NewsPost, 'id' | 'created_at' | 'updated_at'>): Promise<NewsPost | null> => {
+  const { data, error } = await supabase
+    .from('news_posts')
+    .insert([post])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating news post:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+export const updateNewsPost = async (id: string, updates: Partial<NewsPost>): Promise<NewsPost | null> => {
+  const { data, error } = await supabase
+    .from('news_posts')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating news post:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+export const deleteNewsPost = async (id: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from('news_posts')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting news post:', error);
+    throw error;
+  }
+
+  return true;
 };

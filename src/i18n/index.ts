@@ -54,4 +54,10 @@ export const useTranslations = (lang: Language) => {
   return translations[lang];
 };
 
+export const useLanguage = () => {
+  const language = getLanguageFromPath();
+  const t = useTranslations(language);
+  return { language, t };
+};
+
 export const defaultLanguage: Language = 'en';
