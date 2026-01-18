@@ -54,6 +54,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
   };
 
   return (
+    <>
     <header
       className={`sticky top-0 z-50 border-b border-white/10 transition-all duration-300 ease-out before:absolute before:top-0 before:left-1/2 before:-translate-x-1/2 before:w-1/2 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-[#F0B90B]/30 before:to-transparent before:opacity-60 before:blur-[1px] ${
         scrolled
@@ -112,7 +113,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
           </nav>
 
           <div className="flex items-center gap-3 ml-auto shrink-0">
-            <div className="hidden md:block">
+            <div className="hidden lg:block">
               <HeaderAuthActions lang={lang} />
             </div>
 
@@ -229,6 +230,11 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
           )
         : null}
     </header>
+
+    <div className="md:hidden sticky top-[56px] z-40 bg-black/75 backdrop-blur-2xl border-b border-white/10 px-3 pb-3 pt-2">
+      <HeaderAuthActions lang={lang} />
+    </div>
+    </>
   );
 };
 
