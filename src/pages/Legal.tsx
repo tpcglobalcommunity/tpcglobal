@@ -15,6 +15,7 @@ const Legal = ({ lang }: LegalProps) => {
         title={t.legal.title}
         subtitle={t.legal.subtitle}
         centered
+        variant="tight"
       >
         <div className="max-w-5xl mx-auto space-y-8">
           <div>

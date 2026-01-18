@@ -14,6 +14,7 @@ const CommunityFund = ({ lang }: CommunityFundProps) => {
       <PremiumSection
         title={t.fund.title}
         centered
+        variant="tight"
       >
         <div className="max-w-4xl mx-auto">
           <p className="text-white/75 text-sm max-w-[70ch] mx-auto leading-relaxed text-center mb-10">

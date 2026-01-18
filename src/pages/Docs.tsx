@@ -81,7 +81,7 @@ const Docs = ({ lang }: DocsProps) => {
         </Accordion>
       </PremiumSection>
 
-      <PremiumSection>
+      <PremiumSection variant="tight">
         <NoticeBox
           variant="info"
           icon={<AlertCircle />}

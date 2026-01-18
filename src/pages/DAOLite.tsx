@@ -15,6 +15,7 @@ const DAOLite = ({ lang }: DAOLiteProps) => {
         title={t.dao.title}
         subtitle={t.dao.subtitle}
         centered
+        variant="tight"
       >
         <PremiumCard className="text-center mb-12" hover={false}>
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4">

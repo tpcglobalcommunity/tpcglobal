@@ -57,7 +57,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <AppHeader lang={lang} currentPath={currentPath} />
-      <main className="flex-1 pb-4 md:pb-0">{renderPage()}</main>
+      <main className="flex-1">{renderPage()}</main>
       <LegalFooter lang={lang} />
       <BottomNav lang={lang} currentPath={currentPath} />
     </div>

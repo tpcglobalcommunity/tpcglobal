@@ -116,7 +116,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
           </div>
         </div>
 
-        <div className="h-20 md:h-0" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}></div>
+        <div className="h-16 md:h-0" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}></div>
       </div>
     </footer>
   );

@@ -66,14 +66,14 @@ export const layout = {
   },
   spacing: {
     section: {
-      y: 'py-12 md:py-16',
-      yCompact: 'py-10 md:py-14',
-      yDense: 'py-8 md:py-12',
-      yTight: 'py-6 md:py-8',
+      y: 'py-10 md:py-12',
+      yCompact: 'py-8 md:py-10',
+      yDense: 'py-6 md:py-8',
+      yTight: 'py-4 md:py-6',
     },
     sectionGap: {
-      default: 'gap-6 md:gap-8',
-      tight: 'gap-4 md:gap-6',
+      default: 'gap-5 md:gap-6',
+      tight: 'gap-4 md:gap-5',
     },
     container: 'max-w-6xl mx-auto px-4 sm:px-6',
     containerWide: 'max-w-7xl mx-auto px-4 sm:px-6',
