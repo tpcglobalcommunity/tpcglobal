@@ -41,7 +41,7 @@ export const PremiumSection = ({
     : '';
 
   const padBottomClass = isLast
-    ? 'pb-4 md:pb-6'
+    ? 'pb-2 md:pb-4'
     : padBottom === 'none' ? 'pb-0'
     : padBottom === 'sm' ? 'pb-6 md:pb-8'
     : padBottom === 'md' ? 'pb-10 md:pb-12'

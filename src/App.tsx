@@ -57,7 +57,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <AppHeader lang={lang} currentPath={currentPath} />
-      <main className="flex-1 pb-[calc(var(--bottom-nav-h)+var(--safe-bottom))] md:pb-0">{renderPage()}</main>
+      <main className="flex-1 pb-[calc(72px+env(safe-area-inset-bottom)+16px)] md:pb-0">{renderPage()}</main>
       <LegalFooter lang={lang} />
       <BottomNav lang={lang} currentPath={currentPath} />
     </div>
