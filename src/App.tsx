@@ -12,6 +12,7 @@ import Legal from './pages/Legal';
 import LaunchChecklist from './pages/LaunchChecklist';
 import Security from './pages/Security';
 import Support from './pages/Support';
+import Whitepaper from './pages/Whitepaper';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -52,6 +53,8 @@ function App() {
         return <CommunityFund lang={lang} />;
       case '/legal':
         return <Legal lang={lang} />;
+      case '/whitepaper':
+        return <Whitepaper lang={lang} />;
       case '/launch':
         return <LaunchChecklist lang={lang} />;
       case '/security':

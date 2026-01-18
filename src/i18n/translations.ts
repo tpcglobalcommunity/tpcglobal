@@ -661,6 +661,171 @@ export const translations = {
         secondary: 'Read Legal',
       },
     },
+    whitepaper: {
+      header: {
+        pill: 'Official Document',
+        title: 'TPC Whitepaper',
+        subtitle: 'Community Blueprint & Operational Framework',
+        noticeTitle: 'Educational Document',
+        noticeBody: 'This whitepaper is provided for educational and transparency purposes only. It does not constitute financial advice, investment recommendations, or profit guarantees.',
+      },
+      vision: {
+        title: 'Vision & Mission',
+        content: 'TPC exists to build a sustainable, education-first trading community that empowers individuals through transparent collaboration, shared knowledge, and collective governance. Our long-term vision is to create a global ecosystem where every trader has access to professional-grade education, tools, and community support without exploitative practices or false promises.',
+        pillars: [
+          'Education-first approach to trading and financial literacy',
+          'Transparent operations and community-driven decision making',
+          'Sustainable growth through collaboration, not speculation',
+          'Accessible tools and resources for all skill levels',
+        ],
+      },
+      what: {
+        title: 'What is TPC',
+        intro: 'TPC (Trader Professional Community) is a community-driven ecosystem focused on education, transparency, and sustainable growth in the trading space.',
+        model: 'We operate as:',
+        points: [
+          'A professional trading community built on knowledge-sharing and collaboration',
+          'An educational platform providing structured learning resources',
+          'A transparent ecosystem with publicly verifiable operations',
+          'A governance framework enabling community participation',
+        ],
+        notModel: 'TPC is explicitly NOT:',
+        antiPoints: [
+          'NOT a licensed broker or financial advisor',
+          'NOT a fund manager or investment vehicle',
+          'NOT a get-rich-quick scheme or profit guarantee',
+          'NOT a centralized entity making trading decisions for members',
+        ],
+      },
+      community: {
+        title: 'Community Model',
+        intro: 'TPC operates with a layered community structure designed to balance accessibility with quality participation.',
+        layers: [
+          {
+            name: 'Public Layer',
+            description: 'Open access to basic educational content, community discussions, and transparency reports. Anyone can participate without barriers.',
+          },
+          {
+            name: 'Member Layer',
+            description: 'Token holders with access to premium resources, exclusive content, voting rights, and advanced tools.',
+          },
+          {
+            name: 'Verified Contributors',
+            description: 'Active members who contribute content, moderate discussions, and help grow the community. Recognized through badges and additional benefits.',
+          },
+          {
+            name: 'Governance Participants',
+            description: 'Engaged members who participate in proposals, voting, and strategic decisions through our DAO Lite framework.',
+          },
+        ],
+      },
+      token: {
+        title: 'Token & Economic Role',
+        intro: 'The TPC Token is a utility and governance token designed to facilitate ecosystem participation. It is NOT a security and does NOT represent profit-sharing or investment returns.',
+        purpose: 'Token Purpose:',
+        utilities: [
+          'Access to premium educational content and exclusive resources',
+          'Governance voting rights for community proposals and decisions',
+          'Feature unlocks including advanced tools and analytics',
+          'Recognition and reputation within the community ecosystem',
+          'Ecosystem rewards for active participation and contributions',
+        ],
+        disclaimer: 'The TPC Token has no guaranteed value, no profit expectations, and no promises of financial returns. It is a utility mechanism for ecosystem participation only.',
+      },
+      revenue: {
+        title: 'Revenue Flow & Sustainability',
+        intro: 'TPC operates a sustainable economic model through transparent revenue streams that support community operations and growth.',
+        streams: [
+          {
+            name: 'Educational Services',
+            description: 'Premium courses, workshops, mentorship programs, and structured learning paths.',
+          },
+          {
+            name: 'Platform Services',
+            description: 'Access to proprietary tools, analytics, trading journals, and community features.',
+          },
+          {
+            name: 'Partnership Programs',
+            description: 'Transparent affiliate relationships with vetted service providers and platforms.',
+          },
+          {
+            name: 'Marketplace (Future)',
+            description: 'Community-driven marketplace for educational content, tools, and services.',
+          },
+        ],
+        transparency: 'All revenue flows are tracked publicly on our Transparency page with wallet addresses, transaction history, and allocation breakdowns.',
+      },
+      buyback: {
+        title: 'Buyback & Burn Policy',
+        intro: 'TPC implements a transparent buyback and burn mechanism to support long-term token sustainability.',
+        purpose: [
+          'Reduce total token supply over time through verified burns',
+          'Support ecosystem stability and long-term sustainability',
+          'Reward long-term community participants',
+          'Maintain transparency through public wallet tracking',
+        ],
+        process: 'All buyback and burn activities are executed from publicly visible wallets with transaction records available on-chain and summarized on our Transparency page.',
+        disclaimer: 'Buyback and burn activities do NOT guarantee price appreciation, market stability, or financial returns. They are operational mechanisms only.',
+      },
+      governance: {
+        title: 'Governance & Transparency',
+        intro: 'TPC operates with a DAO Lite governance model enabling community-driven decision making while maintaining operational efficiency.',
+        principles: [
+          'Community proposals reviewed and voted on by token holders',
+          'Transparent reporting of all major decisions and their outcomes',
+          'Public treasury tracking with real-time wallet visibility',
+          'Regular community updates through official channels',
+          'Progressive decentralization as the ecosystem matures',
+        ],
+        link: 'Visit our Transparency page for live wallet tracking, governance proposals, and operational reports.',
+      },
+      roadmap: {
+        title: 'Roadmap Summary',
+        intro: 'TPC development follows a phased approach prioritizing trust, education, and sustainable growth.',
+        phases: [
+          {
+            phase: 'Phase 1: Foundation & Trust',
+            items: ['Launch transparency framework', 'Establish community guidelines', 'Deploy initial educational content', 'Build public trust and credibility'],
+          },
+          {
+            phase: 'Phase 2: Membership & Tools',
+            items: ['Premium membership tiers', 'Advanced trading tools and analytics', 'Structured learning paths', 'Community rewards system'],
+          },
+          {
+            phase: 'Phase 3: Governance & DAO',
+            items: ['Launch DAO Lite voting system', 'Community proposal framework', 'Token utility expansion', 'Governance participation rewards'],
+          },
+          {
+            phase: 'Phase 4: Ecosystem Expansion',
+            items: ['Partner integrations', 'Advanced marketplace features', 'Cross-community collaborations', 'Global community growth'],
+          },
+        ],
+        note: 'Detailed roadmap and timeline available on our dedicated Roadmap page.',
+      },
+      risks: {
+        title: 'Risks & Disclaimers',
+        intro: 'Understanding risks is fundamental to responsible participation.',
+        points: [
+          'Educational Purpose Only: All content is for educational purposes and does not constitute financial advice.',
+          'No Financial Guarantees: Participation in TPC does not guarantee profits, returns, or financial success.',
+          'Market Risk: Trading and cryptocurrency markets involve significant risk of loss.',
+          'Token Volatility: TPC Token may have no market value and is subject to extreme volatility.',
+          'No Regulatory Status: TPC is not a licensed financial services provider.',
+          'User Responsibility: All users are solely responsible for their own financial decisions and risk management.',
+          'No Refunds: All token purchases and memberships are non-refundable.',
+          'Project Risk: The TPC project may change, pivot, or discontinue operations.',
+        ],
+        warning: 'By participating in TPC, you acknowledge these risks and confirm you are not relying on any promises or guarantees of financial returns.',
+      },
+      cta: {
+        title: 'Explore TPC Ecosystem',
+        subtitle: 'Learn more about our community, operations, and transparency initiatives.',
+        transparency: 'View Transparency',
+        docs: 'Read Documentation',
+        community: 'Join Community',
+      },
+      lastUpdated: 'Last Updated',
+    },
   },
   id: {
     nav: {
@@ -1323,6 +1488,171 @@ export const translations = {
         primary: 'Lihat Transparansi',
         secondary: 'Baca Legal',
       },
+    },
+    whitepaper: {
+      header: {
+        pill: 'Dokumen Resmi',
+        title: 'Whitepaper TPC',
+        subtitle: 'Blueprint Komunitas & Kerangka Operasional',
+        noticeTitle: 'Dokumen Edukasi',
+        noticeBody: 'Whitepaper ini disediakan untuk tujuan edukasi dan transparansi saja. Ini bukan merupakan nasihat keuangan, rekomendasi investasi, atau jaminan keuntungan.',
+      },
+      vision: {
+        title: 'Visi & Misi',
+        content: 'TPC hadir untuk membangun komunitas trading berkelanjutan yang mengutamakan edukasi, memberdayakan individu melalui kolaborasi transparan, berbagi pengetahuan, dan tata kelola kolektif. Visi jangka panjang kami adalah menciptakan ekosistem global di mana setiap trader memiliki akses ke edukasi profesional, alat, dan dukungan komunitas tanpa praktik eksploitatif atau janji palsu.',
+        pillars: [
+          'Pendekatan education-first untuk trading dan literasi keuangan',
+          'Operasi transparan dan pengambilan keputusan berbasis komunitas',
+          'Pertumbuhan berkelanjutan melalui kolaborasi, bukan spekulasi',
+          'Alat dan sumber daya yang dapat diakses untuk semua tingkat keahlian',
+        ],
+      },
+      what: {
+        title: 'Apa itu TPC',
+        intro: 'TPC (Trader Professional Community) adalah ekosistem berbasis komunitas yang berfokus pada edukasi, transparansi, dan pertumbuhan berkelanjutan di bidang trading.',
+        model: 'Kami beroperasi sebagai:',
+        points: [
+          'Komunitas trading profesional yang dibangun di atas berbagi pengetahuan dan kolaborasi',
+          'Platform edukasi yang menyediakan sumber pembelajaran terstruktur',
+          'Ekosistem transparan dengan operasi yang dapat diverifikasi secara publik',
+          'Kerangka tata kelola yang memungkinkan partisipasi komunitas',
+        ],
+        notModel: 'TPC secara eksplisit BUKAN:',
+        antiPoints: [
+          'BUKAN broker berlisensi atau penasihat keuangan',
+          'BUKAN manajer dana atau kendaraan investasi',
+          'BUKAN skema cepat kaya atau jaminan keuntungan',
+          'BUKAN entitas terpusat yang membuat keputusan trading untuk anggota',
+        ],
+      },
+      community: {
+        title: 'Model Komunitas',
+        intro: 'TPC beroperasi dengan struktur komunitas berlapis yang dirancang untuk menyeimbangkan aksesibilitas dengan partisipasi berkualitas.',
+        layers: [
+          {
+            name: 'Layer Publik',
+            description: 'Akses terbuka ke konten edukasi dasar, diskusi komunitas, dan laporan transparansi. Siapa pun dapat berpartisipasi tanpa hambatan.',
+          },
+          {
+            name: 'Layer Member',
+            description: 'Pemegang token dengan akses ke sumber daya premium, konten eksklusif, hak suara, dan alat lanjutan.',
+          },
+          {
+            name: 'Kontributor Terverifikasi',
+            description: 'Anggota aktif yang berkontribusi konten, memoderasi diskusi, dan membantu menumbuhkan komunitas. Diakui melalui lencana dan manfaat tambahan.',
+          },
+          {
+            name: 'Partisipan Tata Kelola',
+            description: 'Anggota yang terlibat dalam proposal, pemungutan suara, dan keputusan strategis melalui kerangka DAO Lite kami.',
+          },
+        ],
+      },
+      token: {
+        title: 'Token & Peran Ekonomi',
+        intro: 'Token TPC adalah token utilitas dan tata kelola yang dirancang untuk memfasilitasi partisipasi ekosistem. Ini BUKAN sekuritas dan TIDAK mewakili bagi hasil atau pengembalian investasi.',
+        purpose: 'Tujuan Token:',
+        utilities: [
+          'Akses ke konten edukasi premium dan sumber daya eksklusif',
+          'Hak suara tata kelola untuk proposal dan keputusan komunitas',
+          'Membuka fitur termasuk alat dan analitik lanjutan',
+          'Pengakuan dan reputasi dalam ekosistem komunitas',
+          'Reward ekosistem untuk partisipasi dan kontribusi aktif',
+        ],
+        disclaimer: 'Token TPC tidak memiliki nilai yang dijamin, tidak ada ekspektasi keuntungan, dan tidak ada janji pengembalian keuangan. Ini adalah mekanisme utilitas untuk partisipasi ekosistem saja.',
+      },
+      revenue: {
+        title: 'Alur Pendapatan & Keberlanjutan',
+        intro: 'TPC mengoperasikan model ekonomi berkelanjutan melalui aliran pendapatan transparan yang mendukung operasi dan pertumbuhan komunitas.',
+        streams: [
+          {
+            name: 'Layanan Edukasi',
+            description: 'Kursus premium, workshop, program mentoring, dan jalur pembelajaran terstruktur.',
+          },
+          {
+            name: 'Layanan Platform',
+            description: 'Akses ke alat proprietary, analitik, jurnal trading, dan fitur komunitas.',
+          },
+          {
+            name: 'Program Kemitraan',
+            description: 'Hubungan afiliasi transparan dengan penyedia layanan dan platform yang terverifikasi.',
+          },
+          {
+            name: 'Marketplace (Masa Depan)',
+            description: 'Marketplace berbasis komunitas untuk konten edukasi, alat, dan layanan.',
+          },
+        ],
+        transparency: 'Semua aliran pendapatan dilacak secara publik di halaman Transparansi kami dengan alamat dompet, riwayat transaksi, dan rincian alokasi.',
+      },
+      buyback: {
+        title: 'Kebijakan Buyback & Burn',
+        intro: 'TPC menerapkan mekanisme buyback dan burn transparan untuk mendukung keberlanjutan token jangka panjang.',
+        purpose: [
+          'Mengurangi total pasokan token dari waktu ke waktu melalui burn terverifikasi',
+          'Mendukung stabilitas ekosistem dan keberlanjutan jangka panjang',
+          'Memberi penghargaan kepada peserta komunitas jangka panjang',
+          'Menjaga transparansi melalui pelacakan dompet publik',
+        ],
+        process: 'Semua aktivitas buyback dan burn dieksekusi dari dompet yang dapat dilihat publik dengan catatan transaksi tersedia on-chain dan dirangkum di halaman Transparansi kami.',
+        disclaimer: 'Aktivitas buyback dan burn TIDAK menjamin apresiasi harga, stabilitas pasar, atau pengembalian keuangan. Ini hanya mekanisme operasional.',
+      },
+      governance: {
+        title: 'Tata Kelola & Transparansi',
+        intro: 'TPC beroperasi dengan model tata kelola DAO Lite yang memungkinkan pengambilan keputusan berbasis komunitas sambil mempertahankan efisiensi operasional.',
+        principles: [
+          'Proposal komunitas ditinjau dan dipilih oleh pemegang token',
+          'Pelaporan transparan dari semua keputusan utama dan hasilnya',
+          'Pelacakan treasury publik dengan visibilitas dompet real-time',
+          'Pembaruan komunitas reguler melalui saluran resmi',
+          'Desentralisasi progresif seiring ekosistem matang',
+        ],
+        link: 'Kunjungi halaman Transparansi kami untuk pelacakan dompet langsung, proposal tata kelola, dan laporan operasional.',
+      },
+      roadmap: {
+        title: 'Ringkasan Roadmap',
+        intro: 'Pengembangan TPC mengikuti pendekatan bertahap yang mengutamakan kepercayaan, edukasi, dan pertumbuhan berkelanjutan.',
+        phases: [
+          {
+            phase: 'Fase 1: Fondasi & Kepercayaan',
+            items: ['Luncurkan kerangka transparansi', 'Tetapkan pedoman komunitas', 'Deploy konten edukasi awal', 'Bangun kepercayaan dan kredibilitas publik'],
+          },
+          {
+            phase: 'Fase 2: Keanggotaan & Alat',
+            items: ['Tier keanggotaan premium', 'Alat trading dan analitik lanjutan', 'Jalur pembelajaran terstruktur', 'Sistem reward komunitas'],
+          },
+          {
+            phase: 'Fase 3: Tata Kelola & DAO',
+            items: ['Luncurkan sistem voting DAO Lite', 'Kerangka proposal komunitas', 'Ekspansi utilitas token', 'Reward partisipasi tata kelola'],
+          },
+          {
+            phase: 'Fase 4: Ekspansi Ekosistem',
+            items: ['Integrasi partner', 'Fitur marketplace lanjutan', 'Kolaborasi lintas komunitas', 'Pertumbuhan komunitas global'],
+          },
+        ],
+        note: 'Roadmap dan timeline terperinci tersedia di halaman Roadmap khusus kami.',
+      },
+      risks: {
+        title: 'Risiko & Disclaimer',
+        intro: 'Memahami risiko adalah fundamental untuk partisipasi yang bertanggung jawab.',
+        points: [
+          'Tujuan Edukasi Saja: Semua konten hanya untuk tujuan edukasi dan bukan merupakan nasihat keuangan.',
+          'Tidak Ada Jaminan Keuangan: Partisipasi di TPC tidak menjamin keuntungan, pengembalian, atau kesuksesan keuangan.',
+          'Risiko Pasar: Trading dan pasar cryptocurrency melibatkan risiko kehilangan yang signifikan.',
+          'Volatilitas Token: Token TPC mungkin tidak memiliki nilai pasar dan tunduk pada volatilitas ekstrem.',
+          'Tidak Ada Status Regulasi: TPC bukan penyedia layanan keuangan berlisensi.',
+          'Tanggung Jawab Pengguna: Semua pengguna bertanggung jawab penuh atas keputusan keuangan dan manajemen risiko mereka sendiri.',
+          'Tidak Ada Pengembalian Dana: Semua pembelian token dan keanggotaan tidak dapat dikembalikan.',
+          'Risiko Proyek: Proyek TPC dapat berubah, pivot, atau menghentikan operasi.',
+        ],
+        warning: 'Dengan berpartisipasi di TPC, Anda mengakui risiko ini dan mengonfirmasi bahwa Anda tidak bergantung pada janji atau jaminan pengembalian keuangan apa pun.',
+      },
+      cta: {
+        title: 'Jelajahi Ekosistem TPC',
+        subtitle: 'Pelajari lebih lanjut tentang komunitas, operasi, dan inisiatif transparansi kami.',
+        transparency: 'Lihat Transparansi',
+        docs: 'Baca Dokumentasi',
+        community: 'Gabung Komunitas',
+      },
+      lastUpdated: 'Terakhir Diperbarui',
     },
   },
 };
