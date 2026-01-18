@@ -35,7 +35,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
               </div>
               <span className="text-xl font-bold tracking-tight text-white">TPC</span>
             </div>
-            <p className="text-sm text-white/65 mb-1 font-medium">Trader Professional Community</p>
+            <p className="text-sm text-white/65 mb-1 font-medium">{t.footer.brand}</p>
             <p className="text-xs text-white/50 leading-relaxed max-w-[38ch]">{t.footer.tagline}</p>
           </div>
 
@@ -51,7 +51,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
                   className="group relative flex items-center text-[13px] text-white/70 hover:text-white transition-all duration-200"
                 >
                   <span className="absolute -left-3 w-1 h-1 rounded-full bg-[#F0B90B] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
-                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{t.nav.home}</span>
+                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{t.footer.links.home}</span>
                 </Link>
               </li>
               <li>
@@ -60,7 +60,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
                   className="group relative flex items-center text-[13px] text-white/70 hover:text-white transition-all duration-200"
                 >
                   <span className="absolute -left-3 w-1 h-1 rounded-full bg-[#F0B90B] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
-                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{t.nav.docs}</span>
+                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{t.footer.links.docs}</span>
                 </Link>
               </li>
               <li>
@@ -69,7 +69,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
                   className="group relative flex items-center text-[13px] text-white/70 hover:text-white transition-all duration-200"
                 >
                   <span className="absolute -left-3 w-1 h-1 rounded-full bg-[#F0B90B] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
-                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{t.nav.transparency}</span>
+                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{t.footer.links.transparency}</span>
                 </Link>
               </li>
             </ul>
@@ -77,7 +77,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
 
           <div className="opacity-0 animate-[fadeInUp_0.6s_ease-out_0.2s_forwards]">
             <div className="mb-4">
-              <h3 className="text-[11px] uppercase tracking-[0.25em] font-semibold text-white/70 mb-2.5">{t.footer.community}</h3>
+              <h3 className="text-[11px] uppercase tracking-[0.25em] font-semibold text-white/70 mb-2.5">{t.footer.links.community}</h3>
               <div className="w-10 h-[2px] bg-gradient-to-r from-[#F0B90B] to-transparent opacity-90 blur-[1px]"></div>
             </div>
             <ul className="space-y-2">
@@ -89,7 +89,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
                   className="group relative flex items-center text-[13px] text-white/70 hover:text-white transition-all duration-200"
                 >
                   <span className="absolute -left-3 w-1 h-1 rounded-full bg-[#F0B90B] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
-                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{t.footer.telegram}</span>
+                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{t.footer.links.telegram}</span>
                 </a>
               </li>
             </ul>

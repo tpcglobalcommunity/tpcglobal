@@ -16,15 +16,15 @@ const Home = ({ lang }: HomeProps) => {
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F0B90B]/10 border border-[#F0B90B]/30 mb-3 fade-in">
             <Shield className="w-4 h-4 text-[#F0B90B]" />
-            <span className="text-sm font-semibold text-white">{t.home.subtitle}</span>
+            <span className="text-sm font-semibold text-white">{t.hero.subtitle}</span>
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-3 md:mb-4 tracking-tight fade-in">
-            {t.home.title}
+            {t.hero.title}
           </h1>
 
           <p className="text-base text-white/75 mb-5 md:mb-6 max-w-[70ch] mx-auto leading-relaxed fade-in">
-            {t.home.description}
+            {t.hero.description}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-5 md:mb-6 fade-in">
@@ -34,53 +34,53 @@ const Home = ({ lang }: HomeProps) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              {t.home.joinCommunity}
+              {t.hero.ctaPrimary}
             </PremiumButton>
             <Link to={getLangPath(lang, '/docs')}>
               <PremiumButton variant="secondary">
-                {t.home.learnMore}
+                {t.hero.ctaSecondary}
               </PremiumButton>
             </Link>
           </div>
 
           <div className="max-w-2xl mx-auto fade-in">
             <NoticeBox variant="warning">
-              {t.home.disclaimer}
+              {t.hero.disclaimer}
             </NoticeBox>
           </div>
         </div>
       </section>
 
       <PremiumSection
-        title={t.home.whatIsTPC}
-        subtitle={t.home.whatIsTPCDesc}
+        title={t.about.title}
+        subtitle={t.about.content}
         centered
       />
 
       <PremiumSection>
         <PremiumCard className="text-center" hover={false}>
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3 md:mb-4">
-            {t.home.ourMission}
+            {t.mission.title}
           </h2>
           <p className="text-white/75 text-base max-w-[70ch] mx-auto leading-relaxed">
-            {t.home.ourMissionDesc}
+            {t.mission.content}
           </p>
         </PremiumCard>
       </PremiumSection>
 
-      <PremiumSection title={t.home.keyPrinciples} centered>
+      <PremiumSection title={t.principles.title} centered>
         <div className="flex flex-wrap justify-center gap-2 mb-6 md:mb-8">
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-xl bg-white/5 border border-white/10 text-sm font-medium text-white">
             <Eye className="w-3.5 h-3.5 text-[#F0B90B]" />
-            {t.nav.transparency}
+            {t.principles.items.transparency}
           </span>
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-xl bg-white/5 border border-white/10 text-sm font-medium text-white">
             <Users className="w-3.5 h-3.5 text-[#F0B90B]" />
-            {t.nav.dao}
+            {t.principles.items.dao}
           </span>
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-xl bg-white/5 border border-white/10 text-sm font-medium text-white">
             <TrendingUp className="w-3.5 h-3.5 text-[#F0B90B]" />
-            {t.home.community}
+            {t.principles.items.community}
           </span>
         </div>
 
@@ -90,10 +90,10 @@ const Home = ({ lang }: HomeProps) => {
               <Eye className="w-7 h-7 text-black" />
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">
-              {t.home.transparency}
+              {t.principles.items.transparency}
             </h3>
             <p className="text-white/75 text-sm leading-relaxed">
-              {t.home.transparencyDesc}
+              {t.principles.descriptions.transparency}
             </p>
           </PremiumCard>
 
@@ -102,10 +102,10 @@ const Home = ({ lang }: HomeProps) => {
               <Users className="w-7 h-7 text-black" />
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">
-              {t.home.community}
+              {t.principles.items.community}
             </h3>
             <p className="text-white/75 text-sm leading-relaxed">
-              {t.home.communityDesc}
+              {t.principles.descriptions.community}
             </p>
           </PremiumCard>
 
@@ -114,10 +114,10 @@ const Home = ({ lang }: HomeProps) => {
               <TrendingUp className="w-7 h-7 text-black" />
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">
-              {t.home.utility}
+              {t.principles.items.utility}
             </h3>
             <p className="text-white/75 text-sm leading-relaxed">
-              {t.home.utilityDesc}
+              {t.principles.descriptions.utility}
             </p>
           </PremiumCard>
         </div>
@@ -126,10 +126,10 @@ const Home = ({ lang }: HomeProps) => {
       <PremiumSection variant="tight">
         <PremiumCard className="text-center" hover={false}>
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3 md:mb-4">
-            {t.home.joinCommunity}
+            {t.cta.title}
           </h2>
           <p className="text-white/75 text-base max-w-[60ch] mx-auto leading-relaxed mb-5 md:mb-6">
-            {t.home.description}
+            {t.cta.description}
           </p>
           <PremiumButton
             variant="primary"
@@ -137,7 +137,7 @@ const Home = ({ lang }: HomeProps) => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            {t.home.joinCommunity}
+            {t.cta.title}
           </PremiumButton>
         </PremiumCard>
       </PremiumSection>
