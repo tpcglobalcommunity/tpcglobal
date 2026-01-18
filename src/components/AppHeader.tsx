@@ -159,10 +159,10 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
       {mobileMenuOpen && (
         <>
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] animate-[fadeIn_0.2s_ease-out]"
+            className="fixed inset-0 bg-black/80 backdrop-blur-lg z-[100] animate-[fadeIn_0.2s_ease-out]"
             onClick={() => setMobileMenuOpen(false)}
           ></div>
-          <div className="md:hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[380px] max-h-[85vh] bg-black/90 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl z-[110] animate-[scaleIn_0.3s_ease-out] flex flex-col overflow-hidden">
+          <div className="md:hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-[380px] max-h-[82vh] bg-black/95 backdrop-blur-2xl border border-white/12 rounded-3xl shadow-2xl shadow-black/60 z-[110] animate-[scaleIn_0.3s_ease-out] flex flex-col overflow-hidden isolate">
             <div className="flex items-center justify-between p-4 border-b border-white/10 shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="relative">
@@ -181,21 +181,30 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
             </div>
 
             <div className="flex-1 overflow-y-auto">
-              <nav className="p-4 space-y-1" role="navigation">
+              <nav className="p-4 space-y-[6px]" role="navigation">
                 {navItems.map((item) => {
                   const isActive = currentPath === item.path;
                   return (
                     <Link
                       key={item.path}
                       to={item.path}
-                      className={`block px-4 py-3 rounded-2xl text-[14px] font-medium transition-all duration-200 ${
-                        isActive
-                          ? 'text-[#F0B90B] bg-[#F0B90B]/10 border border-[#F0B90B]/20'
-                          : 'text-white/80 hover:bg-white/[0.05] hover:text-white'
-                      }`}
                       onClick={() => setMobileMenuOpen(false)}
+                      className={`group relative flex items-center gap-3 px-4 py-3 rounded-2xl text-[14px] font-semibold tracking-wide transition-all duration-200 ${
+                        isActive
+                          ? 'text-white bg-white/[0.06] border border-white/12'
+                          : 'text-white/80 hover:text-white hover:bg-white/[0.05] border border-transparent'
+                      }`}
                     >
-                      {item.label}
+                      <span
+                        className={`absolute left-2 top-1/2 -translate-y-1/2 h-6 w-[3px] rounded-full transition-all duration-200 ${
+                          isActive
+                            ? 'bg-[#F0B90B] shadow-[0_0_12px_rgba(240,185,11,0.35)]'
+                            : 'bg-transparent group-hover:bg-white/15'
+                        }`}
+                      />
+                      <span className={`${isActive ? 'text-[#F0B90B]' : 'text-white/80 group-hover:text-white'}`}>
+                        {item.label}
+                      </span>
                     </Link>
                   );
                 })}
