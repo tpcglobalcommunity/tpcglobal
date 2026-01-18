@@ -59,7 +59,7 @@ export function HeaderAuthActions({ lang, variant = "default", onAfterAction }: 
 
   if (!isAuthed) {
     return (
-      <div className={`flex ${variant === "mobileMenu" ? "flex-col" : "flex-col md:flex-row"} items-stretch md:items-center gap-2 w-full`}>
+      <div className={`flex ${variant === "mobileMenu" ? "flex-col" : "flex-row"} items-stretch gap-2 w-full`}>
         <Link
           to={getLangPath(language, "/signin")}
           className="flex-1"
@@ -67,8 +67,7 @@ export function HeaderAuthActions({ lang, variant = "default", onAfterAction }: 
         >
           <PremiumButton type="button" variant="secondary" className="h-10 px-4 whitespace-nowrap text-sm w-full">
             <LogIn className="w-4 h-4 mr-2" />
-            <span className={variant === "mobileMenu" ? "" : "hidden lg:inline"}>{t("auth.signin.signIn")}</span>
-            {variant !== "mobileMenu" && <span className="lg:hidden">Sign In</span>}
+            Sign In
           </PremiumButton>
         </Link>
         <Link
@@ -78,8 +77,7 @@ export function HeaderAuthActions({ lang, variant = "default", onAfterAction }: 
         >
           <PremiumButton type="button" className="h-10 px-4 whitespace-nowrap text-sm w-full">
             <UserPlus className="w-4 h-4 mr-2" />
-            <span className={variant === "mobileMenu" ? "" : "hidden lg:inline"}>{t("auth.signup.createAccount")}</span>
-            {variant !== "mobileMenu" && <span className="lg:hidden">Create</span>}
+            Create Account
           </PremiumButton>
         </Link>
       </div>
@@ -87,7 +85,7 @@ export function HeaderAuthActions({ lang, variant = "default", onAfterAction }: 
   }
 
   return (
-    <div className={`flex ${variant === "mobileMenu" ? "flex-col" : "flex-col md:flex-row"} items-stretch md:items-center gap-2 w-full`}>
+    <div className={`flex ${variant === "mobileMenu" ? "flex-col" : "flex-row"} items-stretch gap-2 w-full`}>
       <Link
         to={getLangPath(language, "/member/dashboard")}
         className="flex-1"
@@ -95,19 +93,17 @@ export function HeaderAuthActions({ lang, variant = "default", onAfterAction }: 
       >
         <PremiumButton type="button" className="h-10 px-4 whitespace-nowrap text-sm w-full">
           <LayoutDashboard className="w-4 h-4 mr-2" />
-          <span className={variant === "mobileMenu" ? "" : "hidden lg:inline"}>{t("member.dashboard.title")}</span>
-          {variant !== "mobileMenu" && <span className="lg:hidden">Dashboard</span>}
+          Dashboard
         </PremiumButton>
       </Link>
       <PremiumButton
         type="button"
         variant="secondary"
-        className={`h-10 px-4 whitespace-nowrap text-sm ${variant === "mobileMenu" ? "w-full" : "w-full md:w-auto"}`}
+        className={`h-10 px-4 whitespace-nowrap text-sm ${variant === "mobileMenu" ? "w-full" : "w-auto"}`}
         onClick={() => handleAction(doLogout)}
       >
         <LogOut className="w-4 h-4 mr-2" />
-        <span className={variant === "mobileMenu" ? "" : "hidden lg:inline"}>{t("auth.signout")}</span>
-        {variant !== "mobileMenu" && <span className="lg:hidden">Sign Out</span>}
+        Sign Out
       </PremiumButton>
     </div>
   );

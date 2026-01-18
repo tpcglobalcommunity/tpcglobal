@@ -55,6 +55,18 @@ function App() {
     }
   }, [currentPath]);
 
+  const isAuthPage = (path: string) => {
+    const pathWithoutLang = path.replace(/^\/(en|id)/, '');
+    return ['/signin', '/signup', '/forgot', '/reset'].includes(pathWithoutLang);
+  };
+
+  const isAdminPage = (path: string) => {
+    const pathWithoutLang = path.replace(/^\/(en|id)/, '');
+    return pathWithoutLang.startsWith('/admin');
+  };
+
+  const shouldShowBottomNav = !isAuthPage(currentPath) && !isAdminPage(currentPath);
+
   const renderPage = () => {
     const pathWithoutLang = currentPath.replace(/^\/(en|id)/, '');
 
@@ -144,9 +156,11 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <AppHeader lang={lang} currentPath={currentPath} />
-      <main className="flex-1 pb-[calc(72px+env(safe-area-inset-bottom)+16px)] md:pb-0">{renderPage()}</main>
+      <main className={`flex-1 ${shouldShowBottomNav ? 'pb-[calc(72px+env(safe-area-inset-bottom)+16px)] xl:pb-0' : ''}`}>
+        {renderPage()}
+      </main>
       <LegalFooter lang={lang} />
-      <BottomNav lang={lang} currentPath={currentPath} />
+      {shouldShowBottomNav && <BottomNav lang={lang} currentPath={currentPath} />}
     </div>
   );
 }

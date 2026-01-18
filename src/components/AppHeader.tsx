@@ -83,7 +83,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-6 text-sm font-semibold" role="navigation">
+          <nav className="hidden xl:flex items-center gap-6 text-sm font-semibold" role="navigation">
             {navItems.map((item) => {
               const isActive = currentPath === item.path;
               return (
@@ -113,7 +113,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
           </nav>
 
           <div className="flex items-center gap-3 ml-auto shrink-0">
-            <div className="hidden lg:block">
+            <div className="hidden xl:block">
               <HeaderAuthActions lang={lang} />
             </div>
 
@@ -144,7 +144,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden h-10 w-10 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition grid place-items-center shrink-0"
+              className="xl:hidden h-10 w-10 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition grid place-items-center shrink-0"
               aria-label="Toggle mobile menu"
               aria-expanded={mobileMenuOpen}
             >
@@ -161,13 +161,13 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
             <>
               {/* Overlay */}
               <div
-                className="lg:hidden fixed inset-0 bg-black/60 z-[9999]"
+                className="xl:hidden fixed inset-0 bg-black/60 z-[9999]"
                 onClick={() => setMobileMenuOpen(false)}
               />
 
               {/* Right-side drawer */}
               <div
-                className="lg:hidden fixed top-0 right-0 h-full w-[88%] max-w-sm border-l border-white/10 bg-black/80 backdrop-blur-xl z-[10000] overflow-y-auto"
+                className="xl:hidden fixed top-0 right-0 h-full w-[88%] max-w-sm border-l border-white/10 bg-black/80 backdrop-blur-xl z-[10000] overflow-y-auto"
                 role="dialog"
                 aria-modal="true"
               >
@@ -233,10 +233,6 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
           )
         : null}
     </header>
-
-    <div className="md:hidden sticky top-[56px] z-40 bg-black/75 backdrop-blur-2xl border-b border-white/10 px-3 pb-3 pt-2">
-      <HeaderAuthActions lang={lang} />
-    </div>
     </>
   );
 };
