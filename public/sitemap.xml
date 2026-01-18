@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://tpcglobal.io/en/home</loc><lastmod>BUILD_DATE</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://tpcglobal.io/en/docs</loc><lastmod>BUILD_DATE</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://tpcglobal.io/en/transparency</loc><lastmod>BUILD_DATE</lastmod><changefreq>weekly</changefreq><priority>0.90</priority></url>
+  <url><loc>https://tpcglobal.io/en/dao</loc><lastmod>BUILD_DATE</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://tpcglobal.io/en/fund</loc><lastmod>BUILD_DATE</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://tpcglobal.io/en/legal</loc><lastmod>BUILD_DATE</lastmod><changefreq>yearly</changefreq><priority>0.60</priority></url>
+
+  <url><loc>https://tpcglobal.io/id/home</loc><lastmod>BUILD_DATE</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://tpcglobal.io/id/docs</loc><lastmod>BUILD_DATE</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://tpcglobal.io/id/transparency</loc><lastmod>BUILD_DATE</lastmod><changefreq>weekly</changefreq><priority>0.90</priority></url>
+  <url><loc>https://tpcglobal.io/id/dao</loc><lastmod>BUILD_DATE</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://tpcglobal.io/id/fund</loc><lastmod>BUILD_DATE</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://tpcglobal.io/id/legal</loc><lastmod>BUILD_DATE</lastmod><changefreq>yearly</changefreq><priority>0.60</priority></url>
+</urlset>

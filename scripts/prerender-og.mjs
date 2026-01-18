@@ -107,11 +107,18 @@ function updateMetaTags(html, lang, page) {
     `<meta property="og:image" content="${data.ogImage}" />`
   );
 
-  // Replace OG URL
-  html = html.replace(
-    /<meta property="og:url" content=".*?" \/>/,
-    `<meta property="og:url" content="${canonicalUrl}" />`
-  );
+  // Replace or inject OG URL
+  if (html.includes('<meta property="og:url"')) {
+    html = html.replace(
+      /<meta property="og:url" content=".*?" \/>/,
+      `<meta property="og:url" content="${canonicalUrl}" />`
+    );
+  } else {
+    html = html.replace(
+      '</head>',
+      `  <meta property="og:url" content="${canonicalUrl}" />\n  </head>`
+    );
+  }
 
   // Replace Twitter title
   html = html.replace(
@@ -137,11 +144,18 @@ function updateMetaTags(html, lang, page) {
     `<meta name="twitter:url" content="${canonicalUrl}" />`
   );
 
-  // Replace canonical URL
-  html = html.replace(
-    /<link rel="canonical" href=".*?" \/>/,
-    `<link rel="canonical" href="${canonicalUrl}" />`
-  );
+  // Replace or inject canonical link
+  if (html.includes('<link rel="canonical"')) {
+    html = html.replace(
+      /<link rel="canonical" href=".*?" \/>/,
+      `<link rel="canonical" href="${canonicalUrl}" />`
+    );
+  } else {
+    html = html.replace(
+      '</head>',
+      `  <link rel="canonical" href="${canonicalUrl}" />\n  </head>`
+    );
+  }
 
   return html;
 }
@@ -177,8 +191,28 @@ function generateStaticPages() {
   console.log(`\n✨ Generated ${generatedCount} static pages with per-page OG meta tags`);
 }
 
+function updateSitemapBuildDate() {
+  console.log('\n📍 Updating sitemap.xml with build date...');
+
+  const sitemapPath = path.join(distDir, 'sitemap.xml');
+
+  if (!fs.existsSync(sitemapPath)) {
+    console.log('  ⚠️  sitemap.xml not found in dist, skipping');
+    return;
+  }
+
+  const buildDate = new Date().toISOString().slice(0, 10);
+  let sitemapContent = fs.readFileSync(sitemapPath, 'utf-8');
+
+  sitemapContent = sitemapContent.replace(/BUILD_DATE/g, buildDate);
+
+  fs.writeFileSync(sitemapPath, sitemapContent, 'utf-8');
+  console.log(`  ✓ sitemap.xml updated with lastmod: ${buildDate}`);
+}
+
 try {
   generateStaticPages();
+  updateSitemapBuildDate();
 } catch (error) {
   console.error('❌ Error generating static pages:', error);
   process.exit(1);
