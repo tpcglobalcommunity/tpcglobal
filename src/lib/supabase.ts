@@ -54,6 +54,31 @@ export interface AdminAction {
 
 export type NewsCategory = 'education' | 'update' | 'release' | 'policy' | 'transparency';
 
+export type AnnouncementCategory = 'general' | 'update' | 'policy' | 'security' | 'release';
+
+export interface Announcement {
+  id: string;
+  title: string;
+  body: string;
+  category: AnnouncementCategory;
+  is_pinned: boolean;
+  is_published: boolean;
+  published_at: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface OnboardingState {
+  user_id: string;
+  accepted_disclaimer: boolean;
+  joined_telegram: boolean;
+  read_docs: boolean;
+  completed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface NewsPost {
   id: string;
   slug: string;
@@ -317,4 +342,147 @@ export const deleteNewsPost = async (id: string): Promise<boolean> => {
   }
 
   return true;
+};
+
+export const listAnnouncements = async ({
+  includeDrafts = false,
+  category = null,
+  limit = 20,
+  offset = 0,
+  pinnedFirst = true,
+}: {
+  includeDrafts?: boolean;
+  category?: AnnouncementCategory | null;
+  limit?: number;
+  offset?: number;
+  pinnedFirst?: boolean;
+}): Promise<Announcement[]> => {
+  let query = supabase
+    .from('announcements')
+    .select('*');
+
+  if (!includeDrafts) {
+    query = query.eq('is_published', true);
+  }
+
+  if (category) {
+    query = query.eq('category', category);
+  }
+
+  if (pinnedFirst) {
+    query = query.order('is_pinned', { ascending: false });
+  }
+
+  query = query
+    .order('published_at', { ascending: false, nullsFirst: false })
+    .range(offset, offset + limit - 1);
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('Error fetching announcements:', error);
+    return [];
+  }
+
+  return data || [];
+};
+
+export const getAnnouncement = async (id: string): Promise<Announcement | null> => {
+  const { data, error } = await supabase
+    .from('announcements')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Error fetching announcement:', error);
+    return null;
+  }
+
+  return data;
+};
+
+export const upsertAnnouncement = async (
+  announcement: Partial<Announcement> & { id?: string }
+): Promise<Announcement | null> => {
+  const { data, error } = await supabase
+    .from('announcements')
+    .upsert([announcement])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error upserting announcement:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+export const deleteAnnouncement = async (id: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from('announcements')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting announcement:', error);
+    throw error;
+  }
+
+  return true;
+};
+
+export const getOnboardingState = async (): Promise<OnboardingState | null> => {
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('member_onboarding')
+    .select('*')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Error fetching onboarding state:', error);
+    return null;
+  }
+
+  return data;
+};
+
+export const upsertOnboardingState = async (
+  patch: Partial<Omit<OnboardingState, 'user_id' | 'created_at' | 'updated_at'>>
+): Promise<OnboardingState | null> => {
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('member_onboarding')
+    .upsert([{ user_id: user.id, ...patch }])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error upserting onboarding state:', error);
+    throw error;
+  }
+
+  return data;
+};
+
+export const ensureOnboardingRow = async (): Promise<void> => {
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return;
+
+  const { error } = await supabase.rpc('ensure_onboarding_row', {
+    uid: user.id,
+  });
+
+  if (error) {
+    console.error('Error ensuring onboarding row:', error);
+  }
 };

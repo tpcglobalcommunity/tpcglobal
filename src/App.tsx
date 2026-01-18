@@ -21,11 +21,15 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import Dashboard from './pages/member/Dashboard';
 import SecurityPage from './pages/member/SecurityPage';
+import ProfilePage from './pages/member/ProfilePage';
+import AnnouncementsPage from './pages/member/AnnouncementsPage';
 import VerifyPage from './pages/VerifyPage';
 import NewsPage from './pages/NewsPage';
 import NewsDetailPage from './pages/NewsDetailPage';
 import NewsEditorPage from './pages/admin/NewsEditorPage';
 import NewsAdminListPage from './pages/admin/NewsAdminListPage';
+import AnnouncementsAdminListPage from './pages/admin/AnnouncementsAdminListPage';
+import AnnouncementEditorPage from './pages/admin/AnnouncementEditorPage';
 import AuthLogsPage from './pages/admin/AuthLogsPage';
 
 function App() {
@@ -72,6 +76,19 @@ function App() {
       return <NewsDetailPage slug={slug} />;
     }
 
+    if (pathWithoutLang === '/admin/announcements') {
+      return <AnnouncementsAdminListPage lang={lang} />;
+    }
+
+    if (pathWithoutLang === '/admin/announcements/new') {
+      return <AnnouncementEditorPage lang={lang} />;
+    }
+
+    if (pathWithoutLang.startsWith('/admin/announcements/') && pathWithoutLang.endsWith('/edit')) {
+      const announcementId = pathWithoutLang.replace('/admin/announcements/', '').replace('/edit', '');
+      return <AnnouncementEditorPage lang={lang} announcementId={announcementId} />;
+    }
+
     switch (pathWithoutLang) {
       case '/home':
         return <Home lang={lang} />;
@@ -109,6 +126,10 @@ function App() {
         return <Dashboard lang={lang} />;
       case '/member/security':
         return <SecurityPage lang={lang} />;
+      case '/member/profile':
+        return <ProfilePage lang={lang} />;
+      case '/member/announcements':
+        return <AnnouncementsPage lang={lang} />;
       case '/verify':
         return <VerifyPage lang={lang} />;
       case '/news':
