@@ -170,6 +170,82 @@ export const getProfile = async (userId: string): Promise<Profile | null> => {
   return data;
 };
 
+export const updateProfileSafe = async ({
+  full_name,
+  username,
+  avatar_url,
+}: {
+  full_name: string;
+  username: string;
+  avatar_url: string;
+}): Promise<Profile> => {
+  const { data, error } = await supabase.rpc('update_profile_safe', {
+    p_full_name: full_name,
+    p_username: username,
+    p_avatar_url: avatar_url,
+  });
+
+  if (error) {
+    console.error('Error updating profile:', error);
+    throw new Error(error.message || 'Failed to update profile');
+  }
+
+  return data as Profile;
+};
+
+export const checkUsernameAvailable = async (username: string): Promise<boolean> => {
+  const { data, error } = await supabase.rpc('check_username_available', {
+    p_username: username,
+  });
+
+  if (error) {
+    console.error('Error checking username:', error);
+    return false;
+  }
+
+  return data as boolean;
+};
+
+export const uploadAvatar = async (file: File): Promise<string> => {
+  const MAX_SIZE = 2 * 1024 * 1024;
+  const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/jpg'];
+
+  if (file.size > MAX_SIZE) {
+    throw new Error('FILE_TOO_LARGE');
+  }
+
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    throw new Error('INVALID_FILE_TYPE');
+  }
+
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error('Not authenticated');
+  }
+
+  const fileExt = file.name.split('.').pop();
+  const filePath = `${user.id}/profile.${fileExt}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from('avatars')
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: true,
+    });
+
+  if (uploadError) {
+    console.error('Error uploading avatar:', uploadError);
+    throw new Error('Failed to upload avatar');
+  }
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('avatars')
+    .getPublicUrl(filePath);
+
+  return publicUrl;
+};
+
 export const getReferrals = async (userId: string): Promise<Referral[]> => {
   const { data, error } = await supabase
     .from('referrals')
