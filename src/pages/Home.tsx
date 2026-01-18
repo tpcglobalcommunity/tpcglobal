@@ -124,7 +124,7 @@ const Home = ({ lang }: HomeProps) => {
         </div>
       </PremiumSection>
 
-      <PremiumSection variant="tight" className="pt-4 pb-0 md:pt-6">
+      <PremiumSection variant="tight" className="!pt-4 !pb-6 md:!pt-6 md:!pb-8">
         <PremiumCard className="text-center" hover={false}>
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3 md:mb-4">
             {t.cta.title}
@@ -142,11 +142,6 @@ const Home = ({ lang }: HomeProps) => {
           </PremiumButton>
         </PremiumCard>
       </PremiumSection>
-
-      <div className="relative h-px mx-auto max-w-6xl px-4 sm:px-6 mt-1 md:mt-2">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#F0B90B]/20 to-transparent blur-md"></div>
-      </div>
     </PremiumShell>
   );
 };

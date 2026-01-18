@@ -16,6 +16,7 @@ const DAOLite = ({ lang }: DAOLiteProps) => {
         subtitle={t.dao.subtitle}
         centered
         variant="tight"
+        className="!pb-6 md:!pb-8"
       >
         <PremiumCard className="text-center mb-12" hover={false}>
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4">
@@ -64,12 +65,14 @@ const DAOLite = ({ lang }: DAOLiteProps) => {
           </div>
         </PremiumCard>
 
-        <NoticeBox
-          variant="info"
-          icon={<AlertCircle />}
-        >
-          {t.dao.notice}
-        </NoticeBox>
+        <div className="pb-0">
+          <NoticeBox
+            variant="info"
+            icon={<AlertCircle />}
+          >
+            {t.dao.notice}
+          </NoticeBox>
+        </div>
       </PremiumSection>
     </PremiumShell>
   );

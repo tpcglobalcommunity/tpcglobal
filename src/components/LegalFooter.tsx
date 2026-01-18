@@ -15,7 +15,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
 
   return (
     <footer
-      className="relative bg-black/60 border-t border-white/10 mt-0 backdrop-blur-2xl overflow-hidden"
+      className="relative bg-black/60 border-t border-white/10 -mt-2 md:mt-0 backdrop-blur-2xl overflow-hidden"
     >
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#F0B90B]/30 to-transparent"></div>
 

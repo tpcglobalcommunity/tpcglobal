@@ -70,6 +70,7 @@ const Transparency = ({ lang }: TransparencyProps) => {
         subtitle={t.transparency.subtitle}
         centered
         variant="tight"
+        className="!pb-6 md:!pb-8"
       >
         <p className="text-white/75 text-sm max-w-[70ch] mx-auto leading-relaxed text-center mb-12">
           {t.transparency.description}
