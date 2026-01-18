@@ -55,31 +55,6 @@ const DirectoryPage = ({ lang }: DirectoryPageProps) => {
     });
   };
 
-  const getRoleBadgeColor = (role: string): string => {
-    switch (role) {
-      case 'super_admin':
-      case 'admin':
-        return 'bg-red-500/20 text-red-300 border-red-500/30';
-      case 'moderator':
-        return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-      default:
-        return 'bg-white/10 text-white/70 border-white/20';
-    }
-  };
-
-  const getRoleLabel = (role: string): string => {
-    switch (role) {
-      case 'super_admin':
-        return 'Super Admin';
-      case 'admin':
-        return 'Admin';
-      case 'moderator':
-        return 'Moderator';
-      default:
-        return 'Member';
-    }
-  };
-
   const totalPages = Math.ceil(totalCount / pageSize);
 
   return (

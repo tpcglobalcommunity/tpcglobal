@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, MapPin, Calendar, CheckCircle, AlertCircle } from 'lucide-react';
+import { User, MapPin, Calendar, CheckCircle, AlertCircle, ExternalLink, MessageCircle } from 'lucide-react';
 import { Language, useTranslations, getLangPath } from '../i18n';
 import { PremiumShell, PremiumCard, PremiumButton } from '../components/ui';
 import { getPublicProfileByUsername, DirectoryMemberItem } from '../lib/supabase';
@@ -48,31 +48,6 @@ const PublicProfilePage = ({ lang, username }: PublicProfilePageProps) => {
       month: 'long',
       day: 'numeric',
     });
-  };
-
-  const getRoleBadgeColor = (role: string): string => {
-    switch (role) {
-      case 'super_admin':
-      case 'admin':
-        return 'bg-red-500/20 text-red-300 border-red-500/30';
-      case 'moderator':
-        return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-      default:
-        return 'bg-white/10 text-white/70 border-white/20';
-    }
-  };
-
-  const getRoleLabel = (role: string): string => {
-    switch (role) {
-      case 'super_admin':
-        return 'Super Admin';
-      case 'admin':
-        return 'Admin';
-      case 'moderator':
-        return 'Moderator';
-      default:
-        return 'Member';
-    }
   };
 
   if (loading) {
