@@ -52,13 +52,15 @@ export function HeaderAuthActions({ lang }: { lang?: Language }) {
         <Link to={getLangPath(language, "/signin")} className="flex-1">
           <PremiumButton type="button" variant="secondary" className="h-10 px-4 whitespace-nowrap text-sm w-full">
             <LogIn className="w-4 h-4 mr-2" />
-            <span className="whitespace-nowrap">{t("auth.signin.signIn")}</span>
+            <span className="hidden lg:inline">{t("auth.signin.signIn")}</span>
+            <span className="lg:hidden">Sign In</span>
           </PremiumButton>
         </Link>
         <Link to={getLangPath(language, "/signup")} className="flex-1">
           <PremiumButton type="button" className="h-10 px-4 whitespace-nowrap text-sm w-full">
             <UserPlus className="w-4 h-4 mr-2" />
-            <span className="whitespace-nowrap">{t("auth.signup.createAccount")}</span>
+            <span className="hidden lg:inline">{t("auth.signup.createAccount")}</span>
+            <span className="lg:hidden">Create</span>
           </PremiumButton>
         </Link>
       </div>
@@ -70,7 +72,8 @@ export function HeaderAuthActions({ lang }: { lang?: Language }) {
       <Link to={getLangPath(language, "/member/dashboard")} className="flex-1">
         <PremiumButton type="button" className="h-10 px-4 whitespace-nowrap text-sm w-full">
           <LayoutDashboard className="w-4 h-4 mr-2" />
-          <span className="whitespace-nowrap">{t("member.dashboard.title")}</span>
+          <span className="hidden lg:inline">{t("member.dashboard.title")}</span>
+          <span className="lg:hidden">Dashboard</span>
         </PremiumButton>
       </Link>
       <PremiumButton
@@ -80,7 +83,8 @@ export function HeaderAuthActions({ lang }: { lang?: Language }) {
         onClick={doLogout}
       >
         <LogOut className="w-4 h-4 mr-2" />
-        <span className="whitespace-nowrap">{t("auth.signout")}</span>
+        <span className="hidden lg:inline">{t("auth.signout")}</span>
+        <span className="lg:hidden">Sign Out</span>
       </PremiumButton>
     </div>
   );
