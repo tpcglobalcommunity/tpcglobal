@@ -473,18 +473,26 @@ export const upsertOnboardingState = async (
   return data;
 };
 
-export const ensureOnboardingRow = async (): Promise<void> => {
+export const ensureOnboardingRow = async (): Promise<OnboardingState | null> => {
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) return;
+  if (!user) return null;
 
-  const { error } = await supabase.rpc('ensure_onboarding_row', {
-    uid: user.id,
-  });
+  const existing = await getOnboardingState();
+  if (existing) return existing;
+
+  const { data, error } = await supabase
+    .from('member_onboarding')
+    .insert([{ user_id: user.id }])
+    .select()
+    .single();
 
   if (error) {
     console.error('Error ensuring onboarding row:', error);
+    return null;
   }
+
+  return data;
 };
 
 export const signIn = async ({ email, password }: { email: string; password: string }): Promise<void> => {
