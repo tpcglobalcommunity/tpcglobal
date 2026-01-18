@@ -33,11 +33,32 @@ const Router = () => {
   return { currentPath, lang, routes };
 };
 
-export const Link = ({ to, children, className }: { to: string; children: React.ReactNode; className?: string }) => {
+export const Link = ({
+  to,
+  children,
+  className,
+  onClick,
+}: {
+  to: string;
+  children: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+}) => {
   const handleClick = (e: React.MouseEvent) => {
+    // allow CMD/CTRL click open new tab
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+    // external link fallback
+    if (to.startsWith('http')) return;
+
     e.preventDefault();
-    window.history.pushState({}, '', to);
-    window.dispatchEvent(new PopStateEvent('popstate'));
+
+    if (window.location.pathname !== to) {
+      window.history.pushState({}, '', to);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+
+    onClick?.();
   };
 
   return (
