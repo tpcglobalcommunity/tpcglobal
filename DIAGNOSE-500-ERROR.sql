@@ -146,8 +146,8 @@ END $$;
 
 -- Check if we can access any error information
 SELECT 
-    current_database as database_name,
-    current_user as current_user,
+    current_database() as database_name,
+    session_user as current_user,
     version() as postgres_version;
 
 -- Alternative: Check if there are any recent failed operations
