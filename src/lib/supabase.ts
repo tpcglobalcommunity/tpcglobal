@@ -960,6 +960,9 @@ export const ensureOnboardingRow = async (): Promise<OnboardingState | null> => 
     .single();
 
   if (error) {
+    if (error.code === '23505') {
+      return await getOnboardingState();
+    }
     console.error('Error ensuring onboarding row:', error);
     return null;
   }
