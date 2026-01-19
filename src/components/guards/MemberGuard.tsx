@@ -13,6 +13,7 @@ export default function MemberGuard({ children }: MemberGuardProps) {
   const { loading, session, profile, user } = useAuth();
   const { language } = useLanguage();
   const [profileSafetyCheck, setProfileSafetyCheck] = useState<'checking' | 'failed' | null>(null);
+  const [showPendingNotice, setShowPendingNotice] = useState(false);
 
   useEffect(() => {
     if (!loading && !session) {
@@ -30,6 +31,14 @@ export default function MemberGuard({ children }: MemberGuardProps) {
       if (!profile.is_profile_complete && !isCompleteProfilePage) {
         window.location.href = `/${language}/complete-profile`;
         return;
+      }
+
+      // Check status (if implemented)
+      if (profile.status && profile.status !== 'ACTIVE') {
+        setShowPendingNotice(true);
+        console.log('[MemberGuard] User status is not ACTIVE:', profile.status);
+      } else {
+        setShowPendingNotice(false);
       }
     }
 
@@ -123,5 +132,20 @@ export default function MemberGuard({ children }: MemberGuardProps) {
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {showPendingNotice && (
+        <NoticeBox
+          variant="warning"
+          title="Pending Verification"
+          className="mb-4"
+        >
+          <p className="text-sm text-white/80">
+            Your account is pending verification. Some features may be limited until verification is complete.
+          </p>
+        </NoticeBox>
+      )}
+      {children}
+    </>
+  );
 }

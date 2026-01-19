@@ -12,6 +12,7 @@ interface Profile {
   is_verified: boolean;
   can_invite: boolean;
   is_profile_complete: boolean;
+  status?: string;
   created_at: string;
 }
 
