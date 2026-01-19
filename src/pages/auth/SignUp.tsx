@@ -62,6 +62,10 @@ export default function SignUp({ lang }: SignUpProps) {
   const referralGenericText = useMemo(() => t("auth.signup.errorGeneric"), [t]);
   const referralCheckingText = useMemo(() => t("auth.signup.referralChecking"), [t]);
   const signupGenericText = useMemo(() => t("auth.signup.errorGeneric"), [t]);
+  const signupEmailInUseText = useMemo(
+    () => t("auth.signup.errorEmailInUse"),
+    [t]
+  );
 
   const normalizedReferral = useMemo(() => referralCode.trim().toUpperCase(), [referralCode]);
   
