@@ -1137,6 +1137,37 @@ export const translations = {
         errorEmailInUse: 'Email is already registered. Please sign in instead.',
         errorGeneric: 'Failed to create account. Please try again.',
       },
+      completeProfile: {
+        title: 'Complete Your Profile',
+        subtitle: 'We need some additional information to complete your profile',
+        notice: 'Complete your profile to access all member features',
+        labels: {
+          fullName: 'Full Name',
+          phone: 'Phone Number',
+          telegram: 'Telegram Username',
+          city: 'City'
+        },
+        placeholders: {
+          fullName: 'Enter your full name',
+          phone: 'Enter your phone number',
+          telegram: '@username',
+          city: 'Enter your city'
+        },
+        errors: {
+          fullNameRequired: 'Full name is required',
+          fullNameMinLength: 'Full name must be at least 2 characters',
+          phoneRequired: 'Phone number is required',
+          phoneMinLength: 'Phone number must be at least 8 characters',
+          telegramRequired: 'Telegram username is required',
+          telegramMinLength: 'Telegram username must be at least 2 characters',
+          cityRequired: 'City is required',
+          cityMinLength: 'City must be at least 2 characters',
+          sessionExpired: 'Session has expired, please sign in again'
+        },
+        button: 'Complete Profile',
+        submitting: 'Saving...',
+        success: 'Profile completed successfully!'
+      },
       signin: {
         title: 'Sign In',
         subtitle: 'Welcome back to TPC',
@@ -2847,6 +2878,54 @@ export const translations = {
         username: 'Nama Pengguna',
         usernamePlaceholder: 'johndoe',
         usernameOk: 'Nama pengguna tersedia',
+        usernameRules: 'Minimal 3 karakter, hanya huruf, angka, dan underscore',
+        usernameHint: 'Nama pengguna unik untuk identitas Anda',
+        email: 'Email',
+        password: 'Kata Sandi',
+        passwordHint: 'Minimal 8 karakter',
+        confirmPassword: 'Konfirmasi Kata Sandi',
+        creating: 'Membuat akun...',
+        checkEmailTitle: 'Periksa Email Anda',
+        checkEmailDesc: 'Kami telah mengirim email verifikasi. Klik link verifikasi untuk mengaktifkan akun Anda.',
+        successTitle: 'Pendaftaran Berhasil',
+        successDesc: 'Akun Anda telah dibuat. Silakan masuk untuk melanjutkan.',
+        errorGeneric: 'Gagal membuat akun',
+        errorEmailInUse: 'Email sudah terdaftar',
+        referralInvalid: 'Kode referral tidak valid',
+        referralChecking: 'Memeriksa kode...',
+        referralValid: 'Kode referral valid',
+      },
+      completeProfile: {
+        title: 'Lengkapi Profil Anda',
+        subtitle: 'Kami membutuhkan beberapa informasi tambahan untuk melengkapi profil Anda',
+        notice: 'Lengkapi profil Anda untuk mengakses semua fitur member',
+        labels: {
+          fullName: 'Nama Lengkap',
+          phone: 'Nomor Telepon',
+          telegram: 'Username Telegram',
+          city: 'Kota'
+        },
+        placeholders: {
+          fullName: 'Masukkan nama lengkap',
+          phone: 'Masukkan nomor telepon',
+          telegram: '@username',
+          city: 'Masukkan kota'
+        },
+        errors: {
+          fullNameRequired: 'Nama lengkap wajib diisi',
+          fullNameMinLength: 'Nama lengkap minimal 2 karakter',
+          phoneRequired: 'Nomor telepon wajib diisi',
+          phoneMinLength: 'Nomor telepon minimal 8 karakter',
+          telegramRequired: 'Username Telegram wajib diisi',
+          telegramMinLength: 'Username Telegram minimal 2 karakter',
+          cityRequired: 'Kota wajib diisi',
+          cityMinLength: 'Kota minimal 2 karakter',
+          sessionExpired: 'Sesi telah berakhir, silakan masuk kembali'
+        },
+        button: 'Lengkapi Profil',
+        submitting: 'Menyimpan...',
+        success: 'Profil berhasil dilengkapi!'
+      },
         usernameHint: 'Pilih nama pengguna unik',
         usernameRules: 'Nama pengguna harus 3-20 karakter, hanya huruf kecil, angka, titik, dan garis bawah',
         email: 'Alamat Email',

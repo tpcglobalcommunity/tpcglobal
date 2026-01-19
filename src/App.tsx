@@ -20,6 +20,7 @@ import SignUp from './pages/auth/SignUp';
 import SignIn from './pages/auth/SignIn';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
+import CompleteProfile from './pages/member/CompleteProfile';
 import Dashboard from './pages/member/Dashboard';
 import SecurityPage from './pages/member/SecurityPage';
 import ProfilePage from './pages/member/ProfilePage';
@@ -147,6 +148,8 @@ function App() {
         return <ForgotPassword lang={lang} />;
       case '/reset':
         return <ResetPassword lang={lang} />;
+      case '/complete-profile':
+        return <CompleteProfile lang={lang} />;
       case '/member/dashboard':
         return <Dashboard lang={lang} />;
       case '/member/security':

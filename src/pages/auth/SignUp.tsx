@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useRef } from "react";
 import { Shield, KeyRound, Mail, User2, AtSign, Lock, Check, X, Loader2, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { useI18n, type Language, getLangPath } from "../../i18n";
 import { Link } from "../../components/Router";
-import { validateReferralCode, signUpInviteOnly, isSupabaseConfigured, createProfileIfMissing, supabase } from "../../lib/supabase";
+import { validateReferralCode, signUpInviteOnly, isSupabaseConfigured, supabase } from "../../lib/supabase";
 import { NoticeBox } from "../../components/ui/NoticeBox";
 import { validateUsername } from "../../lib/authHelpers";
 
@@ -195,43 +195,12 @@ export default function SignUp({ lang }: SignUpProps) {
         // Try to get user ID and create profile with timeout
         if (supabase) {
           try {
-            // Add timeout for getUser call
-            const userPromise = supabase.auth.getUser();
-            const timeoutPromise = new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('getUser timeout')), 5000)
-            );
-            
-            const { data: { user } } = await Promise.race([userPromise, timeoutPromise]) as any;
-            console.log("[SIGNUP] Got user:", { user: !!user });
-            
-            if (user) {
-              // Add timeout for profile creation
-              const profilePromise = createProfileIfMissing(
-                user.id,
-                email.trim(),
-                fullName.trim(),
-                username.trim().toLowerCase(),
-                normalizedReferral
-              );
-              
-              const profileTimeoutPromise = new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('Profile creation timeout')), 10000)
-              );
-              
-              const profileResult = await Promise.race([profilePromise, profileTimeoutPromise]) as any;
-              console.log("[SIGNUP] PROFILE RESULT:", profileResult);
-              
-              if (!profileResult.success) {
-                console.error('Profile creation failed:', profileResult.message);
-                // Don't fail the signup, but log the error
-                // The user can still proceed, but might have limited access
-              }
-            } else {
-              console.log("[SIGNUP] No user found, skipping profile creation");
-            }
+            // Profile creation is now handled by trigger
+            // No need to create profile manually in signup
+            console.log("[SIGNUP] Profile will be created by trigger");
           } catch (userError: any) {
             console.error('[SIGNUP] User/profile creation error:', userError);
-            // Don't fail the signup, continue to success state
+            // Don't fail signup, continue to success state
           }
         } else {
           console.log("[SIGNUP] Supabase not available, skipping profile creation");

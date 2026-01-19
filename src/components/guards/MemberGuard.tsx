@@ -22,6 +22,17 @@ export default function MemberGuard({ children }: MemberGuardProps) {
       return;
     }
 
+    // Check profile completion
+    if (session && profile) {
+      const currentPath = window.location.pathname;
+      const isCompleteProfilePage = currentPath.includes('/complete-profile');
+      
+      if (!profile.is_profile_complete && !isCompleteProfilePage) {
+        window.location.href = `/${language}/complete-profile`;
+        return;
+      }
+    }
+
     // Post-login safety: ensure profile exists
     if (session && user && !profile && !profileSafetyCheck) {
       setProfileSafetyCheck('checking');

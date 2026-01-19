@@ -11,6 +11,7 @@ interface Profile {
   referral_code: string;
   is_verified: boolean;
   can_invite: boolean;
+  is_profile_complete: boolean;
   created_at: string;
 }
 
