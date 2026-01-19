@@ -154,7 +154,7 @@ export const validateReferralCode = async (code: string): Promise<boolean> => {
   try {
     const startTime = Date.now();
 
-    const { data, error } = await supabase.rpc('validate_referral_code_public', {
+    const { data, error } = await supabase.rpc('validate_referral_code', {
       p_code: trimmedCode
     });
 
