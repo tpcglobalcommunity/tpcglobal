@@ -143,19 +143,28 @@ export interface NewsPostDetail {
 }
 
 export const validateReferralCode = async (code: string): Promise<boolean> => {
+  if (!code || code.trim() === '') {
+    return false;
+  }
+
   try {
+    const trimmedCode = code.trim().toUpperCase();
+    console.log('[validateReferralCode] Checking code:', trimmedCode);
+
     const { data, error } = await supabase.rpc('validate_referral_code_public', {
-      p_code: code.toUpperCase()
+      p_code: trimmedCode
     });
 
+    console.log('[validateReferralCode] Response:', { data, error });
+
     if (error) {
-      console.error('Error validating referral code:', error);
+      console.error('[validateReferralCode] Error:', error);
       return false;
     }
 
-    return !!data;
+    return data === true;
   } catch (err) {
-    console.error('Error in validateReferralCode:', err);
+    console.error('[validateReferralCode] Exception:', err);
     return false;
   }
 };
