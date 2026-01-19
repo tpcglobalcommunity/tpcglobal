@@ -1131,6 +1131,17 @@ export const signIn = async ({ email, password }: { email: string; password: str
   }
 };
 
+function normalizeSupabaseError(err: any) {
+  return {
+    status: err?.status,
+    code: err?.code || err?.error_code,
+    message: err?.message,
+    details: err?.details,
+    hint: err?.hint,
+    raw: err,
+  };
+}
+
 export const signUpInviteOnly = async ({
   referralCode,
   email,
@@ -1182,13 +1193,9 @@ export const signUpInviteOnly = async ({
     });
 
     if (error) {
-      console.error('[SIGNUP_API] Error:', {
-        message: error.message,
-        status: error.status,
-        code: error.code,
-        isAuthError: true
-      });
-      throw error;
+      const normalizedError = normalizeSupabaseError(error);
+      console.log('SIGNUP SUPABASE ERROR:', normalizedError);
+      throw normalizedError;
     }
 
     const result = {
@@ -1198,14 +1205,9 @@ export const signUpInviteOnly = async ({
     console.log('[SIGNUP_API] Success:', result);
     return result;
   } catch (err: any) {
-    console.error('[SIGNUP_API] Exception:', {
-      message: err?.message || 'Unknown error',
-      stack: err?.stack,
-      status: err?.status,
-      code: err?.code,
-      isAuthApiError: err?.message?.includes('AuthApiError')
-    });
-    throw err;
+    const normalizedError = normalizeSupabaseError(err);
+    console.log('SIGNUP EXCEPTION ERROR:', normalizedError);
+    throw normalizedError;
   }
 };
 
