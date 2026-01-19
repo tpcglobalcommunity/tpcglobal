@@ -239,18 +239,38 @@ export default function SignUp({ lang }: SignUpProps) {
       setDone({ checkEmail: !!res?.checkEmail });
       
     } catch (err: any) {
-      console.error('[SIGNUP] Signup error:', err);
+      console.error('[SIGNUP] Signup error:', {
+        message: err?.message || 'Unknown error',
+        status: err?.status,
+        code: err?.code,
+        isAuthApiError: err?.message?.includes('AuthApiError'),
+        stack: err?.stack
+      });
       
       // Telemetry: log signup failure with privacy masking
       const emailMasked = email.replace(/(.{2}).+(@.+)/, "$1***$2");
       console.error('[TELEMETRY] Signup failed:', { 
         email: emailMasked, 
         referralCode: normalizedReferral, 
-        error: err?.message || 'unknown' 
+        error: err?.message || 'unknown',
+        status: err?.status,
+        code: err?.code
       });
       
-      // Context-based error mapping (no fragile string matching)
-      setError(signupGenericText);
+      // Context-based error mapping based on error type
+      let errorMessage = signupGenericText;
+      
+      if (err?.status === 500 || err?.message?.includes('Database error')) {
+        errorMessage = t("auth.signup.errorGeneric"); // "Failed to create account"
+      } else if (err?.status === 400 || err?.message?.includes('Invalid')) {
+        errorMessage = t("auth.signup.errorGeneric"); // "Failed to create account"
+      } else if (err?.message?.includes('referral')) {
+        errorMessage = t("auth.signup.referralInvalid");
+      } else if (err?.message?.includes('email') || err?.message?.includes('already registered')) {
+        errorMessage = t("errors.emailInUse");
+      }
+      
+      setError(errorMessage);
     } finally {
       console.log('[SIGNUP] Setting submitting to false');
       setSubmitting(false);

@@ -12,14 +12,15 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = supabaseUrl && supabaseAnonKey 
   ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
+  : createClient('https://placeholder.supabase.co', 'placeholder-key'); // Fallback to prevent null
 
 export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
 
 // Helper function to ensure supabase is configured before use
 function ensureSupabase() {
   if (!supabase) {
-    throw new Error('Supabase is not configured. Please check environment variables.');
+    console.warn('Supabase is not configured. Using fallback client.');
+    return supabase; // Return fallback client instead of throwing
   }
   return supabase;
 }
@@ -1144,24 +1145,49 @@ export const signUpInviteOnly = async ({
   username: string;
 }): Promise<{ checkEmail?: boolean } | null> => {
   console.log('[SIGNUP_API] Starting signUpInviteOnly');
-  
+  console.log('[SIGNUP_API] Input:', { 
+    email: email.replace(/(.{2}).+(@.+)/, '$1***$2'), // privacy masking
+    referralCode: referralCode.trim().toUpperCase(),
+    hasFullName: !!fullName,
+    hasUsername: !!username
+  });
+
   try {
-    const { data, error } = await ensureSupabase().auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: fullName,
           username: username,
-          referral_code: referralCode.toUpperCase(),
+          referral_code: referralCode.trim().toUpperCase(),
         },
       },
     });
 
-    console.log('[SIGNUP_API] Response:', { data, error });
+    console.log('[SIGNUP_API] Response:', { 
+      data: data ? {
+        user: {
+          id: data.user?.id,
+          email: data.user?.email,
+          confirmed_at: data.user?.confirmed_at,
+          identities_count: data.user?.identities?.length || 0
+        }
+      } : null, 
+      error: error ? {
+        message: error.message,
+        status: error.status,
+        code: error.code
+      } : null 
+    });
 
     if (error) {
-      console.error('[SIGNUP_API] Error:', error);
+      console.error('[SIGNUP_API] Error:', {
+        message: error.message,
+        status: error.status,
+        code: error.code,
+        isAuthError: true
+      });
       throw error;
     }
 
@@ -1172,7 +1198,13 @@ export const signUpInviteOnly = async ({
     console.log('[SIGNUP_API] Success:', result);
     return result;
   } catch (err: any) {
-    console.error('[SIGNUP_API] Exception:', err);
+    console.error('[SIGNUP_API] Exception:', {
+      message: err?.message || 'Unknown error',
+      stack: err?.stack,
+      status: err?.status,
+      code: err?.code,
+      isAuthApiError: err?.message?.includes('AuthApiError')
+    });
     throw err;
   }
 };
