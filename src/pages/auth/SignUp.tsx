@@ -260,6 +260,14 @@ export default function SignUp({ lang }: SignUpProps) {
       // Context-based error mapping based on error type
       let errorMessage = signupGenericText;
       
+      console.error('[SIGNUP] Full error details:', {
+        error: err,
+        message: err?.message,
+        status: err?.status,
+        code: err?.code,
+        stack: err?.stack
+      });
+      
       if (err?.status === 500 || err?.message?.includes('Database error')) {
         errorMessage = t("auth.signup.errorGeneric"); // "Failed to create account"
       } else if (err?.status === 400 || err?.message?.includes('Invalid')) {
@@ -268,6 +276,9 @@ export default function SignUp({ lang }: SignUpProps) {
         errorMessage = t("auth.signup.referralInvalid");
       } else if (err?.message?.includes('email') || err?.message?.includes('already registered')) {
         errorMessage = t("errors.emailInUse");
+      } else {
+        // Default case - show more specific error if available
+        errorMessage = err?.message || t("auth.signup.errorGeneric");
       }
       
       setError(errorMessage);
