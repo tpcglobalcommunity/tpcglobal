@@ -275,7 +275,7 @@ export default function SignUp({ lang }: SignUpProps) {
       } else if (err?.message?.includes('referral')) {
         errorMessage = t("auth.signup.referralInvalid");
       } else if (err?.message?.includes('email') || err?.message?.includes('already registered')) {
-        errorMessage = t("errors.emailInUse");
+        errorMessage = t("auth.signup.errorEmailInUse");
       } else {
         // Default case - show more specific error if available
         errorMessage = err?.message || t("auth.signup.errorGeneric");
