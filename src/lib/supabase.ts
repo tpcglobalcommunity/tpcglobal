@@ -25,6 +25,17 @@ function ensureSupabase() {
   return supabase;
 }
 
+function normalizeSupabaseError(err: any) {
+  return {
+    status: err?.status,
+    code: err?.code || err?.error_code,
+    message: err?.message,
+    details: err?.details,
+    hint: err?.hint,
+    raw: err,
+  };
+}
+
 export interface Profile {
   id: string;
   email: string | null;
@@ -1130,17 +1141,6 @@ export const signIn = async ({ email, password }: { email: string; password: str
     throw error;
   }
 };
-
-function normalizeSupabaseError(err: any) {
-  return {
-    status: err?.status,
-    code: err?.code || err?.error_code,
-    message: err?.message,
-    details: err?.details,
-    hint: err?.hint,
-    raw: err,
-  };
-}
 
 export const signUpInviteOnly = async ({
   referralCode,
