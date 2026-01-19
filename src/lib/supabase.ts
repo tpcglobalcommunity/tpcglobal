@@ -4,10 +4,25 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+  console.error('Missing Supabase environment variables:', {
+    VITE_SUPABASE_URL: !!supabaseUrl,
+    VITE_SUPABASE_ANON_KEY: !!supabaseAnonKey
+  });
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = supabaseUrl && supabaseAnonKey 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
+
+export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
+
+// Helper function to ensure supabase is configured before use
+function ensureSupabase() {
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please check environment variables.');
+  }
+  return supabase;
+}
 
 export interface Profile {
   id: string;
@@ -154,7 +169,7 @@ export const validateReferralCode = async (code: string): Promise<boolean> => {
   try {
     const startTime = Date.now();
 
-    const { data, error } = await supabase.rpc('validate_referral_code', {
+    const { data, error } = await ensureSupabase().rpc('validate_referral_code', {
       p_code: trimmedCode
     });
 
@@ -1128,23 +1143,108 @@ export const signUpInviteOnly = async ({
   fullName: string;
   username: string;
 }): Promise<{ checkEmail?: boolean } | null> => {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        full_name: fullName,
-        username: username,
-        referral_code: referralCode.toUpperCase(),
+  console.log('[SIGNUP_API] Starting signUpInviteOnly');
+  
+  try {
+    const { data, error } = await ensureSupabase().auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          username: username,
+          referral_code: referralCode.toUpperCase(),
+        },
       },
-    },
-  });
+    });
 
-  if (error) {
-    throw error;
+    console.log('[SIGNUP_API] Response:', { data, error });
+
+    if (error) {
+      console.error('[SIGNUP_API] Error:', error);
+      throw error;
+    }
+
+    const result = {
+      checkEmail: data?.user?.identities?.length === 0,
+    };
+    
+    console.log('[SIGNUP_API] Success:', result);
+    return result;
+  } catch (err: any) {
+    console.error('[SIGNUP_API] Exception:', err);
+    throw err;
   }
+};
 
-  return {
-    checkEmail: data?.user?.identities?.length === 0,
-  };
+export const createProfileIfMissing = async (userId: string, email: string, fullName: string, username: string, referralCode: string): Promise<{ success: boolean; message?: string }> => {
+  console.log('[PROFILE] Creating profile if missing for user:', userId);
+  
+  try {
+    // First check if profile already exists
+    console.log('[PROFILE] Checking if profile exists...');
+    const { data: existingProfile, error: checkError } = await ensureSupabase()
+      .from('profiles')
+      .select('id')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (checkError) {
+      console.error('[PROFILE] Check error:', checkError);
+      return { success: false, message: checkError.message };
+    }
+
+    if (existingProfile) {
+      console.log('[PROFILE] Profile already exists, skipping creation');
+      return { success: true }; // Profile already exists
+    }
+
+    console.log('[PROFILE] Creating new profile...');
+    // Try to create minimal profile
+    const profileData = {
+      id: userId,
+      email: email,
+      full_name: fullName,
+      username: username.toLowerCase(),
+      referral_code: referralCode.toUpperCase(),
+      role: 'member',
+      is_verified: false,
+      can_invite: false,
+      referral_count: 0,
+    };
+
+    console.log('[PROFILE] Inserting profile data:', profileData);
+    const { error } = await ensureSupabase()
+      .from('profiles')
+      .insert([profileData]);
+
+    if (error) {
+      console.error('[PROFILE] Profile creation error:', error);
+      
+      // Telemetry: log profile creation failure with privacy masking
+      const emailMasked = email.replace(/(.{2}).+(@.+)/, "$1***$2");
+      console.error('[TELEMETRY] Profile creation failed:', { 
+        userId, 
+        email: emailMasked, 
+        error: error.message, 
+        code: error.code 
+      });
+      
+      // Check if it's a NOT NULL constraint error
+      if (error.code === '23502' || error.message.includes('null value')) {
+        return { 
+          success: false, 
+          message: 'Profil belum bisa dibuat karena konfigurasi database (kolom wajib). Hubungi admin.' 
+        };
+      }
+      
+      return { success: false, message: error.message };
+    }
+
+    console.log('[PROFILE] Profile created successfully');
+    return { success: true };
+  } catch (err: any) {
+    console.error('[PROFILE] Profile creation exception:', err);
+    return { success: false, message: err?.message || 'Failed to create profile' };
+  }
 };

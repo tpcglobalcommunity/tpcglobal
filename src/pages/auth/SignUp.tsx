@@ -1,8 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Shield, KeyRound, Mail, User2, AtSign, Lock, Check, X, Loader2, ArrowRight } from "lucide-react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
+import { Shield, KeyRound, Mail, User2, AtSign, Lock, Check, X, Loader2, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { useI18n, type Language, getLangPath } from "../../i18n";
 import { Link } from "../../components/Router";
-import { validateReferralCode, signUpInviteOnly } from "../../lib/supabase";
+import { validateReferralCode, signUpInviteOnly, isSupabaseConfigured, createProfileIfMissing, supabase } from "../../lib/supabase";
+import { NoticeBox } from "../../components/ui/NoticeBox";
+import { validateUsername } from "../../lib/authHelpers";
 
 type ReferralState = "idle" | "checking" | "valid" | "invalid";
 
@@ -10,101 +12,149 @@ interface SignUpProps {
   lang?: Language;
 }
 
-const USERNAME_RE = /^[a-z0-9_.]{3,20}$/;
-
 export default function SignUp({ lang }: SignUpProps) {
   const { t, language } = useI18n(lang || "en");
   const L = language;
 
-  const [referralCode, setReferralCode] = useState("");
+  // Check if Supabase is configured
+  if (!isSupabaseConfigured) {
+    return (
+      <div className="max-w-md lg:max-w-lg mx-auto px-4">
+        <div className="text-center mb-4">
+          <div className="mx-auto w-16 h-16 rounded-2xl bg-white/5 border border-white/10 grid place-items-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-[#F0B90B]/10 blur-2xl" />
+            <Shield className="w-7 h-7 text-[#F0B90B] relative z-10" />
+          </div>
+          <h1 className="mt-5 text-[clamp(2rem,8vw,3rem)] font-bold tracking-tight text-white leading-[1.06]">
+            {t("auth.signup.title")}
+          </h1>
+        </div>
+        
+        <NoticeBox variant="warning" title="Configuration Error">
+          The application is not properly configured. Please contact support or check back later.
+        </NoticeBox>
+      </div>
+    );
+  }
+
+  const [referralCode, setReferralCode] = useState("TPC-BOOT01"); // Pre-fill with bootstrap code
   const [refState, setRefState] = useState<ReferralState>("idle");
   const [refMsg, setRefMsg] = useState<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<string>("");
 
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<null | { checkEmail: boolean }>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Ref to cache validation results and prevent duplicate API calls
+  const lastValidatedRef = useRef<{ code: string; valid: boolean } | null>(null);
+  const requestSeqRef = useRef(0);
+
+  // Cache translation text to avoid pulling t() into useEffect
+  const referralInvalidText = useMemo(() => t("auth.signup.referralInvalid"), [t]);
+  const referralGenericText = useMemo(() => t("auth.signup.errorGeneric"), [t]);
+  const referralCheckingText = useMemo(() => t("auth.signup.referralChecking"), [t]);
+  const signupGenericText = useMemo(() => t("auth.signup.errorGeneric"), [t]);
+
   const normalizedReferral = useMemo(() => referralCode.trim().toUpperCase(), [referralCode]);
-  const usernameOk = useMemo(() => USERNAME_RE.test(username.trim().toLowerCase()), [username]);
+  
+  // Email validation
+  const emailValid = useMemo(() => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email.trim());
+  }, [email]);
+  
+  // Username validation using helper
+  const usernameValidation = useMemo(() => validateUsername(username.trim()), [username]);
+  
+  // Password match validation
+  const passwordsMatch = useMemo(() => password === confirmPassword, [password, confirmPassword]);
+  
   const canSubmit = useMemo(() => {
+    // Prevent submit during any loading or invalid state
     if (submitting) return false;
+    if (refState === "checking" || refState === "invalid") return false;
     if (!normalizedReferral) return false;
     if (refState !== "valid") return false;
     if (!fullName.trim()) return false;
-    if (!usernameOk) return false;
+    if (!usernameValidation.valid) return false;
     if (!email.trim()) return false;
+    if (!emailValid) return false;
     if (password.length < 8) return false;
+    if (!passwordsMatch) return false;
     return true;
-  }, [submitting, normalizedReferral, refState, fullName, usernameOk, email, password]);
+  }, [submitting, refState, normalizedReferral, fullName, usernameValidation, email, emailValid, password, passwordsMatch]);
 
+  // Referral validation with caching, debouncing, and anti-stale request pattern
   useEffect(() => {
-    let alive = true;
-    let debounceTimer: any;
-    let timeoutTimer: any;
+    const code = referralCode.trim().toUpperCase();
 
-    setError(null);
-    setDebugInfo("");
-
-    if (!normalizedReferral) {
+    // Reset if empty
+    if (!code) {
       setRefState("idle");
       setRefMsg(null);
       return;
     }
 
+    // Use cache if same code
+    if (lastValidatedRef.current?.code === code) {
+      const valid = lastValidatedRef.current.valid;
+      setRefState(valid ? "valid" : "invalid");
+      setRefMsg(valid ? null : referralInvalidText);
+      return;
+    }
+
+    // Set checking once for new code (no double setting)
     setRefState("checking");
     setRefMsg(null);
-    setDebugInfo("Waiting...");
 
-    debounceTimer = setTimeout(async () => {
-      console.log('[SignUp] Validating referral code:', normalizedReferral);
-      setDebugInfo("Sending request...");
+    // Debounce with anti-stale request pattern
+    const mySeq = ++requestSeqRef.current;
 
-      // Set a timeout to prevent hanging indefinitely
-      timeoutTimer = setTimeout(() => {
-        if (!alive) return;
-        console.error('[SignUp] Validation timeout!');
-        setRefState("invalid");
-        setRefMsg("Validation timeout. Please try again.");
-        setDebugInfo("Timeout!");
-      }, 8000);
-
+    const timer = window.setTimeout(async () => {
       try {
-        const startTime = Date.now();
-        const ok = await validateReferralCode(normalizedReferral);
-        const elapsed = Date.now() - startTime;
+        console.log("[SignUp] Validating referral code:", code);
 
-        if (!alive) return;
+        // Add timeout guard for referral validation
+        const validatePromise = validateReferralCode(code);
+        const timeoutPromise = new Promise<boolean>((_, reject) =>
+          setTimeout(() => reject(new Error("referral validate timeout")), 5000)
+        );
 
-        clearTimeout(timeoutTimer);
-        console.log('[SignUp] Validation result:', ok, `(${elapsed}ms)`);
+        const isValid = await Promise.race([validatePromise, timeoutPromise]);
 
-        setRefState(ok ? "valid" : "invalid");
-        setRefMsg(ok ? null : t("errors.referralInvalid"));
-        setDebugInfo(ok ? `Valid! (${elapsed}ms)` : `Invalid (${elapsed}ms)`);
+        // Anti-stale: ignore if newer request exists
+        if (mySeq !== requestSeqRef.current) return;
+
+        lastValidatedRef.current = { code, valid: isValid };
+        setRefState(isValid ? "valid" : "invalid");
+        setRefMsg(isValid ? null : referralInvalidText);
       } catch (err) {
-        if (!alive) return;
+        // Anti-stale: ignore if newer request exists
+        if (mySeq !== requestSeqRef.current) return;
 
-        clearTimeout(timeoutTimer);
-        console.error('[SignUp] Validation error:', err);
+        // Telemetry: log referral validation failure
+        console.warn('[TELEMETRY] Referral validation failed:', { 
+          code, 
+          error: (err as any)?.message || 'unknown' 
+        });
 
+        lastValidatedRef.current = { code, valid: false };
         setRefState("invalid");
-        setRefMsg(t("errors.generic"));
-        setDebugInfo(`Error: ${err}`);
+        setRefMsg(referralGenericText);
+        console.error("[SignUp] validateReferralCode error:", err);
       }
-    }, 450);
+    }, 400);
 
-    return () => {
-      alive = false;
-      clearTimeout(debounceTimer);
-      clearTimeout(timeoutTimer);
-    };
-  }, [normalizedReferral, t]);
+    return () => window.clearTimeout(timer);
+  }, [referralCode, referralInvalidText, referralGenericText, referralCheckingText]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,8 +162,17 @@ export default function SignUp({ lang }: SignUpProps) {
 
     if (!canSubmit) return;
 
+    console.log("[SIGNUP] Starting signup process...");
     setSubmitting(true);
+    
     try {
+      console.log("[SIGNUP] Calling signUpInviteOnly with:", {
+        referralCode: normalizedReferral,
+        email: email.trim(),
+        fullName: fullName.trim(),
+        username: username.trim().toLowerCase()
+      });
+      
       const res = await signUpInviteOnly({
         referralCode: normalizedReferral,
         email: email.trim(),
@@ -122,14 +181,78 @@ export default function SignUp({ lang }: SignUpProps) {
         username: username.trim().toLowerCase(),
       });
 
+      console.log("[SIGNUP RESPONSE:", { res });
+
+      // Try to create profile if signup succeeded
+      if (res && !res.checkEmail) {
+        console.log("[SIGNUP] User created directly, attempting profile creation...");
+        
+        // Try to get user ID and create profile with timeout
+        if (supabase) {
+          try {
+            // Add timeout for getUser call
+            const userPromise = supabase.auth.getUser();
+            const timeoutPromise = new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('getUser timeout')), 5000)
+            );
+            
+            const { data: { user } } = await Promise.race([userPromise, timeoutPromise]) as any;
+            console.log("[SIGNUP] Got user:", { user: !!user });
+            
+            if (user) {
+              // Add timeout for profile creation
+              const profilePromise = createProfileIfMissing(
+                user.id,
+                email.trim(),
+                fullName.trim(),
+                username.trim().toLowerCase(),
+                normalizedReferral
+              );
+              
+              const profileTimeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Profile creation timeout')), 10000)
+              );
+              
+              const profileResult = await Promise.race([profilePromise, profileTimeoutPromise]) as any;
+              console.log("[SIGNUP] PROFILE RESULT:", profileResult);
+              
+              if (!profileResult.success) {
+                console.error('Profile creation failed:', profileResult.message);
+                // Don't fail the signup, but log the error
+                // The user can still proceed, but might have limited access
+              }
+            } else {
+              console.log("[SIGNUP] No user found, skipping profile creation");
+            }
+          } catch (userError: any) {
+            console.error('[SIGNUP] User/profile creation error:', userError);
+            // Don't fail the signup, continue to success state
+          }
+        } else {
+          console.log("[SIGNUP] Supabase not available, skipping profile creation");
+        }
+      } else {
+        console.log("[SIGNUP] Email verification required, skipping profile creation");
+      }
+
+      console.log("[SIGNUP] Setting done state:", { checkEmail: !!res?.checkEmail });
       setDone({ checkEmail: !!res?.checkEmail });
+      
     } catch (err: any) {
-      const msg = String(err?.message || "");
-      if (msg.toLowerCase().includes("referral")) setError(t("errors.referralInvalid"));
-      else if (msg.toLowerCase().includes("email")) setError(t("errors.emailInUse"));
-      else if (msg.toLowerCase().includes("username")) setError(t("errors.usernameTaken"));
-      else setError(t("errors.generic"));
+      console.error('[SIGNUP] Signup error:', err);
+      
+      // Telemetry: log signup failure with privacy masking
+      const emailMasked = email.replace(/(.{2}).+(@.+)/, "$1***$2");
+      console.error('[TELEMETRY] Signup failed:', { 
+        email: emailMasked, 
+        referralCode: normalizedReferral, 
+        error: err?.message || 'unknown' 
+      });
+      
+      // Context-based error mapping (no fragile string matching)
+      setError(signupGenericText);
     } finally {
+      console.log('[SIGNUP] Setting submitting to false');
       setSubmitting(false);
     }
   };
@@ -215,17 +338,13 @@ export default function SignUp({ lang }: SignUpProps) {
                 ) : null
               }
               helper={
-                refMsg ||
-                (refState === "valid" ? t("auth.signup.referralValid") : t("auth.signup.referralHint"))
+                refMsg || 
+                (refState === "checking" ? referralCheckingText :
+                 refState === "valid" ? t("auth.signup.referralValid") : 
+                 t("auth.signup.referralHint"))
               }
               helperTone={refState === "invalid" ? "error" : refState === "valid" ? "ok" : "muted"}
             />
-
-            {debugInfo && (
-              <div className="px-2 py-1 text-xs text-white/50 bg-white/5 rounded border border-white/10">
-                Debug: {debugInfo} | State: {refState} | Code: {normalizedReferral}
-              </div>
-            )}
 
             <Field
               icon={<User2 className="w-4 h-4" />}
@@ -243,12 +362,12 @@ export default function SignUp({ lang }: SignUpProps) {
               placeholder={t("auth.signup.usernamePlaceholder")}
               helper={
                 username
-                  ? usernameOk
+                  ? usernameValidation.valid
                     ? t("auth.signup.usernameOk")
-                    : t("auth.signup.usernameRules")
+                    : usernameValidation.error || t("auth.signup.usernameRules")
                   : t("auth.signup.usernameHint")
               }
-              helperTone={username ? (usernameOk ? "ok" : "error") : "muted"}
+              helperTone={username ? (usernameValidation.valid ? "ok" : "error") : "muted"}
             />
 
             <Field
@@ -266,9 +385,44 @@ export default function SignUp({ lang }: SignUpProps) {
               value={password}
               onChange={(v) => setPassword(v)}
               placeholder="••••••••"
-              type="password"
+              type={showPassword ? "text" : "password"}
               helper={t("auth.signup.passwordHint")}
               helperTone="muted"
+              right={
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-white/50 hover:text-white/70 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              }
+            />
+
+            <Field
+              icon={<Lock className="w-4 h-4" />}
+              label="Confirm Password"
+              value={confirmPassword}
+              onChange={(v) => setConfirmPassword(v)}
+              placeholder="••••••••"
+              type={showConfirmPassword ? "text" : "password"}
+              helper={
+                confirmPassword
+                  ? passwordsMatch
+                    ? "Passwords match"
+                    : "Passwords do not match"
+                  : ""
+              }
+              helperTone={confirmPassword ? (passwordsMatch ? "ok" : "error") : "muted"}
+              right={
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="text-white/50 hover:text-white/70 transition-colors"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              }
             />
 
             {error ? (
