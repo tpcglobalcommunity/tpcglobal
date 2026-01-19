@@ -1,10 +1,14 @@
 -- FIX DATABASE TRIGGER ERROR (500 unexpected_failure)
--- This script disables the problematic trigger that causes "Database error saving new user"
+-- This script disables problematic trigger that causes "Database error saving new user"
 
--- Step 1: Drop the problematic trigger
+-- Step 1: Drop existing triggers first
+DROP TRIGGER IF EXISTS tpc_on_auth_user_created_failopen ON auth.users;
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 
--- Step 2: Create fail-open trigger (non-blocking)
+-- Step 2: Drop existing function
+DROP FUNCTION IF EXISTS tpc_on_auth_user_created_failopen();
+
+-- Step 3: Create fail-open trigger (non-blocking)
 CREATE OR REPLACE FUNCTION tpc_on_auth_user_created_failopen()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -28,20 +32,20 @@ BEGIN
             NOW()
         );
     EXCEPTION WHEN OTHERS THEN
-        -- Log the error but don't fail the signup
+        -- Log error but don't fail the signup
         RAISE NOTICE 'Profile creation failed for user %: %', NEW.id, SQLERRM;
     END;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Step 3: Create the new trigger
+-- Step 4: Create the new trigger
 CREATE TRIGGER tpc_on_auth_user_created_failopen
     AFTER INSERT ON auth.users
     FOR EACH ROW
     EXECUTE FUNCTION tpc_on_auth_user_created_failopen();
 
--- Step 4: Verify trigger is created
+-- Step 5: Verify trigger is created
 SELECT 
     t.tgname as trigger_name,
     t.tgenabled as status,
@@ -51,10 +55,5 @@ SELECT
     END as status_text
 FROM pg_trigger t 
 WHERE t.tgname = 'tpc_on_auth_user_created_failopen';
-
--- Step 5: Test profile creation (optional)
--- Uncomment to test:
--- INSERT INTO auth.users (id, email, created_at) 
--- VALUES ('test-id', 'test@example.com', NOW());
 
 COMMIT;
