@@ -686,6 +686,112 @@ export const getAdminActions = async (limit: number = 50): Promise<AdminAction[]
   return data || [];
 };
 
+export interface AdminUserListItem {
+  id: string;
+  email: string;
+  full_name: string | null;
+  username: string | null;
+  role: 'member' | 'moderator' | 'admin' | 'super_admin';
+  is_verified: boolean;
+  can_invite: boolean;
+  referral_code: string;
+  referral_count: number;
+  created_at: string;
+  show_in_directory: boolean;
+  vendor_status: string;
+  country: string | null;
+  total_count: number;
+}
+
+export interface AdminListUsersParams {
+  query?: string;
+  role?: string;
+  verified?: boolean;
+  can_invite?: boolean;
+  limit?: number;
+  offset?: number;
+}
+
+export const adminListUsers = async (params: AdminListUsersParams = {}): Promise<AdminUserListItem[]> => {
+  const {
+    query = null,
+    role = null,
+    verified = null,
+    can_invite = null,
+    limit = 20,
+    offset = 0,
+  } = params;
+
+  try {
+    const { data, error } = await supabase.rpc('admin_list_users', {
+      p_query: query,
+      p_role: role,
+      p_verified: verified,
+      p_can_invite: can_invite,
+      p_limit: limit,
+      p_offset: offset,
+    });
+
+    if (error) {
+      console.error('Error listing users (admin):', error);
+      throw error;
+    }
+
+    return (data || []) as AdminUserListItem[];
+  } catch (err) {
+    console.error('Error in adminListUsers:', err);
+    throw err;
+  }
+};
+
+export const adminSetUserRole = async (
+  targetUserId: string,
+  newRole: 'member' | 'moderator' | 'admin' | 'super_admin',
+  reason: string = ''
+): Promise<{ success: boolean; old_role: string; new_role: string }> => {
+  try {
+    const { data, error } = await supabase.rpc('admin_set_user_role', {
+      p_target_user_id: targetUserId,
+      p_new_role: newRole,
+      p_reason: reason,
+    });
+
+    if (error) {
+      console.error('Error setting user role:', error);
+      throw error;
+    }
+
+    return data as { success: boolean; old_role: string; new_role: string };
+  } catch (err) {
+    console.error('Error in adminSetUserRole:', err);
+    throw err;
+  }
+};
+
+export const adminSetUserVerified = async (
+  targetUserId: string,
+  newVerified: boolean,
+  reason: string = ''
+): Promise<{ success: boolean; old_verified: boolean; new_verified: boolean }> => {
+  try {
+    const { data, error } = await supabase.rpc('admin_set_user_verified', {
+      p_target_user_id: targetUserId,
+      p_new_verified: newVerified,
+      p_reason: reason,
+    });
+
+    if (error) {
+      console.error('Error setting user verified:', error);
+      throw error;
+    }
+
+    return data as { success: boolean; old_verified: boolean; new_verified: boolean };
+  } catch (err) {
+    console.error('Error in adminSetUserVerified:', err);
+    throw err;
+  }
+};
+
 export const getNewsPosts = async (
   limit: number = 10,
   offset: number = 0,

@@ -36,6 +36,7 @@ import AnnouncementsAdminListPage from './pages/admin/AnnouncementsAdminListPage
 import AnnouncementEditorPage from './pages/admin/AnnouncementEditorPage';
 import AuthLogsPage from './pages/admin/AuthLogsPage';
 import VendorsAdminPage from './pages/admin/VendorsAdminPage';
+import AdminControlCenterPage from './pages/admin/AdminControlCenterPage';
 import VendorApplyPage from './pages/member/VendorApplyPage';
 import MarketplacePage from './pages/MarketplacePage';
 
@@ -170,6 +171,8 @@ function App() {
         return <AuthLogsPage lang={lang} />;
       case '/admin/vendors':
         return <VendorsAdminPage lang={lang} />;
+      case '/admin/control':
+        return <AdminControlCenterPage />;
       default:
         return <Home lang={lang} />;
     }
