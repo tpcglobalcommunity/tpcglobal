@@ -274,7 +274,7 @@ export default function SignUp({ lang }: SignUpProps) {
         stack: err?.stack
       });
       
-      if (err?.status === 500 || err?.message?.includes('Database error')) {
+      if (err?.status === 500 || err?.code === 'unexpected_failure' || err?.message?.includes('Database error')) {
         errorMessage = t("auth.signup.errorGeneric"); // "Failed to create account"
       } else if (err?.status === 400 || err?.message?.includes('Invalid')) {
         errorMessage = t("auth.signup.errorGeneric"); // "Failed to create account"
