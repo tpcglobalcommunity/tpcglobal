@@ -144,27 +144,43 @@ export interface NewsPostDetail {
 
 export const validateReferralCode = async (code: string): Promise<boolean> => {
   if (!code || code.trim() === '') {
+    console.log('[validateReferralCode] Empty code');
     return false;
   }
 
+  const trimmedCode = code.trim().toUpperCase();
+  console.log('[validateReferralCode] Starting validation for:', trimmedCode);
+
   try {
-    const trimmedCode = code.trim().toUpperCase();
-    console.log('[validateReferralCode] Checking code:', trimmedCode);
+    const startTime = Date.now();
 
     const { data, error } = await supabase.rpc('validate_referral_code_public', {
       p_code: trimmedCode
     });
 
-    console.log('[validateReferralCode] Response:', { data, error });
+    const elapsed = Date.now() - startTime;
+    console.log('[validateReferralCode] Request completed in', elapsed, 'ms');
+    console.log('[validateReferralCode] Raw response:', { data, error });
 
     if (error) {
-      console.error('[validateReferralCode] Error:', error);
+      console.error('[validateReferralCode] RPC Error:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
       return false;
     }
 
-    return data === true;
-  } catch (err) {
-    console.error('[validateReferralCode] Exception:', err);
+    const isValid = data === true;
+    console.log('[validateReferralCode] Is valid:', isValid);
+
+    return isValid;
+  } catch (err: any) {
+    console.error('[validateReferralCode] Exception:', {
+      message: err?.message,
+      stack: err?.stack
+    });
     return false;
   }
 };

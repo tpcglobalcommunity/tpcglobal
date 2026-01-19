@@ -44,7 +44,8 @@ export default function SignUp({ lang }: SignUpProps) {
 
   useEffect(() => {
     let alive = true;
-    let timer: any;
+    let debounceTimer: any;
+    let timeoutTimer: any;
 
     setError(null);
 
@@ -57,14 +58,32 @@ export default function SignUp({ lang }: SignUpProps) {
     setRefState("checking");
     setRefMsg(null);
 
-    timer = setTimeout(async () => {
+    debounceTimer = setTimeout(async () => {
+      console.log('[SignUp] Validating referral code:', normalizedReferral);
+
+      // Set a timeout to prevent hanging indefinitely
+      timeoutTimer = setTimeout(() => {
+        if (!alive) return;
+        console.error('[SignUp] Validation timeout!');
+        setRefState("invalid");
+        setRefMsg("Validation timeout. Please try again.");
+      }, 8000);
+
       try {
         const ok = await validateReferralCode(normalizedReferral);
         if (!alive) return;
+
+        clearTimeout(timeoutTimer);
+        console.log('[SignUp] Validation result:', ok);
+
         setRefState(ok ? "valid" : "invalid");
         setRefMsg(ok ? null : t("errors.referralInvalid"));
-      } catch {
+      } catch (err) {
         if (!alive) return;
+
+        clearTimeout(timeoutTimer);
+        console.error('[SignUp] Validation error:', err);
+
         setRefState("invalid");
         setRefMsg(t("errors.generic"));
       }
@@ -72,7 +91,8 @@ export default function SignUp({ lang }: SignUpProps) {
 
     return () => {
       alive = false;
-      clearTimeout(timer);
+      clearTimeout(debounceTimer);
+      clearTimeout(timeoutTimer);
     };
   }, [normalizedReferral, t]);
 
