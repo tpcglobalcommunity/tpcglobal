@@ -52,6 +52,7 @@ export default function SignUp({ lang }: SignUpProps) {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<null | { checkEmail: boolean }>(null);
   const [error, setError] = useState<string | null>(null);
+  const [debugErr, setDebugErr] = useState<any>(null);
 
   // Ref to cache validation results and prevent duplicate API calls
   const lastValidatedRef = useRef<{ code: string; valid: boolean } | null>(null);
@@ -158,7 +159,7 @@ export default function SignUp({ lang }: SignUpProps) {
     }, 400);
 
     return () => window.clearTimeout(timer);
-  }, [referralCode, referralInvalidText, referralGenericText, referralCheckingText]);
+  }, [referralCode]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -243,6 +244,7 @@ export default function SignUp({ lang }: SignUpProps) {
       setDone({ checkEmail: !!res?.checkEmail });
       
     } catch (err: any) {
+      setDebugErr(err);
       console.error('[SIGNUP] Signup error:', {
         message: err?.message || 'Unknown error',
         status: err?.status,
@@ -464,6 +466,22 @@ export default function SignUp({ lang }: SignUpProps) {
               <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3.5 text-sm text-red-200">
                 {error}
               </div>
+            ) : null}
+
+            {import.meta.env.DEV && debugErr ? (
+              <pre className="mt-3 text-xs text-white/70 bg-white/5 border border-white/10 rounded-xl p-3 overflow-auto">
+{JSON.stringify(
+  {
+    status: debugErr?.status,
+    code: debugErr?.code,
+    message: debugErr?.message,
+    details: debugErr?.details,
+    hint: debugErr?.hint,
+  },
+  null,
+  2
+)}
+              </pre>
             ) : null}
 
             <div className="pt-2">
