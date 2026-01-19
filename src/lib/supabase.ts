@@ -26,13 +26,22 @@ function ensureSupabase() {
 }
 
 function normalizeSupabaseError(err: any) {
+  // jika sudah ternormalisasi, jangan dinormalisasi ulang
+  if (err && typeof err === "object" && ("raw" in err) && ("timestamp" in err)) {
+    return err;
+  }
+
+  const e = err || {};
   return {
-    status: err?.status,
-    code: err?.code || err?.error_code,
-    message: err?.message,
-    details: err?.details,
-    hint: err?.hint,
-    raw: err,
+    status: e?.status ?? e?.statusCode ?? null,
+    code: e?.code ?? e?.error_code ?? null,
+    message: e?.message ?? String(e),
+    details: e?.details ?? null,
+    hint: e?.hint ?? null,
+    name: e?.name ?? null,
+    stack: e?.stack ?? null,
+    timestamp: new Date().toISOString(),
+    raw: e,
   };
 }
 
