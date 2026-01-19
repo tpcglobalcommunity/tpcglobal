@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Supabase API</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #fff; }
+    button { padding: 10px 20px; margin: 10px 0; cursor: pointer; }
+    pre { background: #2a2a2a; padding: 15px; border-radius: 8px; overflow-x: auto; }
+    .success { color: #4ade80; }
+    .error { color: #f87171; }
+  </style>
+</head>
+<body>
+  <h1>Supabase Connection Test</h1>
+
+  <button onclick="testConnection()">Test Connection</button>
+  <button onclick="testRPC()">Test RPC Function</button>
+
+  <h3>Results:</h3>
+  <pre id="output">Click a button to run tests...</pre>
+
+  <script>
+    const SUPABASE_URL = 'https://watoxiwtdnkpxdirkvvf.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhdG94aXd0ZG5rcHhkaXJrdnZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3NDQ0MzgsImV4cCI6MjA4NDMyMDQzOH0.x4lFqshmGwsAM0Duu2B_p6LbrzvvEydl1IEuzA6K06M';
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const output = document.getElementById('output');
+
+    function log(message, type = 'info') {
+      const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
+      output.innerHTML += `<div class="${className}">${message}</div>`;
+    }
+
+    async function testConnection() {
+      output.innerHTML = 'Testing connection...\n\n';
+
+      try {
+        log('✓ Supabase client created', 'success');
+        log(`URL: ${SUPABASE_URL}`, 'success');
+        log(`Key: ${SUPABASE_KEY.substring(0, 20)}...`, 'success');
+
+        // Test a simple query
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('count')
+          .limit(1);
+
+        if (error) {
+          log(`\n✗ Error: ${error.message}`, 'error');
+        } else {
+          log(`\n✓ Connection successful!`, 'success');
+        }
+      } catch (err) {
+        log(`\n✗ Exception: ${err.message}`, 'error');
+      }
+    }
+
+    async function testRPC() {
+      output.innerHTML = 'Testing RPC function...\n\n';
+
+      const testCodes = [
+        'TPC-BOOT01',
+        'tpc-boot01',
+        'INVALID-CODE',
+        ''
+      ];
+
+      for (const code of testCodes) {
+        try {
+          log(`\nTesting code: "${code}"`);
+
+          const startTime = Date.now();
+          const { data, error } = await supabase.rpc('validate_referral_code_public', {
+            p_code: code.toUpperCase()
+          });
+          const elapsed = Date.now() - startTime;
+
+          log(`  Time: ${elapsed}ms`);
+          log(`  Data: ${JSON.stringify(data)}`);
+          log(`  Error: ${error ? error.message : 'null'}`);
+          log(`  Result: ${data === true ? '✓ VALID' : '✗ INVALID'}`, data === true ? 'success' : 'error');
+        } catch (err) {
+          log(`  Exception: ${err.message}`, 'error');
+        }
+      }
+    }
+  </script>
+</body>
+</html>

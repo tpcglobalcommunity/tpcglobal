@@ -19,6 +19,7 @@ export default function SignUp({ lang }: SignUpProps) {
   const [referralCode, setReferralCode] = useState("");
   const [refState, setRefState] = useState<ReferralState>("idle");
   const [refMsg, setRefMsg] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<string>("");
 
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
@@ -48,6 +49,7 @@ export default function SignUp({ lang }: SignUpProps) {
     let timeoutTimer: any;
 
     setError(null);
+    setDebugInfo("");
 
     if (!normalizedReferral) {
       setRefState("idle");
@@ -57,9 +59,11 @@ export default function SignUp({ lang }: SignUpProps) {
 
     setRefState("checking");
     setRefMsg(null);
+    setDebugInfo("Waiting...");
 
     debounceTimer = setTimeout(async () => {
       console.log('[SignUp] Validating referral code:', normalizedReferral);
+      setDebugInfo("Sending request...");
 
       // Set a timeout to prevent hanging indefinitely
       timeoutTimer = setTimeout(() => {
@@ -67,17 +71,22 @@ export default function SignUp({ lang }: SignUpProps) {
         console.error('[SignUp] Validation timeout!');
         setRefState("invalid");
         setRefMsg("Validation timeout. Please try again.");
+        setDebugInfo("Timeout!");
       }, 8000);
 
       try {
+        const startTime = Date.now();
         const ok = await validateReferralCode(normalizedReferral);
+        const elapsed = Date.now() - startTime;
+
         if (!alive) return;
 
         clearTimeout(timeoutTimer);
-        console.log('[SignUp] Validation result:', ok);
+        console.log('[SignUp] Validation result:', ok, `(${elapsed}ms)`);
 
         setRefState(ok ? "valid" : "invalid");
         setRefMsg(ok ? null : t("errors.referralInvalid"));
+        setDebugInfo(ok ? `Valid! (${elapsed}ms)` : `Invalid (${elapsed}ms)`);
       } catch (err) {
         if (!alive) return;
 
@@ -86,6 +95,7 @@ export default function SignUp({ lang }: SignUpProps) {
 
         setRefState("invalid");
         setRefMsg(t("errors.generic"));
+        setDebugInfo(`Error: ${err}`);
       }
     }, 450);
 
@@ -210,6 +220,12 @@ export default function SignUp({ lang }: SignUpProps) {
               }
               helperTone={refState === "invalid" ? "error" : refState === "valid" ? "ok" : "muted"}
             />
+
+            {debugInfo && (
+              <div className="px-2 py-1 text-xs text-white/50 bg-white/5 rounded border border-white/10">
+                Debug: {debugInfo} | State: {refState} | Code: {normalizedReferral}
+              </div>
+            )}
 
             <Field
               icon={<User2 className="w-4 h-4" />}
