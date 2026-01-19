@@ -143,18 +143,21 @@ export interface NewsPostDetail {
 }
 
 export const validateReferralCode = async (code: string): Promise<boolean> => {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('referral_code, can_invite')
-    .eq('referral_code', code.toUpperCase())
-    .maybeSingle();
+  try {
+    const { data, error } = await supabase.rpc('validate_referral_code_public', {
+      p_code: code.toUpperCase()
+    });
 
-  if (error) {
-    console.error('Error validating referral code:', error);
+    if (error) {
+      console.error('Error validating referral code:', error);
+      return false;
+    }
+
+    return !!data;
+  } catch (err) {
+    console.error('Error in validateReferralCode:', err);
     return false;
   }
-
-  return !!(data && data.can_invite);
 };
 
 export const getProfile = async (userId: string): Promise<Profile | null> => {
