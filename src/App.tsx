@@ -167,17 +167,41 @@ function App() {
           </MemberGate>
         );
       case '/member/security':
-        return <SecurityPage lang={lang} />;
+        return (
+          <MemberGate lang={lang}>
+            <SecurityPage lang={lang} />
+          </MemberGate>
+        );
       case '/member/profile':
-        return <ProfilePage lang={lang} />;
+        return (
+          <MemberGate lang={lang}>
+            <ProfilePage lang={lang} />
+          </MemberGate>
+        );
       case '/member/announcements':
-        return <AnnouncementsPage lang={lang} />;
+        return (
+          <MemberGate lang={lang}>
+            <AnnouncementsPage lang={lang} />
+          </MemberGate>
+        );
       case '/member/referrals':
-        return <ReferralsPage lang={lang} />;
+        return (
+          <MemberGate lang={lang}>
+            <ReferralsPage lang={lang} />
+          </MemberGate>
+        );
       case '/member/directory':
-        return <DirectoryPage lang={lang} />;
+        return (
+          <MemberGate lang={lang}>
+            <DirectoryPage lang={lang} />
+          </MemberGate>
+        );
       case '/member/vendor/apply':
-        return <VendorApplyPage lang={lang} />;
+        return (
+          <MemberGate lang={lang}>
+            <VendorApplyPage lang={lang} />
+          </MemberGate>
+        );
       case '/marketplace':
         return <MarketplacePage lang={lang} />;
       case '/verify':
