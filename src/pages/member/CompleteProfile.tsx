@@ -1,323 +1,47 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
-import { useI18n } from '../../i18n';
-import { PremiumShell } from '../../components/ui/PremiumShell';
-import { PremiumCard } from '../../components/ui/PremiumCard';
-import { PremiumButton } from '../../components/ui/PremiumButton';
-import { NoticeBox } from '../../components/ui/NoticeBox';
-import { Loader2 } from 'lucide-react';
+ypFrmSte= ;xpot deult funtionCpletePfile()co [load,eLoad]=Stt(ue)ons[av,eSav]=sSat(as;[formError,seFormError]State<strig | null>nullormFrmFrmSte"""""""",tlgamNmalizedM( => {  = (for.eleram_rnm || "").trimrrnt.rsWith"@") ? t.lic(1 : t},frm.eleram_rnm]et md=truefunction init  seLoading(tue);
+     setFormError(null);
+consturId = es.sess?.user?.id;
 
-interface ProfileData {
-  full_name: string;
-  phone: string;
-  telegram_username: string;
-  city: string;
-}
+      if (!userIdif (mounted) // Pre-fill if existing
+      """, is_profile_complete"""ImaybeS!mounted) return;
 
-interface FormErrors {
-  full_name?: string;
-  phone?: string;
-  telegram_username?: string;
-  city?: string;
-  general?: string;
-}
-
-export default function CompleteProfile() {
-  const { t } = useI18n();
-  
-  const [profileData, setProfileData] = useState<ProfileData>({
-    full_name: '',
-    phone: '',
-    telegram_username: '',
-    city: ''
-  });
-  
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadCurrentProfile();
-  }, []);
-
-  const loadCurrentProfile = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        window.location.href = '/signin';
-        return;
-      }
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name, phone, telegram_username, city')
-        .eq('id', session.user.id)
-        .single();
-
-      if (profile) {
-        setProfileData({
-          full_name: profile.full_name || '',
-          phone: profile.phone || '',
-          telegram_username: profile.telegram_username || '',
-          city: profile.city || ''
-        });
-      }
-    } catch (error) {
-      console.error('Error loading profile:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-
-    // Full Name validation
-    if (!profileData.full_name.trim()) {
-      newErrors.full_name = t('completeProfile.errors.fullNameRequired');
-    } else if (profileData.full_name.trim().length < 2) {
-      newErrors.full_name = t('completeProfile.errors.fullNameMinLength');
+      if (?.is_profile_complete === true// udah lngkap, langsung ke membe
+        wndow.ocion.href = '/member';return;
     }
 
-    // Phone validation
-    if (!profileData.phone.trim()) {
-      newErrors.phone = t('completeProfile.errors.phoneRequired');
-    } else if (profileData.phone.trim().length < 8) {
-      newErrors.phone = t('completeProfile.errors.phoneMinLength');
-    }
+      setForm({
+        (???"").toString()(???"").toString()(???"").toString()(???"").toString(),stLading(false;}
 
-    // Telegram validation
-    if (!profileData.telegram_username.trim()) {
-      newErrors.telegram_username = t('completeProfile.errors.telegramRequired');
-    } else if (profileData.telegram_username.trim().length < 2) {
-      newErrors.telegram_username = t('completeProfile.errors.telegramMinLength');
-    }
+ t( return()=>mount = ;, [])funtiup<KextdkyfStte>(ky: K,: sngstF((p)>{ ..., [ky]: va })
 
-    // City validation
-    if (!profileData.city.trim()) {
-      newErrors.city = t('completeProfile.errors.cityRequired');
-    } else if (profileData.city.trim().length < 2) {
-      newErrors.city = t('completeProfile.errors.cityMinLength');
-    }
+uncton vaid(): s|nullcot m_n.rim(cstphe=om;cot tggamNmalz.trim(contcty = om.cy;
+ifful<2)return"Namankpwjb isminm 2 kkt.";if(phonth < 8) et "Nomor HP wjibdiisiinma 8 kakt."run "UTwjbdinma 2 kaak."rtun "Kawajibdi (mimal2kaakt."ulasyn fucionosetFormError(null);
+consterr = ();
+    if (err) {
+      setErrorerr;avcusId= ss?.usr?.iif(!seId){window.octio.h= '/igin';
+cntyload = ormormtNormalized.trim()orm};
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    const { error  = await supabase
+        .from("profiles"updat(payload)
+        .e""IFormav(odiun<dicssNm="min-h-scenbg-[#0B0F17]ext-wteexitms-cetjuy-cne"Loading</v>retur( <divclassName="min-h-sce bg-[#0B0F17]text-white"> {/* background gow */}potervnts-noeixdn-0opaci60ivabsolute -top-24 left1/2-72 w72-trsl-x1/2 rouddfu bg[#FB9B]/15 blur-3xlclassName="absolutebottom-0right-0h-72w-72oundd-fbg-[#F0B90B]/10bl-3xl"/>  /dv
+ativxauomax-wxl0b6dvinlin-flxmsgap2rounded-fullborderborder-[#F0B90B]/30bg-[#F0B90B]/10px-3py-ssemi[#F0B90B]Wajibdngkapdiv
+h1mt-4 text-3xl md:xt-4l fonbold tckingtightLengkai  Mmrh1plaNm="mt-2text-white70"> SebelumakpenuhkeMemberArea,kia wajb melngkp dadrunuk vikai komnita.p</div>fmEd4udd-2xbrdrbrdr-red-500/30bg-red-50010px-4py-3- txtwhite/90frErrdv)}
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
+   <forundd3xlbrerbordwhite/1gwhie/5 bakdr-bu-x p-5 md:p-6 shdow-[0_0_0_1px_rga(255,255,255,005]"FeldlablNa Lngkapfom(v) => upd"", vChEkAy
+<FidblNoorHPvalu={fmphoonChange={(v=update("p",v)pcdrCoh:8xxxxxxxxxxinpuMd=""<FidlabelUseram Telegramorm.tegrm_useram(v) => upat("eleram_usram", v"Cnh: @tmmb"h={`Akampag: ${eegmNrmiz || "(koo)"}`
+<FildblKoavalue=fmcityoChng={(v)=>upate("cty", )}pcdCh: ubing"
+btonbm"ibvingmt-4 rounded-2xl bg-[#F0B90B] fontbk disabld:pcit6diabdow"avin ? "Myimpn..." : "SipanLanjut"}</button>
 
-    setIsSubmitting(true);
-    setErrors({});
+  3xwhit/6Datainidigunakanuntukverifikasikomunitasdankomunikasipgam Kia tidak mnjanjikan pofit dn sea aktivita tding brisiko.</form>
+</div>  );}
 
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        setErrors({ general: t('completeProfile.errors.sessionExpired') });
-        return;
-      }
-
-      // Clean telegram username (remove @ if present)
-      const cleanTelegram = profileData.telegram_username.trim().replace(/^@/, '');
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          full_name: profileData.full_name.trim(),
-          phone: profileData.phone.trim(),
-          telegram_username: cleanTelegram,
-          city: profileData.city.trim(),
-          is_profile_complete: true,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', session.user.id);
-
-      if (error) {
-        setErrors({ general: error.message });
-        return;
-      }
-
-      setSuccess(true);
-      setTimeout(() => {
-        window.location.href = '/member';
-      }, 2000);
-
-    } catch (error: any) {
-      setErrors({ general: error.message });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleInputChange = (field: keyof ProfileData) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setProfileData(prev => ({
-      ...prev,
-      [field]: e.target.value
-    }));
-    
-    // Clear error for this field when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({
-        ...prev,
-        [field]: undefined
-      }));
-    }
-  };
-
-  if (loading) {
-    return (
-      <PremiumShell>
-        <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
-        </div>
-      </PremiumShell>
-    );
-  }
-
-  return (
-    <PremiumShell>
-      <div className="min-h-screen flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md">
-          <PremiumCard className="p-8">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-white mb-4">
-                {t('completeProfile.title')}
-              </h1>
-              <p className="text-gray-300">
-                {t('completeProfile.subtitle')}
-              </p>
-            </div>
-
-            {/* Success Message */}
-            {success && (
-              <NoticeBox variant="success" className="mb-6">
-                {t('completeProfile.success')}
-              </NoticeBox>
-            )}
-
-            {/* Error Message */}
-            {errors.general && (
-              <NoticeBox variant="warning" className="mb-6">
-                {errors.general}
-              </NoticeBox>
-            )}
-
-            {/* Notice */}
-            <NoticeBox variant="info" className="mb-6">
-              {t('completeProfile.notice')}
-            </NoticeBox>
-
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Full Name */}
-              <div>
-                <label htmlFor="full_name" className="block text-sm font-medium text-gray-200 mb-2">
-                  {t('completeProfile.labels.fullName')}
-                </label>
-                <input
-                  type="text"
-                  id="full_name"
-                  value={profileData.full_name}
-                  onChange={handleInputChange('full_name')}
-                  placeholder={t('completeProfile.placeholders.fullName')}
-                  className="w-full px-4 py-3 bg-black/30 border border-yellow-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
-                  disabled={isSubmitting}
-                />
-                {errors.full_name && (
-                  <p className="mt-2 text-sm text-red-400">
-                    {errors.full_name}
-                  </p>
-                )}
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-200 mb-2">
-                  {t('completeProfile.labels.phone')}
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  value={profileData.phone}
-                  onChange={handleInputChange('phone')}
-                  placeholder={t('completeProfile.placeholders.phone')}
-                  className="w-full px-4 py-3 bg-black/30 border border-yellow-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
-                  disabled={isSubmitting}
-                />
-                {errors.phone && (
-                  <p className="mt-2 text-sm text-red-400">
-                    {errors.phone}
-                  </p>
-                )}
-              </div>
-
-              {/* Telegram Username */}
-              <div>
-                <label htmlFor="telegram_username" className="block text-sm font-medium text-gray-200 mb-2">
-                  {t('completeProfile.labels.telegram')}
-                </label>
-                <input
-                  type="text"
-                  id="telegram_username"
-                  value={profileData.telegram_username}
-                  onChange={handleInputChange('telegram_username')}
-                  placeholder={t('completeProfile.placeholders.telegram')}
-                  className="w-full px-4 py-3 bg-black/30 border border-yellow-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
-                  disabled={isSubmitting}
-                />
-                {errors.telegram_username && (
-                  <p className="mt-2 text-sm text-red-400">
-                    {errors.telegram_username}
-                  </p>
-                )}
-              </div>
-
-              {/* City */}
-              <div>
-                <label htmlFor="city" className="block text-sm font-medium text-gray-200 mb-2">
-                  {t('completeProfile.labels.city')}
-                </label>
-                <input
-                  type="text"
-                  id="city"
-                  value={profileData.city}
-                  onChange={handleInputChange('city')}
-                  placeholder={t('completeProfile.placeholders.city')}
-                  className="w-full px-4 py-3 bg-black/30 border border-yellow-500/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200"
-                  disabled={isSubmitting}
-                />
-                {errors.city && (
-                  <p className="mt-2 text-sm text-red-400">
-                    {errors.city}
-                  </p>
-                )}
-              </div>
-
-              {/* Submit Button */}
-              <PremiumButton
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full py-3"
-              >
-                {isSubmitting ? (
-                  <div className="flex items-center justify-center">
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    {t('completeProfile.submitting')}
-                  </div>
-                ) : (
-                  t('completeProfile.button')
-                )}
-              </PremiumButton>
-            </form>
-          </PremiumCard>
-        </div>
-      </div>
-    </PremiumShell>
-  );
-}
+functionField(props:{
+label:string;
+value:string;
+onChange:(v:string)=>void;
+ placeholder?: strng;helper?:string;
+inputMode?:React.HTMLAttributes<HTMLInputElement>["inputMode"];
+}){
+return(
+ className="mb-4"mb-1 seibolwhite/9psps.vau() => rops.one.arget.valuepsinputMode={props.inputMode}
+rounded2xhite1bg-whit/5 px4py-3 :textwhite/35boder[#F0B90B]/602g[#FB9B]/20pphelperdiv1xwhe55"p.l
