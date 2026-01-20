@@ -21,11 +21,18 @@ export default function SignUp({ lang }: { lang: any }) {
     const code = referralCode.trim().toUpperCase();
     const uname = username.trim();
 
+    // Validation
     if (!code) return setError("Referral code is required.");
     if (!uname) return setError("Username is required.");
     if (!email.trim()) return setError("Email is required.");
     if (password.length < 8) return setError("Password must be at least 8 characters.");
     if (password !== confirmPassword) return setError("Passwords do not match.");
+
+    // Username validation (alphanumeric, underscore, period, 3-20 chars)
+    const usernameRegex = /^[a-zA-Z0-9_.]{3,20}$/;
+    if (!usernameRegex.test(uname)) {
+      return setError("Username must be 3-20 characters (letters, numbers, underscore, period).");
+    }
 
     setIsSubmitting(true);
     try {
@@ -39,7 +46,7 @@ export default function SignUp({ lang }: { lang: any }) {
         options: {
           data: {
             username: uname,
-            referralCode: code,
+            referral_code: code,
           },
         },
       });
