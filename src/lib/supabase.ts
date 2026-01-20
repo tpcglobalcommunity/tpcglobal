@@ -48,10 +48,15 @@ function normalizeSupabaseError(err: any) {
 export interface Profile {
   id: string;
   email: string | null;
-  full_name: string | null;
   username: string | null;
+  full_name: string | null;
+  phone: string | null;
+  telegram_username: string | null;
+  city: string | null;
+  profile_completed: boolean;
+  status?: string | null;
+  role?: string | null;
   avatar_url: string | null;
-  role: 'member' | 'moderator' | 'admin' | 'super_admin';
   is_verified: boolean;
   referral_code: string;
   referred_by: string | null;
@@ -1290,3 +1295,17 @@ export const createProfileIfMissing = async (userId: string, email: string, full
     return { success: false, message: err?.message || 'Failed to create profile' };
   }
 };
+
+export async function getMyProfile(): Promise<Profile | null> {
+  const { data: { user }, error: userErr } = await supabase.auth.getUser();
+  if (userErr || !user) return null;
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id,email,username,full_name,phone,telegram_username,city,profile_completed,status,role,avatar_url,is_verified,referral_code,referred_by,referral_count,can_invite,created_at,updated_at,vendor_status")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data ?? null;
+}
