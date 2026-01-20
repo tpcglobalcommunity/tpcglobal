@@ -22,7 +22,9 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import CompleteProfile from './pages/member/CompleteProfile';
 import MemberGate from './components/guards/MemberGuard';
+import ProfileGate from './components/guards/ProfileGate';
 import MemberHome from './pages/member/MemberHome';
+import Services from './pages/member/Services';
 import Dashboard from './pages/member/Dashboard';
 import SecurityPage from './pages/member/SecurityPage';
 import ProfilePage from './pages/member/ProfilePage';
@@ -157,49 +159,73 @@ function App() {
       case '/member':
         return (
           <MemberGate lang={lang}>
-            <MemberHome lang={lang} />
+            <ProfileGate lang={lang}>
+              <MemberHome lang={lang} />
+            </ProfileGate>
           </MemberGate>
         );
       case '/member/dashboard':
         return (
           <MemberGate lang={lang}>
-            <Dashboard lang={lang} />
+            <ProfileGate lang={lang}>
+              <Dashboard lang={lang} />
+            </ProfileGate>
           </MemberGate>
         );
       case '/member/security':
         return (
           <MemberGate lang={lang}>
-            <SecurityPage lang={lang} />
+            <ProfileGate lang={lang}>
+              <SecurityPage lang={lang} />
+            </ProfileGate>
           </MemberGate>
         );
       case '/member/profile':
         return (
           <MemberGate lang={lang}>
-            <ProfilePage lang={lang} />
+            <ProfileGate lang={lang}>
+              <ProfilePage lang={lang} />
+            </ProfileGate>
           </MemberGate>
         );
       case '/member/announcements':
         return (
           <MemberGate lang={lang}>
-            <AnnouncementsPage lang={lang} />
+            <ProfileGate lang={lang}>
+              <AnnouncementsPage lang={lang} />
+            </ProfileGate>
           </MemberGate>
         );
       case '/member/referrals':
         return (
           <MemberGate lang={lang}>
-            <ReferralsPage lang={lang} />
+            <ProfileGate lang={lang}>
+              <ReferralsPage lang={lang} />
+            </ProfileGate>
           </MemberGate>
         );
       case '/member/directory':
         return (
           <MemberGate lang={lang}>
-            <DirectoryPage lang={lang} />
+            <ProfileGate lang={lang}>
+              <DirectoryPage lang={lang} />
+            </ProfileGate>
           </MemberGate>
         );
       case '/member/vendor/apply':
         return (
           <MemberGate lang={lang}>
-            <VendorApplyPage lang={lang} />
+            <ProfileGate lang={lang}>
+              <VendorApplyPage lang={lang} />
+            </ProfileGate>
+          </MemberGate>
+        );
+      case '/member/services':
+        return (
+          <MemberGate lang={lang}>
+            <ProfileGate lang={lang}>
+              <Services lang={lang} />
+            </ProfileGate>
           </MemberGate>
         );
       case '/marketplace':
