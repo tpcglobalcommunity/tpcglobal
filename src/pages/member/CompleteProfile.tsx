@@ -1,47 +1,200 @@
-ypFrmSte= ;xpot deult funtionCpletePfile()co [load,eLoad]=Stt(ue)ons[av,eSav]=sSat(as;[formError,seFormError]State<strig | null>nullormFrmFrmSte"""""""",tlgamNmalizedM( => {  = (for.eleram_rnm || "").trimrrnt.rsWith"@") ? t.lic(1 : t},frm.eleram_rnm]et md=truefunction init  seLoading(tue);
-     setFormError(null);
-consturId = es.sess?.user?.id;
+import React, { useEffect, useMemo, useState } from 'react';
+import { supabase } from '../../lib/supabase';
 
-      if (!userIdif (mounted) // Pre-fill if existing
-      """, is_profile_complete"""ImaybeS!mounted) return;
+te oat {
+  full_name: string
+  phone: string;
+  telegram_username: string;
+  city: string;
+};
 
-      if (?.is_profile_complete === true// udah lngkap, langsung ke membe
-        wndow.ocion.href = '/member';return;
+erfac omro {
+  nsting sting  useaetr;
+  ct sing sting  uetefle)
+  const  t = usen();
+  const [f, seto] = useState<otae>({
+    full_nam: ,
+    phone: ,
+    telegram_username: ,
+    city: 
+  });
+
+  const eeror = useemo()
+    consttmtguseae();
+    etu stat(se);
+   [otguseae);
+
+  useEffect(() => {
+    lounte  ;
+
+    async () {
+    tr 
+       { data: sess } = await spabase.auth.getSession();
+      const usession) {
+        window.location.href = 'signin';
+        return;
+      }
+
+      /const { data: profile } = await supabase
+        .from(profiles)
+        .select(full_namephone, telegram_username, cty, i)
+        .eq(id, userd)
+        .ingle();
+
+      if (profile) {
+        serilat
+           full_name:profile.full_name  ,
+        phone: profile.phone  ,
+        telegram_username: profile.telegram_username  ,
+        city: profile.city  
+      });
+
+      eo)
+       ini);
+      {
+      edfalse
+    };
+  };
+
+  con date ens eo Formae valuetri) {
+    eorm = (pelue);  }
+  filatetring   {
+    nsfull = for.fullamet);
+    on on  fr.phone.trim()
+    ns = teleroried);
+    s ifrit.trim()
+     (l.length     lega aidii (ialaraer)
+     e.lengrurna  (milraer);
+    if (tg.length < 2) etrsername elegram ai iisi (milrter);
+    if (city.length < 2) erot  iisin  rer);
+    return nl;
+  }
+
+  cnton Submit(e: React.FrmEvent) {
+    e.preventDefault();
+    
+     validateForm(rr);
+      etun
     }
 
-      setForm({
-        (???"").toString()(???"").toString()(???"").toString()(???"").toString(),stLading(false;}
+    setSing(true);
+    try {
+      const { data: sess } = await supabase.auth.getSession();
+      onst er es.sessioned;
+       ur 
+        lanref sn        return;
+      }
 
- t( return()=>mount = ;, [])funtiup<KextdkyfStte>(ky: K,: sngstF((p)>{ ..., [ky]: va })
+      os pa {
+        full_name: form.full_name.trim(),
+        phone:f.phne.trim(),
+        telegram_usenae: elegram,
+        city: f.city.trim(),
+        is_profile_complete: true,
+        updated_at: new Date().toISOString(),
+        })
+        .eq(id, userd);
 
-uncton vaid(): s|nullcot m_n.rim(cstphe=om;cot tggamNmalz.trim(contcty = om.cy;
-ifful<2)return"Namankpwjb isminm 2 kkt.";if(phonth < 8) et "Nomor HP wjibdiisiinma 8 kakt."run "UTwjbdinma 2 kaak."rtun "Kawajibdi (mimal2kaakt."ulasyn fucionosetFormError(null);
-consterr = ();
-    if (err) {
-      setErrorerr;avcusId= ss?.usr?.iif(!seId){window.octio.h= '/igin';
-cntyload = ormormtNormalized.trim()orm};
+      if (error) {
+        setormError(error.message);
+        return;
+      }
 
-    const { error  = await supabase
-        .from("profiles"updat(payload)
-        .e""IFormav(odiun<dicssNm="min-h-scenbg-[#0B0F17]ext-wteexitms-cetjuy-cne"Loading</v>retur( <divclassName="min-h-sce bg-[#0B0F17]text-white"> {/* background gow */}potervnts-noeixdn-0opaci60ivabsolute -top-24 left1/2-72 w72-trsl-x1/2 rouddfu bg[#FB9B]/15 blur-3xlclassName="absolutebottom-0right-0h-72w-72oundd-fbg-[#F0B90B]/10bl-3xl"/>  /dv
-ativxauomax-wxl0b6dvinlin-flxmsgap2rounded-fullborderborder-[#F0B90B]/30bg-[#F0B90B]/10px-3py-ssemi[#F0B90B]Wajibdngkapdiv
-h1mt-4 text-3xl md:xt-4l fonbold tckingtightLengkai  Mmrh1plaNm="mt-2text-white70"> SebelumakpenuhkeMemberArea,kia wajb melngkp dadrunuk vikai komnita.p</div>fmEd4udd-2xbrdrbrdr-red-500/30bg-red-50010px-4py-3- txtwhite/90frErrdv)}
+      window.locatin.hef = '/meber';
+    } finally {
+      setSingfalse);
+    }
+  }
 
-   <forundd3xlbrerbordwhite/1gwhie/5 bakdr-bu-x p-5 md:p-6 shdow-[0_0_0_1px_rga(255,255,255,005]"FeldlablNa Lngkapfom(v) => upd"", vChEkAy
-<FidblNoorHPvalu={fmphoonChange={(v=update("p",v)pcdrCoh:8xxxxxxxxxxinpuMd=""<FidlabelUseram Telegramorm.tegrm_useram(v) => upat("eleram_usram", v"Cnh: @tmmb"h={`Akampag: ${eegmNrmiz || "(koo)"}`
-<FildblKoavalue=fmcityoChng={(v)=>upate("cty", )}pcdCh: ubing"
-btonbm"ibvingmt-4 rounded-2xl bg-[#F0B90B] fontbk disabld:pcit6diabdow"avin ? "Myimpn..." : "SipanLanjut"}</button>
+  if (lang) {
+    retr (
+      v laaere  thi fl ener stifetr>
+        ...
+      di
+    );
+  }
 
-  3xwhit/6Datainidigunakanuntukverifikasikomunitasdankomunikasipgam Kia tidak mnjanjikan pofit dn sea aktivita tding brisiko.</form>
-</div>  );}
+  n 
+    ren 
+     Premium l
+      <div className="in-een fe iset ty-">
+        <d clssName="a- h- anate-ne-ll-00" />
+        <div      reull  ur 
+    <i>
+      <div clssName="relae m-t - px-4 py-1">
+        <div className="m-">
+          <i className="ee ite-center -      1 text-x font-bold text-">
+             ilei
+          </>
+          < classNae="mtext-ra-">
+            pProfilebe
+          </>
+          < cssae /
+            ses     tieaita asa terfisus
+          </>
+        
 
-functionField(props:{
-label:string;
-value:string;
-onChange:(v:string)=>void;
- placeholder?: strng;helper?:string;
-inputMode?:React.HTMLAttributes<HTMLInputElement>["inputMode"];
-}){
-return(
- className="mb-4"mb-1 seibolwhite/9psps.vau() => rops.one.arget.valuepsinputMode={props.inputMode}
-rounded2xhite1bg-whit/5 px4py-3 :textwhite/35boder[#F0B90B]/602g[#FB9B]/20pphelperdiv1xwhe55"p.l
+        {orrror && (
+          <iv className="mb- ronel oe oe /   textsme-">
+            {omor}
+          </i>
+             m
+          onSbmit={oSubmit}
+          className="roune- od er-0 b-tcoplrlab.)
+        >
+          <i
+            e="mae"
+            value={r.full_name}
+            onChange={ate(full_name)}
+            placeholder="onto: o rsad"          />
+
+          el
+            lae="m "
+            eor.ne}
+            ) > hone }
+            laehole="nto 0"
+            toetel
+          />
+
+          el
+            ="ne"
+            value={felane}
+            onChange={detgene)}
+            placeholder=otopceer
+            elpern disian sebaitlraoaledsng}
+          />
+          e
+            lae="t"
+            {or.}
+            nae  div
+            laeholer="ontoPralga
+          />
+          <ut
+            type="suit
+            dsaled={sa}
+            className=" w-full px-4 py-3t-bold tex-laceoay-0 sle:cursor-not-alled
+          >
+            {sgenam & 
+                   <pclassName="mt- text-xs tet-e0">
+                    ror.teramusrae
+          </p>
+        >
+      </div    
+
+               i
+              <div">
+      <label className= block text-smfont-md text-0">
+        {pro.label}
+      </label>
+      <input
+        value={prole}
+        onChange={epnChage(te)}
+        placeholdr={pro.placeholder}
+                className="w-full -l border border-w/0 e-  text-whiteplaceholder- outline-none focus:r- focus:ring- focus:rin-00"
+      />
+      {ros. && (
+        < className="mt- text-xs tet-it/>{prosheper}</div>
+      )}
+    </div>
+  );
+}
