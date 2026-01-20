@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
-import { getMyProfile } from "../../lib/supabase";
+import { useProfileStatus } from "../../lib/useProfileStatus";
 import { Link } from "../Router"; // kalau kamu pakai router custom
 // atau gunakan navigate sesuai router kamu
 
 type Props = {
   children: React.ReactNode;
-  lang: any;
 };
 
-export default function MemberGate({ children, lang }: Props) {
-  const [loading, setLoading] = useState(true);
+export default function MemberGate({ children }: Props) {
+  const { loading, profile, isComplete } = useProfileStatus();
   const [blocked, setBlocked] = useState<null | "login" | "complete">(null);
+  const [lang, setLang] = useState('en');
+
+  useEffect(() => {
+    // Get language from current path
+    const pathLang = window.location.pathname.split('/')[1];
+    if (pathLang === 'en' || pathLang === 'id') {
+      setLang(pathLang);
+    }
+  }, []);
 
   useEffect(() => {
     let alive = true;
@@ -23,33 +31,27 @@ export default function MemberGate({ children, lang }: Props) {
         if (!session?.user) {
           if (!alive) return;
           setBlocked("login");
-          setLoading(false);
           return;
         }
 
-        const profile = await getMyProfile();
-
-        // Kalau profile belum ada (fail-open trigger gagal), arahkan ke complete profile
-        if (!profile || profile.profile_completed !== true) {
+        // Use profile from useProfileStatus instead of duplicate fetch
+        if (!profile || !isComplete) {
           if (!alive) return;
           setBlocked("complete");
-          setLoading(false);
           return;
         }
 
         if (!alive) return;
         setBlocked(null);
-        setLoading(false);
       } catch {
         if (!alive) return;
         // kalau error baca profile, lebih aman kita blok ke complete
         setBlocked("complete");
-        setLoading(false);
       }
     })();
 
     return () => { alive = false; };
-  }, []);
+  }, [profile, isComplete]);
 
   if (loading) {
     return <div className="p-6 text-white/70">Loading...</div>;

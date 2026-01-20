@@ -1,15 +1,11 @@
 import { useState, FormEvent } from 'react';
 import { Mail, ArrowRight, CheckCircle } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../../i18n';
+import { useI18n } from '../../i18n';
 import { Link } from '../../components/Router';
 import { useAuth } from '../../contexts/AuthContext';
 
-interface ForgotPasswordProps {
-  lang: Language;
-}
-
-const ForgotPassword = ({ lang }: ForgotPasswordProps) => {
-  const t = useTranslations(lang);
+export default function ForgotPassword() {
+  const { t } = useI18n();
   const { sendPasswordReset } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -22,14 +18,15 @@ const ForgotPassword = ({ lang }: ForgotPasswordProps) => {
     setError(null);
 
     if (!email) {
-      setError(t.auth.errors.generic);
+      setError(t("auth.errors.generic"));
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const redirectTo = `${window.location.origin}/${lang}/reset`;
+      const currentLang = window.location.pathname.split('/')[1] || 'en';
+      const redirectTo = `${window.location.origin}/${currentLang}/reset`;
       const { error: resetError } = await sendPasswordReset(email, redirectTo);
 
       if (resetError) {
@@ -38,7 +35,7 @@ const ForgotPassword = ({ lang }: ForgotPasswordProps) => {
 
       setSuccess(true);
     } catch (err: unknown) {
-      setError(t.auth.errors.generic);
+      setError(t("auth.errors.generic"));
     } finally {
       setIsSubmitting(false);
     }
@@ -61,12 +58,12 @@ const ForgotPassword = ({ lang }: ForgotPasswordProps) => {
             <p className="text-white/65 mb-8 leading-relaxed">
               {t.auth.forgot.sentDesc}
             </p>
-            <Link to={getLangPath(lang, '/signin')}>
+            <Link to="/signin">
               <button
                 type="button"
                 className="w-full h-12 rounded-2xl font-semibold bg-gradient-to-r from-[#F0B90B] to-[#F8D568] text-black transition-all duration-200 hover:shadow-lg hover:shadow-[#F0B90B]/20 active:translate-y-[1px] flex items-center justify-center gap-2"
               >
-                {t.auth.signup.signInLink}
+                {t("auth.signup.signInLink")}
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
@@ -135,8 +132,8 @@ const ForgotPassword = ({ lang }: ForgotPasswordProps) => {
           </div>
 
           <div className="text-center text-sm text-white/60 pt-3">
-            <Link to={getLangPath(lang, '/signin')} className="text-[#F0B90B] hover:underline underline-offset-4 font-medium">
-              {t.auth.common.backHome}
+            <Link to="/signin" className="text-[#F0B90B] hover:underline underline-offset-4 font-medium">
+              {t("auth.common.backToSignIn")}
             </Link>
           </div>
         </form>
@@ -144,5 +141,3 @@ const ForgotPassword = ({ lang }: ForgotPasswordProps) => {
     </div>
   );
 };
-
-export default ForgotPassword;

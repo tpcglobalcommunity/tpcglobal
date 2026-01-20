@@ -68,4 +68,14 @@ export const Link = ({
   );
 };
 
+export const useNavigate = () => {
+  const navigate = (to: string) => {
+    if (window.location.pathname !== to) {
+      window.history.pushState({}, '', to);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  };
+  return navigate;
+};
+
 export default Router;

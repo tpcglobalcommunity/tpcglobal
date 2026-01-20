@@ -20,7 +20,7 @@ import SignUp from './pages/auth/SignUp';
 import SignIn from './pages/auth/SignIn';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
-import CompleteProfile from './pages/member/CompleteProfile';
+import CompleteProfile from './pages/member/CompleteProfilePage';
 import MemberGate from './components/guards/MemberGuard';
 import ProfileGate from './components/guards/ProfileGate';
 import MemberHome from './pages/member/MemberHome';
@@ -145,11 +145,11 @@ function App() {
       case '/support':
         return <Support lang={lang} />;
       case '/signup':
-        return <SignUp lang={lang} />;
+        return <SignUp />;
       case '/signin':
-        return <SignIn lang={lang} />;
+        return <SignIn />;
       case '/forgot':
-        return <ForgotPassword lang={lang} />;
+        return <ForgotPassword />;
       case '/reset':
         return <ResetPassword lang={lang} />;
       case '/complete-profile':
@@ -158,72 +158,72 @@ function App() {
         return <CompleteProfile lang={lang} />;
       case '/member':
         return (
-          <MemberGate lang={lang}>
-            <ProfileGate lang={lang}>
+          <MemberGate>
+            <ProfileGate>
               <MemberHome lang={lang} />
             </ProfileGate>
           </MemberGate>
         );
       case '/member/dashboard':
         return (
-          <MemberGate lang={lang}>
-            <ProfileGate lang={lang}>
+          <MemberGate>
+            <ProfileGate>
               <Dashboard lang={lang} />
             </ProfileGate>
           </MemberGate>
         );
       case '/member/security':
         return (
-          <MemberGate lang={lang}>
-            <ProfileGate lang={lang}>
+          <MemberGate>
+            <ProfileGate>
               <SecurityPage lang={lang} />
             </ProfileGate>
           </MemberGate>
         );
       case '/member/profile':
         return (
-          <MemberGate lang={lang}>
-            <ProfileGate lang={lang}>
+          <MemberGate>
+            <ProfileGate>
               <ProfilePage lang={lang} />
             </ProfileGate>
           </MemberGate>
         );
       case '/member/announcements':
         return (
-          <MemberGate lang={lang}>
-            <ProfileGate lang={lang}>
+          <MemberGate>
+            <ProfileGate>
               <AnnouncementsPage lang={lang} />
             </ProfileGate>
           </MemberGate>
         );
       case '/member/referrals':
         return (
-          <MemberGate lang={lang}>
-            <ProfileGate lang={lang}>
+          <MemberGate>
+            <ProfileGate>
               <ReferralsPage lang={lang} />
             </ProfileGate>
           </MemberGate>
         );
       case '/member/directory':
         return (
-          <MemberGate lang={lang}>
-            <ProfileGate lang={lang}>
+          <MemberGate>
+            <ProfileGate>
               <DirectoryPage lang={lang} />
             </ProfileGate>
           </MemberGate>
         );
       case '/member/vendor/apply':
         return (
-          <MemberGate lang={lang}>
-            <ProfileGate lang={lang}>
+          <MemberGate>
+            <ProfileGate>
               <VendorApplyPage lang={lang} />
             </ProfileGate>
           </MemberGate>
         );
       case '/member/services':
         return (
-          <MemberGate lang={lang}>
-            <ProfileGate lang={lang}>
+          <MemberGate>
+            <ProfileGate>
               <Services lang={lang} />
             </ProfileGate>
           </MemberGate>

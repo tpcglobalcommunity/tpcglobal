@@ -46,9 +46,7 @@ const AuthLogsPage = ({ lang }: AuthLogsPageProps) => {
           reason,
           meta,
           created_at,
-          profiles!actor_id (
-            email
-          )
+          profiles!actor_id (*)
         `)
         .order('created_at', { ascending: false })
         .range(offset, offset + LIMIT - 1);

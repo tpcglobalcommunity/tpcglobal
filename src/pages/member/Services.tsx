@@ -1,5 +1,5 @@
 import React from 'react';
-import { ServiceAccessGate } from '../../components/guards/ServiceAccessGate';
+import ServiceAccessGate from '../../components/guards/ServiceAccessGate';
 import { 
   Store, 
   TrendingUp, 

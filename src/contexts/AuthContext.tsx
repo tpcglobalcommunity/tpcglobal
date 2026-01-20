@@ -50,9 +50,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [fetchingProfile, setFetchingProfile] = useState(false);
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = async (_userId: string) => {
+    // DISABLED: Profile fetching is now handled by useProfileStatus hook
+    // This prevents duplicate requests and infinite loops
+    console.log('[AuthContext] Profile fetching delegated to useProfileStatus');
+    return;
+    
+    /* Original code - disabled to prevent duplicates
     if (fetchingProfile) return;
 
     try {
@@ -71,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setFetchingProfile(false);
     }
+    */
   };
 
   useEffect(() => {

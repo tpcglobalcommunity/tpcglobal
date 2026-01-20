@@ -51,7 +51,7 @@ export interface Profile {
   username: string | null;
   full_name: string | null;
   phone: string | null;
-  telegram_username: string | null;
+  telegram: string | null;
   city: string | null;
   profile_completed: boolean;
   status?: string | null;
@@ -380,22 +380,56 @@ export const getReferrals = async (userId: string): Promise<Referral[]> => {
 };
 
 export interface ReferralItem {
-  username: string;
+  id: string;
   full_name: string;
-  avatar_url: string | null;
-  joined_at: string;
-  is_verified: boolean;
+  email: string;
+  created_at: string;
 }
 
 export interface ReferralAnalytics {
-  my_referral_code: string;
-  my_referral_count: number;
-  can_invite: boolean;
-  referred_by: string | null;
-  invited_last_7_days: number;
-  invited_last_30_days: number;
-  recent_invites: ReferralItem[];
+  referral_code: string | null;
+  total_referrals: number;
+  last_7_days: number;
+  last_30_days: number;
+  invite_status: string; // 'ACTIVE' or 'INACTIVE'
 }
+
+export const ensureReferralCode = async (): Promise<string | null> => {
+  try {
+    const { data, error } = await supabase.rpc('ensure_referral_code');
+
+    if (error) {
+      console.error('Error ensuring referral code:', error);
+      return null;
+    }
+
+    return data as string;
+  } catch (err) {
+    console.error('Error in ensureReferralCode:', err);
+    return null;
+  }
+};
+
+export const generateReferralCode = async (): Promise<string | null> => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated');
+
+    const referralCode = 'TPC-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ referral_code: referralCode })
+      .eq('id', user.id);
+
+    if (error) throw error;
+
+    return referralCode;
+  } catch (err) {
+    console.error('Error generating referral code:', err);
+    return null;
+  }
+};
 
 export const getMyReferralAnalytics = async (): Promise<ReferralAnalytics | null> => {
   try {
@@ -406,7 +440,9 @@ export const getMyReferralAnalytics = async (): Promise<ReferralAnalytics | null
       return null;
     }
 
-    return data as ReferralAnalytics;
+    // RETURNS TABLE returns array, take first element
+    const analytics = Array.isArray(data) && data.length > 0 ? data[0] : null;
+    return analytics as ReferralAnalytics;
   } catch (err) {
     console.error('Error in getMyReferralAnalytics:', err);
     return null;
@@ -1232,7 +1268,7 @@ export const createProfileIfMissing = async (userId: string, email: string, full
     console.log('[PROFILE] Checking if profile exists...');
     const { data: existingProfile, error: checkError } = await ensureSupabase()
       .from('profiles')
-      .select('id')
+      .select('*')
       .eq('id', userId)
       .maybeSingle();
 
@@ -1302,7 +1338,7 @@ export async function getMyProfile(): Promise<Profile | null> {
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("id,email,username,full_name,phone,telegram_username,city,profile_completed,status,role,avatar_url,is_verified,referral_code,referred_by,referral_count,can_invite,created_at,updated_at,vendor_status")
+    .select("*")
     .eq("id", user.id)
     .maybeSingle();
 

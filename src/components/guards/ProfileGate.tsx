@@ -1,92 +1,30 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
+import { useProfileStatus } from "../../lib/useProfileStatus";
+import { isProfileDataComplete } from "../../lib/profileHelpers";
 import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { useNavigate } from "../../components/Router";
 
 type Props = {
-  lang: any;
   children: React.ReactNode;
 };
 
-export default function ProfileGate({ lang, children }: Props) {
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<any>(null);
+export default function ProfileGate({ children }: Props) {
+  const navigate = useNavigate();
+  const { loading, profile, error: profileError } = useProfileStatus();
   const [error, setError] = useState<string | null>(null);
-  const [timeoutReached, setTimeoutReached] = useState(false);
 
   useEffect(() => {
-    let alive = true;
-    let timeoutId: NodeJS.Timeout;
-
-    const checkProfile = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session?.user) {
-          if (!alive) return;
-          setError("No authenticated session found");
-          setLoading(false);
-          return;
-        }
-
-        // Set timeout to prevent infinite loading
-        timeoutId = setTimeout(() => {
-          if (!alive) return;
-          setTimeoutReached(true);
-          setLoading(false);
-          setError("Profile check timed out. Please refresh.");
-        }, 10000); // 10 second timeout
-
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
-          .select("full_name, telegram, phone_whatsapp, profile_completed")
-          .eq("id", session.user.id)
-          .single();
-
-        clearTimeout(timeoutId);
-
-        if (!alive) return;
-
-        if (profileError) {
-          setError(profileError.message);
-          setLoading(false);
-          return;
-        }
-
-        setProfile(profileData);
-        setLoading(false);
-      } catch (err: any) {
-        clearTimeout(timeoutId);
-        if (!alive) return;
-        setError(err?.message || "Failed to check profile status");
-        setLoading(false);
-      }
-    };
-
-    checkProfile();
-
-    return () => {
-      alive = false;
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, []);
+    // Use profile from useProfileStatus instead of duplicate fetch
+    if (profileError) {
+      setError(profileError);
+    }
+  }, [profileError]);
 
   const isProfileComplete = () => {
-    if (!profile) return false;
-    
-    // Check if profile_completed flag is true
-    if (profile.profile_completed) return true;
-    
-    // Or check individual required fields
-    return !!(
-      profile.full_name && 
-      profile.telegram && 
-      profile.phone_whatsapp
-    );
+    return isProfileDataComplete(profile);
   };
 
   const handleRetry = () => {
-    setLoading(true);
-    setError(null);
-    setTimeoutReached(false);
     // Trigger re-check by forcing re-render
     window.location.reload();
   };
@@ -107,15 +45,6 @@ export default function ProfileGate({ lang, children }: Props) {
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[#F0B90B] mx-auto mb-4" />
           <p className="text-white/70">Checking profile status...</p>
-          {timeoutReached && (
-            <button 
-              onClick={handleRetry}
-              className="mt-4 px-4 py-2 bg-[#F0B90B] text-black rounded-lg hover:bg-[#F0B90B]/90 transition-colors flex items-center gap-2 mx-auto"
-            >
-              <RefreshCw className="w-4 h-4" />
-              Retry
-            </button>
-          )}
         </div>
       </div>
     );
@@ -143,8 +72,7 @@ export default function ProfileGate({ lang, children }: Props) {
 
   // Profile incomplete - redirect to complete profile
   if (!isProfileComplete() && !isCompleteProfileRoute()) {
-    const langPrefix = lang === 'id' ? '/id' : '/en';
-    window.location.href = `${langPrefix}/member/complete-profile`;
+    navigate('/member/complete-profile');
     return null;
   }
 

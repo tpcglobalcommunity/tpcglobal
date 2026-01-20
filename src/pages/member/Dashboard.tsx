@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Tag, Copy, CheckCircle, Users, LogOut, AlertCircle, Megaphone, BookOpen, MessageCircle, Shield, User, FileText, Newspaper, ExternalLink, Check } from 'lucide-react';
+import { Tag, Copy, CheckCircle, Users, LogOut, AlertCircle, Megaphone, BookOpen, MessageCircle, Shield, User, Newspaper, ExternalLink, Check } from 'lucide-react';
 import { Language, useTranslations, getLangPath } from '../../i18n';
 import { PremiumShell, PremiumCard, NoticeBox, PremiumButton } from '../../components/ui';
-import { supabase, getProfile, Profile, getPublishedAnnouncements, Announcement, getOnboardingState, upsertOnboardingState, ensureOnboardingRow, OnboardingState } from '../../lib/supabase';
+import { supabase, getProfile, Profile, getPublishedAnnouncements, Announcement, getOnboardingState, upsertOnboardingState, ensureOnboardingRow, ensureReferralCode } from '../../lib/supabase';
 
 interface DashboardProps {
   lang: Language;
@@ -11,14 +11,24 @@ interface DashboardProps {
 const Dashboard = ({ lang }: DashboardProps) => {
   const t = useTranslations(lang);
 
+  // Safe string helpers to prevent runtime errors
+  const safeUpper = (v: unknown, fallback = "") => {
+    const result = (typeof v === "string" ? v : v == null ? "" : String(v)).toUpperCase() || fallback;
+    if (!v && fallback === "ANNOUNCEMENT") {
+      console.warn("[Dashboard] undefined category field detected, using fallback");
+    }
+    return result;
+  };
+
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [copied, setCopied] = useState(false);
+  const [onboarding, setOnboarding] = useState<any>(null);
+  const [updatingOnboarding, setUpdatingOnboarding] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [runtimeError, setRuntimeError] = useState<string | null>(null);
   const [pinnedAnnouncements, setPinnedAnnouncements] = useState<Announcement[]>([]);
   const [latestAnnouncements, setLatestAnnouncements] = useState<Announcement[]>([]);
-  const [onboarding, setOnboarding] = useState<OnboardingState | null>(null);
-  const [updatingOnboarding, setUpdatingOnboarding] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const init = async () => {
@@ -37,6 +47,13 @@ const Dashboard = ({ lang }: DashboardProps) => {
           return;
         }
 
+        // Debug log for referral code
+        if (!profileData.referral_code) {
+          console.warn('[Dashboard] referral_code missing for user', user.id);
+        } else {
+          console.log('[Dashboard] referral_code loaded:', profileData.referral_code);
+        }
+
         setProfile(profileData);
 
         await ensureOnboardingRow();
@@ -49,8 +66,9 @@ const Dashboard = ({ lang }: DashboardProps) => {
           query: ''
         });
 
-        setPinnedAnnouncements(announcements.filter(a => a.is_pinned).slice(0, 3));
-        setLatestAnnouncements(announcements.filter(a => !a.is_pinned).slice(0, 5));
+        const safeAnnouncements = announcements || [];
+        setPinnedAnnouncements(safeAnnouncements.filter(a => a.is_pinned).slice(0, 3));
+        setLatestAnnouncements(safeAnnouncements.filter(a => !a.is_pinned).slice(0, 5));
 
       } catch (err) {
         console.error('Error initializing dashboard:', err);
@@ -63,11 +81,33 @@ const Dashboard = ({ lang }: DashboardProps) => {
     init();
   }, [lang]);
 
+  const [generatingCode, setGeneratingCode] = useState(false);
+
+  const handleGenerateReferralCode = async () => {
+    try {
+      setGeneratingCode(true);
+      const newCode = await ensureReferralCode();
+      if (newCode) {
+        // Refresh profile data
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const updatedProfile = await getProfile(user.id);
+          setProfile(updatedProfile);
+        }
+      }
+    } catch (err) {
+      console.error('Error generating referral code:', err);
+    } finally {
+      setGeneratingCode(false);
+    }
+  };
+
   const handleCopyReferralCode = async () => {
-    if (!profile?.referral_code) return;
+    const referralCode = profile?.referral_code;
+    if (!referralCode) return;
 
     try {
-      await navigator.clipboard.writeText(profile.referral_code);
+      await navigator.clipboard.writeText(referralCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -162,23 +202,25 @@ const Dashboard = ({ lang }: DashboardProps) => {
     );
   }
 
-  return (
-    <PremiumShell>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-              {t.member.dashboard.title}
-            </h1>
-            <p className="text-white/70">
-              {t.member.dashboard.welcome}, {profile.full_name || profile.username}
-            </p>
+  // Render with error boundary
+  const renderDashboard = () => {
+    try {
+      return (
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                {t.member.dashboard.title}
+              </h1>
+              <p className="text-white/70">
+                {t.member.dashboard.welcome}, {profile.full_name || profile.username}
+              </p>
+            </div>
+            <PremiumButton variant="secondary" onClick={handleSignOut}>
+              <LogOut className="w-5 h-5" />
+              Sign Out
+            </PremiumButton>
           </div>
-          <PremiumButton variant="secondary" onClick={handleSignOut}>
-            <LogOut className="w-5 h-5" />
-            Sign Out
-          </PremiumButton>
-        </div>
 
         {onboarding && !onboarding.completed && (
           <PremiumCard className="mb-8 border-2 border-[#F0B90B]/30">
@@ -363,7 +405,7 @@ const Dashboard = ({ lang }: DashboardProps) => {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <span className="inline-block px-2 py-1 text-xs font-medium bg-[#F0B90B]/20 text-[#F0B90B] rounded">
-                          {announcement.category.toUpperCase()}
+                          {safeUpper(announcement?.category, "ANNOUNCEMENT")}
                         </span>
                       </div>
                       <h3 className="text-lg font-semibold text-white mb-2">
@@ -392,7 +434,7 @@ const Dashboard = ({ lang }: DashboardProps) => {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <span className="inline-block px-2 py-1 text-xs font-medium bg-white/10 text-white/70 rounded">
-                          {announcement.category.toUpperCase()}
+                          {safeUpper(announcement?.category, "ANNOUNCEMENT")}
                         </span>
                         {announcement.published_at && (
                           <span className="text-xs text-white/50">
@@ -508,12 +550,13 @@ const Dashboard = ({ lang }: DashboardProps) => {
               <div className="flex gap-3">
                 <div className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg">
                   <code className="text-lg font-mono font-semibold text-[#F0B90B]">
-                    {profile.referral_code}
+                    {profile?.referral_code ? profile.referral_code : "No code yet"}
                   </code>
                 </div>
                 <button
                   onClick={handleCopyReferralCode}
-                  className="px-6 py-3 bg-gradient-to-r from-[#F0B90B] to-[#F0B90B]/80 text-black font-semibold rounded-lg hover:from-[#F0B90B]/90 hover:to-[#F0B90B]/70 transition-all duration-200 flex items-center gap-2 whitespace-nowrap"
+                  disabled={!profile?.referral_code}
+                  className="px-6 py-3 bg-gradient-to-r from-[#F0B90B] to-[#F0B90B]/80 text-black font-semibold rounded-lg hover:from-[#F0B90B]/90 hover:to-[#F0B90B]/70 transition-all duration-200 flex items-center gap-2 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {copied ? (
                     <>
@@ -529,6 +572,29 @@ const Dashboard = ({ lang }: DashboardProps) => {
                 </button>
               </div>
             </div>
+
+            {!profile?.referral_code && (
+              <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mt-2">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
+                  <div className="text-xs flex-1">
+                    <p className="text-yellow-400 font-medium mb-1">
+                      Referral code belum tersedia
+                    </p>
+                    <p className="text-white/60 mb-2">
+                      Coba refresh halaman atau kontak support jika masalah berlanjut.
+                    </p>
+                    <button
+                      onClick={handleGenerateReferralCode}
+                      disabled={generatingCode}
+                      className="px-3 py-1 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 text-xs font-medium rounded transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {generatingCode ? 'Generating...' : 'Generate Code'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <NoticeBox variant="info" title="">
               {t.member.referral.shareText}
@@ -551,6 +617,36 @@ const Dashboard = ({ lang }: DashboardProps) => {
           </PremiumCard>
         )}
       </div>
+    );
+    } catch (err) {
+      console.error('[Dashboard] Runtime error:', err);
+      setRuntimeError((err as any)?.message || 'Unexpected error rendering dashboard');
+      return null;
+    }
+  };
+
+  if (runtimeError) {
+    return (
+      <PremiumShell>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
+          <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-10">
+            <div className="text-center">
+              <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-white mb-2">Something went wrong</h2>
+              <p className="text-white/70 mb-4">{runtimeError}</p>
+              <PremiumButton onClick={() => window.location.reload()}>
+                Reload Page
+              </PremiumButton>
+            </div>
+          </div>
+        </div>
+      </PremiumShell>
+    );
+  }
+
+  return (
+    <PremiumShell>
+      {renderDashboard()}
     </PremiumShell>
   );
 };

@@ -47,7 +47,7 @@ export default function MemberGuard({ children, allowIncomplete }: Props) {
       // 2) Fetch profile
       const { data: prof, error: profErr } = await supabase
         .from("profiles")
-        .select("id, is_profile_complete, status, role")
+        .select("*")
         .eq("id", userId)
         .maybeSingle();
 
@@ -57,13 +57,11 @@ export default function MemberGuard({ children, allowIncomplete }: Props) {
       if ((!prof || profErr) && userId) {
         await supabase
           .from("profiles")
-          .insert({ id: userId })
-          .select("id, is_profile_complete, status, role")
-          .maybeSingle();
+          .insert({ id: userId });
 
         const { data: prof2 } = await supabase
           .from("profiles")
-          .select("id, is_profile_complete, status, role")
+          .select("*")
           .eq("id", userId)
           .maybeSingle();
 

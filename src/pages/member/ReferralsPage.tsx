@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Users, TrendingUp, Copy, Check, Link as LinkIcon, AlertCircle, CheckCircle, User, Calendar } from 'lucide-react';
+import { Users, TrendingUp, Copy, Check, Link as LinkIcon, CheckCircle } from 'lucide-react';
 import { Language, useTranslations } from '../../i18n';
 import { PremiumShell, PremiumCard, NoticeBox } from '../../components/ui';
 import MemberGuard from '../../components/guards/MemberGuard';
-import { getMyReferralAnalytics, ReferralAnalytics } from '../../lib/supabase';
+import { ReferralAnalytics, supabase, ensureReferralCode } from '../../lib/supabase';
 
 interface ReferralsPageProps {
   lang: Language;
@@ -12,8 +12,12 @@ interface ReferralsPageProps {
 const ReferralsPage = ({ lang }: ReferralsPageProps) => {
   const t = useTranslations(lang);
 
+  // Helper aman
+  const safeUpper = (v?: string | null) => (v ?? "").toUpperCase();
+
   const [analytics, setAnalytics] = useState<ReferralAnalytics | null>(null);
   const [loading, setLoading] = useState(true);
+  const [generatingCode, setGeneratingCode] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedSignup, setCopiedSignup] = useState(false);
   const [copiedVerify, setCopiedVerify] = useState(false);
@@ -24,16 +28,88 @@ const ReferralsPage = ({ lang }: ReferralsPageProps) => {
 
   const loadAnalytics = async () => {
     try {
-      const data = await getMyReferralAnalytics();
-      setAnalytics(data);
+      // Try RPC directly
+      const { data, error } = await supabase.rpc("get_my_referral_analytics");
+      
+      if (error) {
+        console.warn('RPC error, falling back to profile:', error);
+        await loadProfileFallback();
+      } else if (data && data.length > 0) {
+        // RPC success - RETURNS TABLE returns array
+        setAnalytics(data[0]);
+      } else {
+        // RPC returned empty, fallback to profile
+        console.warn('RPC returned empty, falling back to profile');
+        await loadProfileFallback();
+      }
+      
     } catch (err) {
       console.error('Error loading referral analytics:', err);
+      // Try profile fallback on any error
+      try {
+        await loadProfileFallback();
+      } catch (fallbackErr) {
+        console.error('Profile fallback also failed:', fallbackErr);
+        // Set minimal fallback to prevent crash
+        setAnalytics({
+          referral_code: null,
+          total_referrals: 0,
+          last_7_days: 0,
+          last_30_days: 0,
+          invite_status: 'ACTIVE',
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const copyToClipboard = async (text: string, setter: (val: boolean) => void) => {
+  const loadProfileFallback = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('referral_code, can_invite')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+
+      // Fallback analytics from profile
+      const fallbackAnalytics: ReferralAnalytics = {
+        referral_code: profile?.referral_code || null,
+        total_referrals: 0,
+        last_7_days: 0,
+        last_30_days: 0,
+        invite_status: profile?.can_invite ? 'ACTIVE' : 'INACTIVE',
+      };
+
+      setAnalytics(fallbackAnalytics);
+    } catch (err) {
+      console.error('Profile fallback error:', err);
+      throw err;
+    }
+  };
+
+  const handleGenerateReferralCode = async () => {
+    try {
+      setGeneratingCode(true);
+      const newCode = await ensureReferralCode();
+      if (newCode) {
+        // Reload analytics to get updated data
+        await loadAnalytics();
+      }
+    } catch (err) {
+      console.error('Error generating referral code:', err);
+    } finally {
+      setGeneratingCode(false);
+    }
+  };
+
+  const copyToClipboard = async (text: string | null | undefined, setter: (val: boolean) => void) => {
+    if (!text) return;
     try {
       await navigator.clipboard.writeText(text);
       setter(true);
@@ -44,27 +120,18 @@ const ReferralsPage = ({ lang }: ReferralsPageProps) => {
   };
 
   const getSignupLink = () => {
-    if (!analytics?.my_referral_code) return '';
-    return `${window.location.origin}/${lang}/signup?ref=${analytics.my_referral_code}`;
+    if (!analytics?.referral_code) return '';
+    return `${window.location.origin}/${lang}/signup?ref=${analytics.referral_code}`;
   };
 
   const getVerifyLink = () => {
-    if (!analytics?.my_referral_code) return '';
-    return `${window.location.origin}/${lang}/verify?q=${analytics.my_referral_code}`;
-  };
-
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+    if (!analytics?.referral_code) return '';
+    return `${window.location.origin}/${lang}/verify?q=${analytics.referral_code}`;
   };
 
   if (loading) {
     return (
-      <MemberGuard lang={lang}>
+      <MemberGuard>
         <PremiumShell>
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
             <div className="flex items-center justify-center min-h-[400px]">
@@ -76,25 +143,8 @@ const ReferralsPage = ({ lang }: ReferralsPageProps) => {
     );
   }
 
-  if (!analytics) {
-    return (
-      <MemberGuard lang={lang}>
-        <PremiumShell>
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
-            <PremiumCard>
-              <div className="text-center py-12">
-                <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-                <p className="text-white/70">Failed to load referral data</p>
-              </div>
-            </PremiumCard>
-          </div>
-        </PremiumShell>
-      </MemberGuard>
-    );
-  }
-
   return (
-    <MemberGuard lang={lang}>
+    <MemberGuard>
       <PremiumShell>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
           <div className="mb-8">
@@ -106,7 +156,7 @@ const ReferralsPage = ({ lang }: ReferralsPageProps) => {
               {t.member.referrals.subtitle}
             </p>
             <NoticeBox
-              type="info"
+              variant="info"
               title={t.member.referrals.noticeTitle}
               message={t.member.referrals.noticeDesc}
             />
@@ -118,7 +168,7 @@ const ReferralsPage = ({ lang }: ReferralsPageProps) => {
                 <Users className="w-6 h-6 text-[#F0B90B]" />
               </div>
               <p className="text-3xl font-bold text-white mb-2">
-                {analytics.my_referral_count}
+                {analytics?.total_referrals || 0}
               </p>
               <p className="text-sm text-white/60">{t.member.referrals.stats.total}</p>
             </PremiumCard>
@@ -128,7 +178,7 @@ const ReferralsPage = ({ lang }: ReferralsPageProps) => {
                 <TrendingUp className="w-6 h-6 text-green-400" />
               </div>
               <p className="text-3xl font-bold text-white mb-2">
-                {analytics.invited_last_7_days}
+                {analytics?.last_7_days || 0}
               </p>
               <p className="text-sm text-white/60">{t.member.referrals.stats.last7}</p>
             </PremiumCard>
@@ -138,17 +188,17 @@ const ReferralsPage = ({ lang }: ReferralsPageProps) => {
                 <TrendingUp className="w-6 h-6 text-blue-400" />
               </div>
               <p className="text-3xl font-bold text-white mb-2">
-                {analytics.invited_last_30_days}
+                {analytics?.last_30_days || 0}
               </p>
               <p className="text-sm text-white/60">{t.member.referrals.stats.last30}</p>
             </PremiumCard>
 
             <PremiumCard className="text-center">
               <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-white/5 rounded-full">
-                <CheckCircle className={`w-6 h-6 ${analytics.can_invite ? 'text-green-400' : 'text-red-400'}`} />
+                <CheckCircle className="w-6 h-6 text-green-400" />
               </div>
-              <p className={`text-sm font-medium mb-2 ${analytics.can_invite ? 'text-green-400' : 'text-red-400'}`}>
-                {analytics.can_invite ? t.member.referrals.stats.inviteActive : t.member.referrals.stats.inviteRevoked}
+              <p className={`text-sm font-medium mb-2 text-green-400`}>
+                {analytics?.invite_status === 'ACTIVE' ? t.member.referrals.stats.inviteActive : t.member.referrals.stats.inviteRevoked}
               </p>
               <p className="text-sm text-white/60">{t.member.referrals.stats.canInvite}</p>
             </PremiumCard>
@@ -167,11 +217,16 @@ const ReferralsPage = ({ lang }: ReferralsPageProps) => {
                 </label>
                 <div className="flex gap-2">
                   <div className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg">
-                    <p className="text-white font-mono text-lg">{analytics.my_referral_code}</p>
+                    <p className="text-white font-mono text-lg">
+                      {analytics?.referral_code
+                        ? safeUpper(analytics.referral_code)
+                        : "No code yet"}
+                    </p>
                   </div>
                   <button
-                    onClick={() => copyToClipboard(analytics.my_referral_code, setCopiedCode)}
-                    className="px-4 py-3 bg-[#F0B90B] hover:bg-[#F0B90B]/90 text-black font-medium rounded-lg transition-all flex items-center gap-2"
+                    onClick={() => copyToClipboard(analytics?.referral_code, setCopiedCode)}
+                    disabled={!analytics?.referral_code}
+                    className="px-4 py-3 bg-[#F0B90B] hover:bg-[#F0B90B]/90 text-black font-medium rounded-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {copiedCode ? (
                       <>
@@ -185,6 +240,15 @@ const ReferralsPage = ({ lang }: ReferralsPageProps) => {
                       </>
                     )}
                   </button>
+                  {!analytics?.referral_code && (
+                    <button
+                      onClick={handleGenerateReferralCode}
+                      disabled={generatingCode}
+                      className="px-4 py-3 bg-green-500/20 hover:bg-green-500/30 text-green-400 font-medium rounded-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {generatingCode ? 'Generating...' : 'Generate'}
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -243,85 +307,6 @@ const ReferralsPage = ({ lang }: ReferralsPageProps) => {
               </div>
             </div>
           </PremiumCard>
-
-          <PremiumCard>
-            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-              <Users className="w-5 h-5 text-[#F0B90B]" />
-              {t.member.referrals.list.title}
-            </h2>
-
-            {analytics.recent_invites.length === 0 ? (
-              <div className="text-center py-12">
-                <Users className="w-12 h-12 text-white/20 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-white/70 mb-2">
-                  {t.member.referrals.list.emptyTitle}
-                </h3>
-                <p className="text-sm text-white/50">
-                  {t.member.referrals.list.emptyDesc}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {analytics.recent_invites.map((invite, index) => (
-                  <div
-                    key={index}
-                    className="px-4 py-4 bg-white/5 border border-white/10 rounded-lg hover:bg-white/[0.07] transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="relative flex-shrink-0">
-                        {invite.avatar_url ? (
-                          <img
-                            src={invite.avatar_url}
-                            alt={invite.username}
-                            className="w-12 h-12 rounded-full object-cover border-2 border-white/10"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 rounded-full bg-[#F0B90B]/10 border-2 border-white/10 flex items-center justify-center">
-                            <User className="w-6 h-6 text-[#F0B90B]" />
-                          </div>
-                        )}
-                        {invite.is_verified && (
-                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center border-2 border-[#1a1a1a]">
-                            <Check className="w-3 h-3 text-white" />
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="font-medium text-white truncate">{invite.full_name}</p>
-                          {invite.is_verified && (
-                            <span className="text-xs px-2 py-0.5 bg-green-500/10 text-green-400 rounded">
-                              {t.member.referrals.list.verified}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-white/60">@{invite.username}</p>
-                      </div>
-
-                      <div className="flex-shrink-0 text-right">
-                        <div className="flex items-center gap-2 text-sm text-white/50">
-                          <Calendar className="w-4 h-4" />
-                          <span>{formatDate(invite.joined_at)}</span>
-                        </div>
-                        <p className="text-xs text-white/40 mt-1">
-                          {t.member.referrals.list.joined}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </PremiumCard>
-
-          {analytics.referred_by && (
-            <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center">
-              <p className="text-sm text-blue-300">
-                You were invited by <span className="font-medium">@{analytics.referred_by}</span>
-              </p>
-            </div>
-          )}
         </div>
       </PremiumShell>
     </MemberGuard>
