@@ -1178,9 +1178,8 @@ export const signUpInviteOnly = async ({
       password,
       options: {
         data: {
-          full_name: fullName,
           username: username,
-          referral_code: referralCode.trim().toUpperCase(),
+          referralCode: referralCode.trim().toUpperCase(),
         },
       },
     });
