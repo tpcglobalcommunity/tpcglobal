@@ -1,151 +1,82 @@
-import { ReactNode, useEffect, useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useLanguage } from '../../i18n';
-import { createProfileIfMissing } from '../../lib/supabase';
-import { NoticeBox } from '../ui';
-import { PremiumShell, PremiumSection } from '../ui';
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
+import { getMyProfile } from "../../lib/supabase";
+import { Link } from "../Router"; // kalau kamu pakai router custom
+// atau gunakan navigate sesuai router kamu
 
-interface MemberGuardProps {
-  children: ReactNode;
-}
+type Props = {
+  children: React.ReactNode;
+  lang: any;
+};
 
-export default function MemberGuard({ children }: MemberGuardProps) {
-  const { loading, session, profile, user } = useAuth();
-  const { language } = useLanguage();
-  const [profileSafetyCheck, setProfileSafetyCheck] = useState<'checking' | 'failed' | null>(null);
-  const [showPendingNotice, setShowPendingNotice] = useState(false);
+export default function MemberGate({ children, lang }: Props) {
+  const [loading, setLoading] = useState(true);
+  const [blocked, setBlocked] = useState<null | "login" | "complete">(null);
 
   useEffect(() => {
-    if (!loading && !session) {
-      const currentPath = window.location.pathname;
-      const nextParam = encodeURIComponent(currentPath);
-      window.location.href = `/${language}/signin?next=${nextParam}`;
-      return;
-    }
+    let alive = true;
 
-    // Check profile completion
-    if (session && profile) {
-      const currentPath = window.location.pathname;
-      const isCompleteProfilePage = currentPath.includes('/complete-profile');
-      
-      if (!profile.is_profile_complete && !isCompleteProfilePage) {
-        window.location.href = `/${language}/complete-profile`;
-        return;
-      }
+    (async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
 
-      // Check status (if implemented)
-      if (profile.status && profile.status !== 'ACTIVE') {
-        setShowPendingNotice(true);
-        console.log('[MemberGuard] User status is not ACTIVE:', profile.status);
-      } else {
-        setShowPendingNotice(false);
-      }
-    }
-
-    // Post-login safety: ensure profile exists
-    if (session && user && !profile && !profileSafetyCheck) {
-      setProfileSafetyCheck('checking');
-      
-      const ensureProfile = async () => {
-        try {
-          const result = await createProfileIfMissing(
-            user.id,
-            user.email || '',
-            user.user_metadata?.full_name || '',
-            user.user_metadata?.username || '',
-            user.user_metadata?.referral_code || ''
-          );
-
-          if (!result.success) {
-            console.error('[MemberGuard] Profile creation failed:', result.message);
-            setProfileSafetyCheck('failed');
-          } else {
-            setProfileSafetyCheck(null);
-          }
-        } catch (error) {
-          console.error('[MemberGuard] Profile safety check failed:', error);
-          setProfileSafetyCheck('failed');
+        if (!session?.user) {
+          if (!alive) return;
+          setBlocked("login");
+          setLoading(false);
+          return;
         }
-      };
 
-      // Add timeout to prevent hanging
-      const timeoutId = setTimeout(() => {
-        if (profileSafetyCheck === 'checking') {
-          setProfileSafetyCheck('failed');
+        const profile = await getMyProfile();
+
+        // Kalau profile belum ada (fail-open trigger gagal), arahkan ke complete profile
+        if (!profile || profile.profile_completed !== true) {
+          if (!alive) return;
+          setBlocked("complete");
+          setLoading(false);
+          return;
         }
-      }, 10000); // 10 second timeout
 
-      ensureProfile();
-      clearTimeout(timeoutId);
-    }
-  }, [loading, session, user, profile, profileSafetyCheck, language]);
+        if (!alive) return;
+        setBlocked(null);
+        setLoading(false);
+      } catch {
+        if (!alive) return;
+        // kalau error baca profile, lebih aman kita blok ke complete
+        setBlocked("complete");
+        setLoading(false);
+      }
+    })();
+
+    return () => { alive = false; };
+  }, []);
 
   if (loading) {
+    return <div className="p-6 text-white/70">Loading...</div>;
+  }
+
+  if (blocked === "login") {
     return (
-      <PremiumShell>
-        <PremiumSection>
-          <div className="flex items-center justify-center py-24">
-            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          </div>
-        </PremiumSection>
-      </PremiumShell>
+      <div className="p-6 text-white/80">
+        <div className="mb-3 font-semibold">You need to sign in first.</div>
+        <Link to={`/${lang}/signin`} className="text-[#F0B90B]">Go to Sign In</Link>
+      </div>
     );
   }
 
-  if (!session) {
-    return null;
-  }
-
-  // Profile safety check failed
-  if (profileSafetyCheck === 'failed') {
+  if (blocked === "complete") {
     return (
-      <PremiumShell>
-        <PremiumSection>
-          <div className="max-w-md mx-auto py-12">
-            <NoticeBox
-              variant="warning"
-              title="Profile Setup Required"
-            >
-              <p className="text-sm text-white/80 mb-4">
-                Your account was created successfully, but we couldn't set up your profile automatically.
-              </p>
-              <p className="text-sm text-white/60">
-                Please contact our support team to complete your profile setup.
-              </p>
-            </NoticeBox>
-          </div>
-        </PremiumSection>
-      </PremiumShell>
+      <div className="p-6 text-white/80">
+        <div className="mb-2 font-semibold">Complete your profile to continue.</div>
+        <div className="text-white/60 mb-4">
+          Full name, phone, Telegram, and city are required before accessing Member Area.
+        </div>
+        <Link to={`/${lang}/member/complete-profile`} className="text-[#F0B90B]">
+          Complete Profile →
+        </Link>
+      </div>
     );
   }
 
-  // Still checking profile
-  if (profileSafetyCheck === 'checking') {
-    return (
-      <PremiumShell>
-        <PremiumSection>
-          <div className="flex items-center justify-center py-24">
-            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          </div>
-        </PremiumSection>
-      </PremiumShell>
-    );
-  }
-
-  return (
-    <>
-      {showPendingNotice && (
-        <NoticeBox
-          variant="warning"
-          title="Pending Verification"
-          className="mb-4"
-        >
-          <p className="text-sm text-white/80">
-            Your account is pending verification. Some features may be limited until verification is complete.
-          </p>
-        </NoticeBox>
-      )}
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }
