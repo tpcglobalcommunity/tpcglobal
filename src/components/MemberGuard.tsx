@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 type ProfileRow = {
   id: string;
@@ -15,12 +15,11 @@ type Props = {
 };
 
 export default function MemberGuard({ children, allowIncomplete }: Props) {
-  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [sessionUserId, setSessionUserId] = useState<string | null>(null);
   const [profile, setProfile] = useState<ProfileRow | null>(null);
 
-  const path = location.pathname;
+  const path = window.location.pathname;
   const isCompleteProfilePage = useMemo(
     () => path.includes("/complete-profile"),
     [path]
@@ -96,7 +95,7 @@ export default function MemberGuard({ children, allowIncomplete }: Props) {
 
   // Not logged in
   if (!sessionUserId) {
-    window.location.href = `/signin?from=${encodeURIComponent(path)}`;
+    window.location.href = '/signin';
     return;
   }
 
