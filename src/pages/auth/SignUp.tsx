@@ -1,164 +1,117 @@
-import { useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { Loader2 } from "lucide-react";
+React,  useEffect, useMemo, useRef,CheckCircle2, , XCircle";
 
-export default function SignUp({ lang }: { lang: any }) {
-  const [referralCode, setReferralCode] = useState("");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+type Language = "en" | id" | stringtyp ReferralStatus = "idle" | "checking" | "valid" | "invalid";
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [successEmail, setSuccessEmail] = useState<string | null>(null);
+eLguage);
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setSuccessEmail(null);
+  const [refStatus, setRefStatus] = useState<ReferralStatus>("idle");
+  const [refMessage, setRefMessage] = useState<string | null>(null//DeberefrralvalidiconstdbouceR=uRef<numbe | null>constlaChekedRf = ueRef<trng>""useMemo(() => ), [referralCode]eMmo(() => use, [username])  const emailTrim = useMemo(() => email.trim(), [email]);
+constusernameRegex= ^[a-zA-Z0-9_.]{3,20}$;
 
-    const code = referralCode.trim().toUpperCase();
-    const uname = username.trim();
+ const localeErrr = useMemo(() => {refStats === "ivlid"n "Ivalidrefal cde.";
+    if (!uname) retun usrnaeRegextes(unae
+     "Uernam mus be 3-20 chaactes (letters, numbers, undersce, period).";
+    if !emailTrim) return ;
+    return null;
+  }, [code, refStatus, uname, emailTrim, password, confirmPassword]
+  const canSubmit = useMemo(() => {if(iSubmitting) rtu flse;
+    if (rfStatus !=="") return flse;
+    reur!locVlidatEror;
+  }[isSbmittig, efStatu, loalValidateErr]);
 
-    // Validation
-    if (!code) return setError("Referral code is required.");
-    if (!uname) return setError("Username is required.");
-    if (!email.trim()) return setError("Email is required.");
-    if (password.length < 8) return setError("Password must be at least 8 characters.");
-    if (password !== confirmPassword) return setError("Passwords do not match.");
+  // Ral-timerferal valdatin (ebounced)
+useEffet(() => {
+    setEror(null);
+    etSuccessEmail(null;
+normalized = code;
 
-    // Username validation (alphanumeric, underscore, period, 3-20 chars)
-    const usernameRegex = /^[a-zA-Z0-9_.]{3,20}$/;
-    if (!usernameRegex.test(uname)) {
-      return setError("Username must be 3-20 characters (letters, numbers, underscore, period).");
+    if (!normalized) {
+      setRefStat("idl");
+      setRefMessage(null);
+      etur;
     }
 
-    setIsSubmitting(true);
-    try {
-      // Validate referral code via RPC
-      const { data: valid, error: refErr } = await supabase.rpc("validate_referral_code_public", { p_code: code });
-      if (refErr || !valid) throw new Error("Invalid referral code.");
+    // If s as last chckdandalready validinvlid, don't recheck
+    if (normalied === lastCheckedRefcurrent && (refStatus === "valid" || refStatus === "invalid")) 
+      return;
+    
 
-      const { data, error: signUpErr } = await supabase.auth.signUp({
-        email: email.trim(),
-        password,
-        options: {
-          data: {
-            username: uname,
-            referral_code: code,
-          },
-        },
-      });
+    / DebouncedebonceRf.curent) widow.clerTieout(debounceRef.current);
+    stefStatus("chckin");
+    sRefMsage"Checking referral code...");
 
-      if (signUpErr) throw signUpErr;
+    debounceRef.crrent = widow.setTiout(async ( => {
+      try  lastCheckedRef.curn = nomalized;
 
-      // Success - user will receive email verification
-      setSuccessEmail(data.user?.email ?? email.trim());
-    } catch (err: any) {
-      setError(err?.message ?? "Failed to create account.");
-    } finally {
-      setIsSubmitting(false);
-    }
+        cost { data: valid, error: refErr } = awaitsupaba.rpc(
+          "validae_referral_code_public",
+          { p_code: normalized }
+        );
+
+        if (refr) thw refEr;
+
+        if (valid) {
+          setRefStatus"valid);
+          setRefMesage("Valid refrl cod");
+       } else {
+          setRefStat("invalid");
+          seRefMessage("Invalidrferralcode");
+       }
+      } atc (e: ny) {
+        setRefStus("invalid");
+        stRefMesage(e?.message? Stringe.message) : "Faid o valida eferral code");
+      }
+    }, 450);
+  } [code]);
+
+  return () => {
+    if(debouceRef.crrent) window.clearTieout(deounceRf.curent);
   };
+  }, [code]);
 
-  return (
-    <div className="max-w-md mx-auto p-6 text-white">
-      <h2 className="text-2xl font-bold mb-6 text-center">Create Account</h2>
+  contonSbmit = asyc (e: Rat.FmEvnt) => {
+   e.reventDefault();
+    stErro(null);
+    setSuccessEmal(null);
+
+    // Blck submit if not reay
+    if (!canSubmit {
+      setError(localValidateError ?? "Please complete the form  return;
+    Sfey r-checkbefr signup(serertruth)
+        
+       
       
-      <form onSubmit={onSubmit} className="space-y-4">
-        {/* Referral Code */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Referral Code *</label>
-          <input 
-            value={referralCode} 
-            onChange={(e) => setReferralCode(e.target.value)} 
-            placeholder="TPC-XXXXXX" 
-            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-[#F0B90B] text-white placeholder-white/50"
-            required
-          />
-        </div>
-
-        {/* Username */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Username *</label>
-          <input 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
-            placeholder="username" 
-            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-[#F0B90B] text-white placeholder-white/50"
-            required
-          />
-        </div>
-
-        {/* Email */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Email *</label>
-          <input 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            placeholder="email@gmail.com" 
-            type="email"
-            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-[#F0B90B] text-white placeholder-white/50"
-            required
-          />
-        </div>
-
-        {/* Password */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Password *</label>
-          <input 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            type="password" 
-            placeholder="********" 
-            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-[#F0B90B] text-white placeholder-white/50"
-            required
-            minLength={8}
-          />
-        </div>
-
-        {/* Confirm Password */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Confirm Password *</label>
-          <input 
-            value={confirmPassword} 
-            onChange={(e) => setConfirmPassword(e.target.value)} 
-            type="password" 
-            placeholder="********" 
-            className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-[#F0B90B] text-white placeholder-white/50"
-            required
-            minLength={8}
-          />
-        </div>
-
-        {error && (
-          <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm">
-            {error}
+TTdv className="relative">
+            <i    .toUpperCase()    pr-10         div className="absolute right-3 top-12 -translate-y-1/2">
+              {refStatus === "checking" && (
+                <Loaer2 className="w-4 h-4 animate-spin text-whte/60" />
+              )}
+              {refStatus === "valid" && (
+                <CheckCircle2 className="w-4 h-4 text-[#F0B90B]" />
+              )}
+              {refStatus === "invalid" && (
+                <XCircle className="w-4 h-4 text-red-400" />
+              )}
+            </div>
           </div>
-        )}
 
-        {successEmail && (
-          <div className="p-3 bg-green-500/20 border border-green-500/30 rounded-lg text-green-300 text-sm">
-            Account created. Please check your email (<b>{successEmail}</b>) to verify, then sign in.
-          </div>
-        )}
-
-        <button 
-          disabled={isSubmitting} 
-          type="submit"
-          className="w-full py-3 bg-[#F0B90B] text-black font-semibold rounded-lg hover:bg-[#F0B90B]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-        >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Creating...
-            </>
-          ) : (
-            "Create Account"
+          {refMessage && (
+            <p
+              className={`mt-2 text-xs ${
+                refStatus === "valid"
+                  ? "text-[#F0B90B]"
+                  : refStatus === "invalid"
+                    ? "text-red-300"
+                    : "text-white/60"
+              }`}
+            >
+              {refMessage}
+            </p>
           )}
-        </button>
-      </form>
-    </div>
-  );
-}
+        </di
+          />        <pclassName="mt-2text-xstext-white/60">3–20chars:letters,numbers,underscore,period.<p  p className="mt-2 text-xs text-white/60">At least 8 characters.<p>
+        </!cantton>
+
+        <div className="text-center text-sm text-whie/60">
+          Invie-ly. Referral required. <span className="mx-1">•</span> Your data is protected.
+        </div
