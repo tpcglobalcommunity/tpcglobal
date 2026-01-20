@@ -431,24 +431,6 @@ export const generateReferralCode = async (): Promise<string | null> => {
   }
 };
 
-export const getMyReferralAnalytics = async (): Promise<ReferralAnalytics | null> => {
-  try {
-    const { data, error } = await supabase.rpc('get_my_referral_analytics');
-
-    if (error) {
-      console.error('Error fetching referral analytics:', error);
-      return null;
-    }
-
-    // RETURNS TABLE returns array, take first element
-    const analytics = Array.isArray(data) && data.length > 0 ? data[0] : null;
-    return analytics as ReferralAnalytics;
-  } catch (err) {
-    console.error('Error in getMyReferralAnalytics:', err);
-    return null;
-  }
-};
-
 export interface LeaderboardItem {
   username: string;
   full_name: string;
