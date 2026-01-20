@@ -21,6 +21,8 @@ import SignIn from './pages/auth/SignIn';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import CompleteProfile from './pages/member/CompleteProfile';
+import MemberGate from './components/guards/MemberGuard';
+import MemberHome from './pages/member/MemberHome';
 import Dashboard from './pages/member/Dashboard';
 import SecurityPage from './pages/member/SecurityPage';
 import ProfilePage from './pages/member/ProfilePage';
@@ -152,8 +154,18 @@ function App() {
         return <CompleteProfile lang={lang} />;
       case '/member/complete-profile':
         return <CompleteProfile lang={lang} />;
+      case '/member':
+        return (
+          <MemberGate lang={lang}>
+            <MemberHome lang={lang} />
+          </MemberGate>
+        );
       case '/member/dashboard':
-        return <Dashboard lang={lang} />;
+        return (
+          <MemberGate lang={lang}>
+            <Dashboard lang={lang} />
+          </MemberGate>
+        );
       case '/member/security':
         return <SecurityPage lang={lang} />;
       case '/member/profile':
