@@ -150,6 +150,8 @@ function App() {
         return <ResetPassword lang={lang} />;
       case '/complete-profile':
         return <CompleteProfile lang={lang} />;
+      case '/member/complete-profile':
+        return <CompleteProfile lang={lang} />;
       case '/member/dashboard':
         return <Dashboard lang={lang} />;
       case '/member/security':
