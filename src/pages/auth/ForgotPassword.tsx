@@ -1,12 +1,22 @@
 import { useState, FormEvent } from 'react';
 import { Mail, ArrowRight, CheckCircle } from 'lucide-react';
-import { useI18n } from '../../i18n';
+import { useI18n, type Language } from '../../i18n';
 import { Link } from '../../components/Router';
 import { useAuth } from '../../contexts/AuthContext';
 
-export default function ForgotPassword() {
-  const { t } = useI18n();
+export default function ForgotPassword({ lang }: { lang?: Language }) {
+  const { t } = useI18n(lang || "en");
   const { sendPasswordReset } = useAuth();
+
+  // Safe translation helper
+  const tr = (key: string, fallback: string) => {
+    try {
+      const v = t(key);
+      return typeof v === "string" && v.trim() ? v : fallback;
+    } catch {
+      return fallback;
+    }
+  };
 
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,7 +28,7 @@ export default function ForgotPassword() {
     setError(null);
 
     if (!email) {
-      setError(t("auth.errors.generic"));
+      setError(tr("auth.errors.generic", "An error occurred"));
       return;
     }
 
@@ -53,17 +63,17 @@ export default function ForgotPassword() {
               <CheckCircle className="w-8 h-8 text-green-400" />
             </div>
             <h1 className="text-2xl md:text-3xl font-bold text-white mb-3">
-              {t.auth.forgot.sentTitle}
+              {tr("auth.forgot.successTitle", "Check your email")}
             </h1>
             <p className="text-white/65 mb-8 leading-relaxed">
-              {t.auth.forgot.sentDesc}
+              {tr("auth.forgot.successBody", "If an account exists for that email, we've sent a password reset link.")}
             </p>
             <Link to="/signin">
               <button
                 type="button"
                 className="w-full h-12 rounded-2xl font-semibold bg-gradient-to-r from-[#F0B90B] to-[#F8D568] text-black transition-all duration-200 hover:shadow-lg hover:shadow-[#F0B90B]/20 active:translate-y-[1px] flex items-center justify-center gap-2"
               >
-                {t("auth.signup.signInLink")}
+                {tr("auth.forgot.backToSignIn", "Back to sign in")}
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
@@ -81,10 +91,10 @@ export default function ForgotPassword() {
           <Mail className="w-7 h-7 text-[#F0B90B] relative z-10" />
         </div>
         <h1 className="mt-5 text-[clamp(2rem,8vw,3rem)] font-bold tracking-tight text-white leading-[1.06]">
-          {t.auth.forgot.title}
+          {tr("auth.forgot.title", "Reset password")}
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-white/65 max-w-[42ch] mx-auto">
-          {t.auth.forgot.subtitle}
+          {tr("auth.forgot.subtitle", "Enter your email and we'll send a reset link.")}
         </p>
       </div>
 
@@ -101,7 +111,7 @@ export default function ForgotPassword() {
 
           <div>
             <label htmlFor="email" className="block text-sm font-semibold text-white/80 mb-2.5">
-              {t.auth.forgot.email}
+              {tr("auth.forgot.emailLabel", "Email")}
             </label>
             <div className="flex items-center gap-3 h-12 rounded-2xl border border-white/10 bg-white/5 px-4 hover:border-white/15 focus-within:border-[#F0B90B]/45 focus-within:bg-white/7 focus-within:ring-1 focus-within:ring-[#F0B90B]/25 transition-all">
               <Mail className="w-4 h-4 text-white/50 shrink-0" />
@@ -110,7 +120,7 @@ export default function ForgotPassword() {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={t.auth.signin.emailPlaceholder}
+                placeholder={tr("auth.forgot.emailPlaceholder", "name@example.com")}
                 className="flex-1 bg-transparent outline-none text-white placeholder:text-white/30 text-sm"
                 required
                 disabled={isSubmitting}
@@ -123,12 +133,12 @@ export default function ForgotPassword() {
             disabled={isSubmitting}
             className="w-full h-12 rounded-2xl font-semibold bg-gradient-to-r from-[#F0B90B] to-[#F8D568] text-black transition-all duration-200 hover:shadow-lg hover:shadow-[#F0B90B]/20 active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2"
           >
-            {isSubmitting ? t.auth.forgot.sending : t.auth.forgot.send}
+            {isSubmitting ? tr("auth.forgot.sending", "Sending...") : tr("auth.forgot.submit", "Send reset link")}
             <ArrowRight className="w-4 h-4" />
           </button>
 
           <div className="text-xs text-white/45 text-center mt-3">
-            {t.auth.reassurance}
+            {tr("auth.forgot.reassurance", "We'll never share your email with anyone else.")}
           </div>
 
           <div className="text-center text-sm text-white/60 pt-3">

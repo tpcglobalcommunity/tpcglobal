@@ -149,7 +149,7 @@ function App() {
       case '/signin':
         return <SignIn />;
       case '/forgot':
-        return <ForgotPassword />;
+        return <ForgotPassword lang={lang} />;
       case '/reset':
         return <ResetPassword lang={lang} />;
       case '/complete-profile':

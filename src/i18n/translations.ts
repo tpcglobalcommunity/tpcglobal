@@ -1084,6 +1084,19 @@ export const translations = {
       },
     },
     auth: {
+      forgot: {
+        title: 'Reset password',
+        subtitle: 'Enter your email and we\'ll send a reset link.',
+        emailLabel: 'Email',
+        emailPlaceholder: 'name@example.com',
+        submit: 'Send reset link',
+        sending: 'Sending...',
+        backToSignIn: 'Back to sign in',
+        successTitle: 'Check your email',
+        successBody: 'If an account exists for that email, we\'ve sent a password reset link.',
+        errorGeneric: 'Unable to send reset link. Please try again.',
+        reassurance: 'We\'ll never share your email with anyone else.',
+      },
       reassurance: 'Your data is protected. We never share personal information.',
       common: {
         or: 'or',
@@ -2849,6 +2862,19 @@ export const translations = {
       },
     },
     auth: {
+      forgot: {
+        title: 'Reset kata sandi',
+        subtitle: 'Masukkan email, nanti kita kirim link reset.',
+        emailLabel: 'Email',
+        emailPlaceholder: 'nama@email.com',
+        submit: 'Kirim link reset',
+        sending: 'Mengirim...',
+        backToSignIn: 'Kembali ke login',
+        successTitle: 'Cek email',
+        successBody: 'Jika akun dengan email itu ada, link reset sudah kita kirim.',
+        errorGeneric: 'Gagal mengirim link reset. Coba lagi.',
+        reassurance: 'Kami tidak akan pernah membagikan email Anda ke siapa pun.',
+      },
       reassurance: 'Data Anda terlindungi. Kami tidak pernah membagikan informasi pribadi.',
       common: {
         or: 'atau',
