@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { type Language, useI18n, getLangPath } from "../../i18n";
 import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
-import { ScrollText, Search, RefreshCcw, ArrowLeft, ArrowRight } from "lucide-react";
+import { ScrollText, Search, RefreshCcw, ArrowLeft, ArrowRight, Download } from "lucide-react";
 
 type Row = {
   id: number;
@@ -92,6 +92,57 @@ export default function AuditLogPage({ lang }: { lang: Language }) {
     load();
   }, [debouncedQuery, actionFilter, pageIndex]);
 
+  async function exportCSV() {
+    try {
+      setLoading(true);
+      setErr(null);
+
+      // Use RPC to export filtered audit logs
+      const { data, error } = await supabase.rpc("admin_export_audit_logs", {
+        p_q: debouncedQuery || null,
+        p_action: actionFilter || null,
+        p_limit: 5000
+      });
+
+      if (error) throw error;
+
+      const headers = [
+        "id",
+        "created_at",
+        "actor_id",
+        "action",
+        "target_id",
+        "payload"
+      ];
+
+      const lines = [
+        headers.join(","),
+        ...(data || []).map((r: any) =>
+          headers.map((h) => JSON.stringify(r[h] ?? "")).join(",")
+        )
+      ];
+
+      const blob = new Blob([lines.join("\n")], {
+        type: "text/csv;charset=utf-8"
+      });
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `audit_logs_export_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      setErr(null);
+    } catch (e: any) {
+      setErr(e.message || "Failed to export audit logs");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [page, qAction, qActor, qTarget]);
 
   return (
@@ -107,12 +158,20 @@ export default function AuditLogPage({ lang }: { lang: Language }) {
           </p>
         </div>
 
+        <div className="flex gap-2">
+        <PremiumButton variant="secondary" onClick={exportCSV} disabled={loading}>
+          <span className="inline-flex items-center gap-2">
+            <Download className="w-4 h-4" />
+            {t("admin.common.export") || "Export"}
+          </span>
+        </PremiumButton>
         <PremiumButton variant="secondary" onClick={load} disabled={loading}>
           <span className="inline-flex items-center gap-2">
             <RefreshCcw className="w-4 h-4" />
             {t("admin.common.refresh") || "Refresh"}
           </span>
         </PremiumButton>
+      </div>
       </div>
 
       {err ? (
