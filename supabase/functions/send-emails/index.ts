@@ -15,102 +15,73 @@ function escapeHtml(s: string) {
 }
 
 function renderTemplate(template: string, vars: Record<string, any>) {
-  // Minimal HTML templates. Extend anytime.
   const brand = "TPC — Trader Professional Community";
-  const safe = (v: any) => escapeHtml(String(v ?? ""));
-
-  if (template === "verification_approved") {
-    return `
-      <div style="font-family:Arial,sans-serif;line-height:1.5;max-width:600px;margin:0 auto;padding:20px;background:#f8f9fa;border-radius:8px;">
-        <div style="background:#ffffff;padding:30px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-          <h2 style="color:#2d3748;margin:0 0 20px 0;font-size:24px;font-weight:600;">${brand}</h2>
-          <div style="background:#e8f5e8;padding:20px;border-radius:6px;margin:20px 0;">
-            <h3 style="color:#28a745;margin:0 0 10px 0;font-size:18px;">✅ Verification Approved</h3>
-            <p style="color:#495057;font-size:16px;line-height:1.5;">Congratulations! Your wallet verification has been <strong>approved</strong>.</p>
-            <p style="color:#495057;font-size:16px;line-height:1.5;">You can now access all member features and enjoy the full benefits of the TPC platform.</p>
-            <div style="background:#f8f9fa;padding:15px;border-radius:6px;margin:20px 0;">
-              <p style="color:#6c757d;font-size:14px;"><strong>Request ID:</strong> ${safe(vars.request_id)}</p>
-            </div>
-          </div>
-          <div style="text-align:center;padding:20px;color:#6c757d;font-size:12px;">
-            <p style="margin:0;">This is an automated message. Please do not reply to this email.</p>
-            <p style="margin:10px 0 0 0;">© 2026 TPC — Trader Professional Community. All rights reserved.</p>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  if (template === "verification_rejected") {
-    return `
-      <div style="font-family:Arial,sans-serif;line-height:1.5;max-width:600px;margin:0 auto;padding:20px;background:#f8f9fa;border-radius:8px;">
-        <div style="background:#ffffff;padding:30px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-          <h2 style="color:#2d3748;margin:0 0 20px 0;font-size:24px;font-weight:600;">${brand}</h2>
-          <div style="background:#fef2f2;padding:20px;border-radius:6px;margin:20px 0;border-left:4px solid #f59e0b;">
-            <h3 style="color:#dc3545;margin:0 0 10px 0;font-size:18px;">❌ Verification Rejected</h3>
-            <p style="color:#495057;font-size:16px;line-height:1.5;">We're sorry, but your wallet verification has been <strong>rejected</strong>.</p>
-            <p style="color:#495057;font-size:16px;line-height:1.5;">${safe(vars.reason || "Please review your submission and try again.")}</p>
-            <div style="background:#f8f9fa;padding:15px;border-radius:6px;margin:20px 0;">
-              <p style="color:#6c757d;font-size:14px;"><strong>Request ID:</strong> ${safe(vars.request_id)}</p>
-            </div>
-          </div>
-          <div style="text-align:center;padding:20px;color:#6c757d;font-size:12px;">
-            <p style="margin:0;">If you believe this is an error, please contact our support team.</p>
-            <p style="margin:10px 0 0 0;">This is an automated message. Please do not reply to this email.</p>
-            <p style="margin:10px 0 0 0;">© 2026 TPC — Trader Professional Community. All rights reserved.</p>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  if (template === "account_updated") {
-    return `
-      <div style="font-family:Arial,sans-serif;line-height:1.5;max-width:600px;margin:0 auto;padding:20px;background:#f8f9fa;border-radius:8px;">
-        <div style="background:#ffffff;padding:30px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-          <h2 style="color:#2d3748;margin:0 0 20px 0;font-size:24px;font-weight:600;">${brand}</h2>
-          <div style="background:#e3f2fd;padding:20px;border-radius:6px;margin:20px 0;">
-            <h3 style="color:#1e40af;margin:0 0 10px 0;font-size:18px;">🔄 Account Updated</h3>
-            <p style="color:#495057;font-size:16px;line-height:1.5;">Your account settings have been updated by our administrator.</p>
-            ${vars.changes && vars.changes.length > 0 ? `
-              <div style="background:#f8f9fa;padding:15px;border-radius:6px;margin:20px 0;">
-                <p style="color:#495057;font-size:14px;"><strong>Changes made:</strong></p>
-                <ul style="color:#495057;font-size:14px;margin:10px 0;padding-left:20px;">
-                  ${vars.changes.map((change: string) => `<li style="margin:5px 0;">${escapeHtml(change)}</li>`).join('')}
-                </ul>
-              </div>
-            ` : ''}
-            <p style="color:#495057;font-size:16px;line-height:1.5;">If you didn't make these changes, please contact our support team immediately.</p>
-            <div style="background:#f8f9fa;padding:15px;border-radius:6px;margin:20px 0;">
-              <p style="color:#6c757d;font-size:14px;"><strong>Updated by:</strong> Administrator</p>
-              <p style="color:#6c757d;font-size:14px;"><strong>Time:</strong> ${new Date().toLocaleString()}</p>
-            </div>
-          </div>
-          <div style="text-align:center;padding:20px;color:#6c757d;font-size:12px;">
-            <p style="margin:0;">This is an automated message. Please do not reply to this email.</p>
-            <p style="margin:10px 0 0 0;">© 2026 TPC — Trader Professional Community. All rights reserved.</p>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  // default fallback
-  return `
-    <div style="font-family:Arial,sans-serif;line-height:1.5;max-width:600px;margin:0 auto;padding:20px;background:#f8f9fa;border-radius:8px;">
-      <div style="background:#ffffff;padding:30px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-        <h2 style="color:#2d3748;margin:0 0 20px 0;font-size:24px;font-weight:600;">TPC — Trader Professional Community</h2>
-        <div style="background:#e3f2fd;padding:20px;border-radius:6px;margin:20px 0;">
-          <h3 style="color:#1e40af;margin:0 0 10px 0;font-size:18px;">📧 Notification</h3>
-          <p style="color:#495057;font-size:16px;line-height:1.5;">${safe(vars.body || "You have a new notification.")}</p>
-        </div>
-        <div style="text-align:center;padding:20px;color:#6c757d;font-size:12px;">
-          <p style="margin:0;">This is an automated message. Please do not reply to this email.</p>
-          <p style="margin:10px 0 0 0;">© 2026 TPC — Trader Professional Community. All rights reserved.</p>
-        </div>
+  const accent = "#F0B90B";
+  const container = (body: string) => `
+    <div style="background:#0b0b0b;padding:32px 16px;font-family:Inter,Arial,sans-serif;color:#ffffff">
+      <div style="max-width:560px;margin:0 auto;background:#111;border-radius:12px;padding:28px">
+        <h2 style="margin:0 0 16px;color:${accent}">${brand}</h2>
+        ${body}
+        <hr style="border:none;border-top:1px solid #222;margin:24px 0" />
+        <p style="font-size:12px;color:#777">
+          This is an automated message. Please do not reply.<br/>
+          Trading involves risk. No profit is guaranteed.
+        </p>
       </div>
     </div>
   `;
+
+  if (template === "verification_approved") {
+    return container(`
+      <p>Your account verification has been <b style="color:${accent}">approved</b>.</p>
+      <p>You can now access all TPC member features.</p>
+      <a href="https://tpcglobal.io/member"
+         style="display:inline-block;margin-top:16px;padding:12px 18px;
+                background:${accent};color:#000;text-decoration:none;
+                border-radius:8px;font-weight:600">
+        Go to Member Area
+      </a>
+      <p style="margin-top:16px;font-size:12px;color:#888">
+        Request ID: ${vars.request_id ?? "-"}
+      </p>
+    `);
+  }
+
+  if (template === "verification_rejected") {
+    return container(`
+      <p>Your verification request was <b style="color:#ff6b6b">rejected</b>.</p>
+      <p>Reason:</p>
+      <blockquote style="background:#1a1a1a;border-left:3px solid ${accent};
+                         padding:12px;margin:12px 0;color:#ccc">
+        ${vars.reason ?? "Please review and resubmit."}
+      </blockquote>
+      <a href="https://tpcglobal.io/member/verification"
+         style="display:inline-block;margin-top:16px;padding:12px 18px;
+                background:${accent};color:#000;text-decoration:none;
+                border-radius:8px;font-weight:600">
+        Resubmit Verification
+      </a>
+    `);
+  }
+
+  if (template === "account_updated") {
+    return container(`
+      <p>Your account settings have been updated by our administrator.</p>
+      ${vars.changes && vars.changes.length > 0 ? `
+        <div style="background:#1a1a1a;padding:16px;border-radius:8px;margin:16px 0">
+          <p style="margin:0 0 8px;color:#aaa;font-size:12px">Changes made:</p>
+          <ul style="color:#ddd;margin:0;padding-left:20px;font-size:12px">
+            ${vars.changes.map((change: string) => `<li style="margin:4px 0">${escapeHtml(change)}</li>`).join('')}
+          </ul>
+        </div>
+      ` : ''}
+      <p style="margin-top:8px;font-size:12px;color:#888">
+        If you didn't make these changes, please contact support immediately.
+      </p>
+    `);
+  }
+
+  return container(`<p>${vars.body || "System notification"}</p>`);
 }
 
 async function sendWithResend(apiKey: string, fromEmail: string, to: string, subject: string, html: string) {
