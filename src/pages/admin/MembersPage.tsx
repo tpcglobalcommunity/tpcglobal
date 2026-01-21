@@ -12,6 +12,8 @@ import {
   Eye,
 } from "lucide-react";
 import { updateMember } from "../../lib/adminRpc";
+import { downloadCSV, formatDateForFilename } from "../../lib/csv";
+import { downloadTextFile } from "../../lib/download";
 
 type MemberRow = {
   id: string;
@@ -105,36 +107,48 @@ export default function MembersPage({ lang }: { lang: Language }) {
     load();
   }, [debouncedQuery, statusFilter, roleFilter, verifiedFilter, pageIndex]);
 
-  function exportCSV() {
-    const headers = [
-      "id",
-      "email",
-      "username",
-      "full_name",
-      "role",
-      "status",
-      "verified",
-      "created_at",
-    ];
+  async function exportCSV() {
+    try {
+      setLoading(true);
+      setError(null);
+      setSuccess(null);
 
-    const lines = [
-      headers.join(","),
-      ...rows.map((r) =>
-        headers.map((h) => JSON.stringify((r as any)[h] ?? "")).join(",")
-      ),
-    ];
+      // Use RPC to export filtered members
+      const { data, error } = await supabase.rpc("admin_export_members", {
+        p_q: debouncedQuery || null,
+        p_status: statusFilter || null,
+        p_role: roleFilter || null,
+        p_verified: verifiedFilter === "true" ? true : verifiedFilter === "false" ? false : null,
+        p_limit: 5000
+      });
 
-    const blob = new Blob([lines.join("\n")], {
-      type: "text/csv;charset=utf-8",
-    });
-    const url = URL.createObjectURL(blob);
+      if (error) throw error;
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `tpc_members_page_${page + 1}.csv`;
-    a.click();
+      // Define CSV headers
+      const headers = [
+        "id",
+        "email",
+        "full_name", 
+        "username",
+        "role",
+        "status",
+        "verified",
+        "can_invite",
+        "created_at"
+      ];
 
-    URL.revokeObjectURL(url);
+      // Generate filename with timestamp
+      const filename = `tpc-members-${formatDateForFilename()}.csv`;
+
+      // Download CSV using helper
+      downloadCSV(filename, data || [], headers);
+
+      setSuccess(`Exported ${data?.length || 0} members successfully`);
+    } catch (e: any) {
+      setError(e.message || "Failed to export members");
+    } finally {
+      setLoading(false);
+    }
   }
 
   const canPrev = page > 0;

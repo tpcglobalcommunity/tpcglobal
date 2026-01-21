@@ -3,6 +3,8 @@ import { supabase } from "../../lib/supabase";
 import { type Language, useI18n, getLangPath } from "../../i18n";
 import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
 import { ScrollText, Search, RefreshCcw, ArrowLeft, ArrowRight, Download } from "lucide-react";
+import { downloadCSV, formatDateForFilename } from "../../lib/csv";
+import { downloadTextFile } from "../../lib/download";
 
 type Row = {
   id: number;
@@ -106,6 +108,7 @@ export default function AuditLogPage({ lang }: { lang: Language }) {
 
       if (error) throw error;
 
+      // Define CSV headers
       const headers = [
         "id",
         "created_at",
@@ -115,25 +118,17 @@ export default function AuditLogPage({ lang }: { lang: Language }) {
         "payload"
       ];
 
-      const lines = [
-        headers.join(","),
-        ...(data || []).map((r: any) =>
-          headers.map((h) => JSON.stringify(r[h] ?? "")).join(",")
-        )
-      ];
+      // Generate filename with timestamp
+      const filename = `tpc-audit-logs-${formatDateForFilename()}.csv`;
 
-      const blob = new Blob([lines.join("\n")], {
-        type: "text/csv;charset=utf-8"
-      });
+      // Convert payload to JSON string for CSV
+      const csvData = (data || []).map((row: any) => ({
+        ...row,
+        payload: JSON.stringify(row.payload || {})
+      }));
 
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `audit_logs_export_${new Date().toISOString().split('T')[0]}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      // Download CSV using helper
+      downloadCSV(filename, csvData, headers);
 
       setErr(null);
     } catch (e: any) {
@@ -216,8 +211,19 @@ export default function AuditLogPage({ lang }: { lang: Language }) {
           </label>
         </div>
 
-        <div className="mt-3 text-xs text-white/50">
-          total: <span className="text-[#F0B90B] font-semibold">{total}</span> • page {page + 1}
+        <div className="mt-3 text-xs text-white/50 flex justify-between items-center">
+          <span>total: <span className="text-[#F0B90B] font-semibold">{total}</span> • page {pageIndex + 1}</span>
+          <PremiumButton
+            variant="secondary"
+            onClick={exportCSV}
+            disabled={loading}
+            size="sm"
+          >
+            <span className="inline-flex items-center gap-2">
+              <Download className="w-4 h-4" />
+              Export CSV
+            </span>
+          </PremiumButton>
         </div>
       </PremiumCard>
 
