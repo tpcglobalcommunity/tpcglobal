@@ -39,46 +39,61 @@ export default function MembersPage({ lang }: { lang: Language }) {
   const [success, setSuccess] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
 
+  // Search and pagination state
   const [rows, setRows] = useState<MemberRow[]>([]);
   const [total, setTotal] = useState(0);
-
   const [query, setQuery] = useState("");
-  const [page, setPage] = useState(0);
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [roleFilter, setRoleFilter] = useState<string>("");
+  const [verifiedFilter, setVerifiedFilter] = useState<string>("");
+  const [pageIndex, setPageIndex] = useState(0);
+  const pageSize = 20;
 
-  const from = page * PAGE_SIZE;
-  const to = from + PAGE_SIZE - 1;
+  // Debounced search
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+      setPageIndex(0); // Reset to first page when search changes
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [query]);
 
   async function load() {
     setLoading(true);
     setError(null);
 
     try {
-      let q = supabase
-        .from("profiles")
-        .select(
-          "id,email,username,full_name,role,status,verified,created_at",
-          { count: "exact" }
-        )
-        .order("created_at", { ascending: false })
-        .range(from, to);
+      const { data, error } = await supabase.rpc("admin_search_members", {
+        p_q: debouncedQuery || null,
+        p_status: statusFilter || null,
+        p_role: roleFilter || null,
+        p_verified: verifiedFilter === "true" ? true : verifiedFilter === "false" ? false : null,
+        p_limit: pageSize,
+        p_offset: pageIndex * pageSize
+      });
 
-      if (query.trim()) {
-        const like = `%${query.trim()}%`;
-        q = q.or(
-          [
-            `id.ilike.${like}`,
-            `username.ilike.${like}`,
-            `full_name.ilike.${like}`,
-            `email.ilike.${like}`,
-          ].join(",")
-        );
-      }
-
-      const { data, error, count } = await q;
       if (error) throw error;
 
-      setRows((data || []) as MemberRow[]);
-      setTotal(count || 0);
+      // Extract total_count from first row or default to 0
+      const totalCount = data && data.length > 0 ? data[0].total_count : 0;
+      
+      // Convert RPC result to MemberRow format
+      const memberRows = (data || []).map((row: any) => ({
+        id: row.id,
+        email: row.email,
+        username: row.username,
+        full_name: row.full_name,
+        role: row.role,
+        status: row.status,
+        verified: row.verified,
+        created_at: row.created_at
+      }));
+
+      setRows(memberRows);
+      setTotal(totalCount);
     } catch (e: any) {
       setError(e.message || "Failed to load members");
     } finally {
@@ -88,8 +103,7 @@ export default function MembersPage({ lang }: { lang: Language }) {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, query]);
+  }, [debouncedQuery, statusFilter, roleFilter, verifiedFilter, pageIndex]);
 
   function exportCSV() {
     const headers = [
@@ -162,23 +176,76 @@ export default function MembersPage({ lang }: { lang: Language }) {
         </NoticeBox>
       )}
 
-      {/* Search */}
+      {/* Search and Filters */}
       <PremiumCard className="p-4">
-        <label className="grid gap-2">
-          <span className="text-xs text-white/55 inline-flex items-center gap-2">
-            <Search className="w-4 h-4" />
-            Search
-          </span>
-          <input
-            value={query}
-            onChange={(e) => {
-              setPage(0);
-              setQuery(e.target.value);
-            }}
-            className="px-3 py-2 rounded-2xl bg-white/5 border border-white/10 text-white outline-none focus:border-[#F0B90B]/40"
-            placeholder="id, username, email, name…"
-          />
-        </label>
+        <div className="space-y-4">
+          {/* Search Input */}
+          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
+            <div className="flex-1">
+              <label className="grid gap-2">
+                <span className="text-xs text-white/55 inline-flex items-center gap-2">
+                  <Search className="w-4 h-4" />
+                  Search
+                </span>
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="px-3 py-2 rounded-2xl bg-white/5 border border-white/10 text-white outline-none focus:border-[#F0B90B]/40"
+                  placeholder="id, username, email, name…"
+                />
+              </label>
+            </div>
+            
+            {/* Filters */}
+            <div className="flex flex-wrap gap-2">
+              <select
+                value={statusFilter}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  setPageIndex(0);
+                }}
+                className="px-3 py-2 rounded-2xl bg-white/5 border border-white/10 text-white outline-none focus:border-[#F0B90B]/40"
+              >
+                <option value="">All Status</option>
+                <option value="ACTIVE">Active</option>
+                <option value="PENDING">Pending</option>
+                <option value="BANNED">Banned</option>
+              </select>
+              
+              <select
+                value={roleFilter}
+                onChange={(e) => {
+                  setRoleFilter(e.target.value);
+                  setPageIndex(0);
+                }}
+                className="px-3 py-2 rounded-2xl bg-white/5 border border-white/10 text-white outline-none focus:border-[#F0B90B]/40"
+              >
+                <option value="">All Roles</option>
+                <option value="member">Member</option>
+                <option value="moderator">Moderator</option>
+                <option value="admin">Admin</option>
+              </select>
+              
+              <select
+                value={verifiedFilter}
+                onChange={(e) => {
+                  setVerifiedFilter(e.target.value);
+                  setPageIndex(0);
+                }}
+                className="px-3 py-2 rounded-2xl bg-white/5 border border-white/10 text-white outline-none focus:border-[#F0B90B]/40"
+              >
+                <option value="">All Verified</option>
+                <option value="true">Verified</option>
+                <option value="false">Not Verified</option>
+              </select>
+            </div>
+          </div>
+          
+          {/* Total Count */}
+          <div className="text-sm text-white/70">
+            Total: <span className="text-[#F0B90B] font-semibold">{total}</span> members
+          </div>
+        </div>
       </PremiumCard>
 
       {/* Table */}
@@ -381,20 +448,20 @@ export default function MembersPage({ lang }: { lang: Language }) {
         {/* Pagination */}
         <div className="flex justify-between items-center px-4 py-3 border-t border-white/10">
           <div className="text-xs text-white/50">
-            Page {page + 1} • Total {total}
+            Page {pageIndex + 1} of {Math.ceil(total / pageSize)} • Total {total}
           </div>
           <div className="flex gap-2">
             <PremiumButton
               variant="secondary"
-              disabled={!canPrev}
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              disabled={pageIndex === 0}
+              onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
             >
               <ArrowLeft className="w-4 h-4" />
             </PremiumButton>
             <PremiumButton
               variant="secondary"
-              disabled={!canNext}
-              onClick={() => setPage((p) => p + 1)}
+              disabled={pageIndex >= Math.ceil(total / pageSize) - 1}
+              onClick={() => setPageIndex((p) => p + 1)}
             >
               <ArrowRight className="w-4 h-4" />
             </PremiumButton>

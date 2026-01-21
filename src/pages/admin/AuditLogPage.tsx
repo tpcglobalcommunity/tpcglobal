@@ -29,49 +29,68 @@ export default function AuditLogPage({ lang }: { lang: Language }) {
 
   const [rows, setRows] = useState<Row[]>([]);
   const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
+  const pageSize = 25;
 
-  const [qAction, setQAction] = useState("");
-  const [qActor, setQActor] = useState("");
-  const [qTarget, setQTarget] = useState("");
+  // Search state
+  const [query, setQuery] = useState("");
+  const [actionFilter, setActionFilter] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+
+  // Debounced search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+      setPageIndex(0); // Reset to first page when search changes
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  const canPrev = pageIndex > 0;
+  const canNext = pageIndex < Math.ceil(total / pageSize) - 1;
 
   const [expanded, setExpanded] = useState<Record<number, boolean>>({});
-
-  const from = page * PAGE_SIZE;
-  const to = from + PAGE_SIZE - 1;
-
-  const canPrev = page > 0;
-  const canNext = from + rows.length < total;
 
   async function load() {
     setLoading(true);
     setErr(null);
 
     try {
-      let q = supabase
-        .from("admin_audit_log")
-        .select("id, created_at, actor_id, action, target_id, payload", { count: "exact" })
-        .order("created_at", { ascending: false })
-        .range(from, to);
+      const { data, error } = await supabase.rpc("admin_search_audit_logs", {
+        p_q: debouncedQuery || null,
+        p_action: actionFilter || null,
+        p_limit: pageSize,
+        p_offset: pageIndex * pageSize
+      });
 
-      if (qAction.trim()) q = q.ilike("action", `%${qAction.trim()}%`);
-      if (qActor.trim()) q = q.ilike("actor_id", `%${qActor.trim()}%`);
-      if (qTarget.trim()) q = q.ilike("target_id", `%${qTarget.trim()}%`);
-
-      const { data, error, count } = await q;
       if (error) throw error;
 
-      setRows((data || []) as Row[]);
-      setTotal(count || 0);
+      // Extract total_count from first row or default to 0
+      const totalCount = data && data.length > 0 ? data[0].total_count : 0;
+      
+      // Convert RPC result to Row format
+      const auditRows = (data || []).map((row: any) => ({
+        id: row.id,
+        created_at: row.created_at,
+        actor_id: row.actor_id,
+        action: row.action,
+        target_id: row.target_id,
+        payload: row.payload
+      }));
+
+      setRows(auditRows);
+      setTotal(totalCount);
     } catch (e: any) {
-      setErr(e?.message || "Failed to load audit log");
+      setErr(e.message || "Failed to load audit logs");
     } finally {
       setLoading(false);
     }
   }
 
-  // reset page when filter changes
-  useEffect(() => { setPage(0); }, [qAction, qActor, qTarget]);
+  useEffect(() => {
+    load();
+  }, [debouncedQuery, actionFilter, pageIndex]);
 
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [page, qAction, qActor, qTarget]);
 
