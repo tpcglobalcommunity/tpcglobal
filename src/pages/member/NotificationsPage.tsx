@@ -26,17 +26,14 @@ export default function NotificationsPage({ lang }: { lang: Language }) {
   const [markingAll, setMarkingAll] = useState(false);
   const [markingIds, setMarkingIds] = useState<Set<string>>(new Set());
 
-  // Load notifications
+  // Load notifications using helper function
   async function loadNotifications() {
     try {
       setLoading(true);
       setError(null);
 
       const { data, error } = await supabase
-        .from("notifications")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(50);
+        .rpc("get_recent_notifications", { p_limit: 50 });
 
       if (error) throw error;
 
@@ -48,31 +45,27 @@ export default function NotificationsPage({ lang }: { lang: Language }) {
     }
   }
 
-  // Load unread count
+  // Load unread count using helper function
   async function loadUnreadCount() {
     try {
-      const { count, error } = await supabase
-        .from("notifications")
-        .select("*", { count: "exact", head: true })
-        .eq("is_read", false);
+      const { data, error } = await supabase
+        .rpc("get_unread_notification_count");
 
       if (error) throw error;
 
-      setUnreadCount(count || 0);
+      setUnreadCount((data as number) || 0);
     } catch (e: any) {
       console.error("Failed to load unread count:", e);
     }
   }
 
-  // Mark single notification as read
+  // Mark single notification as read using helper function
   async function markAsRead(id: string) {
     try {
       setMarkingIds(prev => new Set(prev).add(id));
 
       const { error } = await supabase
-        .from("notifications")
-        .update({ is_read: true })
-        .eq("id", id);
+        .rpc("mark_notification_read", { p_notification_id: parseInt(id) });
 
       if (error) throw error;
 
@@ -92,15 +85,13 @@ export default function NotificationsPage({ lang }: { lang: Language }) {
     }
   }
 
-  // Mark all notifications as read
+  // Mark all notifications as read using helper function
   async function markAllAsRead() {
     try {
       setMarkingAll(true);
 
-      const { error } = await supabase
-        .from("notifications")
-        .update({ is_read: true })
-        .eq("is_read", false);
+      const { data, error } = await supabase
+        .rpc("mark_all_notifications_read");
 
       if (error) throw error;
 

@@ -11,16 +11,14 @@ export default function MemberNav({ lang }: { lang: Language }) {
   const path = typeof window !== "undefined" ? window.location.pathname : "";
   const [unreadCount, setUnreadCount] = useState(0);
 
-  // Load unread count
+  // Load unread count using helper function
   async function loadUnreadCount() {
     try {
-      const { count, error } = await supabase
-        .from("notifications")
-        .select("*", { count: "exact", head: true })
-        .eq("is_read", false);
+      const { data, error } = await supabase
+        .rpc("get_unread_notification_count");
 
       if (error) throw error;
-      setUnreadCount(count || 0);
+      setUnreadCount((data as number) || 0);
     } catch (e) {
       console.error("Failed to load unread count:", e);
     }
