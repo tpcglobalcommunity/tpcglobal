@@ -47,6 +47,7 @@ import MemberDetailPage from './pages/admin/MemberDetailPage';
 import AuditLogPage from './pages/admin/AuditLogPage';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminControlCenterPage from './pages/admin/AdminControlCenterPage';
+import EmailQueuePage from './pages/admin/EmailQueuePage';
 import AdminSettingsPage from './pages/admin/AdminSettingsPage';
 import VendorApplyPage from './pages/member/VendorApplyPage';
 import MarketplacePage from './pages/MarketplacePage';
@@ -361,6 +362,14 @@ function App() {
           <AdminGuard lang={lang}>
             <AdminLayout lang={lang}>
               <AdminSettingsPage lang={lang} />
+            </AdminLayout>
+          </AdminGuard>
+        );
+      case '/admin/email-queue':
+        return (
+          <AdminGuard lang={lang}>
+            <AdminLayout lang={lang}>
+              <EmailQueuePage lang={lang} />
             </AdminLayout>
           </AdminGuard>
         );
