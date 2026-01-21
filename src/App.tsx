@@ -56,6 +56,7 @@ import WelcomePage from './pages/member/WelcomePage';
 import MemberDashboardPage from './pages/member/MemberDashboardPage';
 import ProgramsPage from './pages/member/ProgramsPage';
 import MemberVerifyPage from './pages/member/VerifyPage';
+import NotificationsPage from './pages/member/NotificationsPage';
 import MemberSettingsPage from './pages/member/MemberSettingsPage';
 import { fetchAppSettings, type AppSettings } from './lib/settings';
 
@@ -244,6 +245,12 @@ function App() {
         return (
           <MemberStatusGuard lang={lang}>
             <MemberVerifyPage lang={lang} />
+          </MemberStatusGuard>
+        );
+      case '/member/notifications':
+        return (
+          <MemberStatusGuard lang={lang}>
+            <NotificationsPage lang={lang} />
           </MemberStatusGuard>
         );
       case '/member/settings':

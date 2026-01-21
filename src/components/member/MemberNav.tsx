@@ -1,17 +1,43 @@
 import { type Language, getLangPath, useI18n } from "../../i18n";
-import { LayoutDashboard, Layers, Wallet, Settings } from "lucide-react";
+import { LayoutDashboard, Layers, Wallet, Settings, Bell } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
 
-type Item = { key: string; label: string; href: string; icon: any };
+type Item = { key: string; label: string; href: string; icon: any; badge?: number };
 
 export default function MemberNav({ lang }: { lang: Language }) {
   const { t } = useI18n();
   const base = `${getLangPath(lang, "")}/member`;
   const path = typeof window !== "undefined" ? window.location.pathname : "";
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // Load unread count
+  async function loadUnreadCount() {
+    try {
+      const { count, error } = await supabase
+        .from("notifications")
+        .select("*", { count: "exact", head: true })
+        .eq("is_read", false);
+
+      if (error) throw error;
+      setUnreadCount(count || 0);
+    } catch (e) {
+      console.error("Failed to load unread count:", e);
+    }
+  }
+
+  useEffect(() => {
+    loadUnreadCount();
+    // Poll every 30 seconds
+    const interval = setInterval(loadUnreadCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const items: Item[] = [
     { key: "dashboard", label: t("member.nav.dashboard") || "Dashboard", href: `${base}/dashboard`, icon: LayoutDashboard },
     { key: "programs", label: t("member.nav.programs") || "Programs", href: `${base}/programs`, icon: Layers },
     { key: "verify", label: t("member.nav.verify") || "Wallet", href: `${base}/verify`, icon: Wallet },
+    { key: "notifications", label: t("member.nav.notifications") || "Notifications", href: `${base}/notifications`, icon: Bell, badge: unreadCount },
     { key: "settings", label: t("member.nav.settings") || "Settings", href: `${base}/settings`, icon: Settings },
   ];
 
@@ -58,7 +84,14 @@ export default function MemberNav({ lang }: { lang: Language }) {
                     <div className="min-w-0 flex-1">
                       <div className={active ? "text-white font-medium" : "text-white/80"}>{i.label}</div>
                     </div>
-                    {active ? <div className="w-1.5 h-6 rounded-full bg-[#F0B90B]" /> : null}
+                    <div className="flex items-center gap-2">
+                      {i.badge && i.badge > 0 && (
+                        <span className="px-2 py-1 text-xs bg-[#F0B90B]/20 text-[#F0B90B] rounded-full">
+                          {i.badge > 99 ? "99+" : i.badge}
+                        </span>
+                      )}
+                      {active ? <div className="w-1.5 h-6 rounded-full bg-[#F0B90B]" /> : null}
+                    </div>
                   </a>
                 );
               })}
@@ -83,12 +116,17 @@ export default function MemberNav({ lang }: { lang: Language }) {
                   <a
                     key={i.key}
                     href={i.href}
-                    className="py-3 flex flex-col items-center justify-center gap-1"
+                    className="py-3 flex flex-col items-center justify-center gap-1 relative"
                   >
                     <Icon className={["w-5 h-5", active ? "text-[#F0B90B]" : "text-white/55"].join(" ")} />
                     <span className={["text-[11px]", active ? "text-white" : "text-white/55"].join(" ")}>
                       {i.label}
                     </span>
+                    {i.badge && i.badge > 0 && (
+                      <span className="absolute top-2 right-4 px-1.5 py-0.5 text-xs bg-[#F0B90B]/20 text-[#F0B90B] rounded-full min-w-[16px] text-center">
+                        {i.badge > 99 ? "99+" : i.badge}
+                      </span>
+                    )}
                     <span className={["h-1 w-1 rounded-full", active ? "bg-[#F0B90B]" : "bg-transparent"].join(" ")} />
                   </a>
                 );
