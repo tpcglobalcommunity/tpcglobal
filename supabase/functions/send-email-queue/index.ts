@@ -85,7 +85,7 @@ serve(async (req) => {
     // 1) Fetch pending emails
     const { data: queue, error: qErr } = await supabase
       .from("email_queue")
-      .select("id, template_type, lang, to_email, to_name, payload, status, attempts, created_at")
+      .select("*")
       .eq("status", "pending")
       .lt("attempts", MAX_ATTEMPTS)
       .order("created_at", { ascending: true })
@@ -105,11 +105,24 @@ serve(async (req) => {
     // 2) Process each email
     for (const item of queue) {
       const id = item.id as string;
-      const type = (item.template_type ?? "announcement") as string;
+      const type = (item.template_type ?? item.template ?? "announcement") as string;
       const lang = (item.lang ?? "en") as string;
-      const to = (item.to_email ?? "") as string;
-      const name = (item.to_name ?? "Member") as string;
+      const to = (item.to_email ?? item.email ?? "") as string;
+      const name = (item.to_name ?? item.name ?? "Member") as string;
       const payload = (item.payload ?? {}) as Record<string, unknown>;
+
+      if (!to) {
+        await supabase
+          .from("email_queue")
+          .update({
+            status: "failed",
+            attempts: (item.attempts ?? 0) + 1,
+            last_error: "Missing recipient email (to_email/email)",
+          })
+          .eq("id", id);
+        failed++;
+        continue;
+      }
 
       try {
         // Mark as sending
@@ -117,7 +130,7 @@ serve(async (req) => {
           .from("email_queue")
           .update({
             status: "sending",
-            attempts: item.attempts + 1,
+            attempts: (item.attempts ?? 0) + 1,
             last_error: null,
           })
           .eq("id", id);
@@ -127,22 +140,21 @@ serve(async (req) => {
           .rpc("get_email_template", { p_type: type, p_lang: lang }) as unknown as { data: TemplateRow[]; error: any };
 
         if (tErr) throw tErr;
-        const row = tpl?.[0];
-        if (!row) throw new Error(`Template not found for type=${type}`);
+        if (!tpl || !tpl[0]) throw new Error(`Template not found for type=${type}`);
 
         // Variables available to templates
         const vars: Record<string, string> = {
           name,
           app_url: APP_URL,
-          // Add payload variables to template context
-          ...Object.fromEntries(
-            Object.entries(payload).map(([k, v]) => [k, String(v)])
-          ),
+          verify_url: String(payload["verify_url"] ?? ""),
+          reset_url: String(payload["reset_url"] ?? ""),
+          message: String(payload["message"] ?? ""),
         };
 
-        const subject = render(row.subject, vars);
-        const text = render(row.body_text, vars);
-        const html = render(row.body_html, vars);
+        // Subject: pakai subject yang sudah ada di row kalau ada, kalau tidak ambil dari template
+        const subject = render((item.subject ?? tpl[0].subject) as string, vars);
+        const text = render(tpl[0].body_text, vars);
+        const html = render(tpl[0].body_html, vars);
 
         // Send via Resend
         await sendViaResend({
@@ -165,42 +177,26 @@ serve(async (req) => {
           .eq("id", id);
 
         sent++;
-        console.log(`✅ Sent email to ${to}: ${subject}`);
       } catch (e) {
-        failed++;
-        const msg = e instanceof Error ? e.message : String(e);
-
-        // Mark as failed
         await supabase
           .from("email_queue")
           .update({
             status: "failed",
-            last_error: msg,
+            last_error: e instanceof Error ? e.message : String(e),
           })
           .eq("id", id);
 
-        console.error(`❌ Failed email to ${to}: ${msg}`);
+        failed++;
       }
     }
 
-    return new Response(JSON.stringify({ 
-      ok: true, 
-      processed: queue.length, 
-      sent, 
-      failed 
-    }), {
+    return new Response(JSON.stringify({ ok: true, processed: queue.length, sent, failed }), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (e) {
     return new Response(
-      JSON.stringify({ 
-        ok: false, 
-        error: e instanceof Error ? e.message : String(e) 
-      }),
-      { 
-        status: 500, 
-        headers: { "Content-Type": "application/json" } 
-      },
+      JSON.stringify({ ok: false, error: e instanceof Error ? e.message : String(e) }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
 });
