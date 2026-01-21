@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "imports": [
+    "https://deno.land/std@0.224.0/http/server.ts",
+    "https://esm.sh/@supabase/supabase-js@2"
+  ],
+  "tasks": {
+    "start": {
+      "command": "deno run --allow-net --allow-env index.ts",
+      "description": "Start email worker"
+    }
+  },
+  "exclude": [
+    "node_modules/"
+  ]
+}
