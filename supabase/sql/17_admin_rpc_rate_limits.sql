@@ -62,7 +62,8 @@ begin
       v_email,
       'TPC Verification Approved',
       'verification_approved',
-      jsonb_build_object('request_id', p_request_id)
+      jsonb_build_object('request_id', p_request_id),
+      req.user_id -- penting untuk ambil language
     );
   end if;
 
