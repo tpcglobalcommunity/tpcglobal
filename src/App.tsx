@@ -49,6 +49,7 @@ import AdminLayout from './pages/admin/AdminLayout';
 import AdminControlCenterPage from './pages/admin/AdminControlCenterPage';
 import EmailQueuePage from './pages/admin/EmailQueuePage';
 import AdminSettingsPage from './pages/admin/AdminSettingsPage';
+import AdminBroadcastCenter from './pages/admin/AdminBroadcastCenter';
 import VendorApplyPage from './pages/member/VendorApplyPage';
 import MarketplacePage from './pages/MarketplacePage';
 import MaintenancePage from './pages/system/MaintenancePage';
@@ -377,6 +378,12 @@ function App() {
         return (
           <AdminGuard lang={lang}>
             <AdminControlCenterPage />
+          </AdminGuard>
+        );
+      case '/admin/broadcast':
+        return (
+          <AdminGuard lang={lang}>
+            <AdminBroadcastCenter />
           </AdminGuard>
         );
       default:

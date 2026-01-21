@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { type Language, getLangPath, useI18n } from "../../i18n";
-import { LayoutDashboard, Users, Link2, ScrollText, Settings, BadgeCheck } from "lucide-react";
+import { LayoutDashboard, Users, Link2, ScrollText, Settings, BadgeCheck, Megaphone } from "lucide-react";
 import type { AdminRole } from "../../hooks/useMyRole";
 
 type NavItem = {
@@ -56,6 +56,13 @@ export default function AdminNav({
         label: t("admin.nav.verification") || "Verification",
         href: `${base}/verification`,
         icon: BadgeCheck,
+        minRole: "admin",
+      },
+      {
+        key: "broadcast",
+        label: t("admin.nav.broadcast") || "Broadcast Center",
+        href: `${base}/broadcast`,
+        icon: Megaphone,
         minRole: "admin",
       },
       {
