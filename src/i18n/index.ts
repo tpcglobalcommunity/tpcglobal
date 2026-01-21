@@ -50,8 +50,9 @@ export function setLanguage(newLang: Language, currentPath: string = window.loca
   }
 }
 
-export const useTranslations = (lang: Language) => {
-  return translations[lang];
+export const useTranslations = (lang?: Language) => {
+  const targetLang = lang || getLanguageFromPath();
+  return translations[targetLang];
 };
 
 export const useLanguage = () => {

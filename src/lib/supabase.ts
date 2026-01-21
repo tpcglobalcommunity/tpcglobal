@@ -57,7 +57,7 @@ export interface Profile {
   status?: string | null;
   role?: string | null;
   avatar_url: string | null;
-  is_verified: boolean;
+  verified: boolean;  // ✅ Kolom di DB: verified
   referral_code: string;
   referred_by: string | null;
   referral_count: number;

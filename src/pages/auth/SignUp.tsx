@@ -2,11 +2,34 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import { useI18n } from "../../i18n";
+import { fetchAppSettings, type AppSettings } from "../../lib/settings";
+import RegistrationsClosedPage from "../system/RegistrationsClosedPage";
 
 type ReferralStatus = "idle" | "checking" | "valid" | "invalid";
 
 export default function SignUp() {
   const { t } = useI18n();
+  const [settings, setSettings] = useState<AppSettings | null>(null);
+  const [settingsErr, setSettingsErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        setSettingsErr(null);
+        const s = await fetchAppSettings(true);
+        if (!alive) return;
+        setSettings(s);
+      } catch (e: any) {
+        if (!alive) return;
+        setSettingsErr(e?.message || null);
+        setSettings(null);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const [referralCode, setReferralCode] = useState("");
   const [username, setUsername] = useState("");
@@ -43,6 +66,14 @@ export default function SignUp() {
     return null;
   }, [code, refStatus, uname, emailTrim, password, confirmPassword, t]);
 
+  // Gate: Check if registrations are open
+  if (settings && settings.registrations_open === false) {
+    return <RegistrationsClosedPage lang="en" />;
+  }
+
+  const referralEnabled = settings ? !!settings.referral_enabled : true;
+  const inviteLimit = settings?.referral_invite_limit ?? 0;
+
   const canSubmit = useMemo(() => {
     return !isSubmitting && refStatus === "valid" && !localValidateError;
   }, [isSubmitting, refStatus, localValidateError]);
@@ -51,6 +82,13 @@ export default function SignUp() {
   useEffect(() => {
     setError(null);
     setSuccessEmail(null);
+
+    if (!referralEnabled) {
+      setRefStatus("idle");
+      setRefMessage(null);
+      lastCheckedRef.current = "";
+      return;
+    }
 
     if (!code) {
       setRefStatus("idle");
@@ -135,6 +173,27 @@ export default function SignUp() {
       <div className="text-center text-xs text-[#F0B90B] mb-6">BUILD: SIGNUP_MINIMAL_V3</div>
 
       <form onSubmit={onSubmit} className="space-y-4">
+        {settingsErr && (
+          <div className="p-3 bg-yellow-500/20 border border-yellow-500/30 rounded-lg text-yellow-300 text-sm mb-4">
+            {t("signup.settingsLoadError") || "Could not load settings; proceeding with defaults."}
+          </div>
+        )}
+
+        {!referralEnabled && (
+          <div className="p-3 bg-blue-500/20 border border-blue-500/30 rounded-lg text-blue-300 text-sm mb-4">
+            {t("signup.referralDisabledTitle") || "Referral System Disabled"}
+            <div className="text-xs mt-1">
+              {t("signup.referralDisabledDesc") || "Referral codes are temporarily disabled."}
+            </div>
+          </div>
+        )}
+
+        {referralEnabled && inviteLimit > 0 && (
+          <div className="p-3 bg-green-500/20 border border-green-500/30 rounded-lg text-green-300 text-sm mb-4">
+            {t("signup.referralLimitHint") || `Referral limit: ${inviteLimit} per code`}
+          </div>
+        )}
+
         {/* Referral */}
         <div>
           <label className="block text-sm font-medium mb-2">

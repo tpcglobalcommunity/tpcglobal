@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Users, Package, FileText, Search, X, Check, AlertTriangle } from 'lucide-react';
-import RoleGuard from '../../components/guards/RoleGuard';
+import { Shield, Users, Package, FileText, Search, X, Check, AlertTriangle, RefreshCw, Download } from 'lucide-react';
 import { PremiumShell } from '../../components/ui/PremiumShell';
 import { PremiumCard } from '../../components/ui/PremiumCard';
 import { PremiumButton } from '../../components/ui/PremiumButton';
-import { NoticeBox } from '../../components/ui/NoticeBox';
 import { useI18n } from '../../i18n';
 import {
   adminListUsers,
@@ -28,8 +26,12 @@ export default function AdminControlCenterPage() {
   const [activeTab, setActiveTab] = useState<TabType>('users');
 
   return (
-    <RoleGuard allow={['admin', 'super_admin']}>
-      <PremiumShell className="min-h-screen">
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold text-white">Admin Control Center</h1>
+      <p className="text-white/60 text-sm mt-1">If you see this, admin page is rendering ✅</p>
+      
+      {/* ...lanjutan konten admin... */}
+      <PremiumShell>
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-yellow-400/50 to-transparent" />
 
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -50,14 +52,6 @@ export default function AdminControlCenterPage() {
               </p>
             </div>
           </div>
-
-          <NoticeBox
-            type="warning"
-            title={t('admin.control.noticeTitle')}
-            className="mb-6"
-          >
-            {t('admin.control.noticeBody')}
-          </NoticeBox>
 
           <div className="flex gap-2 mb-6 border-b border-gray-800">
             <TabButton
@@ -87,7 +81,7 @@ export default function AdminControlCenterPage() {
           </AnimatePresence>
         </div>
       </PremiumShell>
-    </RoleGuard>
+    </div>
   );
 }
 
@@ -117,6 +111,7 @@ function UsersTab() {
   const { t } = useI18n();
   const [users, setUsers] = useState<AdminUserListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('');
   const [verifiedFilter, setVerifiedFilter] = useState<string>('');
@@ -124,10 +119,12 @@ function UsersTab() {
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [selectedUser, setSelectedUser] = useState<AdminUserListItem | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const pageSize = 20;
 
   const fetchUsers = async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await adminListUsers({
         query: searchQuery || undefined,
@@ -139,8 +136,9 @@ function UsersTab() {
       });
       setUsers(data);
       setTotalCount(data.length > 0 ? data[0].total_count : 0);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching users:', error);
+      setError(error.message || 'Failed to fetch users');
     } finally {
       setLoading(false);
     }
@@ -155,6 +153,43 @@ function UsersTab() {
     fetchUsers();
   };
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchUsers();
+    setTimeout(() => setIsRefreshing(false), 500);
+  };
+
+  const resetFilters = () => {
+    setSearchQuery('');
+    setRoleFilter('');
+    setVerifiedFilter('');
+    setCanInviteFilter('');
+    setPage(1);
+  };
+
+  const exportToCSV = () => {
+    const headers = ['Email', 'Username', 'Full Name', 'Role', 'Verified', 'Can Invite', 'Referral Count', 'Created'];
+    const csvData = users.map(user => [
+      user.email,
+      user.username || '',
+      user.full_name || '',
+      user.role,
+      user.is_verified ? 'Yes' : 'No',
+      user.can_invite ? 'Yes' : 'No',
+      user.referral_count.toString(),
+      new Date(user.created_at).toLocaleDateString()
+    ]);
+    
+    const csv = [headers, ...csvData].map(row => row.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `users_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
@@ -164,61 +199,122 @@ function UsersTab() {
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="md:col-span-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              placeholder={t('admin.control.filters.searchPlaceholder')}
-              className="w-full pl-10 pr-4 py-2.5 bg-gray-900/50 border border-gray-700 rounded-lg text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50"
-            />
+      {/* Sticky Toolbar */}
+      <div className="sticky top-0 z-10 mb-6 bg-gray-900/95 backdrop-blur-sm border border-gray-800 rounded-lg p-4">
+        <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+          {/* Search and Filters */}
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-gray-400 mb-1">Search</label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  placeholder={t('admin.control.filters.searchPlaceholder')}
+                  className="w-full pl-9 pr-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 placeholder:text-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-xs font-medium text-gray-400 mb-1">Role</label>
+              <select
+                value={roleFilter}
+                onChange={(e) => setRoleFilter(e.target.value)}
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50"
+              >
+                <option value="">All Roles</option>
+                <option value="member">Member</option>
+                <option value="moderator">Moderator</option>
+                <option value="admin">Admin</option>
+                <option value="super_admin">Super Admin</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-xs font-medium text-gray-400 mb-1">Verified</label>
+              <select
+                value={verifiedFilter}
+                onChange={(e) => setVerifiedFilter(e.target.value)}
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50"
+              >
+                <option value="">All</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-xs font-medium text-gray-400 mb-1">Can Invite</label>
+              <select
+                value={canInviteFilter}
+                onChange={(e) => setCanInviteFilter(e.target.value)}
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50"
+              >
+                <option value="">All</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
           </div>
-        </div>
-        <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className="px-4 py-2.5 bg-gray-900/50 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50"
-        >
-          <option value="">{t('admin.control.filters.all')} {t('admin.control.filters.role')}</option>
-          <option value="member">{t('admin.control.filters.member')}</option>
-          <option value="moderator">{t('admin.control.filters.moderator')}</option>
-          <option value="admin">{t('admin.control.filters.admin')}</option>
-          <option value="super_admin">{t('admin.control.filters.superAdmin')}</option>
-        </select>
-        <div className="flex gap-2">
-          <select
-            value={verifiedFilter}
-            onChange={(e) => setVerifiedFilter(e.target.value)}
-            className="flex-1 px-4 py-2.5 bg-gray-900/50 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50"
-          >
-            <option value="">{t('admin.control.filters.verified')}</option>
-            <option value="yes">{t('admin.control.filters.yes')}</option>
-            <option value="no">{t('admin.control.filters.no')}</option>
-          </select>
-          <select
-            value={canInviteFilter}
-            onChange={(e) => setCanInviteFilter(e.target.value)}
-            className="flex-1 px-4 py-2.5 bg-gray-900/50 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50"
-          >
-            <option value="">{t('admin.control.filters.canInvite')}</option>
-            <option value="yes">{t('admin.control.filters.yes')}</option>
-            <option value="no">{t('admin.control.filters.no')}</option>
-          </select>
+          
+          {/* Action Buttons */}
+          <div className="flex gap-2">
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-gray-300 text-sm font-medium transition-all flex items-center gap-2 disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+            
+            <button
+              onClick={exportToCSV}
+              disabled={users.length === 0}
+              className="px-4 py-2 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 rounded-lg text-yellow-400 text-sm font-medium transition-all flex items-center gap-2 disabled:opacity-50"
+            >
+              <Download className="w-4 h-4" />
+              Export CSV
+            </button>
+          </div>
         </div>
       </div>
 
+      {/* Loading State */}
       {loading ? (
         <div className="text-center py-12">
           <div className="inline-block w-8 h-8 border-4 border-gray-700 border-t-yellow-400 rounded-full animate-spin" />
+          <p className="text-gray-400 mt-4">Loading users...</p>
         </div>
+      ) : error ? (
+        /* Error State */
+        <PremiumCard className="text-center py-12">
+          <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <p className="text-red-400 mb-4">{error}</p>
+          <PremiumButton
+            variant="primary"
+            size="sm"
+            onClick={fetchUsers}
+          >
+            Retry
+          </PremiumButton>
+        </PremiumCard>
       ) : users.length === 0 ? (
+        /* Empty State */
         <PremiumCard className="text-center py-12">
           <Users className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-400">No users found</p>
+          <p className="text-gray-400 mb-4">No users found</p>
+          <PremiumButton
+            variant="secondary"
+            size="sm"
+            onClick={resetFilters}
+          >
+            Reset Filters
+          </PremiumButton>
         </PremiumCard>
       ) : (
         <>
@@ -298,9 +394,10 @@ function UserCard({ user, onManage }: { user: AdminUserListItem; onManage: () =>
             <div className="flex items-center gap-2 flex-wrap">
               <TrustBadges
                 role={user.role}
-                isVerified={user.is_verified}
-                canInvite={user.can_invite}
-                vendorStatus={user.vendor_status}
+                is_verified={user.is_verified}
+                can_invite={user.can_invite}
+                vendor_status={(user.vendor_status as any) || 'none'}
+                lang={'en' as any}
               />
             </div>
             <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
@@ -323,7 +420,7 @@ function UserCard({ user, onManage }: { user: AdminUserListItem; onManage: () =>
 
 function ManageUserModal({ user, onClose, onSuccess }: { user: AdminUserListItem; onClose: () => void; onSuccess: () => void }) {
   const { t } = useI18n();
-  const [role, setRole] = useState(user.role);
+  const [role, setRole] = useState(user.role as string);
   const [verified, setVerified] = useState(user.is_verified);
   const [canInvite, setCanInvite] = useState(user.can_invite);
   const [reason, setReason] = useState('');

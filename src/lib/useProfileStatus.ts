@@ -1,70 +1,77 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { supabase } from "./supabase";
-import { ProfileData, isProfileDataComplete } from "./profileHelpers";
+import { useEffect, useRef, useState } from "react";
+import type { Session } from "@supabase/supabase-js";
+import { supabase, type Profile } from "./supabase";
 
-interface UseProfileStatusReturn {
+type Result = {
+  profile: Profile | null;
   loading: boolean;
-  isComplete: boolean;
-  profile: ProfileData | null;
-  refreshProfile: () => void;
   error: string | null;
-}
+  refresh: () => Promise<void>;
+};
 
-export function useProfileStatus(): UseProfileStatusReturn {
+export function useProfileStatus(): Result {
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<ProfileData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const inFlight = useRef(false);
 
-  const fetchProfile = useCallback(async () => {
-    // Prevent duplicate requests
-    if (inFlight.current) return;
-    
-    try {
-      inFlight.current = true;
-      setLoading(true);
+  // mencegah race condition
+  const alive = useRef(true);
+
+  const loadProfile = async (session: Session | null) => {
+    if (!session?.user?.id) {
+      setProfile(null);
+      setLoading(false);
       setError(null);
-
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
-        setError("No authenticated session");
-        setLoading(false);
-        return;
-      }
-
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session.user.id)
-        .maybeSingle();
-
-      if (profileError) {
-        setError(profileError.message);
-        setLoading(false);
-        return;
-      }
-
-      setProfile(profileData);
-      setLoading(false);
-    } catch (err: any) {
-      setError(err?.message || "Failed to fetch profile");
-      setLoading(false);
-    } finally {
-      inFlight.current = false;
+      return;
     }
+
+    setLoading(true);
+    setError(null);
+
+    const userId = session.user.id;
+    console.log("[useProfileStatus] fetching profile by id:", userId);
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)       // ✅ KUNCI: HARUS pakai id auth.user
+      .maybeSingle();         // lebih aman daripada single() untuk first load
+
+    if (!alive.current) return;
+
+    if (error) {
+      setProfile(null);
+      setError(error.message);
+      setLoading(false);
+      return;
+    }
+
+    setProfile(data ?? null);
+    setLoading(false);
+  };
+
+  // initial session + subscribe auth changes
+  useEffect(() => {
+    alive.current = true;
+
+    supabase.auth.getSession().then(({ data }) => {
+      loadProfile(data.session ?? null);
+    });
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_evt, session) => {
+      loadProfile(session);
+    });
+
+    return () => {
+      alive.current = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
-  useEffect(() => {
-    fetchProfile();
-  }, []); // Remove fetchProfile dependency to prevent infinite loop
-
-  const isComplete = isProfileDataComplete(profile);
-
-  return {
-    loading,
-    isComplete,
-    profile,
-    refreshProfile: fetchProfile,
-    error
+  const refresh = async () => {
+    const { data } = await supabase.auth.getSession();
+    await loadProfile(data.session ?? null);
   };
+
+  return { profile, loading, error, refresh };
 }

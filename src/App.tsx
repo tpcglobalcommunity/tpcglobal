@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getLanguageFromPath } from './i18n';
+import { getLanguageFromPath, getLangPath } from './i18n';
 import AppHeader from './components/AppHeader';
 import LegalFooter from './components/LegalFooter';
 import BottomNav from './components/BottomNav';
@@ -22,10 +22,11 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import CompleteProfile from './pages/member/CompleteProfilePage';
 import MemberGate from './components/guards/MemberGuard';
+import MemberStatusGuard from './components/member/MemberGuard';
 import ProfileGate from './components/guards/ProfileGate';
+import AdminGuard from './components/guards/AdminGuard';
 import MemberHome from './pages/member/MemberHome';
 import Services from './pages/member/Services';
-import Dashboard from './pages/member/Dashboard';
 import SecurityPage from './pages/member/SecurityPage';
 import ProfilePage from './pages/member/ProfilePage';
 import AnnouncementsPage from './pages/member/AnnouncementsPage';
@@ -41,12 +42,26 @@ import AnnouncementsAdminListPage from './pages/admin/AnnouncementsAdminListPage
 import AnnouncementEditorPage from './pages/admin/AnnouncementEditorPage';
 import AuthLogsPage from './pages/admin/AuthLogsPage';
 import VendorsAdminPage from './pages/admin/VendorsAdminPage';
+import VerificationQueuePage from './pages/admin/VerificationQueuePage';
+import MemberDetailPage from './pages/admin/MemberDetailPage';
+import AuditLogPage from './pages/admin/AuditLogPage';
+import AdminLayout from './pages/admin/AdminLayout';
 import AdminControlCenterPage from './pages/admin/AdminControlCenterPage';
+import AdminSettingsPage from './pages/admin/AdminSettingsPage';
 import VendorApplyPage from './pages/member/VendorApplyPage';
 import MarketplacePage from './pages/MarketplacePage';
+import MaintenancePage from './pages/system/MaintenancePage';
+import GlobalBanner from './components/system/GlobalBanner';
+import WelcomePage from './pages/member/WelcomePage';
+import MemberDashboardPage from './pages/member/MemberDashboardPage';
+import ProgramsPage from './pages/member/ProgramsPage';
+import MemberVerifyPage from './pages/member/VerifyPage';
+import MemberSettingsPage from './pages/member/MemberSettingsPage';
+import { fetchAppSettings, type AppSettings } from './lib/settings';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const [appSettings, setAppSettings] = useState<AppSettings | null>(null);
   const lang = getLanguageFromPath(currentPath);
 
   useEffect(() => {
@@ -56,17 +71,53 @@ function App() {
 
     window.addEventListener('popstate', handleLocationChange);
     return () => window.removeEventListener('popstate', handleLocationChange);
+  }, [appSettings]);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const s = await fetchAppSettings();
+        if (!alive) return;
+        setAppSettings(s);
+      } catch (e: any) {
+        if (!alive) return;
+        // Settings error handled by WelcomePage
+      }
+    })();
+    return () => {
+      alive = false;
+    };
   }, []);
 
   useEffect(() => {
-    if (currentPath === '/' || currentPath === '') {
-      window.history.replaceState({}, '', '/en/home');
-      setCurrentPath('/en/home');
-    } else if (!currentPath.match(/^\/(en|id)\//)) {
-      window.history.replaceState({}, '', `/en${currentPath}`);
-      setCurrentPath(`/en${currentPath}`);
+    if (appSettings?.maintenance_mode) {
+      window.location.href = `${getLangPath(lang, "")}/maintenance`;
+      return;
     }
-  }, [currentPath]);
+  }, [appSettings, lang]);
+
+  useEffect(() => {
+    const path = window.location.pathname || "/";
+
+    // root -> default
+    if (path === "/" || path === "") {
+      window.history.replaceState({}, "", "/en/home");
+      setCurrentPath("/en/home");
+      return;
+    }
+
+    // kalau tidak diawali /en/ atau /id/, paksa ke /en + path
+    if (!/^\/(en|id)\//.test(path)) {
+      const next = `/en${path.startsWith("/") ? path : `/${path}`}`;
+      window.history.replaceState({}, "", next);
+      setCurrentPath(next);
+      return;
+    }
+
+    // normal
+    setCurrentPath(path);
+  }, []);
 
   const isAuthPage = (path: string) => {
     const pathWithoutLang = path.replace(/^\/(en|id)/, '');
@@ -79,6 +130,15 @@ function App() {
   };
 
   const shouldShowBottomNav = !isAuthPage(currentPath) && !isAdminPage(currentPath);
+
+  // Maintenance mode guard
+  const maintenanceOn = !!appSettings?.maintenance_mode;
+  const isAdminRoute = isAdminPage(currentPath);
+  const isSigninRoute = isAuthPage(currentPath) && currentPath.includes('/signin');
+  
+  if (maintenanceOn && !isAdminRoute && !isSigninRoute) {
+    return <MaintenancePage lang={lang} />;
+  }
 
   const renderPage = () => {
     const pathWithoutLang = currentPath.replace(/^\/(en|id)/, '');
@@ -148,6 +208,8 @@ function App() {
         return <SignUp />;
       case '/signin':
         return <SignIn />;
+      case '/admin/login':
+        return <SignIn lang={lang} next={`/${lang}/admin/control`} />;
       case '/forgot':
         return <ForgotPassword lang={lang} />;
       case '/reset':
@@ -164,13 +226,31 @@ function App() {
             </ProfileGate>
           </MemberGate>
         );
+      case '/member/welcome':
+        return <WelcomePage lang={lang} />;
       case '/member/dashboard':
         return (
-          <MemberGate>
-            <ProfileGate>
-              <Dashboard lang={lang} />
-            </ProfileGate>
-          </MemberGate>
+          <MemberStatusGuard lang={lang} allowPending={true}>
+            <MemberDashboardPage lang={lang} />
+          </MemberStatusGuard>
+        );
+      case '/member/programs':
+        return (
+          <MemberStatusGuard lang={lang}>
+            <ProgramsPage lang={lang} />
+          </MemberStatusGuard>
+        );
+      case '/member/verify':
+        return (
+          <MemberStatusGuard lang={lang}>
+            <MemberVerifyPage lang={lang} />
+          </MemberStatusGuard>
+        );
+      case '/member/settings':
+        return (
+          <MemberStatusGuard lang={lang}>
+            <MemberSettingsPage lang={lang} />
+          </MemberStatusGuard>
         );
       case '/member/security':
         return (
@@ -235,11 +315,53 @@ function App() {
       case '/news':
         return <NewsPage />;
       case '/admin/auth-logs':
-        return <AuthLogsPage lang={lang} />;
+        return (
+          <AdminGuard lang={lang}>
+            <AuthLogsPage lang={lang} />
+          </AdminGuard>
+        );
       case '/admin/vendors':
-        return <VendorsAdminPage lang={lang} />;
+        return (
+          <AdminGuard lang={lang}>
+            <VendorsAdminPage lang={lang} />
+          </AdminGuard>
+        );
+      case '/admin/verification':
+        return (
+          <AdminGuard lang={lang}>
+            <VerificationQueuePage lang={lang} />
+          </AdminGuard>
+        );
+      case '/admin/member':
+        return (
+          <AdminGuard lang={lang}>
+            <AdminLayout lang={lang}>
+              <MemberDetailPage lang={lang} />
+            </AdminLayout>
+          </AdminGuard>
+        );
+      case '/admin/audit':
+        return (
+          <AdminGuard lang={lang}>
+            <AdminLayout lang={lang}>
+              <AuditLogPage lang={lang} />
+            </AdminLayout>
+          </AdminGuard>
+        );
+      case '/admin/settings':
+        return (
+          <AdminGuard lang={lang}>
+            <AdminLayout lang={lang}>
+              <AdminSettingsPage lang={lang} />
+            </AdminLayout>
+          </AdminGuard>
+        );
       case '/admin/control':
-        return <AdminControlCenterPage />;
+        return (
+          <AdminGuard lang={lang}>
+            <AdminControlCenterPage />
+          </AdminGuard>
+        );
       default:
         return <Home lang={lang} />;
     }
@@ -255,6 +377,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <GlobalBanner lang={lang} />
       <AppHeader lang={lang} currentPath={currentPath} />
       <main className={`flex-1 ${shouldShowBottomNav ? 'pb-[calc(72px+env(safe-area-inset-bottom)+16px)] xl:pb-0' : ''}`}>
         {renderPage()}

@@ -6,6 +6,7 @@ import { signIn } from "../../lib/supabase";
 
 interface SignInProps {
   lang?: Language;
+  next?: string;
 }
 
 function safeNext(nextRaw: string | null, fallback: string) {
@@ -21,20 +22,20 @@ function safeNext(nextRaw: string | null, fallback: string) {
   }
 }
 
-export default function SignIn({ lang }: SignInProps) {
+export default function SignIn({ lang, next }: SignInProps) {
   const { t, language } = useI18n(lang || "en");
   const L = language;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fallback = getLangPath(L, "/member/dashboard");
-  const next = useMemo(() => {
+  const nextUrl = useMemo(() => {
     const params = new URLSearchParams(window.location.search);
-    return safeNext(params.get("next"), fallback);
+    const nextParam = params.get("next");
+    return safeNext(nextParam, fallback);
   }, [fallback]);
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -43,7 +44,7 @@ export default function SignIn({ lang }: SignInProps) {
     setSubmitting(true);
     try {
       await signIn({ email: email.trim(), password });
-      window.location.assign(next);
+      window.location.assign(nextUrl);
     } catch (err: any) {
       const msg = String(err?.message || "");
       if (msg.toLowerCase().includes("confirm")) setError(t("errors.emailNotConfirmed"));

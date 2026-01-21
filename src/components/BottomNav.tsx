@@ -1,7 +1,8 @@
-import { Home, FileText, Users, Eye } from 'lucide-react';
+import { Home, FileText, Users, Eye, Shield } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Language, useTranslations, getLangPath } from '../i18n';
 import { Link } from './Router';
+import { useAuth } from '../contexts/AuthContext';
 
 interface BottomNavProps {
   lang: Language;
@@ -11,6 +12,9 @@ interface BottomNavProps {
 const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const t = useTranslations(lang);
+  const { profile } = useAuth();
+
+  const isAdmin = profile?.role === "admin" || profile?.role === "super_admin";
 
   useEffect(() => {
     const handleMenuState = (event: CustomEvent) => {
@@ -27,6 +31,9 @@ const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
     { label: t.nav.docs, path: getLangPath(lang, '/docs'), icon: FileText },
     { label: t.nav.dao, path: getLangPath(lang, '/dao'), icon: Users },
     { label: t.nav.transparency, path: getLangPath(lang, '/transparency'), icon: Eye },
+    ...(isAdmin ? [
+      { label: t.nav.admin, path: getLangPath(lang, '/admin/control'), icon: Shield }
+    ] : [])
   ];
 
   if (isMenuOpen) {

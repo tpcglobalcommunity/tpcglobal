@@ -5,6 +5,7 @@ import { Language, useTranslations, setLanguage, getLangPath } from '../i18n';
 import { Link } from './Router';
 import TPMonogram from './brand/TPMonogram';
 import { HeaderAuthActions } from './auth/HeaderAuthActions';
+import { useAuth } from '../contexts/AuthContext';
 
 interface AppHeaderProps {
   lang: Language;
@@ -14,7 +15,10 @@ interface AppHeaderProps {
 const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { profile } = useAuth();
   const t = useTranslations(lang);
+
+  const isAdmin = profile?.role === "admin" || profile?.role === "super_admin";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,6 +52,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
     { label: t.nav.transparency, path: getLangPath(lang, '/transparency'), icon: BadgeCheck },
     { label: t.nav.fund, path: getLangPath(lang, '/fund'), icon: Wallet },
     { label: t.nav.legal, path: getLangPath(lang, '/legal'), icon: Scale },
+    ...(isAdmin ? [{ label: t.nav.admin, path: getLangPath(lang, '/admin/control'), icon: Shield }] : [])
   ];
 
   const handleLanguageChange = (newLang: Language) => {

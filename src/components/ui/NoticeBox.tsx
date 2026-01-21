@@ -1,9 +1,9 @@
 import { ReactNode } from 'react';
-import { AlertCircle, Info, CheckCircle } from 'lucide-react';
+import { AlertCircle, Info, CheckCircle, AlertTriangle } from 'lucide-react';
 
 interface NoticeBoxProps {
   children: ReactNode;
-  variant?: 'warning' | 'info' | 'success';
+  variant?: 'warning' | 'info' | 'success' | 'danger';
   title?: string;
   className?: string;
 }
@@ -28,10 +28,16 @@ export const NoticeBox = ({ children, variant = 'warning', title, className = ''
       text: 'text-white/75',
       title: 'text-white',
     },
+    danger: {
+      container: 'bg-red-500/10 border-red-500/30',
+      icon: 'text-red-400',
+      text: 'text-white/75',
+      title: 'text-white',
+    },
   };
 
   const styles = variantStyles[variant];
-  const Icon = variant === 'warning' ? AlertCircle : variant === 'success' ? CheckCircle : Info;
+  const Icon = variant === 'warning' ? AlertCircle : variant === 'success' ? CheckCircle : variant === 'danger' ? AlertTriangle : Info;
 
   return (
     <div

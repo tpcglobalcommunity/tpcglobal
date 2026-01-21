@@ -1,20 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, Profile } from '../lib/supabase';
 import type { Session, User } from '@supabase/supabase-js';
-
-interface Profile {
-  id: string;
-  email: string;
-  full_name: string;
-  username: string;
-  role: string;
-  referral_code: string;
-  is_verified: boolean;
-  can_invite: boolean;
-  is_profile_complete: boolean;
-  status?: string;
-  created_at: string;
-}
+import { useProfileStatus } from '../lib/useProfileStatus';
 
 interface AuthContextType {
   loading: boolean;
@@ -49,43 +36,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const { profile, loading: profileLoading } = useProfileStatus();
 
-  const fetchProfile = async (_userId: string) => {
-    // DISABLED: Profile fetching is now handled by useProfileStatus hook
-    // This prevents duplicate requests and infinite loops
-    console.log('[AuthContext] Profile fetching delegated to useProfileStatus');
-    return;
-    
-    /* Original code - disabled to prevent duplicates
-    if (fetchingProfile) return;
-
-    try {
-      setFetchingProfile(true);
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
-
-      if (error) throw error;
-      setProfile(data);
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-      setProfile(null);
-    } finally {
-      setFetchingProfile(false);
-    }
-    */
-  };
+  const isMember = profile?.role === 'member';
+  const isMod = profile?.role === 'moderator';
+  const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin';
+  const isSuperAdmin = profile?.role === 'super_admin';
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
       setLoading(false);
     });
 
@@ -94,11 +55,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      } else {
-        setProfile(null);
-      }
     });
 
     return () => subscription.unsubscribe();
@@ -180,18 +136,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const refreshProfile = async () => {
-    if (user) {
-      await fetchProfile(user.id);
-    }
+    // Profile refresh is handled by useProfileStatus hook
   };
 
-  const isMember = !!profile;
-  const isMod = profile?.role === 'moderator' || profile?.role === 'admin' || profile?.role === 'super_admin';
-  const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin';
-  const isSuperAdmin = profile?.role === 'super_admin';
-
   const value: AuthContextType = {
-    loading,
+    loading: loading || profileLoading,
     session,
     user,
     profile,

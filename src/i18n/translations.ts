@@ -8,6 +8,7 @@ export const translations = {
       transparency: 'Transparency',
       fund: 'Community Fund',
       legal: 'Legal',
+      admin: 'Admin',
     },
     hero: {
       title: 'Trader Professional Community',
@@ -1187,7 +1188,7 @@ export const translations = {
         noAccount: 'Don\'t have an account?',
         goSignup: 'Create account',
         createAccount: 'Create account',
-        forgot: 'Forgot password?',
+        forgotPassword: 'Forgot password?',
         emailLabel: 'Email Address',
         passwordLabel: 'Password',
         submitButton: 'Sign In',
@@ -1197,15 +1198,6 @@ export const translations = {
         lockedDesc: 'You have exceeded the maximum number of login attempts. Please wait 10 minutes before trying again.',
         errorInvalid: 'Invalid email or password',
         errorGeneric: 'Failed to sign in. Please try again.',
-      },
-      forgot: {
-        title: 'Reset Password',
-        subtitle: 'Enter your email to receive a password reset link',
-        email: 'Email Address',
-        send: 'Send Reset Link',
-        sending: 'Sending...',
-        sentTitle: 'Check Your Email',
-        sentDesc: 'If an account exists with that email, you will receive a password reset link shortly.',
       },
       reset: {
         title: 'Set New Password',
@@ -1786,6 +1778,7 @@ export const translations = {
       transparency: 'Transparansi',
       fund: 'Dana Komunitas',
       legal: 'Legal',
+      admin: 'Admin',
     },
     hero: {
       title: 'Komunitas Trader Profesional',
@@ -2977,21 +2970,12 @@ export const translations = {
         goSignup: 'Buat akun',
         createAccount: 'Buat akun',
 
-        forgot: 'Lupa kata sandi?',
+        forgotPassword: 'Lupa kata sandi?',
         signUpLink: 'Daftar',
         lockedTitle: 'Terlalu Banyak Percobaan',
         lockedDesc: 'Anda telah melebihi jumlah maksimum percobaan login. Silakan tunggu 10 menit sebelum mencoba lagi.',
         errorInvalid: 'Email atau kata sandi tidak valid',
         errorGeneric: 'Gagal masuk. Silakan coba lagi.',
-      },
-      forgot: {
-        title: 'Atur Ulang Kata Sandi',
-        subtitle: 'Masukkan email Anda untuk menerima link reset kata sandi',
-        email: 'Alamat Email',
-        send: 'Kirim Link Reset',
-        sending: 'Mengirim...',
-        sentTitle: 'Periksa Email Anda',
-        sentDesc: 'Jika akun dengan email tersebut ada, Anda akan menerima link reset kata sandi segera.',
       },
       reset: {
         title: 'Buat Kata Sandi Baru',

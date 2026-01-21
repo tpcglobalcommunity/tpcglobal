@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Users, TrendingUp, Copy, Check, Link as LinkIcon, CheckCircle } from 'lucide-react';
+import { Users, TrendingUp, Copy, Check, Link as LinkIcon, CheckCircle, UserPlus, Calendar } from 'lucide-react';
 import { Language, useTranslations } from '../../i18n';
 import { PremiumShell, PremiumCard, NoticeBox } from '../../components/ui';
 import MemberGuard from '../../components/guards/MemberGuard';
-import { ReferralAnalytics, supabase, ensureReferralCode } from '../../lib/supabase';
+import { ReferralAnalytics, supabase, ensureReferralCode, getReferrals } from '../../lib/supabase';
 
 interface ReferralsPageProps {
   lang: Language;
@@ -21,10 +21,45 @@ const ReferralsPage = ({ lang }: ReferralsPageProps) => {
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedSignup, setCopiedSignup] = useState(false);
   const [copiedVerify, setCopiedVerify] = useState(false);
+  const [downline, setDownline] = useState<any[]>([]);
+  const [loadingDownline, setLoadingDownline] = useState(false);
 
   useEffect(() => {
     loadAnalytics();
+    loadDownline();
   }, []);
+
+  const loadDownline = async () => {
+    try {
+      setLoadingDownline(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      
+      const referrals = await getReferrals(user.id);
+      
+      // Get profile data for each referral
+      const downlineData = await Promise.all(
+        referrals.map(async (referral) => {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('username, full_name, avatar_url, created_at')
+            .eq('id', referral.referred_id)
+            .single();
+          
+          return {
+            ...referral,
+            ...profile
+          };
+        })
+      );
+      
+      setDownline(downlineData);
+    } catch (err) {
+      console.error('Error loading downline:', err);
+    } finally {
+      setLoadingDownline(false);
+    }
+  };
 
   const loadAnalytics = async () => {
     try {
@@ -100,6 +135,7 @@ const ReferralsPage = ({ lang }: ReferralsPageProps) => {
       if (newCode) {
         // Reload analytics to get updated data
         await loadAnalytics();
+        await loadDownline();
       }
     } catch (err) {
       console.error('Error generating referral code:', err);
@@ -306,6 +342,104 @@ const ReferralsPage = ({ lang }: ReferralsPageProps) => {
                 </div>
               </div>
             </div>
+          </PremiumCard>
+
+          {/* My Downline Section */}
+          <PremiumCard>
+            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <UserPlus className="w-5 h-5 text-[#F0B90B]" />
+              {t.member.referrals.downline.title || 'My Downline'}
+              <span className="text-sm font-normal text-white/60">
+                ({downline.length} {downline.length === 1 ? 'member' : 'members'})
+              </span>
+            </h2>
+
+            {loadingDownline ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="w-8 h-8 border-4 border-[#F0B90B]/30 border-t-[#F0B90B] rounded-full animate-spin" />
+              </div>
+            ) : downline.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 mx-auto mb-4 bg-white/5 rounded-full flex items-center justify-center">
+                  <Users className="w-8 h-8 text-white/40" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  {t.member.referrals.downline.empty.title || 'No referrals yet'}
+                </h3>
+                <p className="text-white/60 mb-6">
+                  {t.member.referrals.downline.empty.description || 'Start sharing your referral code to build your network!'}
+                </p>
+                <button
+                  onClick={() => copyToClipboard(getSignupLink(), setCopiedSignup)}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#F0B90B] hover:bg-[#F0B90B]/90 text-black font-medium rounded-lg transition-all"
+                >
+                  <LinkIcon className="w-4 h-4" />
+                  {copiedSignup 
+                    ? (t.member.referrals.code.copied || 'Copied!')
+                    : (t.member.referrals.downline.empty.cta || 'Share Invite Link')
+                  }
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {downline.map((member, index) => (
+                  <div key={member.id} className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-lg">
+                    {/* Avatar with badge */}
+                    <div className="relative">
+                      {member.avatar_url ? (
+                        <img 
+                          src={member.avatar_url} 
+                          alt={member.full_name || member.username}
+                          className="w-12 h-12 rounded-full object-cover border-2 border-white/10"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-gradient-to-br from-[#F0B90B] to-[#F0B90B]/50 rounded-full flex items-center justify-center border-2 border-white/10">
+                          <span className="text-black font-bold text-lg">
+                            {(member.full_name || member.username || '?').charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                      )}
+                      {/* New member badge */}
+                      {index < 3 && (
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white/10">
+                          <span className="sr-only">New member</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Member info */}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="font-semibold text-white">
+                          {member.full_name || member.username || 'Unknown'}
+                        </h4>
+                        {member.full_name && member.username && (
+                          <span className="text-white/60 text-sm">
+                            @{member.username}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 text-white/60 text-sm">
+                        <Calendar className="w-3 h-3" />
+                        Joined {new Date(member.created_at).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Referral code used */}
+                    <div className="text-right">
+                      <div className="text-xs text-white/40 mb-1">Used code</div>
+                      <div className="text-sm font-mono text-[#F0B90B]">
+                        {member.referral_code}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </PremiumCard>
         </div>
       </PremiumShell>
