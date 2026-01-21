@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "../../lib/supabase";
 import { type Language, useI18n } from "../../i18n";
 import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
-import { BadgeCheck, XCircle, RefreshCcw, User, Wallet } from "lucide-react";
+import { BadgeCheck, Eye, CheckCircle, XCircle, RefreshCcw, User, Wallet } from "lucide-react";
 import { approveVerification, rejectVerification } from "../../lib/adminRpc";
+import { useMyRole, canManageVerification } from "../../hooks/useMyRole";
+import NotAuthorized from "../../components/NotAuthorized";
 
 type Row = {
   id: number;
@@ -20,6 +22,13 @@ function shortId(id: string) {
 
 export default function VerificationQueuePage({ lang }: { lang: Language }) {
   const { t } = useI18n();
+  const { role, loading: roleLoading } = useMyRole();
+
+  // Check if user has admin+ access
+  if (!roleLoading && !canManageVerification(role)) {
+    return <NotAuthorized lang={lang} message="Only administrators can manage verification requests." />;
+  }
+
   console.log(lang); // Prevent unused variable warning
 
   const [loading, setLoading] = useState(true);

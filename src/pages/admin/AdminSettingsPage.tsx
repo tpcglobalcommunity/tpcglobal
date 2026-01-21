@@ -5,9 +5,17 @@ import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
 import { Settings, Save, RefreshCcw, ShieldAlert } from "lucide-react";
 import { fetchAppSettings, type AppSettings } from "../../lib/settings";
 import { upsertSetting } from "../../lib/adminRpc";
+import { useMyRole, canManageSettings } from "../../hooks/useMyRole";
+import NotAuthorized from "../../components/NotAuthorized";
 
 export default function AdminSettingsPage({ lang }: { lang: Language }) {
   const { t } = useI18n(lang);
+  const { role, loading: roleLoading } = useMyRole();
+
+  // Check if user has super admin access
+  if (!roleLoading && !canManageSettings(role)) {
+    return <NotAuthorized lang={lang} message="Only super administrators can access system settings." />;
+  }
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

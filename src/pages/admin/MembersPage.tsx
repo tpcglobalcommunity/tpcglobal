@@ -14,6 +14,8 @@ import {
 import { updateMember } from "../../lib/adminRpc";
 import { downloadCSV, formatDateForFilename } from "../../lib/csv";
 import { downloadTextFile } from "../../lib/download";
+import { useMyRole, canEditMembers } from "../../hooks/useMyRole";
+import NotAuthorized from "../../components/NotAuthorized";
 
 type MemberRow = {
   id: string;
@@ -33,8 +35,14 @@ function shortId(id: string) {
 }
 
 export default function MembersPage({ lang }: { lang: Language }) {
-  const { t } = useI18n();
+  const { t } = useI18n(lang);
   const baseAdmin = `${getLangPath(lang, "")}/admin`;
+  const { role, loading: roleLoading } = useMyRole();
+
+  // Check if user has viewer+ access
+  if (!roleLoading && !role) {
+    return <NotAuthorized lang={lang} message="You need admin access to view this page." />;
+  }
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

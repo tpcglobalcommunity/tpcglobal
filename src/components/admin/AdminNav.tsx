@@ -1,20 +1,20 @@
 import { useMemo } from "react";
 import { type Language, getLangPath, useI18n } from "../../i18n";
 import { LayoutDashboard, Users, Link2, ScrollText, Settings, BadgeCheck } from "lucide-react";
+import type { AdminRole } from "../../hooks/useMyRole";
 
 type NavItem = {
   key: string;
   label: string;
   href: string;
   icon: any;
-  minRole?: "moderator" | "admin" | "super_admin";
+  minRole?: "viewer" | "admin" | "super_admin";
 };
 
-function roleRank(role?: string | null) {
-  const r = (role || "member").toLowerCase();
-  if (r === "super_admin") return 3;
-  if (r === "admin") return 2;
-  if (r === "moderator") return 1;
+function roleRank(role: AdminRole) {
+  if (role === "super_admin") return 3;
+  if (role === "admin") return 2;
+  if (role === "viewer") return 1;
   return 0;
 }
 
@@ -23,7 +23,7 @@ export default function AdminNav({
   role,
 }: {
   lang: Language;
-  role: string | null;
+  role: AdminRole;
 }) {
   const { t } = useI18n();
   const base = `${getLangPath(lang, "")}/admin`;
@@ -35,14 +35,14 @@ export default function AdminNav({
         label: t("admin.nav.dashboard") || "Dashboard",
         href: `${base}/dashboard`,
         icon: LayoutDashboard,
-        minRole: "moderator",
+        minRole: "viewer",
       },
       {
         key: "members",
         label: t("admin.nav.members") || "Members",
         href: `${base}/members`,
         icon: Users,
-        minRole: "moderator",
+        minRole: "viewer",
       },
       {
         key: "referrals",
@@ -63,14 +63,14 @@ export default function AdminNav({
         label: t("admin.nav.audit") || "Audit Log",
         href: `${base}/audit`,
         icon: ScrollText,
-        minRole: "admin",
+        minRole: "viewer",
       },
       {
         key: "settings",
         label: t("admin.nav.settings") || "Settings",
         href: `${base}/settings`,
         icon: Settings,
-        minRole: "admin",
+        minRole: "super_admin",
       },
     ],
     [base, t]
@@ -80,7 +80,7 @@ export default function AdminNav({
     const rr = roleRank(role);
     const need = (min?: NavItem["minRole"]) => {
       if (!min) return true;
-      if (min === "moderator") return rr >= 1;
+      if (min === "viewer") return rr >= 1;
       if (min === "admin") return rr >= 2;
       if (min === "super_admin") return rr >= 3;
       return false;
