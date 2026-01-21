@@ -1,5 +1,15 @@
 import { supabase } from "./supabase";
 
+// Rate limit error handling
+function handleRateLimitError(error: any) {
+  if (error?.code === "42900" || 
+      error?.message?.includes("rate limit exceeded") ||
+      error?.message?.includes("too many actions")) {
+    throw new Error("RATE_LIMIT");
+  }
+  throw error;
+}
+
 export async function updateMember(args: {
   userId: string;
   status?: string | null;
@@ -14,20 +24,20 @@ export async function updateMember(args: {
     p_verified: args.verified ?? null,
     p_can_invite: args.canInvite ?? null,
   });
-  if (error) throw error;
+  if (error) handleRateLimitError(error);
 }
 
 export async function approveVerification(requestId: string) {
   const { error } = await supabase.rpc("admin_approve_verification", { p_request_id: requestId });
-  if (error) throw error;
+  if (error) handleRateLimitError(error);
 }
 
 export async function rejectVerification(requestId: string, reason?: string) {
   const { error } = await supabase.rpc("admin_reject_verification", { p_request_id: requestId, p_reason: reason ?? null });
-  if (error) throw error;
+  if (error) handleRateLimitError(error);
 }
 
 export async function upsertSetting(key: string, value: any) {
   const { error } = await supabase.rpc("admin_upsert_app_setting", { p_key: key, p_value: value });
-  if (error) throw error;
+  if (error) handleRateLimitError(error);
 }

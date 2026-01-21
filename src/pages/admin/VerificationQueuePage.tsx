@@ -5,6 +5,7 @@ import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
 import { BadgeCheck, Eye, CheckCircle, XCircle, RefreshCcw, User, Wallet } from "lucide-react";
 import { approveVerification, rejectVerification } from "../../lib/adminRpc";
 import { useMyRole, canManageVerification } from "../../hooks/useMyRole";
+import { useActionCooldown } from "../../hooks/useActionCooldown";
 import NotAuthorized from "../../components/NotAuthorized";
 
 type Row = {
@@ -23,6 +24,7 @@ function shortId(id: string) {
 export default function VerificationQueuePage({ lang }: { lang: Language }) {
   const { t } = useI18n();
   const { role, loading: roleLoading } = useMyRole();
+  const { isCoolingDown, setActionTime } = useActionCooldown();
 
   // Check if user has admin+ access
   if (!roleLoading && !canManageVerification(role)) {
@@ -68,6 +70,7 @@ export default function VerificationQueuePage({ lang }: { lang: Language }) {
     setErr(null);
     setOk(null);
     setBusyId(id);
+    
     try {
       if (decision === "APPROVE") {
         await approveVerification(id.toString());
@@ -78,9 +81,15 @@ export default function VerificationQueuePage({ lang }: { lang: Language }) {
       }
       setRejectOpen(null);
       setRejectNotes("");
+      setActionTime(`verify-${id}`);
       await load();
     } catch (e: any) {
-      setErr(e?.message || "Failed to update verification request");
+      if (e.message === "RATE_LIMIT") {
+        setErr("Too many actions. Please wait a moment.");
+        setTimeout(() => setErr(null), 5000);
+      } else {
+        setErr(e?.message || "Failed to update verification request");
+      }
     } finally {
       setBusyId(null);
     }
@@ -165,7 +174,7 @@ export default function VerificationQueuePage({ lang }: { lang: Language }) {
                 <div className="flex flex-col sm:flex-row gap-2">
                   <PremiumButton 
                     onClick={() => decide(r.id, "APPROVE")}
-                    disabled={busyId === r.id}
+                    disabled={busyId === r.id || isCoolingDown(`verify-${r.id}`)}
                   >
                     <span className="inline-flex items-center gap-2">
                       {busyId === r.id ? (
@@ -180,7 +189,7 @@ export default function VerificationQueuePage({ lang }: { lang: Language }) {
                   <PremiumButton
                     variant="secondary"
                     onClick={() => setRejectOpen(rejectOpen === r.id ? null : r.id)}
-                    disabled={busyId === r.id}
+                    disabled={busyId === r.id || isCoolingDown(`verify-${r.id}`)}
                   >
                     <span className="inline-flex items-center gap-2">
                       <XCircle className="w-4 h-4" />
@@ -208,7 +217,7 @@ export default function VerificationQueuePage({ lang }: { lang: Language }) {
                     >
                       {t("admin.common.cancel") || "Cancel"}
                     </PremiumButton>
-                    <PremiumButton onClick={() => decide(r.id, "REJECT", rejectNotes)} disabled={busyId === r.id}>
+                    <PremiumButton onClick={() => decide(r.id, "REJECT", rejectNotes)} disabled={busyId === r.id || isCoolingDown(`verify-${r.id}`)}>
                       <span className="inline-flex items-center gap-2">
                         {busyId === r.id ? (
                           <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
