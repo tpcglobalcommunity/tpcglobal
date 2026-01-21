@@ -2,6 +2,7 @@ import { type Language, getLangPath, useI18n } from "../../i18n";
 import { LayoutDashboard, Layers, Wallet, Settings, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { useRealtimeNotifications } from "../../hooks/useRealtimeNotifications";
 
 type Item = { key: string; label: string; href: string; icon: any; badge?: number };
 
@@ -9,26 +10,32 @@ export default function MemberNav({ lang }: { lang: Language }) {
   const { t } = useI18n();
   const base = `${getLangPath(lang, "")}/member`;
   const path = typeof window !== "undefined" ? window.location.pathname : "";
-  const [unreadCount, setUnreadCount] = useState(0);
 
-  // Load unread count using helper function
-  async function loadUnreadCount() {
-    try {
-      const { data, error } = await supabase
-        .rpc("get_unread_notification_count");
+  // Get current user for realtime notifications
+  const [userId, setUserId] = useState<string | null>(null);
+  
+  // Realtime notifications hook
+  const { unreadCount, isConnected, error } = useRealtimeNotifications({
+    userId: userId || undefined,
+    enabled: !!userId
+  });
 
-      if (error) throw error;
-      setUnreadCount((data as number) || 0);
-    } catch (e) {
-      console.error("Failed to load unread count:", e);
-    }
-  }
-
+  // Get current user session
   useEffect(() => {
-    loadUnreadCount();
-    // Poll every 30 seconds
-    const interval = setInterval(loadUnreadCount, 30000);
-    return () => clearInterval(interval);
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUserId(session?.user?.id || null);
+    };
+    
+    getSession();
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUserId(session?.user?.id || null);
+      }
+    );
+    
+    return () => subscription.unsubscribe();
   }, []);
 
   const items: Item[] = [

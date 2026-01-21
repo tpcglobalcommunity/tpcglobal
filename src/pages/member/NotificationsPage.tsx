@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { type Language, useI18n, getLangPath } from "../../i18n";
 import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
-import { Bell, BellRing, Check, CheckCircle, Clock, X } from "lucide-react";
+import { Bell, BellRing, Check, CheckCircle, Clock } from "lucide-react";
+import { useRealtimeNotifications, showToast } from "../../hooks/useRealtimeNotifications";
 
 type Notification = {
   id: string;
@@ -22,9 +23,52 @@ export default function NotificationsPage({ lang }: { lang: Language }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [markingAll, setMarkingAll] = useState(false);
   const [markingIds, setMarkingIds] = useState<Set<string>>(new Set());
+
+  // Get current user for realtime notifications
+  const [userId, setUserId] = useState<string | null>(null);
+  
+  // Realtime notifications hook
+  const { unreadCount, latest, isConnected, markAsRead: markAsReadHook } = useRealtimeNotifications({
+    userId: userId || undefined,
+    enabled: !!userId
+  });
+
+  // Listen for new notifications and show toast
+  useEffect(() => {
+    if (!latest) return;
+    
+    showToast({
+      title: latest.title,
+      body: latest.body || undefined,
+      duration: 6000,
+      action: {
+        label: "Open",
+        onClick: () => {
+          window.location.href = `${baseMember}/notifications`;
+        }
+      }
+    });
+  }, [latest, baseMember]);
+
+  // Get current user session
+  useEffect(() => {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUserId(session?.user?.id || null);
+    };
+    
+    getSession();
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUserId(session?.user?.id || null);
+      }
+    );
+    
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Load notifications using helper function
   async function loadNotifications() {
@@ -45,20 +89,6 @@ export default function NotificationsPage({ lang }: { lang: Language }) {
     }
   }
 
-  // Load unread count using helper function
-  async function loadUnreadCount() {
-    try {
-      const { data, error } = await supabase
-        .rpc("get_unread_notification_count");
-
-      if (error) throw error;
-
-      setUnreadCount((data as number) || 0);
-    } catch (e: any) {
-      console.error("Failed to load unread count:", e);
-    }
-  }
-
   // Mark single notification as read using helper function
   async function markAsRead(id: string) {
     try {
@@ -73,7 +103,9 @@ export default function NotificationsPage({ lang }: { lang: Language }) {
       setNotifications(prev => 
         prev.map(n => n.id === id ? { ...n, is_read: true } : n)
       );
-      setUnreadCount(prev => Math.max(0, prev - 1));
+      
+      // Update unread count locally
+      markAsReadHook(1);
     } catch (e: any) {
       setError(e.message || "Failed to mark as read");
     } finally {
@@ -97,7 +129,10 @@ export default function NotificationsPage({ lang }: { lang: Language }) {
 
       // Update local state
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
-      setUnreadCount(0);
+      
+      // Update unread count locally
+      const unreadCount = notifications.filter(n => !n.is_read).length;
+      markAsReadHook(unreadCount);
     } catch (e: any) {
       setError(e.message || "Failed to mark all as read");
     } finally {
@@ -139,8 +174,7 @@ export default function NotificationsPage({ lang }: { lang: Language }) {
 
   useEffect(() => {
     loadNotifications();
-    loadUnreadCount();
-  }, []);
+  }, [userId]);
 
   return (
     <div className="grid gap-4">

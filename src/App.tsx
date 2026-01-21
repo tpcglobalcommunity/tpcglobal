@@ -52,6 +52,7 @@ import VendorApplyPage from './pages/member/VendorApplyPage';
 import MarketplacePage from './pages/MarketplacePage';
 import MaintenancePage from './pages/system/MaintenancePage';
 import GlobalBanner from './components/system/GlobalBanner';
+import ToastHost from './components/ui/ToastHost';
 import WelcomePage from './pages/member/WelcomePage';
 import MemberDashboardPage from './pages/member/MemberDashboardPage';
 import ProgramsPage from './pages/member/ProgramsPage';
@@ -390,6 +391,7 @@ function App() {
         {renderPage()}
       </main>
       <LegalFooter lang={lang} />
+      <ToastHost lang={lang} />
       {shouldShowBottomNav && <BottomNav lang={lang} currentPath={currentPath} />}
     </div>
   );
