@@ -37,9 +37,7 @@ const Support = ({ lang }: SupportProps) => {
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#F0B90B]/10 to-[#F0B90B]/5 border border-[#F0B90B]/20 mb-6">
               <Headphones className="w-4 h-4 text-[#F0B90B]" />
-              <span className="text-sm font-medium text-[#F0B90B]">
-                {t.support.header.pill}
-              </span>
+              <span className="text-sm font-medium text-[#F0B90B]">{t.support.header.pill}</span>
             </div>
             <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">
               {t.support.header.title}
