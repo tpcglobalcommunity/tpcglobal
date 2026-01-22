@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import { PremiumSection, PremiumCard } from "../../components/ui";
 import { TierBadge } from "../../components/ui/TierBadge";
@@ -18,7 +18,7 @@ type WalletTier = {
   wallet_address: string | null;
 };
 
-export default function WalletTiersPage() {
+export default function WalletTiersPage({ lang }: { lang: string }) {
   const [data, setData] = useState<WalletTier[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -48,14 +48,14 @@ export default function WalletTiersPage() {
       setRefreshing(userId);
       
       // Call RPC to get wallet info
-      const { data: walletData, error: rpcError } = await supabase.rpc("admin_force_verify_wallet", {
+      const { error: rpcError } = await supabase.rpc("admin_force_verify_wallet", {
         p_user_id: userId
       });
       
       if (rpcError) throw rpcError;
       
       // Call Edge Function for single wallet verification
-      const { data: verifyData, error: verifyError } = await supabase.functions.invoke("verify-tpc-holdings", {
+      const { error: verifyError } = await supabase.functions.invoke("verify-tpc-holdings", {
         body: { 
           user_id: userId,
           wallet: walletAddress 
@@ -101,7 +101,7 @@ export default function WalletTiersPage() {
 
   if (loading) {
     return (
-      <AdminGuard>
+      <AdminGuard lang={lang}>
         <PremiumSection title="Wallet & Tiers" subtitle="Loading...">
           <div className="flex justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F0B90B]"></div>
@@ -112,7 +112,7 @@ export default function WalletTiersPage() {
   }
 
   return (
-    <AdminGuard>
+    <AdminGuard lang={lang}>
       <PremiumSection title="Wallet & Tiers" subtitle="Monitor all member wallets and tiers">
         <PremiumCard>
           {/* Filters */}

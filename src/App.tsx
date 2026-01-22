@@ -64,6 +64,7 @@ import MemberVerifyPage from './pages/member/VerifyPage';
 import NotificationsPage from './pages/member/NotificationsPage';
 import MemberSettingsPage from './pages/member/MemberSettingsPage';
 import WalletPage from './pages/member/WalletPage';
+import WalletTiersPage from './pages/admin/WalletTiersPage';
 import { fetchAppSettings, type AppSettings } from './lib/settings';
 
 function App() {
@@ -395,6 +396,12 @@ function App() {
         return (
           <AdminGuard lang={lang}>
             <AdminBroadcastCenter />
+          </AdminGuard>
+        );
+      case '/admin/wallet-tiers':
+        return (
+          <AdminGuard lang={lang}>
+            <WalletTiersPage lang={lang} />
           </AdminGuard>
         );
       case '/admin/transparency-input':
