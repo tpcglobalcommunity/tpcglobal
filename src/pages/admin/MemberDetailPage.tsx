@@ -212,7 +212,7 @@ export default function MemberDetailPage({ lang }: { lang: Language }) {
           ) : profile ? (
             <div className="mt-4 grid gap-3">
               <div className="flex flex-wrap gap-2 items-center">
-                <span className={chipClass(profile.status, "status")}>{(profile.status || "—").toUpperCase()}</span>
+                <span className={chipClass(profile.verified ? "ACTIVE" : "INACTIVE", "status")}>{(profile.verified ? "ACTIVE" : "INACTIVE").toUpperCase()}</span>
                 <span className="text-xs px-2 py-0.5 rounded-full border bg-white/5 border-white/10 text-white/70">
                   verified: {profile.verified ? "true" : "false"}
                 </span>
