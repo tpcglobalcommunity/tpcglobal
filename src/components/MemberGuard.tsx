@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 type ProfileRow = {
   id: string;
   is_profile_complete: boolean | null;
-  status: string | null;
+  verified: boolean | null;
   role: string | null;
 };
 
@@ -107,7 +107,8 @@ export default function MemberGuard({ children, allowIncomplete }: Props) {
   }
 
   const isComplete = profile.is_profile_complete === true;
-  const status = (profile.status ?? "PENDING").toUpperCase();
+  const isVerified = profile.verified === true;
+  const isViewer = profile.role === "viewer";
 
   // Gate #1: profile completeness
   if (!allowIncomplete && !isComplete && !isCompleteProfilePage) {
@@ -115,13 +116,17 @@ export default function MemberGuard({ children, allowIncomplete }: Props) {
     return;
   }
 
-  // Gate #2: status (optional, default allow but show notice)
+  // Gate #2: verification and role
   return (
     <>
-      {status !== "ACTIVE" && isComplete && (
+      {(!isVerified || isViewer) && isComplete && (
         <div className="mx-auto max-w-4xl px-4 pt-4">
           <div className="rounded-2xl border border-yellow-500/25 bg-yellow-500/10 px-4 py-3 text-sm text-white/85">
-            Akun kita masih <b className="text-yellow-300">PENDING</b>. Beberapa fitur mungkin belum aktif sampai verifikasi selesai.
+            {isViewer ? (
+              <>Akun anda memiliki akses <b className="text-yellow-300">VIEWER</b>. Fitur terbatas tersedia.</>
+            ) : (
+              <>Akun kita masih <b className="text-yellow-300">PENDING VERIFICATION</b>. Beberapa fitur mungkin belum aktif sampai verifikasi selesai.</>
+            )}
           </div>
         </div>
       )}

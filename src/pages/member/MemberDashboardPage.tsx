@@ -12,6 +12,10 @@ type ProfileRow = {
   full_name?: string | null;
   role?: string | null;
   verified?: boolean | null;
+  can_invite?: boolean | null;
+  tpc_tier?: string | null;
+  tpc_balance?: number | null;
+  wallet_verified_at?: string | null;
   created_at?: string | null;
 };
 
@@ -25,12 +29,6 @@ type ReferralUse = {
 function shortId(id?: string | null) {
   if (!id) return "—";
   return `${id.slice(0, 8)}…${id.slice(-6)}`;
-}
-
-function chipVerified(verified?: boolean | null) {
-  if (verified === true) return "text-xs px-2 py-0.5 rounded-full border bg-emerald-500/10 border-emerald-500/20 text-emerald-200";
-  if (verified === false) return "text-xs px-2 py-0.5 rounded-full border bg-amber-500/10 border-amber-500/20 text-amber-200";
-  return "text-xs px-2 py-0.5 rounded-full border bg-white/5 border-white/10 text-white/70";
 }
 
 export default function MemberDashboardPage({ lang }: { lang: Language }) {
@@ -53,6 +51,21 @@ export default function MemberDashboardPage({ lang }: { lang: Language }) {
     [t]
   );
 
+  // Warning logic based on verified and role
+  const warning = useMemo(() => {
+    if (!profile) return null;
+    
+    const notVerified = profile.verified === false;
+    const isViewer = profile.role === "viewer";
+
+    if (isViewer) {
+      return "Not authorized";
+    } else if (notVerified) {
+      return "Account not verified yet";
+    }
+    return null;
+  }, [profile]);
+
   useEffect(() => {
     let alive = true;
 
@@ -69,7 +82,7 @@ export default function MemberDashboardPage({ lang }: { lang: Language }) {
 
         const { data: p, error: pe } = await supabase
           .from("profiles")
-          .select("id, email, username, full_name, role, verified, created_at")
+          .select("id, email, username, full_name, role, verified, can_invite, tpc_tier, tpc_balance, wallet_verified_at, created_at")
           .eq("id", uid)
           .single();
         if (pe) throw pe;
@@ -112,10 +125,10 @@ export default function MemberDashboardPage({ lang }: { lang: Language }) {
       <h1 className="text-3xl md:text-5xl font-bold text-white tracking-tight">{title}</h1>
       <p className="text-white/65 mt-3 text-sm md:text-lg max-w-[70ch]">{subtitle}</p>
 
-      {err ? (
+      {(err || warning) ? (
         <div className="mt-5">
           <NoticeBox variant="warning">
-            <div className="text-sm text-white/85">{err}</div>
+            <div className="text-sm text-white/85">{warning || err}</div>
           </NoticeBox>
         </div>
       ) : null}
@@ -142,10 +155,19 @@ export default function MemberDashboardPage({ lang }: { lang: Language }) {
                 <div className="text-xs text-white/55 truncate">{profile.email || "—"}</div>
 
                 <div className="flex flex-wrap gap-2">
-                  <span className={chipVerified(profile.verified)}>{profile.verified ? "VERIFIED" : "PENDING"}</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full border bg-white/5 border-white/10 text-white/70">
-                    role: {profile.role || "none"}
+                  <span className="px-2 py-1 rounded-full border border-[#F0B90B]/30 bg-[#F0B90B]/10 text-[#F0B90B] font-semibold text-xs">
+                    {(profile?.tpc_tier ?? "BASIC").toUpperCase()}
                   </span>
+
+                  {profile?.verified ? (
+                    <span className="px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-semibold text-xs">
+                      VERIFIED
+                    </span>
+                  ) : (
+                    <span className="px-2 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 font-semibold text-xs">
+                      PENDING
+                    </span>
+                  )}
                 </div>
 
                 <div className="text-xs text-white/45">

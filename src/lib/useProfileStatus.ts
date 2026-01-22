@@ -1,77 +1,64 @@
-import { useEffect, useRef, useState } from "react";
-import type { Session } from "@supabase/supabase-js";
-import { supabase, type Profile } from "./supabase";
+import { useEffect, useState } from "react";
+import { supabase } from "./supabase";
 
 type Result = {
-  profile: Profile | null;
   loading: boolean;
-  error: string | null;
+  verified: boolean;
+  role: string;
   refresh: () => Promise<void>;
 };
 
-export function useProfileStatus(): Result {
-  const [profile, setProfile] = useState<Profile | null>(null);
+export function useProfileStatus(userId?: string): Result {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [verified, setVerified] = useState<boolean>(false);
+  const [role, setRole] = useState<string>("viewer");
 
-  // mencegah race condition
-  const alive = useRef(true);
-
-  const loadProfile = async (session: Session | null) => {
-    if (!session?.user?.id) {
-      setProfile(null);
-      setLoading(false);
-      setError(null);
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    const userId = session.user.id;
-    console.log("[useProfileStatus] fetching profile by id:", userId);
-
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)       // ✅ KUNCI: HARUS pakai id auth.user
-      .maybeSingle();         // lebih aman daripada single() untuk first load
-
-    if (!alive.current) return;
-
-    if (error) {
-      setProfile(null);
-      setError(error.message);
-      setLoading(false);
-      return;
-    }
-
-    setProfile(data ?? null);
-    setLoading(false);
-  };
-
-  // initial session + subscribe auth changes
   useEffect(() => {
-    alive.current = true;
+    let alive = true;
 
-    supabase.auth.getSession().then(({ data }) => {
-      loadProfile(data.session ?? null);
-    });
+    async function run() {
+      if (!userId) { 
+        setLoading(false); 
+        return; 
+      }
+      setLoading(true);
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_evt, session) => {
-      loadProfile(session);
-    });
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("verified,role")
+        .eq("id", userId)
+        .single();
 
-    return () => {
-      alive.current = false;
-      sub.subscription.unsubscribe();
+      if (!alive) return;
+
+      if (!error && data) {
+        setVerified(!!data.verified);
+        setRole(data.role ?? "viewer");
+      }
+
+      setLoading(false);
+    }
+
+    run();
+    return () => { 
+      alive = false; 
     };
-  }, []);
+  }, [userId]);
 
   const refresh = async () => {
-    const { data } = await supabase.auth.getSession();
-    await loadProfile(data.session ?? null);
+    if (!userId) return;
+    
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("verified,role")
+      .eq("id", userId)
+      .single();
+
+    if (!error && data) {
+      setVerified(!!data.verified);
+      setRole(data.role ?? "viewer");
+    }
   };
 
-  return { profile, loading, error, refresh };
+  return { loading, verified, role, refresh };
 }
