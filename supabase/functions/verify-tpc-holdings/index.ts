@@ -58,7 +58,7 @@ async function getSplBalanceByOwnerMint(rpcUrl: string, owner: string, mint: str
   return total;
 }
 
-serve(async (_req) => {
+serve(async (req) => {
   const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
   const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const SOLANA_RPC_URL = Deno.env.get("SOLANA_RPC_URL") || "https://api.mainnet-beta.solana.com";
@@ -72,6 +72,53 @@ serve(async (_req) => {
   console.log("TPC Mint:", TPC_MINT);
 
   try {
+    // Check if single wallet mode
+    const body = await req.json().catch(() => null);
+    
+    if (body && body.user_id && body.wallet) {
+      // Single wallet verification mode
+      console.log(`Single wallet verification for user: ${body.user_id}, wallet: ${body.wallet}`);
+      
+      try {
+        const bal = await getSplBalanceByOwnerMint(SOLANA_RPC_URL, body.wallet, TPC_MINT);
+        const tier = tierFromBalance(bal);
+
+        console.log(`Single wallet result: balance=${bal}, tier=${tier}`);
+
+        const { error: updateError } = await supabase.rpc("worker_update_tpc_tier", {
+          p_user_id: body.user_id,
+          p_balance: bal,
+          p_tier: tier,
+        });
+        
+        if (updateError) throw new Error(`update tier failed: ${updateError.message}`);
+
+        return new Response(JSON.stringify({
+          ok: true,
+          mode: "single",
+          user_id: body.user_id,
+          wallet: body.wallet,
+          balance: bal,
+          tier,
+          rpc: SOLANA_RPC_URL,
+          mint: TPC_MINT,
+        }), { 
+          headers: { "Content-Type": "application/json" } 
+        });
+      } catch (e: any) {
+        console.error(`Single wallet verification failed:`, e);
+        return new Response(JSON.stringify({ 
+          ok: false, 
+          mode: "single",
+          error: e?.message ?? String(e) 
+        }), { 
+          status: 500, 
+          headers: { "Content-Type": "application/json" } 
+        });
+      }
+    }
+
+    // Original batch mode
     // 1) claim wallets batch
     const { data, error } = await supabase.rpc("worker_claim_primary_wallets", { p_limit: 50 });
     if (error) {
@@ -113,6 +160,7 @@ serve(async (_req) => {
 
     const response = {
       ok: true,
+      mode: "batch",
       rpc: SOLANA_RPC_URL,
       mint: TPC_MINT,
       claimed: rows.length,
