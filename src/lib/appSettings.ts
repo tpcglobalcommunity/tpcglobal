@@ -1,7 +1,7 @@
 // Resilient App Settings Module - Production Ready
 // Handles caching, deduplication, and graceful fallbacks
 
-export type AppSettings = Record<string, any>; // atau type kamu sendiri
+export type AppSettings = Record<string, any>;
 
 let cache: AppSettings | null = null;
 let inflight: Promise<AppSettings> | null = null;
@@ -20,6 +20,7 @@ export async function getAppSettings(supabase: any): Promise<AppSettings> {
 
   const p = (async (): Promise<AppSettings> => {
     try {
+      // Try RPC first
       const { data, error } = await supabase.rpc("get_app_settings");
       if (!error && data && typeof data === "object") {
         cache = data as AppSettings;
@@ -28,23 +29,42 @@ export async function getAppSettings(supabase: any): Promise<AppSettings> {
 
       // fallback kalau RPC tidak ada / 404
       if (error && isRpcNotFound(error)) {
-        const { data: rows, error: err2 } = await supabase
-          .from("app_settings")
-          .select("key,value,is_public")
-          .eq("is_public", true);
+        try {
+          const { data: rows, error: err2 } = await supabase
+            .from("app_settings")
+            .select("key,value,is_public")
+            .eq("is_public", true);
 
-        if (!err2 && Array.isArray(rows)) {
-          const obj: AppSettings = {};
-          for (const r of rows) obj[r.key] = r.value;
-          cache = obj;
-          return cache;
+          if (!err2 && Array.isArray(rows)) {
+            const obj: AppSettings = {};
+            for (const r of rows) obj[r.key] = r.value;
+            cache = obj;
+            return cache;
+          }
+        } catch (tableErr) {
+          // Fallback if is_public column doesn't exist
+          try {
+            const { data: rows, error: err3 } = await supabase
+              .from("app_settings")
+              .select("key,value");
+
+            if (!err3 && Array.isArray(rows)) {
+              const obj: AppSettings = {};
+              for (const r of rows) obj[r.key] = r.value;
+              cache = obj;
+              return cache;
+            }
+          } catch (fallbackErr) {
+            console.warn('All app_settings fallbacks failed:', fallbackErr);
+          }
         }
       }
 
       // error lain: tetap jangan null
       cache = {};
       return cache;
-    } catch {
+    } catch (err) {
+      console.warn('getAppSettings error:', err);
       cache = {};
       return cache;
     } finally {

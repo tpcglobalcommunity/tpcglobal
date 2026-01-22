@@ -62,7 +62,18 @@ export const useLanguage = () => {
 };
 
 function getNestedTranslation(obj: any, path: string): string {
-  return path.split('.').reduce((acc, part) => acc?.[part], obj) ?? path;
+  const result = path.split('.').reduce((acc, part) => acc?.[part], obj);
+  if (result !== undefined && result !== null) {
+    return result;
+  }
+  
+  // Fallback: humanize the key
+  return path
+    .split('.')
+    .pop()!
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, str => str.toUpperCase())
+    .replace(/_/g, ' ');
 }
 
 export const useI18n = (lang?: Language) => {

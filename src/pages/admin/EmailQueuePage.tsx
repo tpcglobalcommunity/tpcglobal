@@ -349,7 +349,6 @@ export default function EmailQueuePage({ lang }: { lang: Language }) {
               {selectedIds.size} {t("admin.emailQueue.selected") || "selected"}
             </span>
           )}
-        </div>
 
           {/* Email List */}
           <div className="space-y-2">
