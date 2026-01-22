@@ -145,13 +145,17 @@ function App() {
   // Maintenance mode guard - FINAL RULE
   const maintenanceOn = appSettings?.maintenance_mode === true;
   const isAdminRoute = isAdminPage(currentPath);
-  const isSigninRoute = isAuthPage(currentPath) && currentPath.includes('/signin');
-  const isAuthRoute = isAuthPage(currentPath);
   const isMaintenanceRoute = currentPath.includes('/maintenance');
+  
+  // Auth routes that bypass maintenance
+  const authBypassRoutes = ['/signin', '/signup', '/forgot', '/reset'];
+  const isAuthBypassRoute = authBypassRoutes.some(route => 
+    currentPath.replace(/^\/(en|id)/, '') === route
+  );
   
   // Maintenance page HANYA tampil jika maintenance === true
   // Auth routes HARUS bypass maintenance gate
-  if (maintenanceOn && !isAdminRoute && !isSigninRoute && !isAuthRoute && !isMaintenanceRoute) {
+  if (maintenanceOn && !isAdminRoute && !isMaintenanceRoute && !isAuthBypassRoute) {
     return <MaintenancePage lang={lang} />;
   }
 

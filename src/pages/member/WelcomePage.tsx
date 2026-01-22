@@ -57,9 +57,9 @@ export default function WelcomePage({ lang }: { lang: Language }) {
     [t]
   );
 
-  const homePath = `${getLangPath(lang)}/public`;
-  const docsPath = `${getLangPath(lang)}/public/docs`;
-  const dashboardPath = `${getLangPath(lang)}/member/dashboard`;
+  const homePath = getLangPath(lang, '/home');
+  const docsPath = getLangPath(lang, '/docs');
+  const dashboardPath = getLangPath(lang, '/member/dashboard');
   const telegramUrl = "https://t.me/tpcglobalcommunity";
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function WelcomePage({ lang }: { lang: Language }) {
         const { data: ses } = await supabase.auth.getSession();
         const uid = ses.session?.user?.id;
         if (!uid) {
-          window.location.href = `${getLangPath(lang)}/signin`;
+          window.location.href = getLangPath(lang, '/signin');
           return;
         }
 

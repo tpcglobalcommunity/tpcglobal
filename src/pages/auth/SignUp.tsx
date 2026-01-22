@@ -204,15 +204,6 @@ export default function SignUp() {
           </div>
         )}
 
-        {!referralEnabled && (
-          <div className="p-3 bg-blue-500/20 border border-blue-500/30 rounded-lg text-blue-300 text-sm mb-4">
-            {t("signup.referralDisabledTitle") || "Referral System Disabled"}
-            <div className="text-xs mt-1">
-              {t("signup.referralDisabledDesc") || "Referral codes are temporarily disabled."}
-            </div>
-          </div>
-        )}
-
         {referralEnabled && inviteLimit > 0 && (
           <div className="p-3 bg-green-500/20 border border-green-500/30 rounded-lg text-green-300 text-sm mb-4">
             {t("signup.referralLimitHint") || `Referral limit: ${inviteLimit} per code`}

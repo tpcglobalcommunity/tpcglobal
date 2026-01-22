@@ -5,7 +5,7 @@ import { supabase } from "../../lib/supabase";
 
 export default function MemberBannedPage({ lang }: { lang: Language }) {
   const { t } = useI18n();
-  const homePath = `${getLangPath(lang, "")}/`;
+  const homePath = getLangPath(lang, '/home');
 
   async function signOut() {
     await supabase.auth.signOut();
