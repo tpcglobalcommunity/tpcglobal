@@ -101,11 +101,12 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (appSettings?.maintenance_mode) {
-      window.location.href = `${getLangPath(lang, "")}/maintenance`;
+    // Only redirect if NOT already on maintenance page
+    if (appSettings?.maintenance_mode === true && !currentPath.includes('/maintenance')) {
+      window.location.href = getLangPath(lang, '/maintenance');
       return;
     }
-  }, [appSettings, lang]);
+  }, [appSettings, lang, currentPath]);
 
   useEffect(() => {
     const path = window.location.pathname || "/";
@@ -141,12 +142,16 @@ function App() {
 
   const shouldShowBottomNav = !isAuthPage(currentPath) && !isAdminPage(currentPath);
 
-  // Maintenance mode guard
-  const maintenanceOn = !!appSettings?.maintenance_mode;
+  // Maintenance mode guard - FINAL RULE
+  const maintenanceOn = appSettings?.maintenance_mode === true;
   const isAdminRoute = isAdminPage(currentPath);
   const isSigninRoute = isAuthPage(currentPath) && currentPath.includes('/signin');
+  const isAuthRoute = isAuthPage(currentPath);
+  const isMaintenanceRoute = currentPath.includes('/maintenance');
   
-  if (maintenanceOn && !isAdminRoute && !isSigninRoute) {
+  // Maintenance page HANYA tampil jika maintenance === true
+  // Auth routes HARUS bypass maintenance gate
+  if (maintenanceOn && !isAdminRoute && !isSigninRoute && !isAuthRoute && !isMaintenanceRoute) {
     return <MaintenancePage lang={lang} />;
   }
 
@@ -221,7 +226,7 @@ function App() {
       case '/signin':
         return <SignIn />;
       case '/admin/login':
-        return <SignIn lang={lang} next={`/${lang}/admin/control`} />;
+        return <SignIn lang={lang} />;
       case '/forgot':
         return <ForgotPassword lang={lang} />;
       case '/reset':

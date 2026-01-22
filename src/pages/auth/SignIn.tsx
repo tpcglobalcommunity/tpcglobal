@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { Shield, Mail, Lock, Loader2, ArrowRight } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import { Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { useI18n, type Language, getLangPath } from "../../i18n";
 import { Link } from "../../components/Router";
 import { signIn } from "../../lib/supabase";
@@ -7,7 +7,6 @@ import { useAuthError } from "../../hooks/useAuthError";
 
 interface SignInProps {
   lang?: Language;
-  next?: string;
 }
 
 function safeNext(nextRaw: string | null, fallback: string) {
@@ -23,7 +22,7 @@ function safeNext(nextRaw: string | null, fallback: string) {
   }
 }
 
-export default function SignIn({ lang, next }: SignInProps) {
+export default function SignIn({ lang }: SignInProps) {
   const { t, language } = useI18n(lang || "en");
   const L = language;
 
@@ -55,42 +54,34 @@ export default function SignIn({ lang, next }: SignInProps) {
 
   return (
     <div className="max-w-md lg:max-w-lg mx-auto px-4">
-      <div className="text-center mb-4">
-        <div className="mx-auto w-16 h-16 rounded-2xl bg-white/5 border border-white/10 grid place-items-center relative overflow-hidden">
+      {/* Back to Home Button */}
+      <div className="flex justify-end mb-4">
+        <Link 
+          to={`/${L}`}
+          className="text-sm text-white/60 hover:text-white transition-colors"
+        >
+          ← {t("auth.backToHome") || "Back to Home"}
+        </Link>
+      </div>
+
+      <div className="text-center mb-8">
+        <div className="mx-auto w-16 h-16 rounded-2xl bg-white/5 border border-white/10 grid place-items-center relative overflow-hidden mb-6">
           <div className="absolute inset-0 bg-[#F0B90B]/10 blur-2xl" />
-          <Shield className="w-7 h-7 text-[#F0B90B] relative z-10" />
+          <div className="w-7 h-7 bg-[#F0B90B] rounded-lg relative z-10" />
         </div>
-        <h1 className="mt-5 text-[clamp(2rem,8vw,3rem)] font-bold tracking-tight text-white leading-[1.06]">
+        <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
           {t("auth.signin.title")}
         </h1>
-        <p className="mt-2 text-sm leading-relaxed text-white/65 max-w-[42ch] mx-auto">
+        <p className="text-sm text-white/70">
           {t("auth.signin.subtitle")}
         </p>
       </div>
 
-      <div className="rounded-2xl border-[#F0B90B]/20 bg-[#F0B90B]/8 p-4 mb-5">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold">{t("auth.signIn.title") || "Sign In"}</h2>
-          <button
-            onClick={() => window.location.href = `/${lang}`}
-            className="text-sm text-white/60 hover:text-white transition-colors"
-          >
-            {t("signup.backToHome") || "← Back to Home"}
-          </button>
-        </div>
-        <div className="text-sm font-semibold text-white mb-1">
-          {t("auth.signin.noticeTitle")}
-        </div>
-        <div className="text-xs text-white/70 leading-relaxed">
-          {t("auth.signin.noticeDesc")}
-        </div>
-      </div>
-
-      <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] relative overflow-hidden">
+      <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 relative overflow-hidden">
         <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[#F0B90B]/50 to-transparent" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(240,185,11,0.10),transparent_60%)]" />
 
-        <form onSubmit={onSubmit} className="relative p-5 sm:p-6 space-y-4">
+        <form onSubmit={onSubmit} className="relative p-6 sm:p-7 space-y-4">
           <Field
             icon={<Mail className="w-4 h-4" />}
             label={t("auth.signin.email")}
@@ -104,7 +95,7 @@ export default function SignIn({ lang, next }: SignInProps) {
             label={t("auth.signin.password")}
             value={password}
             onChange={(v) => setPassword(v)}
-            placeholder="••••••••"
+            placeholder="•••••••••"
             type="password"
           />
 
@@ -131,23 +122,20 @@ export default function SignIn({ lang, next }: SignInProps) {
               </>
             )}
           </button>
-
-          <div className="text-xs text-white/45 text-center mt-3">
-            {t("auth.reassurance")}
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-white/60 pt-3">
-            <Link to={getLangPath(L, "/forgot")} className="text-[#F0B90B] hover:underline underline-offset-4 transition-colors">
-              {t("auth.signin.forgot")}
-            </Link>
-            <div className="text-center sm:text-right">
-              <span>{t("auth.signin.noAccount")}</span>{" "}
-              <Link to={getLangPath(L, "/signup")} className="text-[#F0B90B] hover:underline underline-offset-4 font-medium">
-                {t("auth.signin.createAccount")}
-              </Link>
-            </div>
-          </div>
         </form>
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-white/60 mt-6">
+        <Link to={getLangPath(L, "/forgot")} className="text-[#F0B90B] hover:underline underline-offset-4 transition-colors">
+          {t("auth.signin.forgot")}
+        </Link>
+        <div className="text-center sm:text-right">
+          <span>{t("auth.signin.noAccount")}</span>{" "}
+          <Link to={getLangPath(L, "/signup")} className="text-[#F0B90B] hover:underline underline-offset-4 font-medium">
+            {t("auth.signin.createAccount")}
+          </Link>
+        </div>
       </div>
     </div>
   );

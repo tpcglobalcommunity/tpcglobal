@@ -1,8 +1,2 @@
-# Cloudflare Pages SPA Configuration
-# This file handles client-side routing for React SPA
-
-# Redirect root to default language home
-/  /en/home  301
-
-# Handle all other routes - serve index.html for client-side routing
+# Cloudflare Pages SPA
 /*  /index.html  200

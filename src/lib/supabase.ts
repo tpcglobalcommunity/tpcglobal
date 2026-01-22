@@ -13,8 +13,11 @@ if (import.meta.env.DEV) {
   });
 }
 
-// Log Supabase URL in production for verification
-console.info("[SUPABASE_URL]", supabaseUrl);
+// Log Supabase URL in production for verification (only once)
+if (!(window as any).__SUPABASE_URL_LOGGED__) {
+  console.info("[SUPABASE_ACTIVE_URL]", supabaseUrl);
+  (window as any).__SUPABASE_URL_LOGGED__ = true;
+}
 
 // Validate environment variables
 if (!supabaseUrl || !supabaseAnonKey) {

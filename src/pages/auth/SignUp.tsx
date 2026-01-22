@@ -1,15 +1,16 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { CheckCircle2, Loader2, XCircle } from "lucide-react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { useI18n } from "../../i18n";
-import { getAppSettings, type AppSettings } from "../../lib/settings";
+import { Link } from "../../components/Router";
+import { supabase } from "../../lib/supabase";
+import { getAppSettings } from "../../lib/appSettings";
 import RegistrationsClosedPage from "../system/RegistrationsClosedPage";
 
 type ReferralStatus = "idle" | "checking" | "valid" | "invalid";
 
 export default function SignUp() {
   const { t, language: lang } = useI18n();
-  const [settings, setSettings] = useState<AppSettings | null>(null);
+  const [settings, setSettings] = useState<any | null>(null);
   const [settingsErr, setSettingsErr] = useState<string | null>(null);
 
   useEffect(() => {
@@ -168,19 +169,35 @@ export default function SignUp() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 text-white">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">{t("auth.signup.title") || "Create Account"}</h2>
-        <button
-          onClick={() => window.location.href = `/${lang}`}
+    <div className="max-w-md lg:max-w-lg mx-auto px-4">
+      {/* Back to Home Button */}
+      <div className="flex justify-end mb-4">
+        <Link
+          to={`/${lang}`}
           className="text-sm text-white/60 hover:text-white transition-colors"
         >
-          {t("signup.backToHome") || "← Back to Home"}
-        </button>
+          ← {t("auth.backToHome") || "Back to Home"}
+        </Link>
       </div>
-      <div className="text-center text-xs text-[#F0B90B] mb-6">BUILD: SIGNUP_MINIMAL_V3</div>
 
-      <form onSubmit={onSubmit} className="space-y-4">
+      <div className="text-center mb-8">
+        <div className="mx-auto w-16 h-16 rounded-2xl bg-white/5 border border-white/10 grid place-items-center relative overflow-hidden mb-6">
+          <div className="absolute inset-0 bg-[#F0B90B]/10 blur-2xl" />
+          <div className="w-7 h-7 bg-[#F0B90B] rounded-lg relative z-10" />
+        </div>
+        <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
+          {t("auth.signup.title") || "Create Account"}
+        </h1>
+        <p className="text-sm text-white/70">
+          {t("auth.signup.subtitle") || "Join TPC Global Community"}
+        </p>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 relative overflow-hidden">
+        <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[#F0B90B]/50 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(240,185,11,0.10),transparent_60%)]" />
+
+        <form onSubmit={onSubmit} className="relative p-6 sm:p-7 space-y-4">
         {settingsErr && (
           <div className="p-3 bg-yellow-500/20 border border-yellow-500/30 rounded-lg text-yellow-300 text-sm mb-4">
             {t("signup.settingsLoadError") || "Could not load settings; proceeding with defaults."}
@@ -305,7 +322,7 @@ export default function SignUp() {
         <button
           disabled={!canSubmit}
           type="submit"
-          className="w-full py-3 bg-[#F0B90B] text-black font-semibold rounded-lg hover:bg-[#F0B90B]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full h-12 rounded-2xl font-semibold bg-gradient-to-r from-[#F0B90B] to-[#F8D568] text-black transition-all duration-200 hover:shadow-lg hover:shadow-[#F0B90B]/20 active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
             <>
@@ -315,21 +332,24 @@ export default function SignUp() {
             t("auth.signup.createAccount") || "Create Account"
           )}
         </button>
+        </form>
+      </div>
 
-        <div className="text-center text-sm text-white/60">
-          {t("auth.signup.inviteOnly") || "Invite-only. Referral required."}
+      {/* Bottom Navigation */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-white/60 mt-6">
+        <div className="text-center sm:text-left">
+          <span>{t("auth.signup.inviteOnly") || "Invite-only. Referral required."}</span>
         </div>
-
-        <div className="text-center text-sm text-white/60 mt-4">
-          {t("signup.alreadyHaveAccount") || "Already have an account?"}{" "}
-          <a 
-            href={`/${lang}/signin`}
-            className="text-[#F0B90B] hover:text-[#F0B90B]/80 transition-colors font-medium"
+        <div className="text-center sm:text-right">
+          <span>{t("signup.alreadyHaveAccount") || "Already have an account?"}{" "}</span>
+          <Link 
+            to={`/${lang}/signin`}
+            className="text-[#F0B90B] hover:underline underline-offset-4 font-medium"
           >
             {t("signup.signIn") || "Sign In"}
-          </a>
+          </Link>
         </div>
-      </form>
+      </div>
     </div>
   );
 }

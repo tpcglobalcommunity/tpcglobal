@@ -24,9 +24,7 @@ export default function MaintenancePage({ lang }: { lang: Language }) {
     return () => { alive = false; };
   }, []);
 
-  const maintenanceMessage = settings?.maintenance_message || 
-    t("maintenance.subtitle") ||
-    "Some features are temporarily unavailable while we improve security and performance. Admin access remains available.";
+  const maintenanceMessage = settings?.maintenance_message || t("maintenance.subtitle");
 
   return (
     <PremiumShell>
@@ -34,12 +32,12 @@ export default function MaintenancePage({ lang }: { lang: Language }) {
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F0B90B]/10 border border-[#F0B90B]/25 mb-4">
           <Shield className="w-4 h-4 text-[#F0B90B]" />
           <span className="text-sm font-semibold text-white/90">
-            {t("maintenance.badge") || "System Maintenance"}
+            {t("maintenance.badge")}
           </span>
         </div>
 
         <h1 className="text-3xl md:text-5xl font-bold text-white tracking-tight">
-          {t("maintenance.title") || "We're upgrading TPC"}
+          {t("maintenance.title")}
         </h1>
         <p className="text-white/65 mt-3 text-sm md:text-lg max-w-[60ch]">
           {maintenanceMessage}
@@ -49,17 +47,16 @@ export default function MaintenancePage({ lang }: { lang: Language }) {
           <NoticeBox variant="warning">
             <div className="text-sm text-white/85 inline-flex items-center gap-2">
               <Wrench className="w-4 h-4 text-[#F0B90B]" />
-              {t("maintenance.notice") || "Please check back soon. Thank you for your patience."}
+              {t("maintenance.notice")}
             </div>
           </NoticeBox>
 
           <PremiumCard className="p-5">
             <div className="text-white font-semibold">
-              {t("maintenance.ctaTitle") || "Need updates right now?"}
+              {t("maintenance.ctaTitle")}
             </div>
             <div className="text-white/60 text-sm mt-1">
-              {t("maintenance.ctaDesc") ||
-                "Join the official community channel for announcements and support."}
+              {t("maintenance.ctaDesc")}
             </div>
 
             <div className="mt-4 flex flex-col sm:flex-row gap-3">
@@ -70,7 +67,7 @@ export default function MaintenancePage({ lang }: { lang: Language }) {
                 className="inline-flex items-center gap-2"
               >
                 <PremiumButton>
-                  {t("maintenance.joinTelegram") || "Open Telegram Channel"}
+                  {t("maintenance.joinTelegram")}
                   <ExternalLink className="w-4 h-4" />
                 </PremiumButton>
               </a>
@@ -78,14 +75,13 @@ export default function MaintenancePage({ lang }: { lang: Language }) {
               <a href={homePath} className="inline-flex items-center gap-2">
                 <PremiumButton variant="secondary">
                   <ArrowLeft className="w-4 h-4" />
-                  {t("maintenance.backHome") || "Back to Home"}
+                  {t("maintenance.backHome")}
                 </PremiumButton>
               </a>
             </div>
 
             <div className="mt-4 text-xs text-white/45">
-              {t("maintenance.footnote") ||
-                "Security-first: we never guarantee profits. Educational and community-focused."}
+              {t("maintenance.footnote")}
             </div>
           </PremiumCard>
         </div>

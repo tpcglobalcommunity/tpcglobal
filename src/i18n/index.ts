@@ -30,8 +30,8 @@ export function stripLang(pathname: string): string {
 }
 
 export function getLangPath(lang: Language, pathWithoutLang: string): string {
-  const p = pathWithoutLang.startsWith('/') ? pathWithoutLang : `/${pathWithoutLang}`;
-  return `/${lang}${p}`;
+  const clean = pathWithoutLang.startsWith('/') ? pathWithoutLang.slice(1) : pathWithoutLang;
+  return `/${lang}/${clean}`;
 }
 
 /**
