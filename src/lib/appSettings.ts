@@ -3,6 +3,13 @@ export type AppSettings = Record<string, any>;
 let cache: AppSettings | null = null;
 let inflight: Promise<AppSettings> | null = null;
 
+// Default fallback untuk mencegah crash signup
+const DEFAULT_SETTINGS: AppSettings = {
+  signup_enabled: { enabled: true },
+  referral_required: { required: true },
+  maintenance_mode: { enabled: false }
+};
+
 function isRpcNotFound(err: any) {
   const msg = String(err?.message ?? "").toLowerCase();
   return msg.includes("404") || msg.includes("not found") || msg.includes("function");
@@ -39,7 +46,8 @@ export async function getAppSettings(supabase: any): Promise<AppSettings> {
       cache = {};
       return cache;
     } catch {
-      cache = {};
+      // Return default settings untuk mencegah crash
+      cache = DEFAULT_SETTINGS;
       return cache;
     } finally {
       inflight = null;
