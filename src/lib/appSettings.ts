@@ -1,8 +1,6 @@
 // Resilient App Settings Module - Production Ready
 // Handles caching, deduplication, and graceful fallbacks
 
-import { supabase } from './supabase';
-
 export type AppSettings = Record<string, any>; // atau type kamu sendiri
 
 let cache: AppSettings | null = null;
