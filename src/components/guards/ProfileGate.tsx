@@ -10,18 +10,20 @@ type Props = {
 
 export default function ProfileGate({ children }: Props) {
   const navigate = useNavigate();
-  const { loading, profile, error: profileError } = useProfileStatus();
+  const { loading, role, verified } = useProfileStatus();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Use profile from useProfileStatus instead of duplicate fetch
-    if (profileError) {
-      setError(profileError);
+    // Use role and verified from useProfileStatus instead of duplicate fetch
+    if (!loading && !verified) {
+      setError("Profile not verified");
+    } else {
+      setError(null);
     }
-  }, [profileError]);
+  }, [loading, verified]);
 
   const isProfileComplete = () => {
-    return isProfileDataComplete(profile);
+    return isProfileDataComplete({ role, verified });
   };
 
   const handleRetry = () => {

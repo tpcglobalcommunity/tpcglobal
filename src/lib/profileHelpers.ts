@@ -9,6 +9,8 @@ export interface ProfileData {
   profile_completed: boolean;
   wallet_address: string | null;
   tpc_balance: number | null;
+  role: string | null;
+  verified: boolean | null;
 }
 
 /**
@@ -32,12 +34,8 @@ export function isProfileComplete(profile: Profile | null): boolean {
 export function isProfileDataComplete(profile: ProfileData | null): boolean {
   if (!profile) return false;
   
-  const requiredFields: (keyof ProfileData)[] = ['full_name', 'phone', 'telegram', 'city'];
-  
-  return requiredFields.every(field => {
-    const value = profile[field];
-    return value && typeof value === 'string' && value.trim().length > 0;
-  });
+  // Check if profile is verified and not a viewer
+  return profile.verified === true && profile.role !== 'viewer';
 }
 
 /**
