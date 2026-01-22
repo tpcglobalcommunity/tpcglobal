@@ -13,8 +13,7 @@ type GuardState =
 type ProfileRow = {
   id: string;
   role: string | null;
-  status?: string | null;
-  verified?: boolean | null;
+  verified: boolean | null;
 };
 
 export default function AdminGuard({
@@ -29,8 +28,8 @@ export default function AdminGuard({
   const t = useTranslations();
   const [state, setState] = useState<GuardState>({ status: "loading" });
 
-  const signinPath = useMemo(() => getLangPath() + "/signin", [lang]);
-  const homePath = useMemo(() => getLangPath() + "/", [lang]);
+  const signinPath = useMemo(() => getLangPath(lang, "/signin"), [lang]);
+  const homePath = useMemo(() => getLangPath(lang, "/"), [lang]);
 
   useEffect(() => {
     let alive = true;
@@ -53,7 +52,7 @@ export default function AdminGuard({
 
         const { data: profile, error: profileErr } = await supabase
           .from("profiles")
-          .select("id, role, status, verified")
+          .select("id, role, verified")
           .eq("id", userId)
           .single<ProfileRow>();
 

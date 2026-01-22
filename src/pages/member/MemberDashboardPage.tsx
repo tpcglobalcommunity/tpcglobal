@@ -11,7 +11,6 @@ type ProfileRow = {
   username?: string | null;
   full_name?: string | null;
   role?: string | null;
-  status?: string | null;
   verified?: boolean | null;
   created_at?: string | null;
 };
@@ -28,13 +27,10 @@ function shortId(id?: string | null) {
   return `${id.slice(0, 8)}…${id.slice(-6)}`;
 }
 
-function chipStatus(status?: string | null) {
-  const s = (status || "").toUpperCase();
-  const base = "text-xs px-2 py-0.5 rounded-full border";
-  if (s === "ACTIVE") return `${base} bg-emerald-500/10 border-emerald-500/20 text-emerald-200`;
-  if (s === "PENDING") return `${base} bg-amber-500/10 border-amber-500/20 text-amber-200`;
-  if (s === "BANNED") return `${base} bg-red-500/10 border-red-500/20 text-red-200`;
-  return `${base} bg-white/5 border-white/10 text-white/70`;
+function chipVerified(verified?: boolean | null) {
+  if (verified === true) return "text-xs px-2 py-0.5 rounded-full border bg-emerald-500/10 border-emerald-500/20 text-emerald-200";
+  if (verified === false) return "text-xs px-2 py-0.5 rounded-full border bg-amber-500/10 border-amber-500/20 text-amber-200";
+  return "text-xs px-2 py-0.5 rounded-full border bg-white/5 border-white/10 text-white/70";
 }
 
 export default function MemberDashboardPage({ lang }: { lang: Language }) {
@@ -73,7 +69,7 @@ export default function MemberDashboardPage({ lang }: { lang: Language }) {
 
         const { data: p, error: pe } = await supabase
           .from("profiles")
-          .select("id, email, username, full_name, role, status, verified, created_at")
+          .select("id, email, username, full_name, role, verified, created_at")
           .eq("id", uid)
           .single();
         if (pe) throw pe;
@@ -146,9 +142,9 @@ export default function MemberDashboardPage({ lang }: { lang: Language }) {
                 <div className="text-xs text-white/55 truncate">{profile.email || "—"}</div>
 
                 <div className="flex flex-wrap gap-2">
-                  <span className={chipStatus(profile.status)}>{(profile.status || "—").toUpperCase()}</span>
+                  <span className={chipVerified(profile.verified)}>{profile.verified ? "VERIFIED" : "PENDING"}</span>
                   <span className="text-xs px-2 py-0.5 rounded-full border bg-white/5 border-white/10 text-white/70">
-                    verified: {profile.verified ? "true" : "false"}
+                    role: {profile.role || "none"}
                   </span>
                 </div>
 

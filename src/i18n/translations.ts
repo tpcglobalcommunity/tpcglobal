@@ -10,6 +10,38 @@ export const translations = {
       legal: 'Legal',
       admin: 'Admin',
     },
+    member: {
+      title: "Member Area",
+      subtitle: "Your personal dashboard",
+      nav: {
+        title: "Navigation",
+        dashboard: "Dashboard",
+        programs: "Programs",
+        verify: "Verification",
+        notifications: "Notifications",
+        settings: "Settings",
+        footnote: "Member Area"
+      },
+      dashboard: {
+        badge: "Member",
+        subtitle: "Overview & quick actions",
+        accountTitle: "Account Status",
+        noProfile: "Profile data not available",
+        refTitle: "Referral",
+        refNone: "No referral data yet",
+        quickTitle: "Quick Actions",
+        quickDesc: "Useful links and resources",
+        joinTelegram: "Join Telegram",
+        docs: "Documentation",
+        transparency: "Transparency",
+        createdAt: "Created",
+        refCode: "Code",
+        refAt: "Recorded",
+        refNoteTitle: "Integrity",
+        refNoteDesc: "Referral is recorded once per account to prevent abuse.",
+        programFoot: "Planned feature. No guarantees. Risk-aware."
+      }
+    },
     hero: {
       title: 'Trader Professional Community',
       subtitle: 'TPC',
@@ -1779,6 +1811,38 @@ export const translations = {
       fund: 'Dana Komunitas',
       legal: 'Legal',
       admin: 'Admin',
+    },
+    member: {
+      title: "Area Member",
+      subtitle: "Dashboard pribadi Anda",
+      nav: {
+        title: "Navigasi",
+        dashboard: "Dashboard",
+        programs: "Program",
+        verify: "Verifikasi",
+        notifications: "Notifikasi",
+        settings: "Pengaturan",
+        footnote: "Area Member"
+      },
+      dashboard: {
+        badge: "Member",
+        subtitle: "Ringkasan & aksi cepat",
+        accountTitle: "Status Akun",
+        noProfile: "Data profil belum tersedia",
+        refTitle: "Referral",
+        refNone: "Belum ada data referral",
+        quickTitle: "Aksi Cepat",
+        quickDesc: "Tautan dan sumber penting",
+        joinTelegram: "Gabung Telegram",
+        docs: "Dokumentasi",
+        transparency: "Transparansi",
+        createdAt: "Dibuat",
+        refCode: "Kode",
+        refAt: "Dicatat",
+        refNoteTitle: "Integritas",
+        refNoteDesc: "Referral dicatat sekali per akun untuk mencegah penyalahgunaan.",
+        programFoot: "Fitur yang direncanakan. Tidak ada jaminan. Sadar risiko."
+      }
     },
     hero: {
       title: 'Komunitas Trader Profesional',
