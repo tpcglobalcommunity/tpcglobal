@@ -1,39 +1,28 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Get environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://nhscvoqyjtpaskeqaths.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhdG94aXd0ZG5rcHhkaXJrdnZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3NDQ0MzgsImV4cCI6MjA0NDMyMDQzOH0.x4lFqshmGwsAM0Duu2B_p6LbrzvvEydl1IEuzA6K06M';
+// Get environment variables ONLY from ENV
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Log Supabase configuration for debugging
-console.log('🔧 Supabase Config:', {
-  url: supabaseUrl,
-  hasKey: !!supabaseAnonKey,
-  configured: !!(supabaseUrl && supabaseAnonKey)
-});
+// Log Supabase configuration for debugging (dev-only)
+if (import.meta.env.DEV) {
+  console.log('🔧 Supabase Config:', {
+    url: supabaseUrl,
+    hasKey: !!supabaseAnonKey,
+    configured: !!(supabaseUrl && supabaseAnonKey)
+  });
+}
 
 // Validate environment variables
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('❌ Missing Supabase environment variables:', {
-    VITE_SUPABASE_URL: !!supabaseUrl,
-    VITE_SUPABASE_ANON_KEY: !!supabaseAnonKey
-  });
-  
-  // Don't create fallback client - let it fail explicitly
-  throw new Error('Supabase environment variables are required. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+  throw new Error('❌ Missing Supabase environment variables. Please check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
 }
 
-// Create Supabase client from environment variables
+// Create Supabase client from environment variables ONLY
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Export configuration status
 export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
-
-// Export environment variables for debugging
-export const supabaseConfig = {
-  url: supabaseUrl,
-  hasKey: !!supabaseAnonKey,
-  configured: !!(supabaseUrl && supabaseAnonKey)
-};
 
 function normalizeSupabaseError(err: any) {
   // jika sudah ternormalisasi, jangan dinormalisasi ulang

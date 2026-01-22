@@ -5,15 +5,15 @@ import { useState, useEffect } from 'react';
 import { supabase } from './supabase';
 
 interface AppSettings {
-  maintenance_mode?: boolean;
+  maintenance?: boolean;
   version?: string;
   app_name?: string;
   registration_enabled?: boolean;
   verification_enabled?: boolean;
   notifications_enabled?: boolean;
   site?: {
-    title?: string;
-    description?: string;
+    en?: { title?: string; subtitle?: string; };
+    id?: { title?: string; subtitle?: string; };
   };
   [key: string]: any;
 }
@@ -25,15 +25,15 @@ let inFlight: Promise<AppSettings> | null = null;
 
 const TTL_MS = 5 * 60 * 1000; // 5 minutes
 const DEFAULT_SETTINGS: AppSettings = {
-  maintenance_mode: false,
+  maintenance: false,
   version: '1.0.0',
   app_name: 'TPC Global',
   registration_enabled: true,
   verification_enabled: true,
   notifications_enabled: false,
   site: {
-    title: 'TPC Global',
-    description: 'Trader Professional Community'
+    en: { title: 'TPC Global', subtitle: 'Trader Professional Community' },
+    id: { title: 'TPC Global', subtitle: 'Komunitas Trader Profesional' }
   }
 };
 
@@ -129,7 +129,7 @@ export function clearSettingsCache(): void {
  * Check if maintenance mode is enabled
  */
 export function isMaintenanceMode(): boolean {
-  return cache?.maintenance_mode === true;
+  return cache?.maintenance === true;
 }
 
 /**
