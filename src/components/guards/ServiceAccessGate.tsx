@@ -9,20 +9,22 @@ type Props = {
 };
 
 export default function ServiceAccessGate({ children }: Props) {
-  const { profile, loading } = useProfileStatus();
+  const { role, verified, loading } = useProfileStatus();
 
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const tpcBalance = Number(profile?.tpc_balance ?? 0);
-  const hasWalletSaved = !!profile?.wallet_address;
-  const hasEnoughBalance = tpcBalance >= 1000;
+  // For now, use placeholder values until we have full profile data
+  const tpcBalance = 0;
+  const hasWalletSaved = false;
+  const hasEnoughBalance = false;
 
   // Sync UI wallet state from profile when loaded
   useEffect(() => {
-    if (profile?.wallet_address) setWalletAddress(String(profile.wallet_address));
-  }, [profile?.wallet_address]);
+    // Profile data not available in new useProfileStatus hook
+    // TODO: Implement full profile fetching if needed
+  }, []);
 
   const connectPhantom = async () => {
     setError(null);

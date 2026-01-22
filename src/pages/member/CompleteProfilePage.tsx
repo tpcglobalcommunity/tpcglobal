@@ -11,7 +11,7 @@ interface CompleteProfilePageProps {
 
 export default function CompleteProfilePage({ lang }: CompleteProfilePageProps) {
   const navigate = useNavigate();
-  const { profile, loading, refreshProfile } = useProfileStatus();
+  const { role, verified, loading } = useProfileStatus();
   const [formData, setFormData] = useState({
     full_name: '',
     phone: '',
@@ -22,17 +22,12 @@ export default function CompleteProfilePage({ lang }: CompleteProfilePageProps) 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Pre-fill form if profile data exists
+  // Skip form if already verified
   React.useEffect(() => {
-    if (profile) {
-      setFormData({
-        full_name: profile.full_name || '',
-        phone: profile.phone || '',
-        telegram: profile.telegram || '',
-        city: profile.city || ''
-      });
+    if (verified) {
+      navigate('/member/dashboard');
     }
-  }, [profile]);
+  }, [verified, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

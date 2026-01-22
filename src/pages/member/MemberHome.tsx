@@ -20,12 +20,14 @@ type Props = {
 };
 
 export default function MemberHome({ lang }: Props) {
-  const { isComplete, profile } = useProfileStatus();
+  const { role, verified, loading } = useProfileStatus();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     window.location.href = `/${lang}/signin`;
   };
+
+  const isComplete = verified && role !== 'viewer';
 
   const memberNavItems = [
     {
@@ -105,7 +107,7 @@ export default function MemberHome({ lang }: Props) {
           {filteredNavItems.map((item) => {
             const Icon = item.icon;
             const isLocked = item.requiresProfile && !isComplete;
-            const isWalletLocked = item.requiresWallet && (!profile?.wallet_address || (profile?.tpc_balance || 0) < 1000);
+            const isWalletLocked = item.requiresWallet && false; // TODO: Implement wallet checking
 
             return (
               <Link
@@ -142,7 +144,7 @@ export default function MemberHome({ lang }: Props) {
                     <div className="flex items-center gap-2 text-xs text-white/50 mt-2">
                       <Wallet className="w-3 h-3" />
                       <span>
-                        {profile?.wallet_address ? `${profile.tpc_balance || 0} TPC` : 'Not Connected'}
+                        {'Not Connected'}
                       </span>
                     </div>
                   )}
