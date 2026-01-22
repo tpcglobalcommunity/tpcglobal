@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { type Language, useI18n, getLangPath } from "../../i18n";
 import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
 import { Wrench, Shield, ArrowLeft, ExternalLink } from "lucide-react";
-import { fetchAppSettings, type AppSettings } from "../../lib/settings";
+import { getAppSettings, type AppSettings } from "../../lib/settings";
+import { supabase } from "../../lib/supabase";
 
 export default function MaintenancePage({ lang }: { lang: Language }) {
   const { t } = useI18n(lang);
@@ -13,7 +14,7 @@ export default function MaintenancePage({ lang }: { lang: Language }) {
     let alive = true;
     (async () => {
       try {
-        const s = await fetchAppSettings();
+        const s = await getAppSettings(supabase);
         if (!alive) return;
         setSettings(s);
       } catch {

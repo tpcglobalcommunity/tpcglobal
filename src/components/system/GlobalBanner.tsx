@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { fetchAppSettings, type AppSettings } from "../../lib/settings";
+import { getAppSettings, type AppSettings } from "../../lib/settings";
 import { X } from "lucide-react";
+import { supabase } from "../../lib/supabase";
 
 type GlobalBannerProps = {
   lang: string;
@@ -14,7 +15,7 @@ export default function GlobalBanner({ lang }: GlobalBannerProps) {
     let alive = true;
     (async () => {
       try {
-        const s = await fetchAppSettings();
+        const s = await getAppSettings(supabase);
         if (!alive) return;
         setSettings(s);
       } catch {

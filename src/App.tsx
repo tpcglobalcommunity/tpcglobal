@@ -66,7 +66,8 @@ import NotificationsPage from './pages/member/NotificationsPage';
 import MemberSettingsPage from './pages/member/MemberSettingsPage';
 import WalletPage from './pages/member/WalletPage';
 import WalletTiersPage from './pages/admin/WalletTiersPage';
-import { fetchAppSettings, type AppSettings } from './lib/settings';
+import { getAppSettings, type AppSettings } from './lib/settings';
+import { supabase } from './lib/supabase';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -86,7 +87,7 @@ function App() {
     let alive = true;
     (async () => {
       try {
-        const s = await fetchAppSettings();
+        const s = await getAppSettings(supabase);
         if (!alive) return;
         setAppSettings(s);
       } catch (e: any) {

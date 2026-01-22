@@ -3,7 +3,7 @@ import { supabase } from "../../lib/supabase";
 import { type Language, useI18n, getLangPath } from "../../i18n";
 import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
 import { Settings, Save, RefreshCcw, ShieldAlert } from "lucide-react";
-import { fetchAppSettings, type AppSettings } from "../../lib/settings";
+import { getAppSettings, type AppSettings } from "../../lib/settings";
 import { upsertSetting } from "../../lib/adminRpc";
 import { useMyRole, canManageSettings } from "../../hooks/useMyRole";
 import NotAuthorized from "../../components/NotAuthorized";
@@ -37,7 +37,7 @@ export default function AdminSettingsPage({ lang }: { lang: Language }) {
     setSaved(false);
 
     try {
-      const data = await fetchAppSettings(true);
+      const data = await getAppSettings(supabase);
       if (!data) throw new Error("Failed to load settings");
 
       setSettings(data);
@@ -73,7 +73,7 @@ export default function AdminSettingsPage({ lang }: { lang: Language }) {
 
       setSaved(true);
       // Refresh cache
-      await fetchAppSettings(true);
+      await getAppSettings(supabase);
     } catch (e: any) {
       setErr(e?.message || "Failed to save settings");
     } finally {

@@ -96,6 +96,10 @@ export function canManageSettings(role: AdminRole): boolean {
   return role === 'super_admin';
 }
 
+export function canManageSystem(role: AdminRole): boolean {
+  return role === 'super_admin';
+}
+
 export function canViewAudit(role: AdminRole): boolean {
   return role === 'admin' || role === 'super_admin';
 }

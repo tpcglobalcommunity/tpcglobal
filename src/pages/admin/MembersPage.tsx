@@ -97,7 +97,6 @@ export default function MembersPage({ lang }: { lang: Language }) {
         username: row.username,
         full_name: row.full_name,
         role: row.role,
-        status: row.status,
         verified: row.verified,
         created_at: row.created_at
       }));
@@ -139,7 +138,6 @@ export default function MembersPage({ lang }: { lang: Language }) {
         "full_name", 
         "username",
         "role",
-        "status",
         "verified",
         "can_invite",
         "created_at"

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import { useI18n } from "../../i18n";
-import { fetchAppSettings, type AppSettings } from "../../lib/settings";
+import { getAppSettings, type AppSettings } from "../../lib/settings";
 import { useAuthError } from "../../hooks/useAuthError";
 import RegistrationsClosedPage from "../system/RegistrationsClosedPage";
 
@@ -18,7 +18,7 @@ export default function SignUp() {
     (async () => {
       try {
         setSettingsErr(null);
-        const s = await fetchAppSettings(true);
+        const s = await getAppSettings(supabase);
         if (!alive) return;
         setSettings(s);
       } catch (e: any) {
