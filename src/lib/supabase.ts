@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Get environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -10,27 +11,29 @@ console.log('🔧 Supabase Config:', {
   configured: !!(supabaseUrl && supabaseAnonKey)
 });
 
+// Validate environment variables
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables:', {
+  console.error('❌ Missing Supabase environment variables:', {
     VITE_SUPABASE_URL: !!supabaseUrl,
     VITE_SUPABASE_ANON_KEY: !!supabaseAnonKey
   });
+  
+  // Don't create fallback client - let it fail explicitly
+  throw new Error('Supabase environment variables are required. Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
 }
 
-export const supabase = supabaseUrl && supabaseAnonKey 
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : createClient('https://placeholder.supabase.co', 'placeholder-key'); // Fallback to prevent null
+// Create Supabase client from environment variables
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// Export configuration status
 export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
 
-// Helper function to ensure supabase is configured before use
-function ensureSupabase() {
-  if (!supabase) {
-    console.warn('Supabase is not configured. Using fallback client.');
-    return supabase; // Return fallback client instead of throwing
-  }
-  return supabase;
-}
+// Export environment variables for debugging
+export const supabaseConfig = {
+  url: supabaseUrl,
+  hasKey: !!supabaseAnonKey,
+  configured: !!(supabaseUrl && supabaseAnonKey)
+};
 
 function normalizeSupabaseError(err: any) {
   // jika sudah ternormalisasi, jangan dinormalisasi ulang
@@ -205,7 +208,7 @@ export const validateReferralCode = async (code: string): Promise<boolean> => {
   try {
     const startTime = Date.now();
 
-    const { data, error } = await ensureSupabase().rpc('validate_referral_code', {
+    const { data, error } = await supabase.rpc('validate_referral_code', {
       p_code: trimmedCode
     });
 
@@ -1258,7 +1261,7 @@ export const createProfileIfMissing = async (userId: string, email: string, full
   try {
     // First check if profile already exists
     console.log('[PROFILE] Checking if profile exists...');
-    const { data: existingProfile, error: checkError } = await ensureSupabase()
+    const { data: existingProfile, error: checkError } = await supabase
       .from('profiles')
       .select("id,email,username,full_name,phone,telegram,city,profile_completed,role,verified,avatar_url,referral_code,referred_by,referral_count,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
       .eq('id', userId)
@@ -1289,7 +1292,7 @@ export const createProfileIfMissing = async (userId: string, email: string, full
     };
 
     console.log('[PROFILE] Inserting profile data:', profileData);
-    const { error } = await ensureSupabase()
+    const { error } = await supabase
       .from('profiles')
       .insert([profileData]);
 
