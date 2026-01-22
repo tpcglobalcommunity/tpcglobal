@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Get environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://nhscvoqyjtpaskeqaths.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhdG94aXd0ZG5rcHhkaXJrdnZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3NDQ0MzgsImV4cCI6MjA0NDMyMDQzOH0.x4lFqshmGwsAM0Duu2B_p6LbrzvvEydl1IEuzA6K06M';
 
 // Log Supabase configuration for debugging
 console.log('🔧 Supabase Config:', {

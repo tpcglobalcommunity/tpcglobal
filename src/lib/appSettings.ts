@@ -1,4 +1,4 @@
-// Resilient App Settings Module - Production Safe
+// Resilient App Settings Module - Production Ready
 // Handles caching, deduplication, and graceful fallbacks
 
 import { useState, useEffect } from 'react';
@@ -10,6 +10,11 @@ interface AppSettings {
   app_name?: string;
   registration_enabled?: boolean;
   verification_enabled?: boolean;
+  notifications_enabled?: boolean;
+  site?: {
+    title?: string;
+    description?: string;
+  };
   [key: string]: any;
 }
 
@@ -25,6 +30,11 @@ const DEFAULT_SETTINGS: AppSettings = {
   app_name: 'TPC Global',
   registration_enabled: true,
   verification_enabled: true,
+  notifications_enabled: false,
+  site: {
+    title: 'TPC Global',
+    description: 'Trader Professional Community'
+  }
 };
 
 /**
@@ -36,23 +46,25 @@ export async function fetchAppSettings(force = false): Promise<AppSettings> {
 
   // Return cached data if valid and not forced
   if (!force && cache && now - cacheAt < TTL_MS) {
+    console.log(' [fetchAppSettings] Using cached settings');
     return cache;
   }
 
-  // Return existing in-flight promise to prevent duplicate requests
+  // Return existing in-flight promise
   if (!force && inFlight) {
+    console.log(' [fetchAppSettings] Using in-flight promise');
     return inFlight;
   }
 
   // Create new fetch promise
   inFlight = (async () => {
     try {
-      console.log('🔧 [fetchAppSettings] Fetching from RPC...');
+      console.log(' [fetchAppSettings] Fetching from RPC...');
       
       const { data, error } = await supabase.rpc('get_app_settings');
       
       if (error) {
-        console.warn('⚠️ [fetchAppSettings] RPC failed:', {
+        console.warn(' [fetchAppSettings] RPC failed:', {
           message: error.message,
           code: error.code,
           details: error.details
@@ -65,7 +77,7 @@ export async function fetchAppSettings(force = false): Promise<AppSettings> {
       }
 
       if (!data) {
-        console.warn('⚠️ [fetchAppSettings] No data returned');
+        console.warn(' [fetchAppSettings] No data returned');
         cache = DEFAULT_SETTINGS;
         cacheAt = now;
         return DEFAULT_SETTINGS;
@@ -76,11 +88,11 @@ export async function fetchAppSettings(force = false): Promise<AppSettings> {
       cache = { ...DEFAULT_SETTINGS, ...settings };
       cacheAt = now;
       
-      console.log('✅ [fetchAppSettings] Settings loaded:', cache);
+      console.log(' [fetchAppSettings] Settings loaded:', cache);
       return cache;
       
     } catch (err: any) {
-      console.error('❌ [fetchAppSettings] Exception:', {
+      console.error(' [fetchAppSettings] Exception:', {
         message: err.message,
         stack: err.stack
       });
