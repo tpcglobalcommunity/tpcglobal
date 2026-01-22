@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 
 type ProfileRow = {
   id: string;
-  is_profile_complete: boolean | null;
+  profile_completed: boolean | null;
   verified: boolean | null;
   role: string | null;
 };
@@ -47,7 +47,7 @@ export default function MemberGuard({ children, allowIncomplete }: Props) {
       // 2) Fetch profile
       const { data: prof, error: profErr } = await supabase
         .from("profiles")
-        .select("*")
+        .select("id,email,username,full_name,phone,telegram,city,profile_completed,role,verified,avatar_url,referral_code,referred_by,referral_count,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
         .eq("id", userId)
         .maybeSingle();
 
@@ -61,7 +61,7 @@ export default function MemberGuard({ children, allowIncomplete }: Props) {
 
         const { data: prof2 } = await supabase
           .from("profiles")
-          .select("*")
+          .select("id,email,username,full_name,phone,telegram,city,profile_completed,role,verified,avatar_url,referral_code,referred_by,referral_count,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
           .eq("id", userId)
           .maybeSingle();
 
@@ -106,7 +106,7 @@ export default function MemberGuard({ children, allowIncomplete }: Props) {
     );
   }
 
-  const isComplete = profile.is_profile_complete === true;
+  const isComplete = profile.profile_completed === true;
   const isVerified = profile.verified === true;
   const isViewer = profile.role === "viewer";
 
