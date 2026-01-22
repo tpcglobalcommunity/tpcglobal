@@ -4,6 +4,7 @@ import AppHeader from './components/AppHeader';
 import LegalFooter from './components/LegalFooter';
 import BottomNav from './components/BottomNav';
 import AuthLayout from './components/auth/AuthLayout';
+import ErrorBoundary from './components/ErrorBoundary';
 import Home from './pages/Home';
 import Docs from './pages/Docs';
 import DAOLite from './pages/DAOLite';
@@ -426,16 +427,18 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <GlobalBanner lang={lang} />
-      <AppHeader lang={lang} currentPath={currentPath} />
-      <main className={`flex-1 ${shouldShowBottomNav ? 'pb-[calc(72px+env(safe-area-inset-bottom)+16px)] xl:pb-0' : ''}`}>
-        {renderPage()}
-      </main>
-      <LegalFooter lang={lang} />
-      <ToastHost lang={lang} />
-      {shouldShowBottomNav && <BottomNav lang={lang} currentPath={currentPath} />}
-    </div>
+    <ErrorBoundary>
+      <div className="min-h-screen flex flex-col">
+        <GlobalBanner lang={lang} />
+        <AppHeader lang={lang} currentPath={currentPath} />
+        <main className={`flex-1 ${shouldShowBottomNav ? 'pb-[calc(72px+env(safe-area-inset-bottom)+16px)] xl:pb-0' : ''}`}>
+          {renderPage()}
+        </main>
+        <LegalFooter lang={lang} />
+        <ToastHost lang={lang} />
+        {shouldShowBottomNav && <BottomNav lang={lang} currentPath={currentPath} />}
+      </div>
+    </ErrorBoundary>
   );
 }
 

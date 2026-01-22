@@ -79,9 +79,18 @@ export default function WelcomePage({ lang }: { lang: Language }) {
           .from("profiles")
           .select("id, email, username, full_name, role, verified, created_at")
           .eq("id", uid)
-          .single();
+          .maybeSingle(); // Use maybeSingle to prevent errors
 
-        if (error) throw error;
+        if (error) {
+          console.warn('Profile fetch error:', error);
+          setProfile(null); // Safe fallback
+          return;
+        }
+        if (!data) {
+          console.warn('No profile found for user:', uid);
+          setProfile(null); // Safe fallback
+          return;
+        }
         if (!alive) return;
 
         setProfile(data as ProfileRow);

@@ -75,8 +75,17 @@ export default function VerifyPage({ lang }: { lang: Language }) {
         .from("profiles")
         .select("id, wallet_address, verification_status, verified")
         .eq("id", uid)
-        .single();
-      if (pe) throw pe;
+        .maybeSingle(); // Use maybeSingle to prevent errors
+      if (pe) {
+        console.warn('Profile fetch error:', pe);
+        setErr("Failed to load profile");
+        return;
+      }
+      if (!p) {
+        console.warn('No profile found for user:', uid);
+        setErr("Profile not found");
+        return;
+      }
 
       const { data: r } = await supabase
         .from("verification_requests")

@@ -1334,7 +1334,10 @@ export async function getMyProfile(): Promise<Profile | null> {
     .eq("id", user.id)
     .maybeSingle();
 
-  if (error) throw error;
+  if (error) {
+    console.warn('getMyProfile error:', error);
+    return null; // Safe fallback
+  }
   return data ?? null;
 }
 

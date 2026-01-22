@@ -27,10 +27,18 @@ export function useMyRole() {
           .from('profiles')
           .select('role')
           .eq('id', session.user.id)
-          .single();
+          .maybeSingle(); // Use maybeSingle to prevent errors
 
         if (profileError) {
-          throw profileError;
+          console.warn('Profile fetch error:', profileError);
+          setRole('viewer'); // Safe fallback
+          return;
+        }
+
+        if (!profile) {
+          console.warn('No profile found for user:', session.user.id);
+          setRole('viewer'); // Safe fallback
+          return;
         }
 
         setRole(profile.role as AdminRole);

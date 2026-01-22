@@ -63,8 +63,17 @@ export default function MemberSettingsPage({ lang }: { lang: Language }) {
         .from("profiles")
         .select("id, username, full_name, city, verified")
         .eq("id", uid)
-        .single();
-      if (error) throw error;
+        .maybeSingle(); // Use maybeSingle to prevent errors
+      if (error) {
+        console.warn('Profile fetch error:', error);
+        setErr("Failed to load profile");
+        return;
+      }
+      if (!data) {
+        console.warn('No profile found for user:', uid);
+        setErr("Profile not found");
+        return;
+      }
 
       const p = { ...(data as any), email } as ProfileRow;
       setProfile(p);

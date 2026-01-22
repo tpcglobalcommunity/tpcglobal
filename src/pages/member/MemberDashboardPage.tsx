@@ -84,8 +84,17 @@ export default function MemberDashboardPage({ lang }: { lang: Language }) {
           .from("profiles")
           .select("id, email, username, full_name, role, verified, can_invite, tpc_tier, tpc_balance, wallet_verified_at, created_at")
           .eq("id", uid)
-          .single();
-        if (pe) throw pe;
+          .maybeSingle(); // Use maybeSingle to prevent errors
+        if (pe) {
+          console.warn('Profile fetch error:', pe);
+          setProfile(null); // Safe fallback
+          return;
+        }
+        if (!p) {
+          console.warn('No profile found for user:', uid);
+          setProfile(null); // Safe fallback
+          return;
+        }
 
         const { data: r } = await supabase
           .from("referral_uses")
