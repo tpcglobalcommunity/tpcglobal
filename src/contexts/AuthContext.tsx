@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { supabase, Profile } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import type { Session, User } from '@supabase/supabase-js';
 import { useProfileStatus } from '../lib/useProfileStatus';
 
@@ -7,7 +7,8 @@ interface AuthContextType {
   loading: boolean;
   session: Session | null;
   user: User | null;
-  profile: Profile | null;
+  role: string;
+  verified: boolean;
   isMember: boolean;
   isMod: boolean;
   isAdmin: boolean;
@@ -36,12 +37,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const { profile, loading: profileLoading } = useProfileStatus();
+  const { loading: profileLoading, role, verified } = useProfileStatus(session?.user?.id);
 
-  const isMember = profile?.role === 'member';
-  const isMod = profile?.role === 'moderator';
-  const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin';
-  const isSuperAdmin = profile?.role === 'super_admin';
+  const isMember = role === 'member';
+  const isMod = false; // No moderator role in new system
+  const isAdmin = role === 'admin' || role === 'super_admin';
+  const isSuperAdmin = role === 'super_admin';
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -143,7 +144,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading: loading || profileLoading,
     session,
     user,
-    profile,
+    role,
+    verified,
     isMember,
     isMod,
     isAdmin,

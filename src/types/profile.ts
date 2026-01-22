@@ -14,7 +14,7 @@ export interface ProfileData {
   referred_by: string | null;
   referral_count: number;
   role: 'MEMBER' | 'admin' | 'super_admin';
-  status: 'PENDING' | 'ACTIVE' | 'SUSPENDED' | 'NO_PROFILE' | 'ERROR';
+  verified: boolean;
   is_profile_complete: boolean;
   created_at: string;
   updated_at: string;
@@ -30,7 +30,7 @@ export interface ProfileResponse {
 export interface NavigationData {
   route: string;
   reason: string;
-  profile_status: string;
+  profile_verified: boolean;
   user_role: string;
 }
 
@@ -196,7 +196,7 @@ export function navigateByProfile(profile: ProfileData | ProfileWithNavigation):
   // Fallback logic
   if (profile.role === 'super_admin') {
     return '/admin';
-  } else if (profile.status !== 'ACTIVE') {
+  } else if (!profile.verified) {
     return '/member/onboarding';
   } else {
     return '/member/dashboard';
@@ -222,7 +222,7 @@ export function canAccessMember(profile: ProfileData | ProfileWithNavigation): b
     return profile.can_access_member;
   }
   
-  return profile.status === 'ACTIVE' && profile.is_profile_complete;
+  return profile.verified && profile.is_profile_complete;
 }
 
 /**
@@ -235,19 +235,8 @@ export function getProfileDisplayName(profile: ProfileData | ProfileWithNavigati
 /**
  * Get profile status color for UI
  */
-export function getProfileStatusColor(status: string): string {
-  switch (status) {
-    case 'ACTIVE':
-      return 'text-green-500';
-    case 'PENDING':
-      return 'text-yellow-500';
-    case 'SUSPENDED':
-      return 'text-red-500';
-    case 'NO_PROFILE':
-      return 'text-gray-500';
-    default:
-      return 'text-gray-500';
-  }
+export function getProfileStatusColor(verified: boolean): string {
+  return verified ? 'text-green-500' : 'text-yellow-500';
 }
 
 /**
@@ -261,5 +250,5 @@ export function formatMemberCode(memberCode: string): string {
  * Check if profile needs onboarding
  */
 export function needsOnboarding(profile: ProfileData | ProfileWithNavigation): boolean {
-  return !profile.is_profile_complete || profile.status !== 'ACTIVE';
+  return !profile.is_profile_complete || !profile.verified;
 }

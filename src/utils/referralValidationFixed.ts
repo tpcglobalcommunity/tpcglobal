@@ -61,7 +61,7 @@ export async function validateReferralCodeWithInfo(code: string): Promise<{
       .from("profiles")
       .select("*")
       .eq("member_code", code.trim().toUpperCase())
-      .eq("status", "ACTIVE")
+      .eq("verified", true)
       .single();
     
     if (error || !data) {
@@ -142,7 +142,7 @@ export async function validateReferralWithDetail(referralCode: string): Promise<
       .from("profiles")
       .select("*")
       .eq("member_code", referralCode.trim().toUpperCase())
-      .eq("status", "ACTIVE")
+      .eq("verified", true)
       .single();
 
     if (error || !data) {
