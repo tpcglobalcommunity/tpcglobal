@@ -1143,12 +1143,6 @@ export const translations = {
         passwordMinLength: "Password must be at least 8 characters",
         passwordMismatch: "Passwords do not match",
         referralError: "Failed to validate referral code",
-        settingsLoadError: "Could not load settings; proceeding with defaults.",
-        referralDisabledTitle: "Referral is temporarily disabled",
-        referralDisabledDesc: "New registrations are temporarily paused. Please try again later or contact support.",
-        backToHome: "Back to Home",
-        alreadyHaveAccount: "Already have an account?",
-        signIn: "Sign In",
       },
       completeProfile: {
         title: "Complete Your Profile",

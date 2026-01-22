@@ -73,7 +73,7 @@ export default function SignUp() {
   }
 
   const referralEnabled = settings ? !!settings.referral_enabled : true;
-  const inviteLimit = settings?.referral_invite_limit ?? 0;
+  const maintenanceOn = settings?.maintenance_mode === true;
 
   const canSubmit = useMemo(() => {
     return !isSubmitting && refStatus === "valid" && !localValidateError;
@@ -117,16 +117,16 @@ export default function SignUp() {
 
         if (data === true) {
           setRefStatus("valid");
-          setRefMessage(t("auth.signup.referralValid") || "Valid referral code");
+          setRefMessage(t("auth.signup.referralValid") || "Referral valid");
         } else {
           setRefStatus("invalid");
-          setRefMessage(t("auth.signup.referralInvalid") || "Invalid referral code");
+          setRefMessage(t("auth.signup.referralInvalid") || "Referral tidak valid");
         }
       } catch {
         setRefStatus("invalid");
         setRefMessage(t("auth.signup.referralError") || "Failed to validate referral code");
       }
-    }, 450);
+    }, 500);
 
     return () => {
       if (debounceRef.current) window.clearTimeout(debounceRef.current);
@@ -204,9 +204,9 @@ export default function SignUp() {
           </div>
         )}
 
-        {referralEnabled && inviteLimit > 0 && (
-          <div className="p-3 bg-green-500/20 border border-green-500/30 rounded-lg text-green-300 text-sm mb-4">
-            {t("signup.referralLimitHint") || `Referral limit: ${inviteLimit} per code`}
+        {maintenanceOn && (
+          <div className="p-3 bg-blue-500/20 border border-blue-500/30 rounded-lg text-blue-300 text-sm mb-4">
+            {t("signup.maintenanceNotice") || "Platform sedang maintenance. Pendaftaran tetap dibuka untuk pengguna dengan undangan."}
           </div>
         )}
 
