@@ -50,6 +50,8 @@ import AdminControlCenterPage from './pages/admin/AdminControlCenterPage';
 import EmailQueuePage from './pages/admin/EmailQueuePage';
 import AdminSettingsPage from './pages/admin/AdminSettingsPage';
 import AdminBroadcastCenter from './pages/admin/AdminBroadcastCenter';
+import AdminTransparencyPage from './pages/admin/AdminTransparencyPage';
+import TransparencyPage from './pages/public/TransparencyPage';
 import VendorApplyPage from './pages/member/VendorApplyPage';
 import MarketplacePage from './pages/MarketplacePage';
 import MaintenancePage from './pages/system/MaintenancePage';
@@ -192,6 +194,8 @@ function App() {
         return <DAOLite lang={lang} />;
       case '/transparency':
         return <Transparency lang={lang} />;
+      case '/public/transparency':
+        return <TransparencyPage />;
       case '/fund':
         return <CommunityFund lang={lang} />;
       case '/legal':
@@ -384,6 +388,14 @@ function App() {
         return (
           <AdminGuard lang={lang}>
             <AdminBroadcastCenter />
+          </AdminGuard>
+        );
+      case '/admin/transparency-input':
+        return (
+          <AdminGuard lang={lang}>
+            <AdminLayout lang={lang}>
+              <AdminTransparencyPage />
+            </AdminLayout>
           </AdminGuard>
         );
       default:
