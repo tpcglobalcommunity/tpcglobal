@@ -13,4 +13,22 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  build: {
+    // Ensure hash changes with content
+    rollupOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name?.split('.') || [];
+          const ext = info[info.length - 1] || '';
+          const name = info[0] || 'asset';
+          return `${name}-[hash].[ext]`;
+        },
+        chunkFileNames: 'chunk-[hash].js',
+        entryFileNames: 'entry-[hash].js',
+      },
+    },
+    // Force hash generation
+    minify: 'terser',
+    sourcemap: false,
+  },
 });

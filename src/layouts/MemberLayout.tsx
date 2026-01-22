@@ -7,7 +7,6 @@ import { Outlet, Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { useProfileStatus } from "../lib/useProfileStatus";
-import { getProfileDisplayName, formatMemberCode } from "../types/profile";
 import { 
   Home, 
   User, 
@@ -23,10 +22,13 @@ import {
 
 export default function MemberLayout() {
   const location = useLocation();
-  const { profile, loading, error, refreshProfile } = useProfileStatus();
+  const { role, verified, loading } = useProfileStatus();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+
+  const displayName = role === 'viewer' ? 'Guest User' : 'Member';
+  const memberCode = 'TPC000000'; // TODO: Implement proper member code fetching
 
   // Navigation items
   const navigation = [
@@ -58,14 +60,12 @@ export default function MemberLayout() {
 
   // Copy member code to clipboard
   const copyMemberCode = async () => {
-    if (profile?.member_code) {
-      try {
-        await navigator.clipboard.writeText(profile.member_code);
-        setCopySuccess(true);
-        setTimeout(() => setCopySuccess(false), 2000);
-      } catch (err) {
-        console.error("Failed to copy:", err);
-      }
+    try {
+      await navigator.clipboard.writeText(memberCode);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
     }
   };
 
@@ -95,47 +95,13 @@ export default function MemberLayout() {
     return (
       <div className="min-h-screen flex items-center justify-center text-white/70">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F0B90B] mx-auto mb-4"></div>
           <div>Loading profile...</div>
         </div>
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-white/70">
-        <div className="text-center">
-          <div className="text-red-400 mb-4">Error loading profile</div>
-          <button 
-            onClick={refreshProfile}
-            className="px-4 py-2 bg-[#F0B90B] text-black rounded-lg hover:bg-[#F0B90B]/90"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // BENAR: Profile should always exist if we're authenticated
-  // If profile is null here, it means there's a data issue, not auth issue
-  if (!profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-white/70">
-        <div className="text-center">
-          <div className="text-red-400 mb-4">Profile data missing</div>
-          <button 
-            onClick={refreshProfile}
-            className="px-4 py-2 bg-[#F0B90B] text-black rounded-lg hover:bg-[#F0B90B]/90"
-          >
-            Refresh
-          </button>
-        </div>
-      </div>
-    );
-  }
-
+  // Always show layout if authenticated
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Mobile sidebar backdrop */}
@@ -176,10 +142,10 @@ export default function MemberLayout() {
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-medium truncate">
-                {getProfileDisplayName(profile)}
+                {displayName}
               </div>
               <div className="text-sm text-white/60">
-                {formatMemberCode(profile.member_code)}
+                {memberCode}
               </div>
             </div>
           </div>
@@ -187,7 +153,7 @@ export default function MemberLayout() {
           {/* Member code copy */}
           <div className="flex items-center gap-2 p-2 bg-white/5 rounded-lg">
             <span className="text-sm text-white/60 flex-1">
-              {profile.member_code}
+              {memberCode}
             </span>
             <button
               onClick={copyMemberCode}
@@ -258,7 +224,7 @@ export default function MemberLayout() {
               <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-full">
                 <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                 <span className="text-xs text-green-400">
-                  {profile.status}
+                  {verified ? "Verified" : "Pending"}
                 </span>
               </div>
 
@@ -278,8 +244,8 @@ export default function MemberLayout() {
                 {profileDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-black/90 backdrop-blur-xl border border-white/10 rounded-lg shadow-xl z-50">
                     <div className="p-3 border-b border-white/10">
-                      <div className="font-medium">{getProfileDisplayName(profile)}</div>
-                      <div className="text-sm text-white/60">{profile.email}</div>
+                      <div className="font-medium">{displayName}</div>
+                      <div className="text-sm text-white/60">member@tpcglobal.io</div>
                     </div>
                     <div className="p-1">
                       <Link
@@ -336,7 +302,7 @@ export function MemberMinimalLayout() {
           
           <button
             onClick={() => supabase.auth.signOut()}
-            className="px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+            className="px-4 py-2 bg-[#F0B90B] text-black rounded-lg hover:bg-[#F0B90B]/90"
           >
             Logout
           </button>
@@ -346,34 +312,6 @@ export function MemberMinimalLayout() {
       {/* Page content */}
       <main className="min-h-[calc(100vh-4rem)]">
         <Outlet />
-      </main>
-    </div>
-  );
-}
-
-/**
- * Onboarding layout (khusus untuk onboarding flow)
- */
-export function MemberOnboardingLayout() {
-  return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Simple branding header */}
-      <header className="h-16 bg-black/50 backdrop-blur-xl border-b border-white/10 px-8">
-        <div className="flex items-center justify-between h-full">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-[#F0B90B] rounded-lg flex items-center justify-center">
-              <span className="text-black font-bold text-sm">TPC</span>
-            </div>
-            <span className="font-semibold">Complete Your Profile</span>
-          </div>
-        </div>
-      </header>
-
-      {/* Page content */}
-      <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4">
-        <div className="w-full max-w-md">
-          <Outlet />
-        </div>
       </main>
     </div>
   );

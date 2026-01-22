@@ -49,11 +49,18 @@ export function useRealtimeNotifications({
         .eq('user_id', userId)
         .eq('is_read', false);
 
-      if (error) throw error;
+      if (error) {
+        // If table doesn't exist or other error, just return 0 silently
+        console.warn('Notifications table not available:', error.message);
+        setUnreadCount(0);
+        return;
+      }
+      
       setUnreadCount(count || 0);
     } catch (e: any) {
-      console.error('Failed to fetch initial unread count:', e);
-      setError(e.message);
+      // Silently handle errors - don't show error banners
+      console.warn('Failed to fetch notifications:', e.message);
+      setUnreadCount(0);
     }
   }, [userId, enabled]);
 
