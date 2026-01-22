@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import { getAppSettings } from "./supabase";
 
 export type AppSettings = {
   app_name: string;
@@ -44,12 +44,56 @@ export async function fetchAppSettings(force = false): Promise<AppSettings | nul
   }
 
   inFlight = (async () => {
-    const { data, error } = await supabase.rpc("get_app_settings");
-    if (error) throw error;
-
-    cache = data || {} as AppSettings;
-    cacheAt = Date.now();
-    return cache;
+    try {
+      // Use safe getAppSettings with fallback
+      const settings = await getAppSettings();
+      
+      // Convert to AppSettings format
+      cache = {
+        app_name: settings.app_name || 'TPC Global',
+        app_version: settings.version || '1.0.0',
+        maintenance_mode: settings.maintenance_mode === 'true',
+        registration_enabled: true,
+        verification_enabled: true,
+        max_upload_size_mb: 10,
+        supported_languages: ['en', 'id'],
+        default_language: 'en',
+        telegram_community: 'https://t.me/tpcglobal',
+        created_at: new Date().toISOString(),
+        registrations_open: true,
+        referral_enabled: true,
+        referral_invite_limit: 10,
+        default_member_status: 'ACTIVE',
+      };
+      
+      cacheAt = now;
+      return cache;
+    } catch (error: any) {
+      console.error('Failed to fetch app settings:', error);
+      
+      // Return fallback settings
+      cache = {
+        app_name: 'TPC Global',
+        app_version: '1.0.0',
+        maintenance_mode: false,
+        registration_enabled: true,
+        verification_enabled: true,
+        max_upload_size_mb: 10,
+        supported_languages: ['en', 'id'],
+        default_language: 'en',
+        telegram_community: 'https://t.me/tpcglobal',
+        created_at: new Date().toISOString(),
+        registrations_open: true,
+        referral_enabled: true,
+        referral_invite_limit: 10,
+        default_member_status: 'ACTIVE',
+      };
+      
+      cacheAt = now;
+      return cache;
+    } finally {
+      inFlight = null;
+    }
   })();
 
   try {
@@ -57,8 +101,4 @@ export async function fetchAppSettings(force = false): Promise<AppSettings | nul
   } finally {
     inFlight = null;
   }
-}
-
-export function getCachedAppSettings() {
-  return cache;
 }
