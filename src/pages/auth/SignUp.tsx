@@ -3,6 +3,7 @@ import { supabase } from "../../lib/supabase";
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import { useI18n } from "../../i18n";
 import { fetchAppSettings, type AppSettings } from "../../lib/settings";
+import { useAuthError } from "../../hooks/useAuthError";
 import RegistrationsClosedPage from "../system/RegistrationsClosedPage";
 
 type ReferralStatus = "idle" | "checking" | "valid" | "invalid";

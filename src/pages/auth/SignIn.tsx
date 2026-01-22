@@ -3,6 +3,7 @@ import { Shield, Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { useI18n, type Language, getLangPath } from "../../i18n";
 import { Link } from "../../components/Router";
 import { signIn } from "../../lib/supabase";
+import { useAuthError } from "../../hooks/useAuthError";
 
 interface SignInProps {
   lang?: Language;
@@ -29,7 +30,7 @@ export default function SignIn({ lang, next }: SignInProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { error, handleError, clearError } = useAuthError();
 
   const fallback = getLangPath(L, "/member/dashboard");
   const nextUrl = useMemo(() => {
@@ -40,15 +41,13 @@ export default function SignIn({ lang, next }: SignInProps) {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+    clearError();
     setSubmitting(true);
     try {
       await signIn({ email: email.trim(), password });
       window.location.assign(nextUrl);
     } catch (err: any) {
-      const msg = String(err?.message || "");
-      if (msg.toLowerCase().includes("confirm")) setError(t("errors.emailNotConfirmed"));
-      else setError(t("errors.invalidCredentials"));
+      handleError(err);
     } finally {
       setSubmitting(false);
     }
