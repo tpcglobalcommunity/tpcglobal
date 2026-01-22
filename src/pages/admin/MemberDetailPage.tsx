@@ -98,7 +98,7 @@ export default function MemberDetailPage({ lang }: { lang: Language }) {
       // Profile
       const { data: p, error: pe } = await supabase
         .from("profiles")
-        .select("id, email, username, full_name, role, status, verified, wallet_address, verification_status, created_at")
+        .select("id, email, username, full_name, role, verified, wallet_address, verification_status, created_at")
         .eq("id", memberId)
         .single();
       if (pe) throw pe;

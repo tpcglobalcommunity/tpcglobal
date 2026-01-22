@@ -77,15 +77,15 @@ export default function AdminDashboardPage({ lang }: { lang: Language }) {
       // Members counts
       const [total, active, pending, banned] = await Promise.all([
         safeCountProfiles(),
-        safeCountProfiles({ col: "status", eq: "ACTIVE" }),
-        safeCountProfiles({ col: "status", eq: "PENDING" }),
-        safeCountProfiles({ col: "status", eq: "BANNED" }),
+        safeCountProfiles({ col: "verified", eq: "true" }),
+        safeCountProfiles({ col: "verified", eq: "false" }),
+        safeCountProfiles({ col: "role", eq: "banned" }),
       ]);
 
       // Latest members
       const { data: members, error: memErr } = await supabase
         .from("profiles")
-        .select("id, email, full_name, username, role, status, created_at")
+        .select("id, email, full_name, username, role, verified, created_at")
         .order("created_at", { ascending: false })
         .limit(10);
 

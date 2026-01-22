@@ -77,7 +77,7 @@ export default function WelcomePage({ lang }: { lang: Language }) {
 
         const { data, error } = await supabase
           .from("profiles")
-          .select("id, email, username, full_name, role, status, verified, created_at")
+          .select("id, email, username, full_name, role, verified, created_at")
           .eq("id", uid)
           .single();
 

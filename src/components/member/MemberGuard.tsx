@@ -4,7 +4,7 @@ import { type Language, getLangPath } from "../../i18n";
 import MemberPendingPage from "../../pages/member/MemberPendingPage";
 import MemberBannedPage from "../../pages/member/MemberBannedPage";
 
-type Status = "ACTIVE" | "PENDING" | "BANNED" | string;
+type Status = "VERIFIED" | "PENDING" | "BANNED" | string;
 
 export default function MemberGuard({
   lang,
@@ -29,7 +29,7 @@ export default function MemberGuard({
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("status")
+        .select("verified")
         .eq("id", uid)
         .single();
 
@@ -40,7 +40,7 @@ export default function MemberGuard({
         setStatus("PENDING");
         return;
       }
-      setStatus((data?.status as Status) || "PENDING");
+      setStatus((data?.verified ? "VERIFIED" : "PENDING") as Status);
     })();
 
     return () => {

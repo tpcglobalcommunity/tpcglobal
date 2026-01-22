@@ -61,7 +61,7 @@ export default function MemberSettingsPage({ lang }: { lang: Language }) {
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, username, full_name, city, status, verified")
+        .select("id, username, full_name, city, verified")
         .eq("id", uid)
         .single();
       if (error) throw error;

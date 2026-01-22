@@ -73,7 +73,7 @@ export default function VerifyPage({ lang }: { lang: Language }) {
 
       const { data: p, error: pe } = await supabase
         .from("profiles")
-        .select("id, wallet_address, verification_status, status, verified")
+        .select("id, wallet_address, verification_status, verified")
         .eq("id", uid)
         .single();
       if (pe) throw pe;
