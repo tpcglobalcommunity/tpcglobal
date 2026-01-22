@@ -190,7 +190,7 @@ export default function VerifyPage({ lang }: { lang: Language }) {
                 {(profile?.verification_status || "NONE").toUpperCase()}
               </span>
               <span className="text-xs px-2 py-0.5 rounded-full border bg-white/5 border-white/10 text-white/70">
-                account: {(profile?.status || "—").toUpperCase()}
+                account: {profile?.verified ? "VERIFIED" : "UNVERIFIED"}
               </span>
             </div>
 

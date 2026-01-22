@@ -1334,4 +1334,4 @@ export async function getMyProfile(): Promise<Profile | null> {
 }
 
 // Re-export from new appSettings module for backward compatibility
-export { fetchAppSettings as getAppSettings } from './appSettings';
+export { getAppSettings } from './appSettings';

@@ -18,7 +18,7 @@ export async function getAppSettings(supabase: any): Promise<AppSettings> {
   // kalau ada request yang sedang jalan, tunggu itu
   if (inflight) return inflight;
 
-  inflight = (async (): Promise<AppSettings> => {
+  const p = (async (): Promise<AppSettings> => {
     try {
       const { data, error } = await supabase.rpc("get_app_settings");
       if (!error && data && typeof data === "object") {
@@ -52,7 +52,8 @@ export async function getAppSettings(supabase: any): Promise<AppSettings> {
     }
   })();
 
-  return inflight;
+  inflight = p;
+  return p;
 }
 
 // optional kalau butuh reset saat signout
