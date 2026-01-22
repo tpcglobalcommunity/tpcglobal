@@ -11,9 +11,9 @@ interface AppSettings {
   registration_enabled?: boolean;
   verification_enabled?: boolean;
   notifications_enabled?: boolean;
-  site?: {
-    en?: { title?: string; subtitle?: string; };
-    id?: { title?: string; subtitle?: string; };
+  site_name?: {
+    en?: string;
+    id?: string;
   };
   [key: string]: any;
 }
@@ -31,14 +31,14 @@ const DEFAULT_SETTINGS: AppSettings = {
   registration_enabled: true,
   verification_enabled: true,
   notifications_enabled: false,
-  site: {
-    en: { title: 'TPC Global', subtitle: 'Trader Professional Community' },
-    id: { title: 'TPC Global', subtitle: 'Komunitas Trader Profesional' }
+  site_name: {
+    en: 'TPC Global',
+    id: 'TPC Global'
   }
 };
 
 /**
- * Fetch app settings with caching and deduplication
+ * Fetch app settings with RPC first, fallback to table query
  * Never throws, always returns safe defaults
  */
 export async function fetchAppSettings(force = false): Promise<AppSettings> {
@@ -46,41 +46,38 @@ export async function fetchAppSettings(force = false): Promise<AppSettings> {
 
   // Return cached data if valid and not forced
   if (!force && cache && now - cacheAt < TTL_MS) {
-    console.log(' [fetchAppSettings] Using cached settings');
+    console.log('🔧 [fetchAppSettings] Using cached settings');
     return cache;
   }
 
   // Return existing in-flight promise
   if (!force && inFlight) {
-    console.log(' [fetchAppSettings] Using in-flight promise');
+    console.log('🔧 [fetchAppSettings] Using in-flight promise');
     return inFlight;
   }
 
   // Create new fetch promise
   inFlight = (async () => {
     try {
-      console.log(' [fetchAppSettings] Fetching from RPC...');
+      console.log('🔧 [fetchAppSettings] Fetching from RPC...');
       
+      // Try RPC first
       const { data, error } = await supabase.rpc('get_app_settings');
       
       if (error) {
-        console.warn(' [fetchAppSettings] RPC failed:', {
+        console.warn('⚠️ [fetchAppSettings] RPC failed, falling back to table query:', {
           message: error.message,
           code: error.code,
           details: error.details
         });
         
-        // Return default settings on any error
-        cache = DEFAULT_SETTINGS;
-        cacheAt = now;
-        return DEFAULT_SETTINGS;
+        // Fallback to table query
+        return await fetchFromTable();
       }
 
       if (!data) {
-        console.warn(' [fetchAppSettings] No data returned');
-        cache = DEFAULT_SETTINGS;
-        cacheAt = now;
-        return DEFAULT_SETTINGS;
+        console.warn('⚠️ [fetchAppSettings] No data from RPC, falling back to table query');
+        return await fetchFromTable();
       }
 
       // Parse and cache the result
@@ -88,25 +85,74 @@ export async function fetchAppSettings(force = false): Promise<AppSettings> {
       cache = { ...DEFAULT_SETTINGS, ...settings };
       cacheAt = now;
       
-      console.log(' [fetchAppSettings] Settings loaded:', cache);
+      console.log('✅ [fetchAppSettings] Settings loaded from RPC:', cache);
       return cache;
       
     } catch (err: any) {
-      console.error(' [fetchAppSettings] Exception:', {
+      console.error('❌ [fetchAppSettings] Exception:', {
         message: err.message,
         stack: err.stack
       });
       
       // Always return safe defaults on exceptions
-      cache = DEFAULT_SETTINGS;
-      cacheAt = now;
-      return DEFAULT_SETTINGS;
+      return await fetchFromTable();
     } finally {
       inFlight = null;
     }
   })();
 
   return inFlight!;
+}
+
+/**
+ * Fallback: fetch from app_settings table directly
+ */
+async function fetchFromTable(): Promise<AppSettings> {
+  try {
+    console.log('🔧 [fetchFromTable] Querying app_settings table...');
+    
+    const { data, error } = await supabase
+      .from('app_settings')
+      .select('key, value')
+      .eq('is_public', true);
+    
+    if (error) {
+      console.warn('⚠️ [fetchFromTable] Table query failed, using defaults:', error);
+      cache = DEFAULT_SETTINGS;
+      cacheAt = Date.now();
+      return DEFAULT_SETTINGS;
+    }
+
+    if (!data || data.length === 0) {
+      console.warn('⚠️ [fetchFromTable] No data in table, using defaults');
+      cache = DEFAULT_SETTINGS;
+      cacheAt = Date.now();
+      return DEFAULT_SETTINGS;
+    }
+
+    // Convert array to object
+    const settings = data.reduce((acc, row) => {
+      try {
+        const value = typeof row.value === 'string' ? JSON.parse(row.value) : row.value;
+        acc[row.key] = value;
+      } catch (e) {
+        console.warn(`⚠️ [fetchFromTable] Failed to parse value for key ${row.key}:`, e);
+      }
+      return acc;
+    }, {} as AppSettings);
+
+    cache = { ...DEFAULT_SETTINGS, ...settings };
+    cacheAt = Date.now();
+    
+    console.log('✅ [fetchFromTable] Settings loaded from table:', cache);
+    return cache;
+    
+  } catch (err: any) {
+    console.error('❌ [fetchFromTable] Exception:', err);
+    cache = DEFAULT_SETTINGS;
+    cacheAt = Date.now();
+    return DEFAULT_SETTINGS;
+  }
 }
 
 /**

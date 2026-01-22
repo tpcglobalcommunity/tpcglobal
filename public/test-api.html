@@ -21,8 +21,8 @@
   <pre id="output">Click a button to run tests...</pre>
 
   <script>
-    const SUPABASE_URL = 'https://watoxiwtdnkpxdirkvvf.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhdG94aXd0ZG5rcHhkaXJrdnZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3NDQ0MzgsImV4cCI6MjA4NDMyMDQzOH0.x4lFqshmGwsAM0Duu2B_p6LbrzvvEydl1IEuzA6K06M';
+    const SUPABASE_URL = import.meta.env?.VITE_SUPABASE_URL || 'https://nhscvoqyjtpaskeqaths.supabase.co';
+    const SUPABASE_KEY = import.meta.env?.VITE_SUPABASE_ANON_KEY || 'YOUR_ANON_KEY_HERE';
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     const output = document.getElementById('output');
