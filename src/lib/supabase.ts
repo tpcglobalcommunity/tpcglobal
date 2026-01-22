@@ -1341,46 +1341,5 @@ export async function getMyProfile(): Promise<Profile | null> {
   return data ?? null;
 }
 
-// Safe get_app_settings with fallback
-export async function getAppSettings(): Promise<Record<string, string>> {
-  try {
-    console.log('🔧 Fetching app settings...');
-    const { data, error } = await supabase.rpc('get_app_settings');
-    
-    if (error) {
-      console.warn('⚠️ get_app_settings RPC failed:', error.message);
-      // Return fallback settings
-      return {
-        maintenance_mode: 'false',
-        version: '1.0.0',
-        app_name: 'TPC Global'
-      };
-    }
-    
-    if (!data || data.length === 0) {
-      console.warn('⚠️ get_app_settings returned no data');
-      return {
-        maintenance_mode: 'false',
-        version: '1.0.0',
-        app_name: 'TPC Global'
-      };
-    }
-    
-    // Convert array to object
-    const settings: Record<string, string> = {};
-    data.forEach((item: any) => {
-      settings[item.key] = item.value;
-    });
-    
-    console.log('✅ App settings loaded:', settings);
-    return settings;
-  } catch (err: any) {
-    console.error('❌ get_app_settings exception:', err);
-    // Return fallback settings on any error
-    return {
-      maintenance_mode: 'false',
-      version: '1.0.0',
-      app_name: 'TPC Global'
-    };
-  }
-}
+// Re-export from new appSettings module for backward compatibility
+export { fetchAppSettings as getAppSettings } from './appSettings';

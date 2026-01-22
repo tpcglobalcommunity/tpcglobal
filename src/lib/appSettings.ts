@@ -1,104 +1,162 @@
-import { getAppSettings } from "./supabase";
+// Resilient App Settings Module - Production Safe
+// Handles caching, deduplication, and graceful fallbacks
 
-export type AppSettings = {
-  app_name: string;
-  app_version: string;
-  maintenance_mode: boolean;
-  registration_enabled: boolean;
-  verification_enabled: boolean;
-  max_upload_size_mb: number;
-  supported_languages: string[];
-  default_language: string;
-  telegram_community: string;
-  created_at: string;
-  // Global Banner
-  global_banner_enabled?: boolean;
-  global_banner_text?: string;
-  // Maintenance
-  maintenance_message?: string;
-  // Legacy fields for SettingsPage compatibility
-  registrations_open?: boolean;
-  referral_enabled?: boolean;
-  referral_invite_limit?: number;
-  default_member_status?: string;
-  id?: number;
-  updated_at?: string;
-  updated_by?: string | null;
-};
+import { useState, useEffect } from 'react';
+import { supabase } from './supabase';
 
+interface AppSettings {
+  maintenance_mode?: boolean;
+  version?: string;
+  app_name?: string;
+  registration_enabled?: boolean;
+  verification_enabled?: boolean;
+  [key: string]: any;
+}
+
+// Cache and deduplication state
 let cache: AppSettings | null = null;
 let cacheAt = 0;
-let inFlight: Promise<AppSettings | null> | null = null;
+let inFlight: Promise<AppSettings> | null = null;
 
 const TTL_MS = 5 * 60 * 1000; // 5 minutes
+const DEFAULT_SETTINGS: AppSettings = {
+  maintenance_mode: false,
+  version: '1.0.0',
+  app_name: 'TPC Global',
+  registration_enabled: true,
+  verification_enabled: true,
+};
 
-export async function fetchAppSettings(force = false): Promise<AppSettings | null> {
+/**
+ * Fetch app settings with caching and deduplication
+ * Never throws, always returns safe defaults
+ */
+export async function fetchAppSettings(force = false): Promise<AppSettings> {
   const now = Date.now();
 
+  // Return cached data if valid and not forced
   if (!force && cache && now - cacheAt < TTL_MS) {
     return cache;
   }
 
+  // Return existing in-flight promise to prevent duplicate requests
   if (!force && inFlight) {
     return inFlight;
   }
 
+  // Create new fetch promise
   inFlight = (async () => {
     try {
-      // Use safe getAppSettings with fallback
-      const settings = await getAppSettings();
+      console.log('🔧 [fetchAppSettings] Fetching from RPC...');
       
-      // Convert to AppSettings format
-      cache = {
-        app_name: settings.app_name || 'TPC Global',
-        app_version: settings.version || '1.0.0',
-        maintenance_mode: settings.maintenance_mode === 'true',
-        registration_enabled: true,
-        verification_enabled: true,
-        max_upload_size_mb: 10,
-        supported_languages: ['en', 'id'],
-        default_language: 'en',
-        telegram_community: 'https://t.me/tpcglobal',
-        created_at: new Date().toISOString(),
-        registrations_open: true,
-        referral_enabled: true,
-        referral_invite_limit: 10,
-        default_member_status: 'ACTIVE',
-      };
+      const { data, error } = await supabase.rpc('get_app_settings');
       
+      if (error) {
+        console.warn('⚠️ [fetchAppSettings] RPC failed:', {
+          message: error.message,
+          code: error.code,
+          details: error.details
+        });
+        
+        // Return default settings on any error
+        cache = DEFAULT_SETTINGS;
+        cacheAt = now;
+        return DEFAULT_SETTINGS;
+      }
+
+      if (!data) {
+        console.warn('⚠️ [fetchAppSettings] No data returned');
+        cache = DEFAULT_SETTINGS;
+        cacheAt = now;
+        return DEFAULT_SETTINGS;
+      }
+
+      // Parse and cache the result
+      const settings = typeof data === 'object' ? data : DEFAULT_SETTINGS;
+      cache = { ...DEFAULT_SETTINGS, ...settings };
       cacheAt = now;
+      
+      console.log('✅ [fetchAppSettings] Settings loaded:', cache);
       return cache;
-    } catch (error: any) {
-      console.error('Failed to fetch app settings:', error);
       
-      // Return fallback settings
-      cache = {
-        app_name: 'TPC Global',
-        app_version: '1.0.0',
-        maintenance_mode: false,
-        registration_enabled: true,
-        verification_enabled: true,
-        max_upload_size_mb: 10,
-        supported_languages: ['en', 'id'],
-        default_language: 'en',
-        telegram_community: 'https://t.me/tpcglobal',
-        created_at: new Date().toISOString(),
-        registrations_open: true,
-        referral_enabled: true,
-        referral_invite_limit: 10,
-        default_member_status: 'ACTIVE',
-      };
+    } catch (err: any) {
+      console.error('❌ [fetchAppSettings] Exception:', {
+        message: err.message,
+        stack: err.stack
+      });
       
+      // Always return safe defaults on exceptions
+      cache = DEFAULT_SETTINGS;
       cacheAt = now;
-      return cache;
+      return DEFAULT_SETTINGS;
     } finally {
       inFlight = null;
     }
   })();
 
-  try {
-    return await inFlight;
-  } finally {
-    inFlight = null;
-  }
+  return inFlight!;
+}
+
+/**
+ * Get cached settings without fetching
+ */
+export function getCachedSettings(): AppSettings | null {
+  return cache;
+}
+
+/**
+ * Clear settings cache
+ */
+export function clearSettingsCache(): void {
+  cache = null;
+  cacheAt = 0;
+  inFlight = null;
+}
+
+/**
+ * Check if maintenance mode is enabled
+ */
+export function isMaintenanceMode(): boolean {
+  return cache?.maintenance_mode === true;
+}
+
+/**
+ * Get app version
+ */
+export function getAppVersion(): string {
+  return cache?.version || DEFAULT_SETTINGS.version || '1.0.0';
+}
+
+/**
+ * React hook for app settings
+ */
+export function useAppSettings(force = false): AppSettings {
+  const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
+  const [, setLoading] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadSettings() {
+      setLoading(true);
+      try {
+        const result = await fetchAppSettings(force);
+        if (mounted) {
+          setSettings(result);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadSettings();
+
+    return () => {
+      mounted = false;
+    };
+  }, [force]);
+
+  return settings;
 }
