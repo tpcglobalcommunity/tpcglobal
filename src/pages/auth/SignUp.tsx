@@ -3,13 +3,12 @@ import { supabase } from "../../lib/supabase";
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import { useI18n } from "../../i18n";
 import { getAppSettings, type AppSettings } from "../../lib/settings";
-import { useAuthError } from "../../hooks/useAuthError";
 import RegistrationsClosedPage from "../system/RegistrationsClosedPage";
 
 type ReferralStatus = "idle" | "checking" | "valid" | "invalid";
 
 export default function SignUp() {
-  const { t } = useI18n();
+  const { t, language: lang } = useI18n();
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [settingsErr, setSettingsErr] = useState<string | null>(null);
 
@@ -170,7 +169,15 @@ export default function SignUp() {
 
   return (
     <div className="max-w-md mx-auto p-6 text-white">
-      <h2 className="text-2xl font-bold mb-2 text-center">{t("auth.signup.title") || "Create Account"}</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-bold">{t("auth.signup.title") || "Create Account"}</h2>
+        <button
+          onClick={() => window.location.href = `/${lang}`}
+          className="text-sm text-white/60 hover:text-white transition-colors"
+        >
+          {t("signup.backToHome") || "← Back to Home"}
+        </button>
+      </div>
       <div className="text-center text-xs text-[#F0B90B] mb-6">BUILD: SIGNUP_MINIMAL_V3</div>
 
       <form onSubmit={onSubmit} className="space-y-4">
@@ -311,6 +318,16 @@ export default function SignUp() {
 
         <div className="text-center text-sm text-white/60">
           {t("auth.signup.inviteOnly") || "Invite-only. Referral required."}
+        </div>
+
+        <div className="text-center text-sm text-white/60 mt-4">
+          {t("signup.alreadyHaveAccount") || "Already have an account?"}{" "}
+          <a 
+            href={`/${lang}/signin`}
+            className="text-[#F0B90B] hover:text-[#F0B90B]/80 transition-colors font-medium"
+          >
+            {t("signup.signIn") || "Sign In"}
+          </a>
         </div>
       </form>
     </div>
