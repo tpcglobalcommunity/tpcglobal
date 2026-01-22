@@ -69,6 +69,15 @@ export default function SignIn({ lang, next }: SignInProps) {
       </div>
 
       <div className="rounded-2xl border-[#F0B90B]/20 bg-[#F0B90B]/8 p-4 mb-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold">{t("auth.signIn.title") || "Sign In"}</h2>
+          <button
+            onClick={() => window.location.href = `/${lang}`}
+            className="text-sm text-white/60 hover:text-white transition-colors"
+          >
+            {t("signup.backToHome") || "← Back to Home"}
+          </button>
+        </div>
         <div className="text-sm font-semibold text-white mb-1">
           {t("auth.signin.noticeTitle")}
         </div>
