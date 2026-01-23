@@ -19,6 +19,7 @@ export default function SignUp() {
   const [settings, setSettings] = useState<any | null>(null);
   const [settingsErr, setSettingsErr] = useState<string | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [buildProbe, setBuildProbe] = useState<any>(null);
 
   // Guard: Redirect authenticated users away from signup
   useEffect(() => {
@@ -121,6 +122,25 @@ export default function SignUp() {
   const isEmailValid = useMemo(() => {
     return emailRegex.test(emailTrim);
   }, [emailTrim]);
+
+  // Fetch build probe for deploy verification
+  useEffect(() => {
+    const fetchBuildProbe = async () => {
+      try {
+        const response = await fetch(`/__build_probe__.json?ts=${Date.now()}`);
+        if (response.ok) {
+          const data = await response.json();
+          setBuildProbe(data);
+        } else {
+          setBuildProbe({ error: "not found" });
+        }
+      } catch (err) {
+        setBuildProbe({ error: "fetch failed" });
+      }
+    };
+
+    fetchBuildProbe();
+  }, []);
 
   const isPasswordValid = useMemo(() => {
     return password.length >= 8;
@@ -642,6 +662,16 @@ export default function SignUp() {
           <div className="text-center mt-2">
             <span className="text-white/10 text-xs">
               Build: {BUILD_ID}
+            </span>
+          </div>
+          
+          {/* Build Probe for deploy verification */}
+          <div className="text-center mt-1">
+            <span className="text-white/5 text-xs">
+              PROBE: {buildProbe 
+                ? `${buildProbe.probe} | TS: ${buildProbe.ts}` 
+                : buildProbe?.error || "loading..."
+              }
             </span>
           </div>
         </div>

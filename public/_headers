@@ -25,6 +25,10 @@
 /id/*
   Cache-Control: no-store
 
+# Build probe - no cache for deploy verification
+/__build_probe__.json
+  Cache-Control: no-store
+
 # Static assets with hash - long-term cache
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
