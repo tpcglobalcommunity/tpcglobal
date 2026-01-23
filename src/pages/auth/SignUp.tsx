@@ -6,6 +6,7 @@ import { supabase } from "../../lib/supabase";
 import { getAppSettings } from "../../lib/appSettings";
 import { buildAuthRedirect } from "../../lib/authRedirect";
 import { ensureLangPath } from "../../utils/langPath";
+import { devLog } from "../../utils/devLog";
 import RegistrationsClosedPage from "../system/RegistrationsClosedPage";
 
 type ReferralStatus = "idle" | "checking" | "valid" | "invalid";
@@ -64,7 +65,7 @@ export default function SignUp() {
         setSettingsErr(null);
         const s = await getAppSettings(supabase);
         if (!alive) return;
-        console.log("[APP_SETTINGS]", s);
+        devLog("[APP_SETTINGS]", s);
         setSettings(s);
       } catch (err) {
         if (!alive) return;
@@ -110,7 +111,7 @@ export default function SignUp() {
     if (settings) {
       const DEBUG = import.meta.env.DEV && localStorage.getItem("tpc_debug") === "1";
       if (DEBUG) {
-        console.log("[SIGNUP_SETTINGS_FINAL]", { 
+        devLog("[SIGNUP_SETTINGS_FINAL]", { 
           maintenance: settings?.maintenance_mode, 
           referralEnabled: settings?.referral_enabled,
           registrationsOpen: settings?.registrations_open
@@ -127,7 +128,7 @@ export default function SignUp() {
   useEffect(() => {
     const DEBUG = import.meta.env.DEV && localStorage.getItem("tpc_debug") === "1";
     if (DEBUG) {
-      console.log("[REFERRAL_DEBUG]", {
+      devLog("[REFERRAL_DEBUG]", {
         referralCode,
         code,
         refStatus,
@@ -200,7 +201,7 @@ export default function SignUp() {
 
         const DEBUG = import.meta.env.DEV && localStorage.getItem("tpc_debug") === "1";
         if (DEBUG) {
-          console.log("[REFERRAL_RPC_CALL]", { 
+          devLog("[REFERRAL_RPC_CALL]", { 
             referralCode: referralCode.trim(), 
             p_code: code 
           });
@@ -211,11 +212,11 @@ export default function SignUp() {
         });
 
         if (DEBUG) {
-          console.log("[REFERRAL_RPC_RESULT]", { code, data, refErr });
+          devLog("[REFERRAL_RPC_RESULT]", { code, data, error: refErr });
         }
 
         if (refErr) {
-          console.error("Referral RPC error:", refErr);
+          devLog("Referral RPC error:", refErr);
           setRefStatus("invalid");
           setRefMessage(t("auth.signup.referralError") ?? "Failed to validate referral code");
           return;

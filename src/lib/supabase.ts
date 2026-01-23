@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { devLog } from '../utils/devLog';
 
 // Get environment variables ONLY from ENV
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -7,7 +8,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 // Debug logs only in development with debug flag
 const DEBUG = import.meta.env.DEV && localStorage.getItem("tpc_debug") === "1";
 if (DEBUG) {
-  console.log('🔧 Supabase Config:', {
+  devLog(' Supabase Config:', {
     url: supabaseUrl,
     hasKey: !!supabaseAnonKey,
     configured: !!(supabaseUrl && supabaseAnonKey)
@@ -16,7 +17,7 @@ if (DEBUG) {
 
 // Validate environment variables - BLOCK DEPLOYMENT IF MISSING
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('❌ Missing Supabase environment variables. Please check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
+  throw new Error(' Missing Supabase environment variables. Please check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
 }
 
 // Create Supabase client from environment variables ONLY - SINGLETON
@@ -188,12 +189,12 @@ export interface NewsPostDetail {
 
 export const validateReferralCode = async (code: string): Promise<boolean> => {
   if (!code || code.trim() === '') {
-    console.log('[validateReferralCode] Empty code');
+    devLog('[validateReferralCode] Empty code');
     return false;
   }
 
   const trimmedCode = code.trim().toUpperCase();
-  console.log('[validateReferralCode] Starting validation for:', trimmedCode);
+  devLog('[validateReferralCode] Starting validation for:', trimmedCode);
 
   try {
     const startTime = Date.now();
@@ -203,8 +204,8 @@ export const validateReferralCode = async (code: string): Promise<boolean> => {
     });
 
     const elapsed = Date.now() - startTime;
-    console.log('[validateReferralCode] Request completed in', elapsed, 'ms');
-    console.log('[validateReferralCode] Raw response:', { data, error });
+    devLog('[validateReferralCode] Request completed in', elapsed, 'ms');
+    devLog('[validateReferralCode] Raw response:', { data, error });
 
     if (error) {
       console.error('[validateReferralCode] RPC Error:', {
@@ -217,7 +218,7 @@ export const validateReferralCode = async (code: string): Promise<boolean> => {
     }
 
     const isValid = data === true;
-    console.log('[validateReferralCode] Is valid:', isValid);
+    devLog('[validateReferralCode] Is valid:', isValid);
 
     return isValid;
   } catch (err: any) {
