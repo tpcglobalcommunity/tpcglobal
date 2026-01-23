@@ -64,7 +64,7 @@ function getNestedTranslation(obj: any, path: string): string {
     return result;
   }
   
-  // Fallback: humanize the key
+  // Fallback ke humanized key (untuk backward compatibility)
   return path
     .split('.')
     .pop()!
@@ -75,11 +75,26 @@ function getNestedTranslation(obj: any, path: string): string {
 
 export const useI18n = (lang?: Language) => {
   const detectedLang = lang || getLanguageFromPath(window.location.pathname);
-  const translations = useTranslations(detectedLang);
+  const currentTranslations = useTranslations(detectedLang);
+  const enTranslations = translations.en; // Fallback ke EN
+  
   const t = (key: string, fallback?: string) => {
-    const value = getNestedTranslation(translations, key);
-    return value ?? fallback ?? key;
+    // Coba di current language
+    const result = getNestedTranslation(currentTranslations, key);
+    if (result !== undefined && result !== null && typeof result === 'string') {
+      return result;
+    }
+    
+    // Fallback ke EN
+    const enResult = getNestedTranslation(enTranslations, key);
+    if (enResult !== undefined && enResult !== null && typeof enResult === 'string') {
+      return enResult;
+    }
+    
+    // Last fallback
+    return fallback ?? key;
   };
+  
   return { t, language: detectedLang };
 };
 
