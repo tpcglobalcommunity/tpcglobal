@@ -53,7 +53,20 @@ export const useLanguage = () => {
   const t = useTranslations(language);
   const translate = (key: string, fallback?: string) => {
     const value = getNestedTranslation(t, key);
-    return value !== null ? value : fallback;
+    if (value !== null && value !== undefined && value !== "") {
+      return value;
+    }
+    
+    // Key is missing or empty - show visible fallback
+    const missingKey = `[${language}] ${key}`;
+    
+    // Log warning once per missing key
+    if (!missingKeys.has(key)) {
+      missingKeys.add(key);
+      console.warn(`Missing translation key: ${key} for language: ${language}`);
+    }
+    
+    return fallback || missingKey;
   };
   return { language, t: translate };
 };
@@ -68,6 +81,9 @@ function getNestedTranslation(obj: any, path: string): string | null {
   return null;
 }
 
+// Track missing keys to avoid duplicate warnings
+const missingKeys = new Set<string>();
+
 export const useI18n = (lang?: Language) => {
   const detectedLang = lang || getLanguageFromPath(window.location.pathname);
   const currentTranslations = useTranslations(detectedLang);
@@ -76,19 +92,27 @@ export const useI18n = (lang?: Language) => {
   const t = (key: string, fallback?: string) => {
     // Coba di current language
     const result = getNestedTranslation(currentTranslations, key);
-    if (result !== null) {
+    if (result !== null && result !== undefined && result !== "") {
       return result;
     }
     
     // Fallback ke EN
     const enResult = getNestedTranslation(enTranslations, key);
-    if (enResult !== null) {
+    if (enResult !== null && enResult !== undefined && enResult !== "") {
       return enResult;
     }
     
-    // Last fallback - if no fallback provided, this will return undefined
-    // which will cause the UI to fail rather than show placeholder text
-    return fallback;
+    // Key is missing or empty - show visible fallback
+    const missingKey = `[${detectedLang}] ${key}`;
+    
+    // Log warning once per missing key
+    if (!missingKeys.has(key)) {
+      missingKeys.add(key);
+      console.warn(`Missing translation key: ${key} for language: ${detectedLang}`);
+    }
+    
+    // Return fallback if provided, otherwise the missing key indicator
+    return fallback || missingKey;
   };
   
   return { t, language: detectedLang };

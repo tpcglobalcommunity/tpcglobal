@@ -1128,7 +1128,7 @@ export const translations = {
         inviteOnlyTitle: "Invitation-only",
         inviteOnlyDesc: "Registration requires a valid invitation code.",
         referralLabel: "Invitation Code",
-        referralPlaceholder: "TPC-XXXXXX",
+        referralPlaceholder: "TPC-XXXXX",
         emailLabel: "Email",
         emailPlaceholder: "name@email.com",
         passwordLabel: "Password",
@@ -1141,10 +1141,10 @@ export const translations = {
         haveAccount: "Already have an account?",
         signIn: "Sign in",
         inviteCode: {
-          label: "Invitation Code",
+          label: "Invitation code",
           placeholder: "TPC-XXXXX",
           helper: "Enter your invitation code to continue",
-          checking: "Verifying...",
+          checking: "Checking...",
           valid: "Code verified",
           invalid: "Invalid code",
           invalidFormat: "Format: TPC-XXXXXX",
@@ -1152,25 +1152,25 @@ export const translations = {
         },
         username: {
           label: "Username",
-          placeholder: "johndoe",
+          placeholder: "Choose a username",
           helper: "3-20 characters: lowercase, numbers, underscore",
           required: "Username is required",
           invalid: "Invalid username format"
         },
         fullName: {
-          label: "Full Name",
-          placeholder: "John Doe",
+          label: "Full name",
+          placeholder: "Your full name",
           required: "Full name is required"
         },
         email: {
           label: "Email",
-          placeholder: "your@email.com",
+          placeholder: "name@email.com",
           required: "Email is required",
           invalid: "Invalid email format"
         },
         password: {
           label: "Password",
-          placeholder: "••••••••••",
+          placeholder: "Create a strong password",
           helper: "At least 8 characters",
           required: "Password is required",
           minLength: "Password must be at least 8 characters",
@@ -1178,7 +1178,7 @@ export const translations = {
         },
         confirmPassword: {
           label: "Confirm Password",
-          placeholder: "••••••••••"
+          placeholder: "Create a strong password"
         },
         loading: "Creating Account...",
         errors: {
@@ -1191,7 +1191,6 @@ export const translations = {
           checkEmail: "Please check your email to verify your account",
           sentTo: "Verification sent to:",
           openEmail: "Open Email App",
-          resend: "Resend Verification",
           goToSignIn: "Go to Sign In"
         }
       },
@@ -2951,17 +2950,17 @@ export const translations = {
         backToHome: "Kembali ke Beranda",
         alreadyHaveAccount: "Sudah punya akun?",
         createAccount: "Buat Akun",
-        title: "Buat akun TPC kita",
-        subtitle: "Akses khusus undangan. Masukkan kode untuk melanjutkan.",
+        title: "Buat akun TPC",
+        subtitle: "Akses hanya undangan. Masukkan kode untuk melanjutkan.",
         inviteOnlyTitle: "Khusus Undangan",
         inviteOnlyDesc: "Pendaftaran memerlukan kode undangan yang valid.",
-        referralLabel: "Kode Undangan",
-        referralPlaceholder: "TPC-XXXXXX",
+        referralLabel: "Kode undangan",
+        referralPlaceholder: "TPC-XXXXX",
         emailLabel: "Email",
         emailPlaceholder: "nama@email.com",
         passwordLabel: "Password",
         passwordPlaceholder: "Buat password yang kuat",
-        fullNameLabel: "Nama Lengkap",
+        fullNameLabel: "Nama lengkap",
         fullNamePlaceholder: "Nama lengkap kita",
         usernameLabel: "Username",
         usernamePlaceholder: "Buat username",
@@ -2969,10 +2968,10 @@ export const translations = {
         haveAccount: "Sudah punya akun?",
         signIn: "Masuk",
         inviteCode: {
-          label: "Kode Undangan",
-          placeholder: "TPC-XXXXXX",
+          label: "Kode undangan",
+          placeholder: "TPC-XXXXX",
           helper: "Masukkan kode undangan Anda untuk melanjutkan",
-          checking: "Memverifikasi...",
+          checking: "Memeriksa...",
           valid: "Kode diverifikasi",
           invalid: "Kode tidak valid",
           invalidFormat: "Format: TPC-XXXXXX",
@@ -2980,11 +2979,48 @@ export const translations = {
         },
         username: {
           label: "Username",
-          placeholder: "johndoe",
+          placeholder: "Buat username",
           helper: "3-20 karakter: huruf kecil, angka, underscore",
           required: "Username diperlukan",
           invalid: "Format username tidak valid"
         },
+        fullName: {
+          label: "Nama lengkap",
+          placeholder: "Nama lengkap kita",
+          required: "Nama lengkap diperlukan"
+        },
+        email: {
+          label: "Email",
+          placeholder: "nama@email.com",
+          required: "Email diperlukan",
+          invalid: "Format email tidak valid"
+        },
+        password: {
+          label: "Password",
+          placeholder: "Buat password yang kuat",
+          helper: "Minimal 8 karakter",
+          required: "Password diperlukan",
+          minLength: "Password minimal 8 karakter",
+          mismatch: "Password tidak cocok"
+        },
+        confirmPassword: {
+          label: "Konfirmasi Password",
+          placeholder: "Buat password yang kuat"
+        },
+        loading: "Membuat Akun...",
+        errors: {
+          generic: "Gagal membuat akun. Silakan coba lagi.",
+          inviteRequired: "Kode undangan diperlukan",
+          usernameInvalid: "Format username tidak valid"
+        },
+        success: {
+          title: "Akun berhasil dibuat",
+          checkEmail: "Silakan periksa email Anda untuk verifikasi akun",
+          sentTo: "Verifikasi dikirim ke:",
+          openEmail: "Buka Aplikasi Email",
+          goToSignIn: "Ke Halaman Masuk"
+        }
+      },
         fullName: {
           label: "Nama Lengkap",
           placeholder: "John Doe",
