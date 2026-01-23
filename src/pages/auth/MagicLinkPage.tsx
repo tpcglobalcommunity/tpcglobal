@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useI18n, type Language } from '../../i18n';
 import AuthShell from '../../components/auth/AuthShell';
-import { Loader2, CheckCircle2, XCircle, Key } from 'lucide-react';
+import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
 
 export default function MagicLinkPage({ lang }: { lang: Language }) {
   const { t } = useI18n(lang);
