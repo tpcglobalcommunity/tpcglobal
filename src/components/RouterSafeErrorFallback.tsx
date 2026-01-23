@@ -1,13 +1,9 @@
 import React from "react";
 
-type Props = { title?: string; message?: string };
+export default function RouterSafeErrorFallback() {
+  const reload = () => window.location.reload();
 
-export default function RouterSafeErrorFallback({
-  title = "Something went wrong",
-  message = "We encountered an unexpected error. Please try refreshing the page or return to the home page.",
-}: Props) {
   const goHome = () => {
-    // Always land on language root if present, else /
     const p = window.location.pathname || "/";
     const m = p.match(/^\/(en|id)(\/|$)/);
     const langRoot = m ? `/${m[1]}` : "/";
@@ -15,28 +11,30 @@ export default function RouterSafeErrorFallback({
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 16 }}>
-      <div style={{ width: "100%", maxWidth: 420, borderRadius: 18, border: "1px solid rgba(255,255,255,.12)", padding: 18 }}>
-        <div style={{ display: "grid", gap: 10, textAlign: "center" }}>
-          <div style={{ fontSize: 28, fontWeight: 800 }}>{title}</div>
-          <div style={{ opacity: 0.8, lineHeight: 1.5 }}>{message}</div>
+    <div className="min-h-screen grid place-items-center p-4 bg-black">
+      <div className="w-full max-w-[420px] rounded-2xl border border-white/10 bg-white/5 p-5">
+        <div className="text-center space-y-3">
+          <div className="text-3xl font-extrabold text-white">Something went wrong</div>
+          <div className="text-white/70 leading-relaxed">
+            We encountered an unexpected error. Please try refreshing the page or return to the home page.
+          </div>
 
-          <div style={{ display: "grid", gap: 10, marginTop: 14 }}>
+          <div className="grid gap-3 pt-3">
             <button
-              onClick={() => window.location.reload()}
-              style={{ height: 44, borderRadius: 12, border: "none", cursor: "pointer", fontWeight: 700 }}
+              onClick={reload}
+              className="h-11 rounded-xl bg-[#f0b90b] text-black font-bold"
             >
               Reload Page
             </button>
             <button
               onClick={goHome}
-              style={{ height: 44, borderRadius: 12, border: "1px solid rgba(255,255,255,.18)", background: "transparent", cursor: "pointer", fontWeight: 700 }}
+              className="h-11 rounded-xl border border-white/15 bg-transparent text-white font-bold"
             >
               Go Home
             </button>
           </div>
 
-          <div style={{ marginTop: 10, opacity: 0.6, fontSize: 12 }}>
+          <div className="pt-2 text-xs text-white/50">
             If this problem persists, please contact support or join our community.
           </div>
         </div>
