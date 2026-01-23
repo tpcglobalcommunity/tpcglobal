@@ -399,6 +399,15 @@ export default function SignUp() {
         </div>
       </div>
 
+      {/* BIG BUILD STAMP BANNER - Always Visible */}
+      <div className="sticky top-0 z-50 bg-black/90 backdrop-blur-sm border-b border-white/20 px-4 py-2">
+        <div className="text-center">
+          <span className="text-xs font-mono text-white/80 bg-black/50 px-3 py-1 rounded-full border border-white/10">
+            BUILD: {BUILD_ID} • LANG: {lang} • PATH: {typeof window !== 'undefined' ? window.location.pathname : 'loading...'}
+          </span>
+        </div>
+      </div>
+
       <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
