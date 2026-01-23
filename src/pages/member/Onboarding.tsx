@@ -130,16 +130,16 @@ export default function Onboarding() {
               to={`/${lang}`}
               className="text-sm text-white/60 hover:text-white transition-colors"
             >
-              ← {t("auth.backToHome") || "Back to Home"}
+              ← {t("auth.backToHome")}
             </Link>
           </div>
 
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
-              {t("onboarding.title") || "Complete Your Profile"}
+              {t("onboarding.title")}
             </h1>
             <p className="text-sm text-white/70">
-              {t("onboarding.subtitle") || "Tell us more about yourself to get started"}
+              {t("onboarding.subtitle")}
             </p>
           </div>
 
@@ -147,13 +147,13 @@ export default function Onboarding() {
             {/* Full Name */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                {t("onboarding.fullName") || "Full Name"} *
+                {t("onboarding.fullName")} *
               </label>
               <input
                 type="text"
                 value={formData.full_name}
                 onChange={(e) => handleInputChange("full_name", e.target.value)}
-                placeholder={t("onboarding.fullNamePlaceholder") || "John Doe"}
+                placeholder={t("onboarding.fullNamePlaceholder")}
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-[#F0B90B] text-white placeholder-white/50"
                 required
               />
@@ -162,13 +162,13 @@ export default function Onboarding() {
             {/* Phone */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                {t("onboarding.phone") || "Phone Number"} *
+                {t("onboarding.phone")} *
               </label>
               <input
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => handleInputChange("phone", e.target.value)}
-                placeholder={t("onboarding.phonePlaceholder") || "+62 812-3456-7890"}
+                placeholder={t("onboarding.phonePlaceholder")}
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-[#F0B90B] text-white placeholder-white/50"
                 required
               />
@@ -177,13 +177,13 @@ export default function Onboarding() {
             {/* Telegram */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                {t("onboarding.telegram") || "Telegram Username"}
+                {t("onboarding.telegram")}
               </label>
               <input
                 type="text"
                 value={formData.telegram}
                 onChange={(e) => handleInputChange("telegram", e.target.value)}
-                placeholder={t("onboarding.telegramPlaceholder") || "@username"}
+                placeholder={t("onboarding.telegramPlaceholder")}
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-[#F0B90B] text-white placeholder-white/50"
               />
             </div>
@@ -191,13 +191,13 @@ export default function Onboarding() {
             {/* City */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                {t("onboarding.city") || "City"} *
+                {t("onboarding.city")} *
               </label>
               <input
                 type="text"
                 value={formData.city}
                 onChange={(e) => handleInputChange("city", e.target.value)}
-                placeholder={t("onboarding.cityPlaceholder") || "Jakarta"}
+                placeholder={t("onboarding.cityPlaceholder")}
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:border-[#F0B90B] text-white placeholder-white/50"
                 required
               />
@@ -217,10 +217,10 @@ export default function Onboarding() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  {t("onboarding.saving") || "Saving..."}
+                  {t("onboarding.saving")}
                 </>
               ) : (
-                t("onboarding.completeProfile") || "Complete Profile"
+                t("onboarding.completeProfile")
               )}
             </button>
           </form>

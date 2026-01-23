@@ -53,24 +53,19 @@ export const useLanguage = () => {
   const t = useTranslations(language);
   const translate = (key: string, fallback?: string) => {
     const value = getNestedTranslation(t, key);
-    return value ?? fallback ?? key;
+    return value !== null ? value : fallback;
   };
   return { language, t: translate };
 };
 
-function getNestedTranslation(obj: any, path: string): string {
+function getNestedTranslation(obj: any, path: string): string | null {
   const result = path.split('.').reduce((acc, part) => acc?.[part], obj);
   if (result !== undefined && result !== null) {
     return result;
   }
   
-  // Fallback ke humanized key (untuk backward compatibility)
-  return path
-    .split('.')
-    .pop()!
-    .replace(/([A-Z])/g, ' $1')
-    .replace(/^./, str => str.toUpperCase())
-    .replace(/_/g, ' ');
+  // Return null instead of fallback to humanized key
+  return null;
 }
 
 export const useI18n = (lang?: Language) => {
@@ -81,18 +76,19 @@ export const useI18n = (lang?: Language) => {
   const t = (key: string, fallback?: string) => {
     // Coba di current language
     const result = getNestedTranslation(currentTranslations, key);
-    if (result !== undefined && result !== null && typeof result === 'string') {
+    if (result !== null) {
       return result;
     }
     
     // Fallback ke EN
     const enResult = getNestedTranslation(enTranslations, key);
-    if (enResult !== undefined && enResult !== null && typeof enResult === 'string') {
+    if (enResult !== null) {
       return enResult;
     }
     
-    // Last fallback
-    return fallback ?? key;
+    // Last fallback - if no fallback provided, this will return undefined
+    // which will cause the UI to fail rather than show placeholder text
+    return fallback;
   };
   
   return { t, language: detectedLang };

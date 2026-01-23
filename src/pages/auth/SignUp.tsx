@@ -201,7 +201,7 @@ export default function SignUp() {
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
 
     setRefStatus("checking");
-    setRefMessage(t("signup.inviteCode.checking"));
+    setRefMessage(t("signup.inviteCode.checking") || "Checking...");
 
     debounceRef.current = window.setTimeout(async () => {
       if (!alive) return;
@@ -220,7 +220,7 @@ export default function SignUp() {
         if (refErr) {
           devLog("Referral RPC error:", refErr);
           setRefStatus("invalid");
-          setRefMessage(t("signup.inviteCode.invalid"));
+          setRefMessage(t("signup.inviteCode.invalid") || "Invalid code");
           return;
         }
 
@@ -228,14 +228,14 @@ export default function SignUp() {
 
         setRefStatus(data === true ? "valid" : "invalid");
         setRefMessage(data === true 
-          ? t("signup.inviteCode.valid")
-          : t("signup.inviteCode.invalid")
+          ? t("signup.inviteCode.valid") || "Code verified"
+          : t("signup.inviteCode.invalid") || "Invalid code"
         );
       } catch {
         if (!alive) return;
         
         setRefStatus("invalid");
-        setRefMessage(t("signup.inviteCode.invalid"));
+        setRefMessage(t("signup.inviteCode.invalid") || "Invalid code");
       }
     }, 450);
 
@@ -298,7 +298,7 @@ export default function SignUp() {
       });
 
       if (signUpErr) {
-        setError(signUpErr?.message || t("signup.errors.generic"));
+        setError(signUpErr?.message || t("signup.errors.generic") || "Failed to create account");
         return;
       }
 
@@ -306,7 +306,7 @@ export default function SignUp() {
       setPassword("");
       setConfirmPassword("");
     } catch (err: any) {
-      setError(err?.message || t("signup.errors.generic"));
+      setError(err?.message || t("signup.errors.generic") || "Failed to create account");
     } finally {
       setIsSubmitting(false);
     }

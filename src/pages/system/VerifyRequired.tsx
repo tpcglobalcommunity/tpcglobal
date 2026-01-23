@@ -77,10 +77,10 @@ export default function VerifyRequired() {
               <Mail className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-white mb-3">
-              {t("verifyRequired.title") || "Check Your Email"}
+              {t("verifyRequired.title")}
             </h1>
             <p className="text-white/60 text-lg">
-              {t("verifyRequired.subtitle") || "We've sent a verification email to complete your registration"}
+              {t("verifyRequired.subtitle")}
             </p>
           </div>
 
@@ -89,13 +89,13 @@ export default function VerifyRequired() {
             {/* Email Input */}
             <div>
               <label className="block text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
-                {t("verifyRequired.emailLabel") || "Email Address"}
+                {t("verifyRequired.emailLabel")}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("verifyRequired.emailPlaceholder") || "your@email.com"}
+                placeholder={t("verifyRequired.emailPlaceholder")}
                 className="w-full h-12 rounded-xl bg-white/5 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/50 focus:border-transparent transition-all"
               />
             </div>
@@ -118,7 +118,7 @@ export default function VerifyRequired() {
                 className="w-full h-12 rounded-xl bg-gradient-to-r from-[#F0B90B] to-[#F8D568] text-black font-semibold hover:from-[#F0B90B]/90 hover:to-[#F8D568]/90 transition-all flex items-center justify-center gap-2"
               >
                 <Mail className="w-4 h-4" />
-                {t("verifyRequired.openEmail") || "Open Email App"}
+                {t("verifyRequired.openEmail")}
               </button>
               
               <button
@@ -129,12 +129,12 @@ export default function VerifyRequired() {
                 {isResending ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
-                    {t("verifyRequired.resending") || "Sending..."}
+                    {t("verifyRequired.resending")}
                   </>
                 ) : (
                   <>
                     <RefreshCw className="w-4 h-4" />
-                    {t("verifyRequired.resend") || "Resend Verification"}
+                    {t("verifyRequired.resend")}
                   </>
                 )}
               </button>
@@ -147,7 +147,7 @@ export default function VerifyRequired() {
                 className="w-full flex items-center justify-between text-white/70 hover:text-white transition-colors py-2"
               >
                 <span className="text-sm font-medium">
-                  {t("verifyRequired.emailTips") || "Email Tips"}
+                  {t("verifyRequired.emailTips")}
                 </span>
                 {showTips ? (
                   <ChevronUp className="w-4 h-4" />
@@ -160,19 +160,19 @@ export default function VerifyRequired() {
                 <div className="mt-4 space-y-3 text-sm text-white/60">
                   <div className="flex items-start gap-2">
                     <span className="text-[#F0B90B]">•</span>
-                    <span>{t("verifyRequired.tip1") || "Check your spam/junk folder"}</span>
+                    <span>{t("verifyRequired.tip1")}</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-[#F0B90B]">•</span>
-                    <span>{t("verifyRequired.tip2") || "Add noreply@tpcglobal.io to contacts"}</span>
+                    <span>{t("verifyRequired.tip2")}</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-[#F0B90B]">•</span>
-                    <span>{t("verifyRequired.tip3") || "Verification links expire in 24 hours"}</span>
+                    <span>{t("verifyRequired.tip3")}</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="text-[#F0B90B]">•</span>
-                    <span>{t("verifyRequired.tip4") || "Click link directly from email client"}</span>
+                    <span>{t("verifyRequired.tip4")}</span>
                   </div>
                 </div>
               )}
@@ -184,7 +184,7 @@ export default function VerifyRequired() {
                 to={ensureLangPath(lang, "/signin")}
                 className="text-white/60 hover:text-white/80 text-sm transition-colors"
               >
-                ← {t("verifyRequired.backToSignIn") || "Back to Sign In"}
+                ← {t("verifyRequired.backToSignIn")}
               </Link>
             </div>
           </div>
@@ -195,7 +195,7 @@ export default function VerifyRequired() {
               to={ensureLangPath(lang, "/")}
               className="text-white/40 hover:text-white/60 text-sm transition-colors"
             >
-              ← {t("common.backHome") || "Back to Home"}
+              ← {t("common.backHome")}
             </Link>
           </div>
         </div>
