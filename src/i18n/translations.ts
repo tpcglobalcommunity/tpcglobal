@@ -1124,7 +1124,7 @@
         alreadyHaveAccount: "Already have an account?",
         createAccount: "Create Account",
         title: "Create your TPC account",
-        subtitle: "Invitation-only access. Enter your code to continue.",
+        subtitle: "Join the community and access premium features.",
         inviteOnlyTitle: "Invitation-only",
         inviteOnlyDesc: "Registration requires a valid invitation code.",
         referralLabel: "Invitation Code",
@@ -1178,7 +1178,7 @@
         },
         confirmPassword: {
           label: "Confirm Password",
-          placeholder: "Create a strong password"
+          placeholder: "Repeat your password"
         },
         loading: "Creating Account...",
         errors: {
@@ -2950,7 +2950,7 @@
         alreadyHaveAccount: "Sudah punya akun?",
         createAccount: "Buat Akun",
         title: "Buat akun TPC",
-        subtitle: "Akses hanya undangan. Masukkan kode untuk melanjutkan.",
+        subtitle: "Bergabung dan akses fitur premium.",
         inviteOnlyTitle: "Khusus Undangan",
         inviteOnlyDesc: "Pendaftaran memerlukan kode undangan yang valid.",
         referralLabel: "Kode undangan",
@@ -3004,7 +3004,7 @@
         },
         confirmPassword: {
           label: "Konfirmasi Password",
-          placeholder: "Buat password yang kuat"
+          placeholder: "Ulangi password"
         },
         loading: "Membuat Akun...",
         errors: {
