@@ -362,7 +362,7 @@ export default function SignUp() {
                 : 'text-white/70 hover:text-white'
             }`}
           >
-            EN
+            {t("common.language.en")}
           </button>
           <button
             type="button"
@@ -373,7 +373,7 @@ export default function SignUp() {
                 : 'text-white/70 hover:text-white'
             }`}
           >
-            ID
+            {t("common.language.id")}
           </button>
         </div>
       </div>

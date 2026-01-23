@@ -1104,6 +1104,11 @@ export const translations = {
         or: 'or',
         backHome: 'Back to Home',
         backToSignIn: 'Back to Sign In',
+        loading: 'Loading...',
+        language: {
+          en: 'EN',
+          id: 'ID'
+        }
       },
       signout: 'Sign Out',
       signup: {
@@ -2915,6 +2920,11 @@ export const translations = {
         or: 'atau',
         backHome: 'Kembali ke Beranda',
         backToSignIn: 'Kembali ke Masuk',
+        loading: 'Memuat...',
+        language: {
+          en: 'EN',
+          id: 'ID'
+        }
       },
       signout: 'Keluar',
       signup: {
