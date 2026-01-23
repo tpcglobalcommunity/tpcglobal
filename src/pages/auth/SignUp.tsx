@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { useI18n } from "../../i18n";
-import { Link, useNavigate } from "../../components/Router";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { getAppSettings } from "../../lib/appSettings";
+import { buildAuthRedirect } from "../../lib/authRedirect";
 import { ensureLangPath } from "../../utils/langPath";
 import RegistrationsClosedPage from "../system/RegistrationsClosedPage";
 
@@ -257,6 +258,25 @@ export default function SignUp() {
     setError(null);
     setSuccessEmail(null);
 
+    // Honeypot check - block bots
+    const form = e.target as HTMLFormElement;
+    const honeypot = (form.elements.namedItem('company') as HTMLInputElement)?.value;
+    if (honeypot) {
+      setError(t("auth.signup.invalid") || "Invalid request");
+      return;
+    }
+
+    // Anti-spam throttle check
+    const lastAttempt = localStorage.getItem("tpc_signup_last_attempt");
+    const now = Date.now();
+    if (lastAttempt && (now - parseInt(lastAttempt)) < 20000) {
+      setError(t("auth.signup.tooFast") || "Too many attempts. Please wait a few seconds.");
+      return;
+    }
+
+    // Update last attempt time
+    localStorage.setItem("tpc_signup_last_attempt", now.toString());
+
     if (!canSubmit) {
       const msg = localValidateError ?? (t("auth.signup.completeForm") ?? "Please complete the form.");
       setError(msg);
@@ -279,7 +299,7 @@ export default function SignUp() {
         password,
         options: { 
           data: { username: uname, referral_code: code },
-          emailRedirectTo: `${window.location.origin}/${lang}/auth/callback`
+          emailRedirectTo: buildAuthRedirect(`/${lang}/auth/callback`)
         },
       });
 
@@ -364,6 +384,16 @@ export default function SignUp() {
             <div className="h-1 bg-gradient-to-r from-[#F0B90B] via-[#F8D568] to-[#F0B90B]" />
             
             <form onSubmit={onSubmit} noValidate className="p-8 space-y-6">
+              {/* Honeypot field for bot protection */}
+              <input
+                type="text"
+                name="company"
+                autoComplete="off"
+                tabIndex={-1}
+                className="absolute -left-[9999px] w-0 h-0 opacity-0"
+                aria-hidden="true"
+              />
+
               {/* Status Messages */}
               {settingsErr && (
                 <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-300 text-sm">
