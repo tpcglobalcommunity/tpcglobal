@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { ProfileData, getProfileWithNavigation } from "../types/profile";
 
@@ -10,9 +9,8 @@ export default function MemberGuard({
 }: {
   children: React.ReactNode;
 }) {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [, setProfile] = useState<ProfileData | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -25,7 +23,7 @@ export default function MemberGuard({
         } = await supabase.auth.getSession();
 
         if (!session) {
-          navigate("/signin", { replace: true });
+          window.location.replace("/signin");
           return;
         }
 
@@ -38,7 +36,7 @@ export default function MemberGuard({
 
         // 3) Routing tegas berdasarkan navigation route dari backend
         if (profileData.navigation_route !== window.location.pathname) {
-          navigate(profileData.navigation_route, { replace: true });
+          window.location.replace(profileData.navigation_route);
           return;
         }
 
@@ -52,7 +50,7 @@ export default function MemberGuard({
         
         // Auto logout jika error kritis
         await supabase.auth.signOut();
-        navigate("/signin", { replace: true });
+        window.location.replace("/signin");
       }
     }
 
@@ -61,7 +59,7 @@ export default function MemberGuard({
     return () => {
       mounted = false;
     };
-  }, [navigate]);
+  }, []);
 
   if (loading) {
     return (
@@ -86,7 +84,6 @@ export function AdminGuard({
 }: {
   children: React.ReactNode;
 }) {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -100,7 +97,7 @@ export function AdminGuard({
         } = await supabase.auth.getSession();
 
         if (!session) {
-          navigate("/signin", { replace: true });
+          window.location.replace("/signin");
           return;
         }
 
@@ -111,7 +108,7 @@ export function AdminGuard({
 
         // 3) Check admin access
         if (!profileData.can_access_admin) {
-          navigate(profileData.navigation_route, { replace: true });
+          window.location.replace(profileData.navigation_route);
           return;
         }
 
@@ -124,7 +121,7 @@ export function AdminGuard({
         if (!mounted) return;
         
         await supabase.auth.signOut();
-        navigate("/signin", { replace: true });
+        window.location.replace("/signin");
       }
     }
 
@@ -133,7 +130,7 @@ export function AdminGuard({
     return () => {
       mounted = false;
     };
-  }, [navigate]);
+  }, []);
 
   if (loading) {
     return (
@@ -158,7 +155,6 @@ export function AuthGuard({
 }: {
   children: React.ReactNode;
 }) {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -172,7 +168,7 @@ export function AuthGuard({
         } = await supabase.auth.getSession();
 
         if (!session) {
-          navigate("/signin", { replace: true });
+          window.location.replace("/signin");
           return;
         }
 
@@ -186,7 +182,7 @@ export function AuthGuard({
         
         if (!mounted) return;
         
-        navigate("/signin", { replace: true });
+        window.location.replace("/signin");
       }
     }
 
@@ -195,7 +191,7 @@ export function AuthGuard({
     return () => {
       mounted = false;
     };
-  }, [navigate]);
+  }, []);
 
   if (loading) {
     return (
@@ -222,7 +218,6 @@ export function PublicGuard({
   children: React.ReactNode;
   redirectTo?: string;
 }) {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -242,11 +237,11 @@ export function PublicGuard({
             
             if (!mounted) return;
             
-            navigate(profileData.navigation_route, { replace: true });
+            window.location.replace(profileData.navigation_route);
           } catch {
             // Fallback ke default redirect
             if (!mounted) return;
-            navigate(redirectTo, { replace: true });
+            window.location.replace(redirectTo);
           }
           return;
         }
@@ -271,7 +266,7 @@ export function PublicGuard({
     return () => {
       mounted = false;
     };
-  }, [navigate, redirectTo]);
+  }, []);
 
   if (loading) {
     return (
