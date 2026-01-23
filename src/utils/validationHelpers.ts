@@ -1,4 +1,45 @@
 // =========================================================
+// ENVIRONMENT VALIDATION
+// =========================================================
+
+/**
+ * Validate Supabase environment variables
+ */
+export function validateSupabaseEnv(): {
+  isValid: boolean;
+  error: string | null;
+  env: {
+    url: string | undefined;
+    anonKey: string | undefined;
+  };
+} {
+  const url = import.meta.env.VITE_SUPABASE_URL;
+  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+  if (!url || !anonKey) {
+    const DEBUG = import.meta.env.DEV && localStorage.getItem("tpc_debug") === "1";
+    if (DEBUG) {
+      console.error('[ENV ERROR]', {
+        url: url || 'MISSING',
+        anon: anonKey ? 'OK' : 'MISSING',
+      });
+    }
+    
+    return {
+      isValid: false,
+      error: 'Missing Supabase environment variables',
+      env: { url, anonKey }
+    };
+  }
+
+  return {
+    isValid: true,
+    error: null,
+    env: { url, anonKey }
+  };
+}
+
+// =========================================================
 // USERNAME VALIDATION HELPERS
 // Regex patterns dan validation functions untuk username
 // =========================================================
