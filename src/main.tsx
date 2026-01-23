@@ -13,13 +13,14 @@ setupChunkRecovery();
 // Clear chunk reload flag on successful load
 clearChunkReloadFlag();
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {
-      // Service worker registration failed, continue without it
-    });
-  });
-}
+// TEMPORARILY DISABLED: Service Worker causing caching issues during development
+// if ('serviceWorker' in navigator) {
+//   window.addEventListener('load', () => {
+//     navigator.serviceWorker.register('/sw.js').catch(() => {
+//       // Service worker registration failed, continue without it
+//     });
+//   });
+// }
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
