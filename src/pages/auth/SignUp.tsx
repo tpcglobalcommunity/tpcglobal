@@ -23,6 +23,11 @@ export default function SignUp() {
 
     (async () => {
       try {
+        if (!supabase) {
+          console.error('Supabase client not available');
+          return;
+        }
+
         const { data, error } = await supabase.auth.getSession();
         if (!alive) return;
         if (error) throw error;
@@ -53,6 +58,7 @@ export default function SignUp() {
 
   useEffect(() => {
     let alive = true;
+
     (async () => {
       try {
         setSettingsErr(null);
@@ -60,12 +66,13 @@ export default function SignUp() {
         if (!alive) return;
         console.log("[APP_SETTINGS]", s);
         setSettings(s);
-      } catch (e: any) {
+      } catch (err) {
         if (!alive) return;
-        setSettingsErr(e?.message || null);
-        setSettings(null);
+        console.error('Failed to load settings:', err);
+        setSettingsErr('Failed to load settings');
       }
     })();
+
     return () => {
       alive = false;
     };
