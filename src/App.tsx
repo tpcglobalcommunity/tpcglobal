@@ -225,6 +225,8 @@ function App() {
       case '/support':
         return <Support lang={lang} />;
       case '/signup':
+      case '/en/signup':
+      case '/id/signup':
         return <SignUp />;
       case '/signin':
         return <SignIn />;
