@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, Mail, User, Lock, Shield } from "lucide-react";
 import { useI18n } from "../../i18n";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
@@ -7,6 +7,7 @@ import { getAppSettings } from "../../lib/appSettings";
 import { buildAuthRedirect } from "../../lib/authRedirect";
 import { ensureLangPath } from "../../utils/langPath";
 import { devLog } from "../../utils/devLog";
+import { normalizeInviteCode, isInviteCodeFormatValid } from "../../utils/inviteCode";
 import RegistrationsClosedPage from "../system/RegistrationsClosedPage";
 
 type ReferralStatus = "idle" | "checking" | "valid" | "invalid";
@@ -79,15 +80,16 @@ export default function SignUp() {
     };
   }, []);
 
-  const [referralCode, setReferralCode] = useState("");
+  // Form state
+  const [inviteCode, setInviteCode] = useState("");
   const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [refStatus, setRefStatus] = useState<ReferralStatus>("idle");
   const [refMessage, setRefMessage] = useState<string | null>(null);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successEmail, setSuccessEmail] = useState<string | null>(null);
@@ -95,71 +97,60 @@ export default function SignUp() {
   const debounceRef = useRef<number | null>(null);
   const lastCheckedRef = useRef<string>("");
 
-  const code = useMemo(() => referralCode.trim().toUpperCase(), [referralCode]);
+  // Computed values
+  const code = useMemo(() => normalizeInviteCode(inviteCode), [inviteCode]);
   const uname = useMemo(() => username.trim().toLowerCase(), [username]);
   const emailTrim = useMemo(() => email.trim(), [email]);
 
-  // NOTE: sesuai UI hint kamu: underscore saja (tanpa titik)
   const usernameRegex = /^[a-z0-9_]{3,20}$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const referralEnabled = settings?.referral_enabled ?? true;
   const maintenance = settings?.maintenance_mode === true;
   const registrationsOpen = settings?.registrations_open ?? true;
 
-  // Debug log untuk membuktikan nilai FINAL
-  useEffect(() => {
-    if (settings) {
-      const DEBUG = import.meta.env.DEV && localStorage.getItem("tpc_debug") === "1";
-      if (DEBUG) {
-        devLog("[SIGNUP_SETTINGS_FINAL]", { 
-          maintenance: settings?.maintenance_mode, 
-          referralEnabled: settings?.referral_enabled,
-          registrationsOpen: settings?.registrations_open
-        });
-      }
-    }
-  }, [settings]);
+  // Validation helpers
+  const isInviteFormatValid = useMemo(() => {
+    return !referralEnabled || isInviteCodeFormatValid(code);
+  }, [code, referralEnabled]);
 
-  // Helper for referral format validation
-  const isReferralFormatReady = (code: string) => 
-    /^TPC-[A-Z0-9]{6,10}$/.test(code) || code === "TPC-BOOT01";
+  const isUsernameValid = useMemo(() => {
+    return usernameRegex.test(uname);
+  }, [uname]);
 
-  // Debug: Log referral validation state
-  useEffect(() => {
-    const DEBUG = import.meta.env.DEV && localStorage.getItem("tpc_debug") === "1";
-    if (DEBUG) {
-      devLog("[REFERRAL_DEBUG]", {
-        referralCode,
-        code,
-        refStatus,
-        isFormatReady: isReferralFormatReady(code),
-        referralEnabled
-      });
-    }
-  }, [referralCode, code, refStatus, referralEnabled]);
+  const isEmailValid = useMemo(() => {
+    return emailRegex.test(emailTrim);
+  }, [emailTrim]);
 
-  // Computed values (hooks) - ALL AT TOP LEVEL
-  const localValidateError = useMemo(() => {
-    if (referralEnabled) {
-      if (!code) return t("auth.signup.referralRequired") ?? "Referral code is required.";
-      if (refStatus === "checking") return t("auth.signup.referralChecking") ?? "Checking referral code...";
-      if (refStatus === "invalid") return t("auth.signup.referralInvalid") ?? "Invalid referral code.";
-    }
-    if (!uname) return t("auth.signup.usernameRequired") ?? "Username is required.";
-    if (!usernameRegex.test(uname))
-      return t("auth.signup.usernameRules") ?? "3–20 chars: lowercase letters, numbers, underscore.";
-    if (!emailTrim) return t("auth.signup.emailRequired") ?? "Email is required.";
-    if (password.length < 8) return t("auth.signup.passwordMinLength") ?? "Password must be at least 8 characters.";
-    if (password !== confirmPassword) return t("auth.signup.passwordMismatch") ?? "Passwords do not match.";
-    return null;
-  }, [code, refStatus, uname, emailTrim, password, confirmPassword, t, referralEnabled]);
+  const isPasswordValid = useMemo(() => {
+    return password.length >= 8;
+  }, [password]);
+
+  const isPasswordMatch = useMemo(() => {
+    return password === confirmPassword;
+  }, [password, confirmPassword]);
 
   const canSubmit = useMemo(() => {
-    const referralOk = referralEnabled ? refStatus === "valid" : true;
-    return !isSubmitting && referralOk && !localValidateError;
-  }, [isSubmitting, refStatus, localValidateError, referralEnabled]);
+    const inviteOk = referralEnabled ? refStatus === "valid" : true;
+    return (
+      !isSubmitting &&
+      inviteOk &&
+      isUsernameValid &&
+      isEmailValid &&
+      isPasswordValid &&
+      isPasswordMatch
+    );
+  }, [
+    isSubmitting,
+    refStatus,
+    referralEnabled,
+    isUsernameValid,
+    isEmailValid,
+    isPasswordValid,
+    isPasswordMatch,
+  ]);
 
-  // Referral validation (debounced, NO LOOP) - HOOK AT TOP LEVEL
+  // Referral validation (debounced)
   useEffect(() => {
     let alive = true;
 
@@ -179,8 +170,7 @@ export default function SignUp() {
       return;
     }
 
-    // Check format before validating
-    if (!isReferralFormatReady(code)) {
+    if (!isInviteFormatValid) {
       setRefStatus("idle");
       setRefMessage(null);
       return;
@@ -191,7 +181,7 @@ export default function SignUp() {
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
 
     setRefStatus("checking");
-    setRefMessage(t("auth.signup.referralChecking") ?? "Checking referral code...");
+    setRefMessage(t("signup.inviteCode.checking"));
 
     debounceRef.current = window.setTimeout(async () => {
       if (!alive) return;
@@ -199,26 +189,18 @@ export default function SignUp() {
       try {
         lastCheckedRef.current = code;
 
-        const DEBUG = import.meta.env.DEV && localStorage.getItem("tpc_debug") === "1";
-        if (DEBUG) {
-          devLog("[REFERRAL_RPC_CALL]", { 
-            referralCode: referralCode.trim(), 
-            p_code: code 
-          });
-        }
+        devLog("[REFERRAL_RPC_CALL]", { code });
 
         const { data, error: refErr } = await supabase.rpc("validate_referral_code_public", {
           p_code: code,
         });
 
-        if (DEBUG) {
-          devLog("[REFERRAL_RPC_RESULT]", { code, data, error: refErr });
-        }
+        devLog("[REFERRAL_RPC_RESULT]", { code, data, error: refErr });
 
         if (refErr) {
           devLog("Referral RPC error:", refErr);
           setRefStatus("invalid");
-          setRefMessage(t("auth.signup.referralError") ?? "Failed to validate referral code");
+          setRefMessage(t("signup.inviteCode.invalid"));
           return;
         }
 
@@ -226,23 +208,23 @@ export default function SignUp() {
 
         setRefStatus(data === true ? "valid" : "invalid");
         setRefMessage(data === true 
-          ? (t("auth.signup.referralValid") ?? "Referral valid")
-          : (t("auth.signup.referralInvalid") ?? "Referral code tidak valid")
+          ? t("signup.inviteCode.valid")
+          : t("signup.inviteCode.invalid")
         );
       } catch {
         if (!alive) return;
         
         setRefStatus("invalid");
-        setRefMessage(t("auth.signup.referralError") || "Failed to validate referral code");
+        setRefMessage(t("signup.inviteCode.invalid"));
       }
-    }, 500);
+    }, 450);
 
     return () => {
       alive = false;
       if (debounceRef.current) window.clearTimeout(debounceRef.current);
       debounceRef.current = null;
     };
-  }, [code, t, referralEnabled]);
+  }, [code, t, referralEnabled, isInviteFormatValid]);
 
   // Conditional rendering logic - NO HOOKS AFTER THIS POINT
   if (!settings || isRedirecting) {
@@ -266,70 +248,46 @@ export default function SignUp() {
     setError(null);
     setSuccessEmail(null);
 
-    // Honeypot check - block bots
-    const form = e.target as HTMLFormElement;
-    const honeypot = (form.elements.namedItem('company') as HTMLInputElement)?.value;
-    if (honeypot) {
-      setError(t("auth.signup.invalid") || "Invalid request");
-      return;
-    }
-
-    // Anti-spam throttle check
-    const lastAttempt = localStorage.getItem("tpc_signup_last_attempt");
-    const now = Date.now();
-    if (lastAttempt && (now - parseInt(lastAttempt)) < 20000) {
-      setError(t("auth.signup.tooFast") || "Too many attempts. Please wait a few seconds.");
-      return;
-    }
-
-    // Update last attempt time
-    localStorage.setItem("tpc_signup_last_attempt", now.toString());
-
     if (!canSubmit) {
-      const msg = localValidateError ?? (t("auth.signup.completeForm") ?? "Please complete the form.");
-      setError(msg);
+      const errors = [];
+      if (referralEnabled && refStatus !== "valid") errors.push(t("signup.errors.inviteRequired"));
+      if (!isUsernameValid) errors.push(t("signup.errors.usernameInvalid"));
+      if (!isEmailValid) errors.push(t("signup.email.invalid"));
+      if (!isPasswordValid) errors.push(t("signup.password.minLength"));
+      if (!isPasswordMatch) errors.push(t("signup.password.mismatch"));
+      
+      setError(errors.join(". "));
       return;
     }
 
     setIsSubmitting(true);
     try {
-      // Skip referral validation if referral is disabled
       if (referralEnabled) {
-        // Final guard: validate referral again
         const { data: valid, error: refErr } = await supabase.rpc("validate_referral_code_public", {
           p_code: code,
         });
-        if (refErr || valid !== true) throw new Error(t("auth.signup.referralInvalid") ?? "Invalid referral code.");
+        if (refErr || valid !== true) throw new Error(t("signup.inviteCode.invalid"));
       }
 
       const { data, error: signUpErr } = await supabase.auth.signUp({
         email: emailTrim,
         password,
         options: { 
-          data: { username: uname, referral_code: code },
+          data: { username: uname, full_name: fullName, referral_code: code },
           emailRedirectTo: buildAuthRedirect(`/${lang}/auth/callback`)
         },
       });
 
       if (signUpErr) {
-        // tampilkan detail error object, bukan cuma message
-        setError(
-          signUpErr?.message
-            ? `${signUpErr.message}\n\nDETAIL:\n${JSON.stringify(signUpErr, null)}` 
-            : `Signup failed:\n${JSON.stringify(signUpErr, null)}` 
-        );
-        setIsSubmitting(false);
+        setError(signUpErr?.message || t("signup.errors.generic"));
         return;
       }
 
-      // Success state - clear sensitive data and show success UI
-      setError(null);
       setSuccessEmail(data.user?.email ?? emailTrim);
       setPassword("");
       setConfirmPassword("");
-      setIsSubmitting(false);
     } catch (err: any) {
-      setError(err?.message ?? (t("auth.signup.errorGeneric") ?? "Failed to create account."));
+      setError(err?.message || t("signup.errors.generic"));
     } finally {
       setIsSubmitting(false);
     }
