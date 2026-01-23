@@ -231,7 +231,7 @@ export default function SignUp() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-white/70">
           <Loader2 className="w-6 h-6 animate-spin mb-2" />
-          <p>Loading...</p>
+          <p>{t("common.loading") || "Loading..."}</p>
         </div>
       </div>
     );
