@@ -15,6 +15,7 @@ function toBooleanStrict(value: any): boolean {
 }
 
 // Helper untuk normalisasi app settings dengan strict boolean conversion
+// SINGLE SOURCE OF TRUTH — DO NOT DUPLICATE
 function normalizeAppSettings(raw: any): AppSettings {
   const normalized: AppSettings = {};
   
@@ -28,6 +29,7 @@ function normalizeAppSettings(raw: any): AppSettings {
   }
   
   // Pastikan field penting selalu ada dengan default AMAN
+  // MAINTENANCE FLAG: HARUS false sebagai safe default
   if (typeof normalized.maintenance_mode === 'undefined') {
     normalized.maintenance_mode = false;
   }

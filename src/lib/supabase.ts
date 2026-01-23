@@ -4,8 +4,9 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Log Supabase configuration for debugging (dev-only)
-if (import.meta.env.DEV) {
+// Debug logs only in development with debug flag
+const DEBUG = import.meta.env.DEV && localStorage.getItem("tpc_debug") === "1";
+if (DEBUG) {
   console.log('🔧 Supabase Config:', {
     url: supabaseUrl,
     hasKey: !!supabaseAnonKey,
@@ -13,24 +14,12 @@ if (import.meta.env.DEV) {
   });
 }
 
-// Log Supabase init
-console.log("[SUPABASE_INIT]", {
-  url: import.meta.env.VITE_SUPABASE_URL,
-  hasAnon: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
-});
-
-// Log Supabase URL in production for verification (only once)
-if (!(window as any).__SUPABASE_URL_LOGGED__) {
-  console.info("[SUPABASE_ACTIVE_URL]", supabaseUrl);
-  (window as any).__SUPABASE_URL_LOGGED__ = true;
-}
-
-// Validate environment variables
+// Validate environment variables - BLOCK DEPLOYMENT IF MISSING
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('❌ Missing Supabase environment variables. Please check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
 }
 
-// Create Supabase client from environment variables ONLY
+// Create Supabase client from environment variables ONLY - SINGLETON
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Export configuration status
