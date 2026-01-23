@@ -8,6 +8,7 @@ import { buildAuthRedirect } from "../../lib/authRedirect";
 import { ensureLangPath } from "../../utils/langPath";
 import { devLog } from "../../utils/devLog";
 import { normalizeInviteCode, isInviteCodeFormatValid } from "../../utils/inviteCode";
+import { BUILD_ID } from "../../utils/buildInfo";
 import RegistrationsClosedPage from "../system/RegistrationsClosedPage";
 
 type ReferralStatus = "idle" | "checking" | "valid" | "invalid";
@@ -635,6 +636,13 @@ export default function SignUp() {
             >
               ← {t("common.backHome")}
             </Link>
+          </div>
+          
+          {/* Build ID for debugging */}
+          <div className="text-center mt-2">
+            <span className="text-white/10 text-xs">
+              Build: {BUILD_ID}
+            </span>
           </div>
         </div>
       </div>

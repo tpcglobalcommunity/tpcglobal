@@ -9,6 +9,22 @@
 /*.html
   Cache-Control: no-cache, no-store, must-revalidate
 
+# Signup routes - no cache to prevent stale UI
+/signup
+  Cache-Control: no-store
+
+/en/signup
+  Cache-Control: no-store
+
+/id/signup
+  Cache-Control: no-store
+
+/en/*
+  Cache-Control: no-store
+
+/id/*
+  Cache-Control: no-store
+
 # Static assets with hash - long-term cache
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
