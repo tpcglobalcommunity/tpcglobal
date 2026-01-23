@@ -4,7 +4,7 @@ import { Lock, ExternalLink, LogIn, Shield } from "lucide-react";
 
 export default function RegistrationsClosedPage({ lang }: { lang: Language }) {
   const { t } = useI18n(lang);
-  const signinPath = `${getLangPath(lang)}/signin`;
+  const signinPath = getLangPath(lang, "/signin");
 
   return (
     <PremiumShell>

@@ -1,19 +1,25 @@
 import { useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useLanguage } from "../../i18n";
+import type { Language } from "../../i18n";
 
 function go(path: string) {
   window.location.assign(path);
 }
 
 type RoleGuardProps = {
-  allow: Array<string>; // contoh: ["admin","super_admin"]
+  allowedRoles?: string[]; // untuk kompatibilitas dengan kode admin
+  allow?: Array<string>; // backward compatibility
+  lang?: Language; // opsional, tidak digunakan dalam logic
   children: React.ReactNode;
 };
 
-export default function RoleGuard({ allow, children }: RoleGuardProps) {
+export default function RoleGuard({ allowedRoles, allow, children }: RoleGuardProps) {
   const { session, profile, loading } = useAuth();
   const { language } = useLanguage();
+
+  // Gunakan allowedRoles jika ada, fallback ke allow
+  const roles = allowedRoles || allow || [];
 
   useEffect(() => {
     if (loading) return;
@@ -29,12 +35,12 @@ export default function RoleGuard({ allow, children }: RoleGuardProps) {
     }
 
     const role = String(profile.role || "").toLowerCase();
-    const ok = allow.map(r => r.toLowerCase()).includes(role);
+    const ok = roles.map(r => r.toLowerCase()).includes(role);
 
     if (!ok) {
       go(`/${language}/member/dashboard`);
     }
-  }, [loading, session, profile, language, allow]);
+  }, [loading, session, profile, language, roles]);
 
   if (loading) {
     return (
@@ -47,7 +53,7 @@ export default function RoleGuard({ allow, children }: RoleGuardProps) {
   if (!session || !profile) return null;
 
   const role = String(profile.role || "").toLowerCase();
-  const ok = allow.map(r => r.toLowerCase()).includes(role);
+  const ok = roles.map(r => r.toLowerCase()).includes(role);
   if (!ok) return null;
 
   return <>{children}</>;

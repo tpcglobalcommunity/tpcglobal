@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Store, Filter, CheckCircle, XCircle, User, ExternalLink, Calendar, AlertCircle } from 'lucide-react';
-import { Language, useTranslations } from '../../i18n';
+import { Language, useI18n } from '../../i18n';
 import { PremiumShell, PremiumCard, PremiumButton } from '../../components/ui';
 import MemberGuard from '../../components/guards/MemberGuard';
 import RoleGuard from '../../components/guards/RoleGuard';
@@ -13,7 +13,7 @@ interface VendorsAdminPageProps {
 type FilterStatus = 'all' | 'pending' | 'approved' | 'rejected';
 
 const VendorsAdminPage = ({ lang }: VendorsAdminPageProps) => {
-  const t = useTranslations(lang);
+  const { t } = useI18n(lang);
 
   const [applications, setApplications] = useState<VendorApplication[]>([]);
   const [filteredApplications, setFilteredApplications] = useState<VendorApplication[]>([]);
@@ -108,10 +108,10 @@ const VendorsAdminPage = ({ lang }: VendorsAdminPageProps) => {
             <div className="mb-8">
               <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 flex items-center gap-3">
                 <Store className="w-8 h-8 text-[#F0B90B]" />
-                {t.admin.vendors.title}
+                {t("admin.vendors.title", "Vendor Applications")}
               </h1>
               <p className="text-white/70 text-lg">
-                {t.admin.vendors.subtitle}
+                {t("admin.vendors.subtitle", "Manage and review vendor applications")}
               </p>
             </div>
 
@@ -127,7 +127,7 @@ const VendorsAdminPage = ({ lang }: VendorsAdminPageProps) => {
                       : 'bg-white/5 text-white/70 hover:bg-white/10'
                   }`}
                 >
-                  {status === 'all' ? t.admin.vendors.filter.all : t.admin.vendors.filter[status]}
+                  {status === 'all' ? t("admin.vendors.filter.all", "All") : t("admin.vendors.filter." + status, status)}
                 </button>
               ))}
             </div>
@@ -140,7 +140,7 @@ const VendorsAdminPage = ({ lang }: VendorsAdminPageProps) => {
               <PremiumCard>
                 <div className="text-center py-12">
                   <Store className="w-12 h-12 text-white/20 mx-auto mb-4" />
-                  <p className="text-white/70">{t.admin.vendors.empty}</p>
+                  <p className="text-white/70">{t("admin.vendors.empty", "No applications found")}</p>
                 </div>
               </PremiumCard>
             ) : (
@@ -211,7 +211,7 @@ const VendorsAdminPage = ({ lang }: VendorsAdminPageProps) => {
                             size="sm"
                           >
                             <CheckCircle className="w-4 h-4" />
-                            {t.admin.vendors.approve}
+                            {t("admin.vendors.approve", "Approve")}
                           </PremiumButton>
                           <PremiumButton
                             variant="secondary"
@@ -220,7 +220,7 @@ const VendorsAdminPage = ({ lang }: VendorsAdminPageProps) => {
                             size="sm"
                           >
                             <XCircle className="w-4 h-4" />
-                            {t.admin.vendors.reject}
+                            {t("admin.vendors.reject", "Reject")}
                           </PremiumButton>
                         </div>
                       )}
@@ -238,7 +238,7 @@ const VendorsAdminPage = ({ lang }: VendorsAdminPageProps) => {
                       <AlertCircle className="w-8 h-8 text-yellow-400" />
                     </div>
                     <h3 className="text-xl font-bold text-white mb-3">
-                      {t.admin.vendors.confirmTitle}
+                      {t("admin.vendors.confirmTitle", "Confirm Action")}
                     </h3>
                     <p className="text-white/70 mb-6">
                       {confirmAction.action === 'approved'

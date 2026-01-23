@@ -1,5 +1,5 @@
 import { useState, useEffect, FormEvent } from 'react';
-import { Shield, Search, CheckCircle, XCircle, Copy, Link as LinkIcon, User, Calendar, Award, ExternalLink } from 'lucide-react';
+import { Shield, Search, CheckCircle, Copy, Link as LinkIcon, User, Calendar, Award, ExternalLink } from 'lucide-react';
 import { Language, useTranslations, getLangPath } from '../i18n';
 import { PremiumShell, NoticeBox, PremiumButton, PremiumCard } from '../components/ui';
 import { Link } from '../components/Router';
@@ -170,7 +170,7 @@ const VerifyPage = ({ lang }: VerifyPageProps) => {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <span className="text-white/60">@{currentUser.username}</span>
-                      {currentUser.is_verified && (
+                      {currentUser.verified && (
                         <CheckCircle className="w-5 h-5 text-green-400" />
                       )}
                     </div>

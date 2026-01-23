@@ -14,7 +14,6 @@ const categoryIcons: Record<NewsCategory, typeof BookOpen> = {
 
 export default function NewsPage() {
   const { t, language } = useLanguage();
-  const translations = t;
   const [posts, setPosts] = useState<NewsPostListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<NewsCategory | 'all'>('all');
@@ -79,18 +78,18 @@ export default function NewsPage() {
       <PremiumSection>
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
-            {translations.news.hero.title}
+            {t("news.hero.title", "News")}
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-            {translations.news.hero.subtitle}
+            {t("news.hero.subtitle", "Latest updates and announcements")}
           </p>
 
           <NoticeBox className="max-w-3xl mx-auto">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-              {translations.news.hero.noticeTitle}
+              {t("news.hero.noticeTitle", "Important Notice")}
             </h3>
             <p className="text-gray-700 dark:text-gray-300">
-              {translations.news.hero.noticeDesc}
+              {t("news.hero.noticeDesc", "Stay informed with our latest news and updates")}
             </p>
           </NoticeBox>
         </div>
@@ -113,7 +112,7 @@ export default function NewsPage() {
                   `}
                 >
                   <Icon className="w-4 h-4" />
-                  {translations.news.filters[category]}
+                  {t("news.filters." + category, category)}
                 </button>
               );
             })}
@@ -124,7 +123,7 @@ export default function NewsPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder={translations.news.search.placeholder}
+                placeholder={t("news.search.placeholder", "Search news...")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -154,10 +153,10 @@ export default function NewsPage() {
         ) : filteredPosts.length === 0 ? (
           <div className="text-center py-12">
             <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
-              {translations.news.empty.title}
+              {t("news.empty.title", "No articles found")}
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              {translations.news.empty.desc}
+              {t("news.empty.desc", "Try adjusting your filters or search query")}
             </p>
           </div>
         ) : (
@@ -174,7 +173,7 @@ export default function NewsPage() {
                   onClick={() => loadPosts(false)}
                   disabled={loading}
                 >
-                  {loading ? translations.news.loading : translations.news.loadMore}
+                  {loading ? t("news.loading", "Loading...") : t("news.loadMore", "Load More")}
                 </PremiumButton>
               </div>
             )}
@@ -194,7 +193,7 @@ function NewsCard({
   language: string;
   formatDate: (date: string | null) => string;
 }) {
-  const { t: translations } = useLanguage();
+  const { t } = useLanguage();
   const title = language === 'en' ? post.title_en : post.title_id;
   const excerpt = language === 'en' ? post.excerpt_en : post.excerpt_id;
   const Icon = categoryIcons[post.category];
@@ -215,7 +214,7 @@ function NewsCard({
         <div className="flex items-center gap-2 mb-3">
           <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
             <Icon className="w-3 h-3" />
-            {translations.news.filters[post.category]}
+            {t("news.filters." + post.category, post.category)}
           </span>
           {post.is_pinned && (
             <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200">
@@ -240,7 +239,7 @@ function NewsCard({
             href={`/${language}/news/${post.slug}`}
             className="text-blue-600 dark:text-blue-400 font-medium hover:underline text-sm"
           >
-            {translations.news.card.readMore} →
+            {t("news.card.readMore", "Read More")} →
           </a>
         </div>
       </div>

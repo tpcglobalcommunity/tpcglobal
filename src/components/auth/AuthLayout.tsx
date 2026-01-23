@@ -12,8 +12,8 @@ export default function AuthLayout({ lang, children }: AuthLayoutProps) {
       <AuthHeader lang={lang} />
 
       <div className="relative border-b border-white/10">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F0B90B]/10 via-transparent to-transparent opacity-60" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#F0B90B]/10 via-transparent to-transparent opacity-60" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
       </div>
 
       <main className="flex-1 relative">

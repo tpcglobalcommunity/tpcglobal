@@ -1,0 +1,2 @@
+# This file ensures the seed directory structure is tracked in git
+# Seed files are versioned and applied through migrations

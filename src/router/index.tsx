@@ -3,22 +3,23 @@
 // React Router v6 configuration dengan guards
 // =========================================================
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { MemberGuard, AdminGuard, AuthGuard, PublicGuard } from "@/components/guards";
+import { createBrowserRouter, RouterProvider, redirect } from "react-router-dom";
+import { MemberGuard, PublicGuard } from "../components/guards";
 
 // Import pages (sesuaikan dengan struktur project Anda)
-import SignUpPage from "@/pages/auth/SignUp";
-import SignInPage from "@/pages/auth/SignIn";
-import ForgotPasswordPage from "@/pages/auth/ForgotPassword";
-import DashboardPage from "@/pages/member/Dashboard";
-import OnboardingPage from "@/pages/member/Onboarding";
-import ProfilePage from "@/pages/member/Profile";
-import TeamPage from "@/pages/member/Team";
-import AdminDashboard from "@/pages/admin/Dashboard";
-import AdminUsers from "@/pages/admin/Users";
-import AdminSettings from "@/pages/admin/Settings";
-import NotFoundPage from "@/pages/NotFound";
-import HomePage from "@/pages/Home";
+import SignUpPage from "../pages/auth/SignUp";
+import SignInPage from "../pages/auth/SignIn";
+import ForgotPasswordPage from "../pages/auth/ForgotPassword";
+import AuthCallbackPage from "../pages/auth/AuthCallback";
+import OnboardingPage from "../pages/member/Onboarding";
+import DashboardPage from "../pages/member/Dashboard";
+// import ProfilePage from "../pages/member/Profile"; // TODO: Create this file
+// import TeamPage from "../pages/member/Team"; // TODO: Create this file
+// import AdminDashboard from "../pages/admin/Dashboard"; // TODO: Create this file
+// import AdminUsers from "../pages/admin/Users"; // TODO: Create this file
+// import AdminSettings from "../pages/admin/Settings"; // TODO: Create this file
+// import NotFoundPage from "../pages/NotFound"; // TODO: Create this file
+import HomePage from "../pages/Home";
 
 // =========================================================
 // ROUTER CONFIGURATION
@@ -60,6 +61,14 @@ const router = createBrowserRouter([
       </PublicGuard>
     ),
   },
+  {
+    path: "/auth/callback",
+    element: <AuthCallbackPage />,
+  },
+  {
+    path: "/:lang/auth/callback",
+    element: <AuthCallbackPage />,
+  },
 
   // MEMBER ROUTES (memerlukan auth + profile)
   {
@@ -79,47 +88,55 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/member/profile",
+    path: "/:lang/onboarding",
     element: (
       <MemberGuard>
-        <ProfilePage />
+        <OnboardingPage />
       </MemberGuard>
     ),
   },
-  {
-    path: "/member/team",
-    element: (
-      <MemberGuard>
-        <TeamPage />
-      </MemberGuard>
-    ),
-  },
+  // {
+  //   path: "/member/profile",
+  //   element: (
+  //     <MemberGuard>
+  //       <ProfilePage />
+  //     </MemberGuard>
+  //   ),
+  // },
+  // {
+  //   path: "/member/team",
+  //   element: (
+  //     <MemberGuard>
+  //       <TeamPage />
+  //     </MemberGuard>
+  //   ),
+  // },
 
   // ADMIN ROUTES (admin only)
-  {
-    path: "/admin",
-    element: (
-      <AdminGuard>
-        <AdminDashboard />
-      </AdminGuard>
-    ),
-  },
-  {
-    path: "/admin/users",
-    element: (
-      <AdminGuard>
-        <AdminUsers />
-      </AdminGuard>
-    ),
-  },
-  {
-    path: "/admin/settings",
-    element: (
-      <AdminGuard>
-        <AdminSettings />
-      </AdminGuard>
-    ),
-  },
+  // {
+  //   path: "/admin",
+  //   element: (
+  //     <AdminGuard>
+  //       <AdminDashboard />
+  //     </AdminGuard>
+  //   ),
+  // },
+  // {
+  //   path: "/admin/users",
+  //   element: (
+  //     <AdminGuard>
+  //       <AdminUsers />
+  //     </AdminGuard>
+  //   ),
+  // },
+  // {
+  //   path: "/admin/settings",
+  //   element: (
+  //     <AdminGuard>
+  //       <AdminSettings />
+  //     </AdminGuard>
+  //   ),
+  // },
 
   // LEGACY ROUTES (redirect ke yang baru)
   {
@@ -134,7 +151,12 @@ const router = createBrowserRouter([
   // 404 NOT FOUND
   {
     path: "*",
-    element: <NotFoundPage />,
+    element: <div className="min-h-screen flex items-center justify-center text-white/70">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold mb-4">404</h1>
+        <p>Page not found</p>
+      </div>
+    </div>,
   },
 ]);
 
@@ -150,69 +172,70 @@ export default function App() {
 // ALTERNATIVE: NESTED ROUTES (jika menggunakan layout)
 // =========================================================
 
-import { Outlet } from "react-router-dom";
+// Layout components (not used in current router config)
+// import { Outlet } from "react-router-dom";
 
-function MemberLayout() {
-  return (
-    <MemberGuard>
-      <Outlet />
-    </MemberGuard>
-  );
-}
+// function MemberLayout() {
+//   return (
+//     <MemberGuard>
+//       <Outlet />
+//     </MemberGuard>
+//   );
+// }
 
-function AdminLayout() {
-  return (
-    <AdminGuard>
-      <Outlet />
-    </AdminGuard>
-  );
-}
+// function AdminLayout() {
+//   return (
+//     <AdminGuard>
+//       <Outlet />
+//     </AdminGuard>
+//   );
+// }
 
-function PublicLayout() {
-  return (
-    <PublicGuard>
-      <Outlet />
-    </PublicLayout>
-  );
-}
+// function PublicLayout() {
+//   return (
+//     <PublicGuard>
+//       <Outlet />
+//     </PublicGuard>
+//   );
+// }
 
-// Nested router configuration
-const nestedRouter = createBrowserRouter([
-  {
-    path: "/",
-    element: <PublicLayout />,
-    children: [
-      { index: true, element: <HomePage /> },
-      { path: "signin", element: <SignInPage /> },
-      { path: "signup", element: <SignUpPage /> },
-      { path: "forgot-password", element: <ForgotPasswordPage /> },
-    ],
-  },
-  {
-    path: "/member",
-    element: <MemberLayout />,
-    children: [
-      { index: true, loader: () => redirect("/member/dashboard") },
-      { path: "dashboard", element: <DashboardPage /> },
-      { path: "onboarding", element: <OnboardingPage /> },
-      { path: "profile", element: <ProfilePage /> },
-      { path: "team", element: <TeamPage /> },
-    ],
-  },
-  {
-    path: "/admin",
-    element: <AdminLayout />,
-    children: [
-      { index: true, element: <AdminDashboard /> },
-      { path: "users", element: <AdminUsers /> },
-      { path: "settings", element: <AdminSettings /> },
-    ],
-  },
-  {
-    path: "*",
-    element: <NotFoundPage />,
-  },
-]);
+// Nested router configuration (DISABLED - using components that don't exist)
+// const nestedRouter = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <PublicLayout />,
+//     children: [
+//       { index: true, element: <HomePage /> },
+//       { path: "signin", element: <SignInPage /> },
+//       { path: "signup", element: <SignUpPage /> },
+//       { path: "forgot-password", element: <ForgotPasswordPage /> },
+//     ],
+//   },
+//   {
+//     path: "/member",
+//     element: <MemberLayout />,
+//     children: [
+//       { index: true, loader: () => redirect("/member/dashboard") },
+//       { path: "dashboard", element: <DashboardPage /> },
+//       { path: "onboarding", element: <OnboardingPage /> },
+//       { path: "profile", element: <ProfilePage /> },
+//       { path: "team", element: <TeamPage /> },
+//     ],
+//   },
+//   {
+//     path: "/admin",
+//     element: <AdminLayout />,
+//     children: [
+//       { index: true, element: <AdminDashboard /> },
+//       { path: "users", element: <AdminUsers /> },
+//       { path: "settings", element: <AdminSettings /> },
+//     ],
+//   },
+//   {
+//     path: "*",
+//     element: <NotFoundPage />,
+//   },
+// ]);
 
 // =========================================================
 // ROUTE GUARDS HOOKS
@@ -242,77 +265,6 @@ export function useRouteInfo() {
   };
 }
 
-/**
- * Hook untuk check current route access
- */
-export function useRouteAccess() {
-  const routeInfo = useRouteInfo();
-  const { profile } = useProfile();
-
-  if (!profile) {
-    return {
-      canAccess: false,
-      reason: "No profile data",
-      redirectTo: "/signin",
-    };
-  }
-
-  // Check admin access
-  if (routeInfo.isAdminRoute) {
-    const canAccess = profile.can_access_admin;
-    return {
-      canAccess,
-      reason: canAccess ? "Admin access granted" : "Insufficient permissions",
-      redirectTo: canAccess ? null : profile.navigation_route,
-    };
-  }
-
-  // Check member access
-  if (routeInfo.isMemberRoute) {
-    const canAccess = profile.can_access_member;
-    return {
-      canAccess,
-      reason: canAccess ? "Member access granted" : "Profile incomplete",
-      redirectTo: canAccess ? null : profile.navigation_route,
-    };
-  }
-
-  // Public routes always accessible
-  return {
-    canAccess: true,
-    reason: "Public route",
-    redirectTo: null,
-  };
-}
-
-/**
- * Component untuk conditional rendering based on route
- */
-export function RouteGuard({ children }: { children: React.ReactNode }) {
-  const routeAccess = useRouteAccess();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!routeAccess.canAccess && routeAccess.redirectTo) {
-      navigate(routeAccess.redirectTo, { replace: true });
-    }
-  }, [routeAccess.canAccess, routeAccess.redirectTo, navigate]);
-
-  if (!routeAccess.canAccess) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-white/70">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F0B90B] mx-auto mb-4"></div>
-          <div>Checking access...</div>
-          <div className="text-sm text-white/50 mt-2">{routeAccess.reason}</div>
-        </div>
-      </div>
-    );
-  }
-
-  return <>{children}</>;
-}
-
 // =========================================================
 // REDIRECT HELPERS
 // =========================================================
@@ -320,8 +272,8 @@ export function RouteGuard({ children }: { children: React.ReactNode }) {
 /**
  * Loader function untuk auto-redirect
  */
-export function createRedirectLoader(to: string, replace = true) {
-  return () => redirect(to, replace ? { replace: true } : undefined);
+export function createRedirectLoader(to: string) {
+  return () => redirect(to);
 }
 
 /**

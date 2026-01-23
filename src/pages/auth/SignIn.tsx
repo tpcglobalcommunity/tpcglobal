@@ -4,6 +4,8 @@ import { useI18n, type Language, getLangPath } from "../../i18n";
 import { Link } from "../../components/Router";
 import { signIn } from "../../lib/supabase";
 import { useAuthError } from "../../hooks/useAuthError";
+import AuthShell from "../../components/auth/AuthShell";
+import { AuthBuildMarker } from "../../components/auth/AuthBuildMarker";
 
 interface SignInProps {
   lang?: Language;
@@ -53,118 +55,89 @@ export default function SignIn({ lang }: SignInProps) {
   };
 
   return (
-    <div className="max-w-md lg:max-w-lg mx-auto px-4">
-      {/* Back to Home Button */}
-      <div className="flex justify-end mb-4">
-        <Link 
-          to={`/${L}`}
-          className="text-sm text-white/60 hover:text-white transition-colors"
-        >
-          ← {t("auth.backToHome") || "Back to Home"}
-        </Link>
-      </div>
-
-      <div className="text-center mb-8">
-        <div className="mx-auto w-16 h-16 rounded-2xl bg-white/5 border border-white/10 grid place-items-center relative overflow-hidden mb-6">
-          <div className="absolute inset-0 bg-[#F0B90B]/10 blur-2xl" />
-          <div className="w-7 h-7 bg-[#F0B90B] rounded-lg relative z-10" />
+    <AuthShell 
+      lang={lang}
+      title={t("auth.signin.title")}
+      subtitle={t("auth.signin.subtitle")}
+    >
+      <form onSubmit={onSubmit} className="space-y-4">
+        {/* Email Field */}
+        <div>
+          <label className="block text-sm font-semibold text-white/80 mb-2.5">
+            {t("auth.signin.email")}
+          </label>
+          <div className="flex items-center gap-3 h-12 rounded-2xl border border-white/10 bg-white/5 px-4 hover:border-white/15 focus-within:border-[#F0B90B]/45 focus-within:bg-white/7 focus-within:ring-1 focus-within:ring-[#F0B90B]/25 transition-all">
+            <Mail className="w-4 h-4 text-white/50 shrink-0" />
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@email.com"
+              type="email"
+              className="flex-1 bg-transparent outline-none text-white placeholder:text-white/30 text-sm"
+              autoComplete="email"
+            />
+          </div>
         </div>
-        <h1 className="text-3xl font-bold tracking-tight text-white mb-2">
-          {t("auth.signin.title")}
-        </h1>
-        <p className="text-sm text-white/70">
-          {t("auth.signin.subtitle")}
-        </p>
-      </div>
 
-      <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 relative overflow-hidden">
-        <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[#F0B90B]/50 to-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(240,185,11,0.10),transparent_60%)]" />
+        {/* Password Field */}
+        <div>
+          <label className="block text-sm font-semibold text-white/80 mb-2.5">
+            {t("auth.signin.password")}
+          </label>
+          <div className="flex items-center gap-3 h-12 rounded-2xl border border-white/10 bg-white/5 px-4 hover:border-white/15 focus-within:border-[#F0B90B]/45 focus-within:bg-white/7 focus-within:ring-1 focus-within:ring-[#F0B90B]/25 transition-all">
+            <Lock className="w-4 h-4 text-white/50 shrink-0" />
+            <input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="•••••••••"
+              type="password"
+              className="flex-1 bg-transparent outline-none text-white placeholder:text-white/30 text-sm"
+              autoComplete="current-password"
+            />
+          </div>
+        </div>
 
-        <form onSubmit={onSubmit} className="relative p-6 sm:p-7 space-y-4">
-          <Field
-            icon={<Mail className="w-4 h-4" />}
-            label={t("auth.signin.email")}
-            value={email}
-            onChange={(v) => setEmail(v)}
-            placeholder="name@email.com"
-            type="email"
-          />
-          <Field
-            icon={<Lock className="w-4 h-4" />}
-            label={t("auth.signin.password")}
-            value={password}
-            onChange={(v) => setPassword(v)}
-            placeholder="•••••••••"
-            type="password"
-          />
+        {/* Error Display */}
+        {error ? (
+          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3.5 text-sm text-red-200">
+            {error}
+          </div>
+        ) : null}
 
-          {error ? (
-            <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3.5 text-sm text-red-200">
-              {error}
-            </div>
-          ) : null}
-
-          <button
-            type="submit"
-            disabled={submitting || !email.trim() || password.length < 1}
-            className="w-full h-12 rounded-2xl font-semibold bg-gradient-to-r from-[#F0B90B] to-[#F8D568] text-black transition-all duration-200 hover:shadow-lg hover:shadow-[#F0B90B]/20 active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2"
-          >
-            {submitting ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                {t("auth.signin.signingIn")}
-              </>
-            ) : (
-              <>
-                {t("auth.signin.signIn")}
-                <ArrowRight className="w-4 h-4" />
-              </>
-            )}
-          </button>
-        </form>
-      </div>
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={submitting || !email.trim() || password.length < 1}
+          className="w-full h-12 rounded-2xl font-semibold bg-gradient-to-r from-[#F0B90B] to-[#F8D568] text-black transition-all duration-200 hover:shadow-lg hover:shadow-[#F0B90B]/20 active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2"
+        >
+          {submitting ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              {t("auth.signin.submitting") || "Signing in..."}
+            </>
+          ) : (
+            <>
+              {t("auth.signin.signIn") || "Sign In"}
+              <ArrowRight className="w-4 h-4" />
+            </>
+          )}
+        </button>
+      </form>
 
       {/* Bottom Navigation */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-white/60 mt-6">
         <Link to={getLangPath(L, "/forgot")} className="text-[#F0B90B] hover:underline underline-offset-4 transition-colors">
-          {t("auth.signin.forgot")}
+          {t("auth.signin.forgot") || "Forgot password?"}
         </Link>
         <div className="text-center sm:text-right">
-          <span>{t("auth.signin.noAccount")}</span>{" "}
+          <span>{t("auth.signin.noAccount") || "Don't have an account?"}</span>{" "}
           <Link to={getLangPath(L, "/signup")} className="text-[#F0B90B] hover:underline underline-offset-4 font-medium">
-            {t("auth.signin.createAccount")}
+            {t("auth.signin.createAccount") || "Create account"}
           </Link>
         </div>
       </div>
-    </div>
-  );
-}
-
-function Field(props: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  type?: string;
-}) {
-  const { icon, label, value, onChange, placeholder, type } = props;
-
-  return (
-    <div>
-      <label className="block text-sm font-semibold text-white/80 mb-2.5">{label}</label>
-      <div className="flex items-center gap-3 h-12 rounded-2xl border border-white/10 bg-white/5 px-4 hover:border-white/15 focus-within:border-[#F0B90B]/45 focus-within:bg-white/7 focus-within:ring-1 focus-within:ring-[#F0B90B]/25 transition-all">
-        <div className="text-white/50 shrink-0">{icon}</div>
-        <input
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          type={type || "text"}
-          className="flex-1 bg-transparent outline-none text-white placeholder:text-white/30 text-sm"
-          autoComplete="off"
-        />
-      </div>
-    </div>
+      
+      <AuthBuildMarker />
+    </AuthShell>
   );
 }

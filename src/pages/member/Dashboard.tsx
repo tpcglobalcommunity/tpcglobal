@@ -5,10 +5,10 @@ import { PremiumShell, PremiumCard, NoticeBox, PremiumButton } from '../../compo
 import { supabase, getProfile, Profile, getPublishedAnnouncements, Announcement, getOnboardingState, upsertOnboardingState, ensureOnboardingRow, ensureReferralCode } from '../../lib/supabase';
 
 interface DashboardProps {
-  lang: Language;
+  lang?: Language;
 }
 
-const Dashboard = ({ lang }: DashboardProps) => {
+const Dashboard = ({ lang = "en" }: DashboardProps) => {
   const t = useTranslations(lang);
 
   // Safe string helpers to prevent runtime errors
@@ -377,7 +377,7 @@ const Dashboard = ({ lang }: DashboardProps) => {
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-white mb-1">Status</h3>
                 <p className="text-xl font-semibold text-white/90">
-                  {profile.is_verified ? 'Verified' : 'Member'}
+                  {profile?.verified ? 'Verified' : 'Member'}
                 </p>
               </div>
             </div>

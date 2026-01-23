@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { ProfileData, getProfileWithNavigation } from "../types/profile";
 
+export { default as MemberGuard } from "./MemberGuard";
+
 export default function MemberGuard({
   children,
 }: {

@@ -9,7 +9,10 @@
     "postbuild": "node scripts/prerender-og.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "typecheck:watch": "tsc -p tsconfig.json --noEmit --watch",
+    "typecheck:full": "tsc -p tsconfig.json --noEmit --incremental false",
+    "typecheck:clean": "node -e \"try{require('fs').rmSync('node_modules/.cache/tsc',{recursive:true,force:true})}catch(e){}\""
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

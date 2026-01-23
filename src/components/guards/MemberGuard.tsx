@@ -1,25 +1,33 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
-import { useProfileStatus } from "../../lib/useProfileStatus";
+import { useAuth } from "../../contexts/AuthContext";
 import { Link } from "../Router"; // kalau kamu pakai router custom
+import type { Language } from "../../i18n";
 // atau gunakan navigate sesuai router kamu
 
 type Props = {
   children: React.ReactNode;
+  lang?: Language; // opsional, untuk override auto-detection
 };
 
-export default function MemberGate({ children }: Props) {
-  const { loading, profile, isComplete } = useProfileStatus();
+export default function MemberGate({ children, lang: propLang }: Props) {
+  const { loading, profile } = useAuth();
   const [blocked, setBlocked] = useState<null | "login" | "complete">(null);
-  const [lang, setLang] = useState('en');
+  const [lang, setLang] = useState(propLang || 'en');
 
   useEffect(() => {
+    // Gunakan prop lang jika ada, otherwise auto-detect dari path
+    if (propLang) {
+      setLang(propLang);
+      return;
+    }
+    
     // Get language from current path
     const pathLang = window.location.pathname.split('/')[1];
     if (pathLang === 'en' || pathLang === 'id') {
       setLang(pathLang);
     }
-  }, []);
+  }, [propLang]);
 
   useEffect(() => {
     let alive = true;
@@ -34,8 +42,8 @@ export default function MemberGate({ children }: Props) {
           return;
         }
 
-        // Use profile from useProfileStatus instead of duplicate fetch
-        if (!profile || !isComplete) {
+        // Use profile from useAuth
+        if (!profile || !profile.profile_completed) {
           if (!alive) return;
           setBlocked("complete");
           return;
@@ -51,7 +59,7 @@ export default function MemberGate({ children }: Props) {
     })();
 
     return () => { alive = false; };
-  }, [profile, isComplete]);
+  }, [profile]);
 
   if (loading) {
     return <div className="p-6 text-white/70">Loading...</div>;

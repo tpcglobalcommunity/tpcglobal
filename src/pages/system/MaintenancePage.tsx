@@ -17,12 +17,31 @@ export default function MaintenancePage({ lang }: { lang: Language }) {
         const s = await getAppSettings(supabase);
         if (!alive) return;
         setSettings(s);
+        
+        // Redirect to home jika maintenance=false
+        if (s?.maintenance_mode === false) {
+          window.location.href = homePath;
+          return;
+        }
       } catch {
-        // Silently fail - use fallback message
+        // Silently fail - redirect ke home untuk safety
+        window.location.href = homePath;
       }
     })();
     return () => { alive = false; };
   }, []);
+
+  // Jika settings belum ada atau maintenance=false, tampilkan loading atau redirect
+  if (!settings || settings?.maintenance_mode === false) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white/70">
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-white/20 border-t-transparent"></div>
+          <p className="mt-2">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   const maintenanceMessage = settings?.maintenance_message || t("maintenance.subtitle");
 

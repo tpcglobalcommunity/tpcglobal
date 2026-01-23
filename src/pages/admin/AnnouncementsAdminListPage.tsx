@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Megaphone, Plus, Edit, Trash2, Eye, EyeOff, Pin, PinOff, Filter } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../../i18n';
+import { Language, useI18n, getLangPath } from '../../i18n';
 import { PremiumShell, PremiumCard, PremiumButton } from '../../components/ui';
 import MemberGuard from '../../components/guards/MemberGuard';
 import RoleGuard from '../../components/guards/RoleGuard';
@@ -12,7 +12,7 @@ interface AnnouncementsAdminListPageProps {
 }
 
 const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) => {
-  const t = useTranslations(lang);
+  const { t } = useI18n(lang);
   const { profile } = useAuth();
 
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -69,7 +69,7 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
       return;
     }
 
-    const confirmMsg = `${t.admin.announcements.confirmDelete}\n\n${lang === 'id' ? announcement.title_id : announcement.title_en}`;
+    const confirmMsg = `${t("admin.announcements.confirmDelete", "Are you sure you want to delete this announcement?")}\n\n${lang === 'id' ? announcement.title_id : announcement.title_en}`;
     if (!confirm(confirmMsg)) {
       return;
     }
@@ -95,24 +95,24 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
 
   return (
     <MemberGuard lang={lang}>
-      <RoleGuard allow={['moderator', 'admin', 'super_admin']}>
+      <RoleGuard allowedRoles={['moderator', 'admin', 'super_admin']}>
         <PremiumShell>
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
             <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
               <div>
                 <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center gap-3">
                   <Megaphone className="w-8 h-8 text-[#F0B90B]" />
-                  {t.admin.announcements.title}
+                  {t("admin.announcements.title", "Announcements")}
                 </h1>
                 <p className="text-white/70">
-                  {t.admin.announcements.subtitle}
+                  {t("admin.announcements.subtitle", "Manage announcements and updates")}
                 </p>
               </div>
               <PremiumButton
                 onClick={() => window.location.href = getLangPath(lang, '/admin/announcements/new')}
               >
                 <Plus className="w-5 h-5" />
-                {t.admin.announcements.new}
+                {t("admin.announcements.new", "New Announcement")}
               </PremiumButton>
             </div>
 
@@ -130,7 +130,7 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
                       : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/10'
                   }`}
                 >
-                  {t.admin.announcements.filterAll}
+                  {t("admin.announcements.filterAll", "All")}
                 </button>
                 <button
                   onClick={() => setFilter('published')}
@@ -140,7 +140,7 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
                       : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/10'
                   }`}
                 >
-                  {t.admin.announcements.filterPublished}
+                  {t("admin.announcements.filterPublished", "Published")}
                 </button>
                 <button
                   onClick={() => setFilter('draft')}
@@ -150,7 +150,7 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
                       : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/10'
                   }`}
                 >
-                  {t.admin.announcements.filterDraft}
+                  {t("admin.announcements.filterDraft", "Draft")}
                 </button>
               </div>
             </div>
@@ -173,7 +173,7 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
                     onClick={() => window.location.href = getLangPath(lang, '/admin/announcements/new')}
                   >
                     <Plus className="w-5 h-5" />
-                    {t.admin.announcements.new}
+                    {t("admin.announcements.new", "New Announcement")}
                   </PremiumButton>
                 </div>
               </PremiumCard>
@@ -221,14 +221,14 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
                         <button
                           onClick={() => window.location.href = getLangPath(lang, `/admin/announcements/${announcement.id}/edit`)}
                           className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
-                          title={t.admin.announcements.actionsEdit}
+                          title={t("admin.announcements.actionsEdit", "Edit")}
                         >
                           <Edit className="w-4 h-4 text-white/70" />
                         </button>
                         <button
                           onClick={() => handleTogglePublish(announcement)}
                           className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
-                          title={announcement.is_published ? t.admin.announcements.actionsUnpublish : t.admin.announcements.actionsPublish}
+                          title={announcement.is_published ? t("admin.announcements.actionsUnpublish", "Unpublish") : t("admin.announcements.actionsPublish", "Publish")}
                         >
                           {announcement.is_published ? (
                             <EyeOff className="w-4 h-4 text-white/70" />
@@ -239,7 +239,7 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
                         <button
                           onClick={() => handleTogglePin(announcement)}
                           className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
-                          title={announcement.is_pinned ? t.admin.announcements.actionsUnpin : t.admin.announcements.actionsPin}
+                          title={announcement.is_pinned ? t("admin.announcements.actionsUnpin", "Unpin") : t("admin.announcements.actionsPin", "Pin")}
                         >
                           {announcement.is_pinned ? (
                             <PinOff className="w-4 h-4 text-white/70" />
@@ -251,7 +251,7 @@ const AnnouncementsAdminListPage = ({ lang }: AnnouncementsAdminListPageProps) =
                           <button
                             onClick={() => handleDelete(announcement)}
                             className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors"
-                            title={t.admin.announcements.actionsDelete}
+                            title={t("admin.announcements.actionsDelete", "Delete")}
                           >
                             <Trash2 className="w-4 h-4 text-red-400" />
                           </button>

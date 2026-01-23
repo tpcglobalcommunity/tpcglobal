@@ -1,0 +1,2 @@
+# This file ensures the functions directory structure is tracked in git
+# Function files are versioned and applied through migrations

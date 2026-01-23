@@ -15,7 +15,7 @@ interface Phase {
   title: string;
   desc: string;
   quarter: string;
-  bullets: string[];
+  bullets: readonly string[];
 }
 
 const Roadmap = ({ lang }: RoadmapProps) => {

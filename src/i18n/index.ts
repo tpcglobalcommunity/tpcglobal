@@ -1,4 +1,5 @@
 import { translations, Language } from './translations';
+import { stripLang, ensureLangPath, getLanguageFromPath } from '../utils/langPath';
 
 export type { Language };
 
@@ -19,19 +20,11 @@ export function storeLanguage(lang: Language) {
   } catch {}
 }
 
-export function getLanguageFromPath(pathname: string = window.location.pathname): Language {
-  const m = pathname.match(/^\/(en|id)(\/|$)/);
-  if (m) return m[1] as Language;
-  return getStoredLanguage() ?? 'en';
-}
+export { getLanguageFromPath, stripLang };
 
-export function stripLang(pathname: string): string {
-  return pathname.replace(/^\/(en|id)(?=\/|$)/, '');
-}
-
+// Legacy function for backward compatibility
 export function getLangPath(lang: Language, pathWithoutLang: string): string {
-  const clean = pathWithoutLang.startsWith('/') ? pathWithoutLang.slice(1) : pathWithoutLang;
-  return `/${lang}/${clean}`;
+  return ensureLangPath(lang, pathWithoutLang);
 }
 
 /**
@@ -42,7 +35,7 @@ export function setLanguage(newLang: Language, currentPath: string = window.loca
   storeLanguage(newLang);
 
   const without = stripLang(currentPath);
-  const next = getLangPath(newLang, without === '' ? '/home' : without);
+  const next = ensureLangPath(newLang, without === '' ? '/home' : without);
 
   if (window.location.pathname !== next) {
     window.history.pushState({}, '', next);
@@ -51,14 +44,18 @@ export function setLanguage(newLang: Language, currentPath: string = window.loca
 }
 
 export const useTranslations = (lang?: Language) => {
-  const targetLang = lang || getLanguageFromPath();
+  const targetLang = lang || getLanguageFromPath(window.location.pathname);
   return translations[targetLang];
 };
 
 export const useLanguage = () => {
-  const language = getLanguageFromPath();
+  const language = getLanguageFromPath(window.location.pathname);
   const t = useTranslations(language);
-  return { language, t };
+  const translate = (key: string, fallback?: string) => {
+    const value = getNestedTranslation(t, key);
+    return value ?? fallback ?? key;
+  };
+  return { language, t: translate };
 };
 
 function getNestedTranslation(obj: any, path: string): string {
@@ -77,9 +74,12 @@ function getNestedTranslation(obj: any, path: string): string {
 }
 
 export const useI18n = (lang?: Language) => {
-  const detectedLang = lang || getLanguageFromPath();
+  const detectedLang = lang || getLanguageFromPath(window.location.pathname);
   const translations = useTranslations(detectedLang);
-  const t = (path: string) => getNestedTranslation(translations, path);
+  const t = (key: string, fallback?: string) => {
+    const value = getNestedTranslation(translations, key);
+    return value ?? fallback ?? key;
+  };
   return { t, language: detectedLang };
 };
 

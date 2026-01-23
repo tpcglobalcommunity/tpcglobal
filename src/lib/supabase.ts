@@ -13,6 +13,12 @@ if (import.meta.env.DEV) {
   });
 }
 
+// Log Supabase init
+console.log("[SUPABASE_INIT]", {
+  url: import.meta.env.VITE_SUPABASE_URL,
+  hasAnon: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+});
+
 // Log Supabase URL in production for verification (only once)
 if (!(window as any).__SUPABASE_URL_LOGGED__) {
   console.info("[SUPABASE_ACTIVE_URL]", supabaseUrl);

@@ -51,8 +51,8 @@ export default function AuthShell({
           {/* Glassmorphism Card */}
           <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 relative overflow-hidden">
             {/* Background Effects */}
-            <div className="absolute inset-0 bg-[#F0B90B]/10 blur-2xl" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(240,185,11,0.10),transparent_60%)]" />
+            <div className="pointer-events-none absolute inset-0 bg-[#F0B90B]/10 blur-2xl" />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(240,185,11,0.10),transparent_60%)]" />
 
             {/* Form Container */}
             <div className="relative p-6 sm:p-8">

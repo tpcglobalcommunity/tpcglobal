@@ -1,0 +1,2 @@
+# This file ensures the supabase directory structure is tracked in git
+# Individual SQL files are versioned and managed through migrations

@@ -4,10 +4,10 @@ import { Link } from '../components/Router';
 import { PremiumShell, PremiumSection, PremiumCard, PremiumButton, NoticeBox } from '../components/ui';
 
 interface HomeProps {
-  lang: Language;
+  lang?: Language;
 }
 
-const Home = ({ lang }: HomeProps) => {
+const Home = ({ lang = "en" }: HomeProps) => {
   const t = useTranslations(lang);
 
   return (

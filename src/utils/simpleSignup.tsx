@@ -3,7 +3,7 @@
 // =========================================================
 
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { validateReferralForForm } from "./referralValidationFixed";
 
@@ -151,30 +151,20 @@ export function useSimpleSignUp() {
 
 export function SimpleSignUpComponent() {
   const navigate = useNavigate();
-  const { signUp } = useSimpleSignUp();
+  const signUpData = useSimpleSignUp();
 
   // Auto redirect on success
   useEffect(() => {
-    if (signUp.success) {
+    if (signUpData.success) {
       // Success message sudah ditampilkan, redirect akan ditangani di handleSubmit
-      navigate(signUp.redirectPath, { replace: true });
+      navigate("/signin", { replace: true });
     }
-  }, [signUp.success]);
+  }, [signUpData.success, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const result = await signUp(
-      signUp.email,
-      signUp.password,
-      signUp.username,
-      signUp.referralCode
-    );
-    
-    if (result.success) {
-      // Redirect ke path yang ditentukan
-      navigate(result.redirectPath, { replace: true });
-    }
+    await signUpData.signUp();
   };
 
   return (
@@ -186,12 +176,12 @@ export function SimpleSignUpComponent() {
             <label className="block text-sm font-medium mb-2">Email</label>
             <input
               type="email"
-              value={signUp.email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={signUpData.email}
+              onChange={(e) => signUpData.setEmail(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg"
               placeholder="email@example.com"
               required
-              disabled={signUp.isLoading}
+              disabled={signUpData.isLoading}
             />
           </div>
 
@@ -200,12 +190,12 @@ export function SimpleSignUpComponent() {
             <label className="block text-sm font-medium mb-2">Password</label>
             <input
               type="password"
-              value={signUp.password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={signUpData.password}
+              onChange={(e) => signUpData.setPassword(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg"
               placeholder="Min 6 characters"
               required
-              disabled={signUp.isLoading}
+              disabled={signUpData.isLoading}
             />
           </div>
 
@@ -214,12 +204,12 @@ export function SimpleSignUpComponent() {
             <label className="block text-sm font-medium mb-2">Username</label>
             <input
               type="text"
-              value={signUp.username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={signUpData.username}
+              onChange={(e) => signUpData.setUsername(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg"
               placeholder="johndoe"
               required
-              disabled={signUp.isLoading}
+              disabled={signUpData.isLoading}
             />
           </div>
 
@@ -228,35 +218,35 @@ export function SimpleSignUpComponent() {
             <label className="block text-sm font-medium mb-2">Referral Code (Optional)</label>
             <input
               type="text"
-              value={signUp.referralCode}
-              onChange={(e) => setReferralCode(e.target.value)}
+              value={signUpData.referralCode}
+              onChange={(e) => signUpData.setReferralCode(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg"
               placeholder="TPC-ABC123"
-              disabled={signUp.isLoading}
+              disabled={signUpData.isLoading}
             />
           </div>
 
           {/* Error */}
-          {signUp.error && (
+          {signUpData.error && (
             <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-              {signUp.error}
+              {signUpData.error}
             </div>
           )}
 
           {/* Success */}
-          {signUp.success && (
+          {signUpData.success && (
             <div className="p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-              {signUp.success}
+              {signUpData.success}
             </div>
           )}
 
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={signUp.isLoading}
+            disabled={signUpData.isLoading}
             className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
           >
-            {signUp.isLoading ? "Creating Account..." : "Sign Up"}
+            {signUpData.isLoading ? "Creating Account..." : "Sign Up"}
           </button>
         </form>
 

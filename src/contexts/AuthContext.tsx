@@ -2,11 +2,14 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { supabase } from '../lib/supabase';
 import type { Session, User } from '@supabase/supabase-js';
 import { useProfileStatus } from '../lib/useProfileStatus';
+import type { Profile } from '../lib/supabase';
+import { getProfile } from '../lib/supabase';
 
 interface AuthContextType {
   loading: boolean;
   session: Session | null;
   user: User | null;
+  profile: Profile | null;
   role: string;
   verified: boolean;
   isMember: boolean;
@@ -37,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const { loading: profileLoading, role, verified } = useProfileStatus(session?.user?.id);
 
   const isMember = role === 'member';
@@ -60,6 +64,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      getProfile(session.user.id).then(setProfile);
+    } else {
+      setProfile(null);
+    }
+  }, [session?.user?.id]);
 
   const signUpInviteOnly = async (params: {
     referralCode: string;
@@ -144,6 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading: loading || profileLoading,
     session,
     user,
+    profile,
     role,
     verified,
     isMember,

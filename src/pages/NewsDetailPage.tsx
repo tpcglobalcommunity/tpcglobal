@@ -10,7 +10,6 @@ interface NewsDetailPageProps {
 
 export default function NewsDetailPage({ slug }: NewsDetailPageProps) {
   const { t, language } = useLanguage();
-  const translations = t;
   const [post, setPost] = useState<NewsPostDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -69,15 +68,15 @@ export default function NewsDetailPage({ slug }: NewsDetailPageProps) {
         <PremiumSection>
           <div className="text-center py-12">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              {translations.news.detail.notFound}
+              {t("news.detail.notFound", "Article not found")}
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mb-8">
-              {translations.news.detail.notFoundDesc}
+              {t("news.detail.notFoundDesc", "The article you're looking for doesn't exist or has been removed.")}
             </p>
             <a href={`/${language}/news`}>
               <PremiumButton>
                 <ArrowLeft className="w-4 h-4" />
-                {translations.news.detail.back}
+                {t("news.detail.back", "Back to News")}
               </PremiumButton>
             </a>
           </div>
@@ -98,7 +97,7 @@ export default function NewsDetailPage({ slug }: NewsDetailPageProps) {
             className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline mb-8"
           >
             <ArrowLeft className="w-4 h-4" />
-            {translations.news.detail.back}
+            {t("news.detail.back", "Back to News")}
           </a>
 
           {post.cover_url && (
@@ -115,7 +114,7 @@ export default function NewsDetailPage({ slug }: NewsDetailPageProps) {
             <div className="flex items-center gap-2">
               <Tag className="w-4 h-4" />
               <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-medium">
-                {translations.news.filters[post.category]}
+                {t("news.filters." + post.category, post.category)}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -142,20 +141,20 @@ export default function NewsDetailPage({ slug }: NewsDetailPageProps) {
           <div className="border-t border-gray-200 dark:border-gray-700 pt-8 mt-12">
             <div className="bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 rounded-2xl p-8">
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                {translations.news.detail.ctaTitle}
+                {t("news.detail.ctaTitle", "Stay Updated")}
               </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                {translations.news.detail.ctaDesc}
+                {t("news.detail.ctaDesc", "Get the latest updates and announcements from our team.")}
               </p>
               <div className="flex flex-wrap gap-4">
                 <a href={`/${language}/docs`}>
                   <PremiumButton variant="primary">
-                    {translations.nav.docs}
+                    {t("nav.docs", "Documentation")}
                   </PremiumButton>
                 </a>
                 <a href={`/${language}/transparency`}>
                   <PremiumButton variant="secondary">
-                    {translations.nav.transparency}
+                    {t("nav.transparency", "Transparency")}
                   </PremiumButton>
                 </a>
                 <a
@@ -165,7 +164,7 @@ export default function NewsDetailPage({ slug }: NewsDetailPageProps) {
                 >
                   <PremiumButton variant="secondary">
                     <ExternalLink className="w-4 h-4" />
-                    {translations.footer.links.telegram}
+                    {t("footer.links.telegram", "Telegram")}
                   </PremiumButton>
                 </a>
               </div>
