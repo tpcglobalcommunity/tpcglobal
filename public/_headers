@@ -1,98 +1,29 @@
-# Cache Control Headers for TPC Global
-# Cloudflare Pages _headers file
+/
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
 
-# HTML files - no cache for immediate updates
-/index.html
-  Cache-Control: no-cache, no-store, must-revalidate
-
-# All other HTML files
-/*.html
-  Cache-Control: no-cache, no-store, must-revalidate
-
-# Signup routes - no cache to prevent stale UI
 /signup
-  Cache-Control: no-store
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+  Pragma: no-cache
+  Expires: 0
 
 /en/signup
-  Cache-Control: no-store
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+  Pragma: no-cache
+  Expires: 0
 
 /id/signup
-  Cache-Control: no-store
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+  Pragma: no-cache
+  Expires: 0
 
-/en/*
-  Cache-Control: no-store
+/*.html
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+  Pragma: no-cache
+  Expires: 0
 
-/id/*
-  Cache-Control: no-store
-
-# Build probe - no cache for deploy verification
-/__build_probe__.json
-  Cache-Control: no-store
-
-# Static assets with hash - long-term cache
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
-
-# JS and CSS files with hash - long-term cache
-/*.js
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.css
-  Cache-Control: public, max-age=31536000, immutable
-
-# Images and media
-/*.png
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.jpg
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.jpeg
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.gif
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.svg
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.webp
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.ico
-  Cache-Control: public, max-age=31536000, immutable
-
-# Fonts
-/*.woff
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.woff2
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.ttf
-  Cache-Control: public, max-age=31536000, immutable
-
-# Fallback for all other static files
-/*
-  Cache-Control: public, max-age=31536000, immutable
-
-# Force no-cache for signup HTML
-/
-  Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate
-  Pragma: no-cache
-  Expires: 0
-
-/signup
-  Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate
-  Pragma: no-cache
-  Expires: 0
-
-/en/signup
-  Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate
-  Pragma: no-cache
-  Expires: 0
-
-/id/signup
-  Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate
-  Pragma: no-cache
-  Expires: 0
