@@ -12,7 +12,10 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "typecheck:watch": "tsc -p tsconfig.json --noEmit --watch",
     "typecheck:full": "tsc -p tsconfig.json --noEmit --incremental false",
-    "typecheck:clean": "node -e \"try{require('fs').rmSync('node_modules/.cache/tsc',{recursive:true,force:true})}catch(e){}\""
+    "typecheck:clean": "node -e \"try{require('fs').rmSync('node_modules/.cache/tsc',{recursive:true,force:true})}catch(e){}\"",
+    "predeploy:tpcglobalc": "node scripts/ensure-tpcglobalc.js",
+    "deploy:tpcglobalc": "npm run build && npx wrangler pages deploy dist --project-name tpcglobalc",
+    "deploy:dry": "node -e \"console.log('Use: npm run deploy:tpcglobalc')\""
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
