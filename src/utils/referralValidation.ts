@@ -326,7 +326,7 @@ const { referralCode, setReferralCode, validation } = useReferralForm();
 <input
   value={referralCode}
   onChange={(e) => setReferralCode(e.target.value)}
-  placeholder="Enter referral code"
+  placeholder="Invitation code"
 />
 <div className={`text-sm ${getReferralValidationColor(validation)}`}>
   {getReferralValidationMessage(validation)}

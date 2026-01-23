@@ -173,13 +173,13 @@ export function SimpleSignUpComponent() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium mb-2">Email</label>
+            <label className="block text-sm font-medium mb-2">Email Address</label>
             <input
               type="email"
               value={signUpData.email}
               onChange={(e) => signUpData.setEmail(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="email@example.com"
+              placeholder="name@email.com"
               required
               disabled={signUpData.isLoading}
             />
@@ -193,7 +193,7 @@ export function SimpleSignUpComponent() {
               value={signUpData.password}
               onChange={(e) => signUpData.setPassword(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="Min 6 characters"
+              placeholder="Create a strong password"
               required
               disabled={signUpData.isLoading}
             />
@@ -207,7 +207,7 @@ export function SimpleSignUpComponent() {
               value={signUpData.username}
               onChange={(e) => signUpData.setUsername(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="johndoe"
+              placeholder="Choose a username"
               required
               disabled={signUpData.isLoading}
             />
@@ -215,13 +215,13 @@ export function SimpleSignUpComponent() {
 
           {/* Referral Code (Optional) */}
           <div>
-            <label className="block text-sm font-medium mb-2">Referral Code (Optional)</label>
+            <label className="block text-sm font-medium mb-2">Invitation Code (Optional)</label>
             <input
               type="text"
               value={signUpData.referralCode}
               onChange={(e) => signUpData.setReferralCode(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg"
-              placeholder="TPC-ABC123"
+              placeholder="TPC-XXXXX"
               disabled={signUpData.isLoading}
             />
           </div>

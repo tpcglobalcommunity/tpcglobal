@@ -370,7 +370,7 @@ const handleSubmit = async (e) => {
 <input
   value={referralCode}
   onChange={(e) => setReferralCode(e.target.value)}
-  placeholder="Referral code (optional)"
+  placeholder="Invitation code (optional)"
 />
 {validation.error && (
   <div className="text-red-400 text-sm">{validation.error}</div>
