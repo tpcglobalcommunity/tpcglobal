@@ -66,7 +66,7 @@ export const useLanguage = () => {
       console.warn(`Missing translation key: ${key} for language: ${language}`);
     }
     
-    return fallback || missingKey;
+    return (fallback && fallback !== "") ? fallback : missingKey;
   };
   return { language, t: translate };
 };
@@ -111,8 +111,8 @@ export const useI18n = (lang?: Language) => {
       console.warn(`Missing translation key: ${key} for language: ${detectedLang}`);
     }
     
-    // Return fallback if provided, otherwise the missing key indicator
-    return fallback || missingKey;
+    // Return fallback if provided and non-empty, otherwise the missing key indicator
+    return (fallback && fallback !== "") ? fallback : missingKey;
   };
   
   return { t, language: detectedLang };
