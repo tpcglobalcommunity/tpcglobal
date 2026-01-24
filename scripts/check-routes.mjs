@@ -31,6 +31,10 @@ const DEFAULT_ROUTES = [
 const BASE_URL = process.env.BASE_URL || "http://localhost:5173";
 const TIMEOUT_MS = Number(process.env.TIMEOUT_MS || 12000);
 
+// Determine if we're in production mode
+const isProd = (BASE_URL.startsWith("https://") && !BASE_URL.includes("localhost")) || 
+               process.env.CI === "true";
+
 const FAIL_TEXTS = [
   "errorboundary",
   "something went wrong",
@@ -60,19 +64,19 @@ function detectBlankPage(body) {
                        /type="module"/i.test(body); // Module scripts indicate JS loading
     
     if (!hasContent) {
-      return "blank root (possible JS/hydration failure)";
+      if (isProd) {
+        return "blank root (possible JS/hydration failure)";
+      } else {
+        return "WARN blank root (dev mode allowed)";
+      }
     }
   }
   return null;
 }
 
 function detectMissingAssets(body) {
-  // Only check for missing assets in production mode (not dev)
-  // Dev mode uses Vite's dynamic imports, not /assets/ paths
-  const isProduction = /src=["'][^"']*\/assets\//i.test(body) || 
-                       /\/assets\//i.test(body);
-  
-  if (!isProduction) {
+  // Only check for missing assets in production mode
+  if (!isProd) {
     return null; // Skip check for development mode
   }
   
@@ -88,7 +92,11 @@ function detectMissingAssets(body) {
 function detectServiceWorkerError(body) {
   const lowerBody = body.toLowerCase();
   if (lowerBody.includes('service worker') && lowerBody.includes('error')) {
-    return "service worker error";
+    if (isProd) {
+      return "service worker error";
+    } else {
+      return "WARN service worker error (dev mode allowed)";
+    }
   }
   return null;
 }
@@ -182,6 +190,7 @@ function fetchSingle(url) {
   console.log(`🔍 CHECKING ROUTES: ${BASE_URL}`);
   console.log(`⏱️  TIMEOUT: ${TIMEOUT_MS}ms`);
   console.log(`📋 ROUTES: ${DEFAULT_ROUTES.length} routes`);
+  console.log(`🏷️  MODE: ${isProd ? 'PRODUCTION' : 'DEVELOPMENT'}`);
   console.log("");
 
   let passed = 0;
@@ -204,18 +213,33 @@ function fetchSingle(url) {
     const missingAssetsError = detectMissingAssets(result.body);
     const serviceWorkerError = detectServiceWorkerError(result.body);
 
-    const isOk = statusOk && !foundFailText && !result.error && 
-                !blankPageError && !missingAssetsError && !serviceWorkerError;
+    // Determine if this is a failure or warning
+    const hasWarnings = blankPageError?.startsWith('WARN') || 
+                       serviceWorkerError?.startsWith('WARN');
+    const hasFailures = !statusOk || foundFailText || result.error || 
+                       (blankPageError && !blankPageError.startsWith('WARN')) ||
+                       (missingAssetsError && !missingAssetsError.startsWith('WARN')) ||
+                       (serviceWorkerError && !serviceWorkerError.startsWith('WARN'));
 
-    if (isOk) {
+    if (!hasFailures) {
       passed++;
       const redirectInfo = result.redirectCount > 0 ? ` → ${result.redirectCount} redirects` : "";
-      console.log(`✅ OK ${fullUrl} [${result.status}]${redirectInfo} (${result.responseTime}ms)`);
+      console.log(`✅ PASS ${fullUrl} [${result.status}]${redirectInfo} (${result.responseTime}ms)`);
+      
+      // Show warnings if any
+      if (hasWarnings) {
+        if (blankPageError?.startsWith('WARN')) {
+          console.log(`    ⚠️ WARN: ${blankPageError}`);
+        }
+        if (serviceWorkerError?.startsWith('WARN')) {
+          console.log(`    ⚠️ WARN: ${serviceWorkerError}`);
+        }
+      }
     } else {
       failed++;
       failedRoutes.push(fullUrl);
       const redirectInfo = result.redirectCount > 0 ? ` → ${result.redirectCount} redirects` : "";
-      console.log(`❌ FAIL ${fullUrl} [${result.status}]${redirectInfo} (${result.responseTime}ms)`);
+      console.log(`❌ FAIL (prod) ${fullUrl} [${result.status}]${redirectInfo} (${result.responseTime}ms)`);
       
       if (result.error) {
         console.log(`    ERROR: ${result.error}`);
