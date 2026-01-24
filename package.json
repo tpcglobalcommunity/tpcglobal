@@ -8,6 +8,7 @@
     "typecheck": "tsc --noEmit",
     "validate:i18n": "tsx scripts/validate-i18n.ts",
     "i18n:audit": "tsx scripts/i18n-audit.ts",
+    "check:routes": "node scripts/check-routes.mjs",
     "dev": "vite",
     "build": "npm run validate:i18n && vite build",
     "postbuild": "node scripts/prerender-og.mjs",
