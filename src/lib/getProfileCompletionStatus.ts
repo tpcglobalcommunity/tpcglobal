@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { isProfileComplete } from "./profileHelpers";
 
 export async function getProfileCompletionStatus(): Promise<{ profile_required_completed: boolean } | null> {
   const { data: { session } } = await supabase.auth.getSession();
@@ -12,11 +13,7 @@ export async function getProfileCompletionStatus(): Promise<{ profile_required_c
 
   if (error) throw error;
 
-  const done =
-    !!data?.full_name?.trim() &&
-    !!data?.phone?.trim() &&
-    !!data?.telegram?.trim() &&
-    !!data?.city?.trim();
+  const done = isProfileComplete(data);
 
   return { profile_required_completed: done };
 }
