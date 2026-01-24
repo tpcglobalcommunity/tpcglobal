@@ -72,28 +72,28 @@ const MarketplacePage = ({ lang }: MarketplacePageProps) => {
             <Store className="w-8 h-8 text-[#F0B90B]" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            {t("marketplace.title", "Marketplace")}
+            {t("marketplace.title")}
           </h1>
           <p className="text-xl text-white/70 max-w-3xl mx-auto mb-6">
-            {t("marketplace.subtitle", "Discover trusted vendors and services")}
+            {t("marketplace.subtitle")}
           </p>
 
           {user && (
-            <PremiumButton onClick={() => window.location.href = getLangPath(lang, '/member/vendor/apply')}>
+            <PremiumButton onClick={() => window.location.href = getLangPath(lang) + '/member/vendor/apply'}>
               <Store className="w-5 h-5" />
-              {t("marketplace.applyAsVendor", "Apply as Vendor")}
+              {t("marketplace.applyAsVendor")}
             </PremiumButton>
           )}
         </div>
 
         <NoticeBox variant="warning" className="mb-8">
-          {t("marketplace.disclaimer", "Disclaimer text")}
+          {t("marketplace.disclaimer")}
         </NoticeBox>
 
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-4">
             <Filter className="w-5 h-5 text-white/40" />
-            <span className="text-sm font-medium text-white/60">{t("marketplace.filterByCategory", "Filter by category")}</span>
+            <span className="text-sm font-medium text-white/60">{t("marketplace.filterByCategory")}</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((category) => (
@@ -107,8 +107,8 @@ const MarketplacePage = ({ lang }: MarketplacePageProps) => {
                 }`}
               >
                 {category === 'all'
-                  ? t("marketplace.categories.all", "All")
-                  : t(`marketplace.categories.${category}`, category.charAt(0).toUpperCase() + category.slice(1))}
+                  ? t("marketplace.categories.all")
+                  : t(`marketplace.categories.${category}`)}
               </button>
             ))}
           </div>
@@ -123,10 +123,10 @@ const MarketplacePage = ({ lang }: MarketplacePageProps) => {
             <div className="text-center py-12">
               <Store className="w-12 h-12 text-white/20 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-white/70 mb-2">
-                {t("marketplace.emptyTitle", "No vendors found")}
+                {t("marketplace.emptyTitle")}
               </h3>
               <p className="text-sm text-white/50">
-                {t("marketplace.emptyDesc", "No vendors in this category")}
+                {t("marketplace.emptyDesc")}
               </p>
             </div>
           </PremiumCard>
@@ -135,14 +135,14 @@ const MarketplacePage = ({ lang }: MarketplacePageProps) => {
             <div className="text-center py-12">
               <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-white/70 mb-2">
-                {t("marketplace.errorTitle", "Failed to load vendors")}
+                {t("marketplace.errorTitle")}
               </h3>
               <p className="text-sm text-white/50 mb-4">
-                {t("marketplace.errorDesc", "Please try again later")}
+                {t("marketplace.errorDesc")}
               </p>
               <PremiumButton onClick={loadVendors} variant="secondary">
                 <RefreshCw className="w-4 h-4" />
-                {t("marketplace.retry", "Retry")}
+                {t("marketplace.retry")}
               </PremiumButton>
             </div>
           </PremiumCard>
@@ -154,7 +154,7 @@ const MarketplacePage = ({ lang }: MarketplacePageProps) => {
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="text-xl font-bold text-white">{s(vendor.brand_name)}</h3>
                     <span className="px-2 py-1 text-xs bg-white/10 text-white/70 rounded border border-white/20">
-                      {t(`marketplace.categories.${s(vendor.category)}`, s(vendor.category).charAt(0).toUpperCase() + s(vendor.category).slice(1))}
+                      {t(`marketplace.categories.${s(vendor.category)}`)}
                     </span>
                   </div>
 
@@ -184,7 +184,7 @@ const MarketplacePage = ({ lang }: MarketplacePageProps) => {
                       className="flex items-center justify-center gap-2 px-4 py-2 bg-[#F0B90B]/10 hover:bg-[#F0B90B]/20 border border-[#F0B90B]/30 rounded-lg text-[#F0B90B] font-medium transition-all"
                     >
                       <ExternalLink className="w-4 h-4" />
-                      {t("marketplace.visitWebsite", "Visit Website")}
+                      {t("marketplace.visitWebsite")}
                     </a>
                   )}
                   {s(vendor.contact_telegram) && (
@@ -195,7 +195,7 @@ const MarketplacePage = ({ lang }: MarketplacePageProps) => {
                       className="flex items-center justify-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white/80 font-medium transition-all"
                     >
                       <MessageCircle className="w-4 h-4" />
-                      {t("marketplace.contactTelegram", "Contact on Telegram")}
+                      {t("marketplace.contactTelegram")}
                     </a>
                   )}
                 </div>
@@ -208,7 +208,7 @@ const MarketplacePage = ({ lang }: MarketplacePageProps) => {
           <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-lg">
             <AlertCircle className="w-5 h-5 text-white/40" />
             <p className="text-sm text-white/60">
-              {t("marketplace.footerDisclaimer", "Always verify vendors independently")}
+              {t("marketplace.footerDisclaimer")}
             </p>
           </div>
         </div>

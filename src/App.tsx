@@ -21,6 +21,7 @@ import Whitepaper from "./pages/Whitepaper";
 import Roadmap from "./pages/Roadmap";
 import Faq from "./pages/Faq";
 import MarketplacePage from "./pages/MarketplacePage";
+import MarketplaceItemPage from "./pages/MarketplaceItemPage";
 
 import SignUp from "./pages/auth/SignUp";
 import SignIn from "./pages/auth/SignIn";
@@ -260,6 +261,8 @@ export default function App() {
         return <Support lang={lang} />;
       case "/marketplace":
         return <MarketplacePage lang={lang} />;
+      case "/marketplace/item":
+        return <MarketplaceItemPage lang={lang} />;
 
       // AUTH
       case "/signup":

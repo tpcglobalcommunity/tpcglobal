@@ -22,6 +22,8 @@ const DEFAULT_ROUTES = [
   "/id/maintenance",
   "/en/marketplace",
   "/id/marketplace",
+  "/en/marketplace/item/demo",
+  "/id/marketplace/item/demo",
   "/en/docs",
   "/id/docs",
   "/en/dao",
