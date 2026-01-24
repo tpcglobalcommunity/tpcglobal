@@ -253,20 +253,26 @@ export default function SignUp() {
   };
 
   // Check username availability using RPC (NO PROFILE QUERY)
-  const checkUsernameAvailability = async (username: string): Promise<boolean> => {
-    try {
-      const { data, error } = await supabase.rpc('check_username_available', {
-        p_username: username
-      });
+  const checkUsernameAvailability = async (username: string): Promise<{ status: 'ok' | 'unknown' | 'error', available: boolean }> => {
+    const u = (username ?? '').trim().toLowerCase();
+    if (!u) return { status: 'unknown', available: true };
 
-      if (error) {
-        throw error;
+    const { data, error } = await supabase.rpc('check_username_available', { p_username: u });
+
+    if (error) {
+      const msg = String((error as any).message ?? '').toLowerCase();
+      const isRpcMissing = msg.includes('404') || msg.includes('not found') || msg.includes('function');
+
+      if (isRpcMissing) {
+        // fallback: jangan block signup kalau RPC belum ada / belum terdeploy
+        return { status: 'unknown', available: true };
       }
 
-      return data === true; // Return true if username is available
-    } catch {
-      return false; // Assume taken on error
+      return { status: 'error', available: true };
     }
+
+    const available = !!(data?.available);
+    return { status: 'ok', available };
   };
 
   // Form submission
@@ -290,8 +296,8 @@ export default function SignUp() {
     setIsSubmitting(true);
     try {
       // Check username availability
-      const isUsernameAvailable = await checkUsernameAvailability(uname);
-      if (!isUsernameAvailable) {
+      const usernameCheck = await checkUsernameAvailability(uname);
+      if (usernameCheck.status === 'ok' && !usernameCheck.available) {
         setError(t("signup.errors.usernameTaken"));
         return;
       }
