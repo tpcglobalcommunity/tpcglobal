@@ -9,6 +9,8 @@
     "validate:i18n": "tsx scripts/validate-i18n.ts",
     "i18n:audit": "tsx scripts/i18n-audit.ts",
     "check:routes": "node scripts/check-routes.mjs",
+    "check:routes:dev": "node scripts/check-routes-env.cjs http://localhost:5174",
+    "check:routes:prod": "node scripts/check-routes-env.cjs https://tpcglobal.io",
     "dev": "vite",
     "build": "npm run validate:i18n && vite build",
     "postbuild": "node scripts/prerender-og.mjs",
