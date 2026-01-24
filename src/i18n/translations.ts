@@ -220,7 +220,27 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "footer.links.twitter": "X (Twitter)",
     "footer.links.youtube": "YouTube",
     "footer.links.support": "Support",
-    "footer.links.contact": "Contact"
+    "footer.links.contact": "Contact",
+
+    "updateProfit.title": "Update Profit",
+    "updateProfit.subtitle": "Share your trading results with the TPC community",
+    "updateProfit.disclaimer": "This is for educational and community tracking purposes only. Trading involves risk and past performance does not guarantee future results.",
+    "updateProfit.fields.date": "Date",
+    "updateProfit.fields.account": "Account (Optional)",
+    "updateProfit.fields.amount": "Profit/Loss Amount",
+    "updateProfit.fields.currency": "Currency",
+    "updateProfit.fields.type": "Type",
+    "updateProfit.fields.note": "Note (Optional)",
+    "updateProfit.fields.agree": "I confirm this is my real trading result.",
+    "updateProfit.actions.save": "Save Result",
+    "updateProfit.actions.saving": "Saving...",
+    "updateProfit.success.title": "Result Saved (Demo)",
+    "updateProfit.success.body": "Your trading result has been recorded. This is a demo - actual database integration coming soon.",
+    "updateProfit.errors.required": "This field is required",
+    "updateProfit.errors.invalidAmount": "Please enter a valid amount",
+    "updateProfit.errors.tooLarge": "Amount cannot exceed 1,000,000",
+    "updateProfit.errors.noteTooLong": "Note cannot exceed 280 characters",
+    "updateProfit.errors.mustAgree": "You must confirm this is your real trading result"
   },
 
   id: {
@@ -422,6 +442,26 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "footer.links.twitter": "X (Twitter)",
     "footer.links.youtube": "YouTube",
     "footer.links.support": "Bantuan",
-    "footer.links.contact": "Kontak"
+    "footer.links.contact": "Kontak",
+
+    "updateProfit.title": "Update Laporan Profit",
+    "updateProfit.subtitle": "Bagikan hasil trading Anda dengan komunitas TPC",
+    "updateProfit.disclaimer": "Ini hanya untuk tujuan edukasi dan pelacakan komunitas. Trading melibatkan risiko dan performa masa lalu tidak menjamin hasil masa depan.",
+    "updateProfit.fields.date": "Tanggal",
+    "updateProfit.fields.account": "Akun (Opsional)",
+    "updateProfit.fields.amount": "Jumlah Profit/Loss",
+    "updateProfit.fields.currency": "Mata Uang",
+    "updateProfit.fields.type": "Tipe",
+    "updateProfit.fields.note": "Catatan (Opsional)",
+    "updateProfit.fields.agree": "Saya konfirmasi ini adalah hasil trading real saya.",
+    "updateProfit.actions.save": "Simpan Hasil",
+    "updateProfit.actions.saving": "Menyimpan...",
+    "updateProfit.success.title": "Hasil Disimpan (Demo)",
+    "updateProfit.success.body": "Hasil trading Anda telah dicatat. Ini adalah demo - integrasi database akan segera hadir.",
+    "updateProfit.errors.required": "Field ini wajib diisi",
+    "updateProfit.errors.invalidAmount": "Masukkan jumlah yang valid",
+    "updateProfit.errors.tooLarge": "Jumlah tidak boleh melebihi 1.000.000",
+    "updateProfit.errors.noteTooLong": "Catatan tidak boleh melebihi 280 karakter",
+    "updateProfit.errors.mustAgree": "Anda harus konfirmasi ini adalah hasil trading real Anda"
   }
 };
