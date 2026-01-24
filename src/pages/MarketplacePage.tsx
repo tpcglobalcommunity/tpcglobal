@@ -430,13 +430,13 @@ export default function MarketplacePage() {
                   </div>
 
                   <div className="border-t border-white/10 pt-4 mt-4">
-                    <Link
-                      to={getLangPath(lang, `/marketplace/item/${id}`)}
+                    <button
+                      onClick={() => setSelected(item)}
                       className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#F0B90B] to-[#F0B90B]/90 hover:from-[#F0B90B]/90 hover:to-[#F0B90B] text-black font-medium rounded-lg transition-all shadow-lg shadow-[#F0B90B]/25"
                     >
                       {viewDetails}
                       <TrendingUp className="w-4 h-4" />
-                    </Link>
+                    </button>
                   </div>
                 </PremiumCard>
                 </div>
