@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { useI18n, type Language, getLangPath } from "../../i18n";
 import { Link } from "../../components/Router";
@@ -6,6 +6,7 @@ import { signIn } from "../../lib/supabase";
 import { useAuthError } from "../../hooks/useAuthError";
 import AuthShell from "../../components/auth/AuthShell";
 import { AuthBuildMarker } from "../../components/auth/AuthBuildMarker";
+import { getAuthState, getAuthRedirectPath, getLanguageFromPath } from "../../lib/authGuards";
 
 interface SignInProps {
   lang?: Language;
@@ -33,7 +34,31 @@ export default function SignIn({ lang }: SignInProps) {
   const [submitting, setSubmitting] = useState(false);
   const { error, handleError, clearError } = useAuthError();
 
-  const fallback = getLangPath(L, "/member/dashboard");
+  // Check auth state and redirect if needed
+  useEffect(() => {
+    const checkAuthAndRedirect = async () => {
+      const authState = await getAuthState();
+      const currentLang = getLanguageFromPath(window.location.pathname);
+      
+      if (authState.isAuthed && authState.isEmailVerified) {
+        // Already verified - redirect to update-profit
+        const redirectPath = getAuthRedirectPath(authState, currentLang);
+        window.location.assign(redirectPath);
+        return;
+      }
+      
+      if (authState.isAuthed && !authState.isEmailVerified) {
+        // Logged in but not verified - redirect to verify
+        const verifyPath = `/${currentLang}/verify`;
+        window.location.assign(verifyPath);
+        return;
+      }
+    };
+
+    checkAuthAndRedirect();
+  }, []);
+
+  const fallback = getLangPath(L, "/member/update-profit");
   const nextUrl = useMemo(() => {
     const params = new URLSearchParams(window.location.search);
     const nextParam = params.get("next");
@@ -49,12 +74,12 @@ export default function SignIn({ lang }: SignInProps) {
       
       if (result.needsVerification) {
         // Redirect to email verification page
-        const verifyUrl = `${getLangPath(L, "/verify-email")}?email=${encodeURIComponent(email.trim())}`;
+        const verifyUrl = `${getLangPath(L, "/verify")}?email=${encodeURIComponent(email.trim())}`;
         window.location.assign(verifyUrl);
         return;
       }
       
-      // Email is verified, proceed to member area
+      // Email is verified, proceed to update-profit
       window.location.assign(nextUrl);
     } catch (err: any) {
       handleError(err);

@@ -40,6 +40,7 @@ import MemberHome from "./pages/member/MemberHome";
 import MemberDashboardPage from "./pages/member/MemberDashboardPage";
 import ProgramsPage from "./pages/member/ProgramsPage";
 import MemberVerifyPage from "./pages/member/VerifyPage";
+import UpdateProfit from "./pages/member/UpdateProfit";
 import NotificationsPage from "./pages/member/NotificationsPage";
 import MemberSettingsPage from "./pages/member/MemberSettingsPage";
 import WalletPage from "./pages/member/WalletPage";
@@ -192,7 +193,7 @@ export default function App() {
   // Maintenance gate - FINAL RULE
   const maintenanceOn = appSettings?.maintenance_mode === true;
   const isMaintenanceRoute = pathWithoutLang === "/maintenance";
-  const authBypassRoutes = ["/signin", "/signup", "/forgot", "/reset"];
+  const authBypassRoutes = ["/login", "/signup", "/forgot", "/verify", "/invite", "/magic"];
   const isAuthBypassRoute = authBypassRoutes.includes(pathWithoutLang);
 
   if (maintenanceOn && !isAdminPage && !isMaintenanceRoute && !isAuthBypassRoute) {
@@ -306,6 +307,13 @@ export default function App() {
         return (
           <MemberStatusGuard lang={lang} allowPending={true}>
             <MemberDashboardPage lang={lang} />
+          </MemberStatusGuard>
+        );
+
+      case "/member/update-profit":
+        return (
+          <MemberStatusGuard lang={lang} allowPending={false}>
+            <UpdateProfit lang={lang} />
           </MemberStatusGuard>
         );
 

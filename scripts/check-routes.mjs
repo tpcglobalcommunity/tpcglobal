@@ -26,6 +26,8 @@ const DEFAULT_ROUTES = [
   "/id/docs",
   "/en/dao",
   "/id/dao",
+  "/en/member/update-profit",
+  "/id/member/update-profit",
 ];
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:5173";
