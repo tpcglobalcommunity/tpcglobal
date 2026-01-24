@@ -39,7 +39,59 @@ const FAIL_TEXTS = [
   "[i18n missing]",
   "missing translation",
   "hydration failed",
+  "failed to load resource",
+  "chunkloaderror",
+  "loading chunk",
+  "net::err",
+  "module script failed",
+  "service worker",
 ];
+
+function detectBlankPage(body) {
+  // Check for empty root div
+  const emptyRootMatch = body.match(/<div[^>]*id=["']root["'][^>]*>\s*<\/div>/i);
+  if (emptyRootMatch) {
+    // Check if there's meaningful content after root
+    const hasContent = /<(main|header|section|h1|nav|article|aside|footer)/i.test(body) ||
+                       /data-reactroot/i.test(body) ||
+                       /__REACT_DEVTOOLS_GLOBAL_HOOK__/i.test(body) ||
+                       /class="[^"]*\w+[^"]*"/i.test(body) || // Any class with content
+                       /vite-dev/i.test(body) || // Vite dev mode indicator
+                       /type="module"/i.test(body); // Module scripts indicate JS loading
+    
+    if (!hasContent) {
+      return "blank root (possible JS/hydration failure)";
+    }
+  }
+  return null;
+}
+
+function detectMissingAssets(body) {
+  // Only check for missing assets in production mode (not dev)
+  // Dev mode uses Vite's dynamic imports, not /assets/ paths
+  const isProduction = /src=["'][^"']*\/assets\//i.test(body) || 
+                       /\/assets\//i.test(body);
+  
+  if (!isProduction) {
+    return null; // Skip check for development mode
+  }
+  
+  const hasScripts = /<script/i.test(body);
+  const hasAssets = /src=["'][^"']*\/assets\//i.test(body);
+  
+  if (hasScripts && !hasAssets) {
+    return "no assets scripts found";
+  }
+  return null;
+}
+
+function detectServiceWorkerError(body) {
+  const lowerBody = body.toLowerCase();
+  if (lowerBody.includes('service worker') && lowerBody.includes('error')) {
+    return "service worker error";
+  }
+  return null;
+}
 
 async function checkRoute(url, maxRedirects = 5) {
   let currentUrl = url;
@@ -142,11 +194,18 @@ function fetchSingle(url) {
 
     const statusOk = result.status >= 200 && result.status < 400;
     const bodyLower = result.body.toLowerCase();
+    
+    // Check for various failure patterns
     const foundFailText = FAIL_TEXTS.find(text => 
       bodyLower.includes(text.toLowerCase())
     );
+    
+    const blankPageError = detectBlankPage(result.body);
+    const missingAssetsError = detectMissingAssets(result.body);
+    const serviceWorkerError = detectServiceWorkerError(result.body);
 
-    const isOk = statusOk && !foundFailText && !result.error;
+    const isOk = statusOk && !foundFailText && !result.error && 
+                !blankPageError && !missingAssetsError && !serviceWorkerError;
 
     if (isOk) {
       passed++;
@@ -164,6 +223,12 @@ function fetchSingle(url) {
         console.log(`    REASON: HTTP ${result.status} (expected 200-399)`);
       } else if (foundFailText) {
         console.log(`    REASON: Found error text "${foundFailText}"`);
+      } else if (blankPageError) {
+        console.log(`    REASON: ${blankPageError}`);
+      } else if (missingAssetsError) {
+        console.log(`    REASON: ${missingAssetsError}`);
+      } else if (serviceWorkerError) {
+        console.log(`    REASON: ${serviceWorkerError}`);
       }
     }
   }
