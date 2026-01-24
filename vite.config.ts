@@ -18,6 +18,7 @@ export default defineConfig({
     __BUILD_SHA__: JSON.stringify(process.env.CF_PAGES_COMMIT_SHA || process.env.COMMIT_REF || "dev"),
     __BUILD_ID__: JSON.stringify(process.env.CF_PAGES_BUILD_ID || ""),
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+    VITE_BUILD_TIME: JSON.stringify(new Date().toISOString()),
   },
   optimizeDeps: {
     exclude: ['lucide-react'],

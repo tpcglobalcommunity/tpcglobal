@@ -6,11 +6,11 @@ import App from './App.tsx';
 import ErrorBoundary from './components/system/ErrorBoundary.tsx';
 import { I18nProvider } from './i18n';
 import { setupChunkRecovery, clearChunkReloadFlag } from './utils/chunkRecovery';
-import { BUILD_SHA, BUILD_ID, BUILD_TIME } from './lib/buildInfo';
+import { getBuildInfo } from './lib/buildInfo';
 import './index.css';
 
-// Log build info
-console.log("[BUILD]", { sha: BUILD_SHA, id: BUILD_ID, time: BUILD_TIME });
+// Log build info (production proof)
+console.info("[BUILD]", getBuildInfo());
 
 // Setup chunk recovery for handling chunk load errors
 setupChunkRecovery();

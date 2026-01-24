@@ -15,18 +15,18 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
 
   // Safe footer data with fallbacks
   const footerData = {
-    brand: t('footer.brand', 'TPC'),
-    tagline: t('footer.tagline', 'Education-first trading community'),
-    quickLinks: t('footer.quickLinks', 'Quick Links'),
-    links: {
-      home: t('footer.links.home', 'Home'),
-      docs: t('footer.links.docs', 'Documentation'),
-      transparency: t('footer.links.transparency', 'Transparency'),
-      community: t('footer.links.community', 'Community'),
-      telegram: t('footer.links.telegram', 'Telegram')
-    },
-    madeWith: t('footer.madeWith', 'Made with care by TPC')
-  };
+  brand: t('footer.brand'),
+  tagline: t('footer.tagline'),
+  quickLinks: t('footer.quickLinks'),
+  links: {
+    home: t('footer.links.home'),
+    docs: t('footer.links.docs'),
+    transparency: t('footer.links.transparency'),
+    community: t('footer.links.community'),
+    telegram: t('footer.links.telegram')
+  },
+  madeWith: t('footer.madeWith')
+};
 
   return (
     <footer

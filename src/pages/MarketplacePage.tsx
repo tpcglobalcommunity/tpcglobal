@@ -5,7 +5,7 @@ import { PremiumShell, PremiumCard } from "../components/ui";
 import { useAuth } from "../contexts/AuthContext";
 import { getMarketplaceItemsByCategory, type MarketplaceItem, type MarketplaceCategory } from "../data/marketplace.mock";
 import { Link } from "../components/Router";
-import { BUILD_SHA, BUILD_TIME } from "../lib/buildInfo";
+import { getBuildInfo } from "../lib/buildInfo";
 
 const CATEGORIES: MarketplaceCategory[] = [
   "all",
@@ -335,8 +335,13 @@ export default function MarketplacePage() {
             <p className="text-sm text-white/60">{footerDisclaimer}</p>
           </div>
           <div className="mt-2 text-center">
-            <p className="text-xs text-white/30">
-              Build: {BUILD_SHA.slice(0, 7)} • {new Date(BUILD_TIME).toLocaleString()}
+            <p className="text-[10px] text-white/40">
+              Build: {(() => {
+                const build = getBuildInfo();
+                const shaShort = build.sha === "dev" ? "dev" : build.sha.slice(0, 7);
+                const localTime = new Date(build.time).toLocaleString();
+                return `${shaShort} • ${localTime}`;
+              })()}
             </p>
           </div>
         </div>
