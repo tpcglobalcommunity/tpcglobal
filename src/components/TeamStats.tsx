@@ -47,7 +47,7 @@ export function TeamStats({ userId }: { userId: string }) {
           .eq('referrer_id', userId);
 
         setStats({
-          level1_count: profile?.referral_count || 0,
+          level1_count: 0,
           total_team_count: totalTeam?.length || 0,
           level2_count: 0,
           level3_count: 0

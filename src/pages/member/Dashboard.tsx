@@ -342,7 +342,7 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
                   {t.member.referral.countLabel}
                 </h3>
                 <p className="text-3xl font-bold text-[#F0B90B]">
-                  {profile.referral_count}
+                  {0}
                 </p>
               </div>
             </div>

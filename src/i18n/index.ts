@@ -1,166 +1,98 @@
-import { translations } from "./translations";
-import type { Language } from "./translations";
-import { useI18n } from "./context";
-
+import { translations, Language } from "./translations";
+import { 
+  getStoredLanguage, 
+  storeLanguage, 
+  detectLangFromPath, 
+  stripLangPrefix, 
+  collapseDoubleLang 
+} from "../utils/langPath";
+import { resolvePath } from "./resolve";
 export type { Language };
 
-// Simplified type to avoid deep inference
-export type TranslationKey = string;
+export { I18nProvider, useI18n } from "./context";
+export { storeLanguage };
 
-const STORAGE_KEY = "tpc_lang";
-
-export function getStoredLanguage(): Language | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw === "en" || raw === "id" ? (raw as Language) : null;
-  } catch {
-    return null;
-  }
-}
-
-export function storeLanguage(lang: Language) {
-  try {
-    localStorage.setItem(STORAGE_KEY, lang);
-  } catch {}
-}
-
-export function setLanguage(lang: Language) {
-  storeLanguage(lang);
-}
-
+// URL PREFIX ALWAYS WINS - STRICT RULE
 export function getLanguageFromPath(pathname?: string): Language {
-  const path = pathname || (typeof window !== "undefined" ? window.location.pathname : "");
-  const m = path.match(/^\/(en|id)(\/|$)/);
-  if (m) return m[1] as Language;
-  return getStoredLanguage() ?? "en";
+  const p = pathname ?? (typeof window !== "undefined" ? window.location.pathname : "");
+  const m = p.match(/^\/(en|id)(\/|$)/);
+  if (m) return m[1] as Language;          // ✅ PREFIX ALWAYS WINS
+  return getStoredLanguage() ?? "en";      // fallback only
 }
 
 export function stripLang(pathname: string): string {
-  return pathname.replace(/^\/(en|id)(?=\/|$)/, "");
+  return stripLangPrefix(pathname);
 }
 
+// Anti /en/en: jika sudah ada prefix, jangan ditambah lagi
+export function ensureLangPath(lang: Language, to: string): string {
+  const raw = to.startsWith("/") ? to : `/${to}`;
+  const collapsed = collapseDoubleLang(raw);
+  const hasLang = detectLangFromPath(collapsed);
+  if (hasLang) return collapsed;
+
+  const without = stripLangPrefix(collapsed);
+  const clean = without.startsWith("/") ? without : `/${without}`;
+  return `/${lang}${clean === "/" ? "" : clean}`.replace(/\/{2,}/g, "/");
+}
+
+// Legacy compatibility: getLangPath alias
 export function getLangPath(lang: Language, pathWithoutLang: string): string {
   const clean = pathWithoutLang.startsWith("/") ? pathWithoutLang.slice(1) : pathWithoutLang;
   return `/${lang}/${clean}`;
 }
 
-// Helper type guards
-function isRecord(v: unknown): v is Record<string, any> {
-  return v !== null && typeof v === 'object' && !Array.isArray(v);
-}
-
-function safeString(v: unknown): string | null {
-  if (typeof v === 'string') return v;
-  if (typeof v === 'number' || typeof v === 'boolean') return String(v);
-  return null;
-}
-
-function resolveAny(obj: any, path: string): any {
-  if (!isRecord(obj)) return undefined;
-  if (typeof path !== 'string' || !path.trim()) return undefined;
+// t() resolver: handles both strings, nested objects, and array indices
+export function t(key: string, lang?: Language): string | any {
+  const l = lang ?? getLanguageFromPath();
+  const dict = translations[l] ?? translations.en;
   
-  const parts = path.split('.').filter(Boolean);
-  let current = obj;
+  // Try to resolve with bracket support
+  let value = resolvePath(dict, key);
   
-  for (const part of parts) {
-    // Handle array indices like "cards[2]"
-    const arrayMatch = part.match(/^(\w+)\[(\d+)\]$/);
-    if (arrayMatch) {
-      const [, arrayName, index] = arrayMatch;
-      if (!isRecord(current) || !(arrayName in current)) {
-        return undefined;
-      }
-      const array = current[arrayName];
-      const arrayIndex = parseInt(index, 10);
-      if (!Array.isArray(array) || arrayIndex >= array.length) {
-        return undefined;
-      }
-      current = array[arrayIndex];
-    } else {
-      if (!isRecord(current) || !(part in current)) {
-        return undefined;
-      }
-      current = current[part];
-    }
+  if (value !== undefined) {
+    return value;
   }
   
-  return current;
-}
-
-export function t(key: TranslationKey, fallback?: string, lang?: Language): string {
-  const targetLang = lang || getLanguageFromPath();
-  const dict = (translations as any)[targetLang] ?? (translations as any).en;
-  const value = resolveAny(dict, key);
+  // Fallback to English with bracket support
+  const enDict = translations.en;
+  value = resolvePath(enDict, key);
   
-  const stringResult = safeString(value);
-  if (stringResult !== null) return stringResult;
+  if (value !== undefined) {
+    return value;
+  }
   
-  if (fallback) return fallback;
-  console.warn(`[i18n] Missing key "${key}" for lang "${targetLang}"`);
-  return typeof key === 'string' ? key : '';
+  // Return key for debugging if not found
+  return key;
 }
-
-// Re-export React components from context.tsx
-export { useI18n, I18nProvider } from "./context";
 
 // Legacy compatibility exports
-export { translations } from "./translations";
-
-// Compatibility helper functions
 export function tStr(key: string, fallback?: string, lang?: Language): string {
-  const targetLang = lang || getLanguageFromPath();
-  const dict = (translations as any)[targetLang] ?? (translations as any).en;
-  const value = resolveAny(dict, key);
-  
-  const stringResult = safeString(value);
-  if (stringResult !== null) return stringResult;
-  
-  return fallback || key;
+  return t(key, lang) || fallback || key;
 }
 
 export function tArr(key: string, lang?: Language): string[] {
-  const targetLang = lang || getLanguageFromPath();
-  const dict = (translations as any)[targetLang] ?? (translations as any).en;
-  const value = resolveAny(dict, key);
-  
-  // If it's already an array, ensure all elements are strings
-  if (Array.isArray(value)) {
-    return value.map(item => safeString(item) || '').filter(Boolean);
-  }
-  
-  // If it's a string, try to split it
-  const stringResult = safeString(value);
-  if (stringResult !== null) {
-    // Try common delimiters
-    if (stringResult.includes('\n')) {
-      return stringResult.split('\n').map(s => s.trim()).filter(Boolean);
+  const result = t(key, lang);
+  // Try to split by common delimiters if it's a string
+  if (typeof result === 'string') {
+    if (result.includes('\n')) {
+      return result.split('\n').map((s: string) => s.trim()).filter(Boolean);
     }
-    if (stringResult.includes('|')) {
-      return stringResult.split('|').map(s => s.trim()).filter(Boolean);
+    if (result.includes('|')) {
+      return result.split('|').map((s: string) => s.trim()).filter(Boolean);
     }
-    // Single item array
-    return [stringResult.trim()].filter(Boolean);
   }
-  
-  // Missing or invalid value
-  return [];
+  // Return as array if it's already an array, or empty array
+  return Array.isArray(result) ? result : [];
 }
 
-// Legacy compatibility alias
 export function useTranslations() {
-  // Fallback implementation - doesn't need React context
   const language = getLanguageFromPath();
   return {
     language,
-    setLanguage,
-    t: (key: string) => t(key, undefined, language),
+    setLanguage: storeLanguage,
+    t: (key: string) => t(key, language),
     tStr: (key: string, fallback?: string) => tStr(key, fallback, language),
     tArr: (key: string) => tArr(key, language)
   };
-}
-
-// Compatibility export for useLanguage
-export function useLanguage() {
-  const { language, setLanguage } = useI18n();
-  return { language, setLanguage };
 }

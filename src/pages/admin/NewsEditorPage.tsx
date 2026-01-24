@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLanguage } from '../../i18n';
+import { useI18n } from '../../i18n';
 import {
   adminGetNewsPost,
   createNewsPost,
@@ -17,7 +17,7 @@ interface NewsEditorPageProps {
 }
 
 export default function NewsEditorPage({ postId }: NewsEditorPageProps) {
-  const { t, language } = useLanguage();
+  const { t, language } = useI18n();
   const translations = t;
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);

@@ -38,7 +38,7 @@ export async function ensureProfileAfterVerifiedLogin(): Promise<{ success: bool
       .upsert({
         id: user.id,
         username: username,
-        profile_required_completed: false
+        email: user.email
       }, { 
         onConflict: 'id' 
       });

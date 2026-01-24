@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { FileText, User, Calendar } from 'lucide-react';
 import { Language } from '../../i18n';
 import { PremiumShell, PremiumSection, PremiumCard, PremiumButton } from '../../components/ui';
-import { useLanguage } from '../../i18n';
+import { useI18n } from '../../i18n';
 import { supabase } from '../../lib/supabase';
 import MemberGuard from '../../components/guards/MemberGuard';
 import RoleGuard from '../../components/guards/RoleGuard';
@@ -22,7 +22,7 @@ interface LogEntry {
 }
 
 const AuthLogsPage = ({ lang }: AuthLogsPageProps) => {
-  const { t } = useLanguage();
+  const { t } = useI18n();
   const translations = t;
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);

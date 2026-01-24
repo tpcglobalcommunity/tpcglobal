@@ -176,7 +176,7 @@ function UsersTab() {
       user.role,
       user.is_verified ? 'Yes' : 'No',
       user.can_invite ? 'Yes' : 'No',
-      user.referral_count.toString(),
+      '0',
       new Date(user.created_at).toLocaleDateString()
     ]);
     
@@ -401,7 +401,7 @@ function UserCard({ user, onManage }: { user: AdminUserListItem; onManage: () =>
               />
             </div>
             <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-              <span>{t('admin.control.user.referral')}: {user.referral_code} ({user.referral_count})</span>
+              <span>{t('admin.control.user.referral')}: {user.referral_code} (0)</span>
               {user.country && <span>{user.country}</span>}
             </div>
           </div>

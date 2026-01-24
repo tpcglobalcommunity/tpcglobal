@@ -12,7 +12,6 @@ export interface ProfileData {
   member_code: string;
   referral_code: string | null;
   referred_by: string | null;
-  referral_count: number;
   role: 'MEMBER' | 'admin' | 'super_admin';
   verified: boolean;
   is_profile_complete: boolean;

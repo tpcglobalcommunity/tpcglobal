@@ -2,7 +2,28 @@
 // This module provides safe profile fetching with comprehensive error handling
 
 import { supabase } from './supabase';
-import { isUuid, formatSbError, debugLog } from './profileHelpers';
+
+// Local helpers to avoid import issues
+const DEBUG = import.meta.env.DEV;
+function debugLog(scope: string, message: string, data?: any) {
+  if (DEBUG) console.log(`[${scope}] ${message}`, data ?? "");
+}
+
+function formatSbError(err: unknown): string {
+  const e = err as any;
+  const msg =
+    e?.message ||
+    e?.error_description ||
+    e?.details ||
+    (typeof e === "string" ? e : "") ||
+    "Unknown error";
+  return String(msg);
+}
+
+function isUuid(uuid: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(uuid);
+}
 
 export interface SafeProfile {
   id: string;

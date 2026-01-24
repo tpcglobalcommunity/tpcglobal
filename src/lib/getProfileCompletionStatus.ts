@@ -1,12 +1,10 @@
 import { supabase } from "./supabase";
-import { computeProfileCompletion, REQUIRED_PROFILE_FIELDS } from "./profileHelpers";
+import { computeProfileCompletion, formatSbError } from "./profileHelpers";
 
 export async function getProfileCompletionStatus(): Promise<{
-  isAuthenticated: boolean;
-  isEmailVerified: boolean;
-  profile: any;
+  authenticated: boolean;
+  verified: boolean;
   profile_required_completed: boolean;
-  missingFields: string[];
 } | null> {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.user?.id) return null;
@@ -15,11 +13,9 @@ export async function getProfileCompletionStatus(): Promise<{
   
   if (!isEmailVerified) {
     return {
-      isAuthenticated: true,
-      isEmailVerified: false,
-      profile: null,
-      profile_required_completed: false,
-      missingFields: [...REQUIRED_PROFILE_FIELDS]
+      authenticated: true,
+      verified: false,
+      profile_required_completed: false
     };
   }
 
@@ -30,23 +26,19 @@ export async function getProfileCompletionStatus(): Promise<{
     .maybeSingle();
 
   if (error) {
-    console.error('[getProfileCompletionStatus] Error:', error);
+    console.error('[getProfileCompletionStatus] Error:', formatSbError(error));
     return {
-      isAuthenticated: true,
-      isEmailVerified: true,
-      profile: null,
-      profile_required_completed: false,
-      missingFields: [...REQUIRED_PROFILE_FIELDS]
+      authenticated: true,
+      verified: true,
+      profile_required_completed: false
     };
   }
 
   const completion = computeProfileCompletion(data);
 
   return {
-    isAuthenticated: true,
-    isEmailVerified: true,
-    profile: data,
-    profile_required_completed: completion.isComplete,
-    missingFields: completion.missing
+    authenticated: true,
+    verified: true,
+    profile_required_completed: completion.isComplete
   };
 }

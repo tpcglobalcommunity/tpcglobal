@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useProfileStatus } from "../../lib/useProfileStatus";
-import { isProfileDataComplete } from "../../lib/profileHelpers";
+import { isProfileDataComplete, safeFetchProfile } from "../../lib/profileHelpers";
 import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { useNavigate } from "../../components/Router";
+import { useAuth } from "../../contexts/AuthContext";
 
 type Props = {
   children: React.ReactNode;
@@ -10,8 +11,11 @@ type Props = {
 
 export default function ProfileGate({ children }: Props) {
   const navigate = useNavigate();
-  const { loading, role, verified } = useProfileStatus();
+  const { loading, verified } = useProfileStatus();
+  const { session } = useAuth();
   const [error, setError] = useState<string | null>(null);
+  const [profileData, setProfileData] = useState<any>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
 
   useEffect(() => {
     // Use role and verified from useProfileStatus instead of duplicate fetch
@@ -22,8 +26,30 @@ export default function ProfileGate({ children }: Props) {
     }
   }, [loading, verified]);
 
+  useEffect(() => {
+    // Fetch full profile data when we have the user ID
+    async function fetchProfile() {
+      if (!session?.user?.id) {
+        setProfileLoading(false);
+        return;
+      }
+
+      try {
+        const profile = await safeFetchProfile(session.user.id);
+        setProfileData(profile);
+      } catch (err) {
+        console.error('Failed to fetch profile:', err);
+        setError('Failed to load profile data');
+      } finally {
+        setProfileLoading(false);
+      }
+    }
+
+    fetchProfile();
+  }, [session?.user?.id]);
+
   const isProfileComplete = () => {
-    return isProfileDataComplete({ role, verified });
+    return isProfileDataComplete(profileData);
   };
 
   const handleRetry = () => {
@@ -41,7 +67,7 @@ export default function ProfileGate({ children }: Props) {
   };
 
   // Loading state
-  if (loading) {
+  if (loading || profileLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">

@@ -11,7 +11,7 @@ interface ProfilePageProps {
 }
 
 const ProfilePage = ({ lang }: ProfilePageProps) => {
-  const t = useTranslations(lang);
+  const { t } = useTranslations();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -24,7 +24,6 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
   const [formData, setFormData] = useState({
     full_name: '',
     username: '',
-    avatar_url: '',
   });
 
   const [directorySettings, setDirectorySettings] = useState({
@@ -95,7 +94,7 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
       const profileData = await getProfile(user.id);
 
       if (!profileData) {
-        setError(t.member.profile.genericError);
+        setError(t("member.profile.genericError"));
         return;
       }
 
@@ -103,7 +102,6 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
       setFormData({
         full_name: profileData.full_name || '',
         username: profileData.username || '',
-        avatar_url: profileData.avatar_url || '',
       });
       setDirectorySettings({
         show_in_directory: (profileData as any).show_in_directory || false,
@@ -112,7 +110,7 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
       });
     } catch (err) {
       console.error('Error loading profile:', err);
-      setError(t.member.profile.genericError);
+      setError(t("member.profile.genericError"));
     } finally {
       setLoading(false);
     }
@@ -127,15 +125,16 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
 
     try {
       const publicUrl = await uploadAvatar(file);
-      setFormData({ ...formData, avatar_url: publicUrl });
+      // Avatar upload disabled - just log the upload
+      console.log('Avatar uploaded to:', publicUrl);
     } catch (err: any) {
       console.error('Error uploading avatar:', err);
       if (err.message === 'FILE_TOO_LARGE') {
-        setError(t.member.profile.fileTooLarge);
+        setError(t("member.profile.fileTooLarge"));
       } else if (err.message === 'INVALID_FILE_TYPE') {
-        setError(t.member.profile.fileTypeInvalid);
+        setError(t("member.profile.fileTypeInvalid"));
       } else {
-        setError(t.member.profile.genericError);
+        setError(t("member.profile.genericError"));
       }
     } finally {
       setUploading(false);
@@ -160,12 +159,12 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
     const normalizedUsername = formData.username.trim().toLowerCase();
 
     if (!isValidUsername(normalizedUsername)) {
-      setError(t.member.profile.usernameInvalid);
+      setError(t("member.profile.usernameInvalid"));
       return;
     }
 
     if (usernameStatus === 'taken') {
-      setError(t.member.profile.usernameTaken);
+      setError(t("member.profile.usernameTaken"));
       return;
     }
 
@@ -175,21 +174,19 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
       const updatedProfile = await updateProfileSafe({
         full_name: formData.full_name.trim(),
         username: normalizedUsername,
-        avatar_url: formData.avatar_url.trim() || '',
       });
 
       setProfile(updatedProfile);
       setFormData({
         full_name: updatedProfile.full_name || '',
         username: updatedProfile.username || '',
-        avatar_url: updatedProfile.avatar_url || '',
       });
 
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
       console.error('Error updating profile:', err);
-      setError(err.message || t.member.profile.genericError);
+      setError(err.message || t("member.profile.genericError"));
     } finally {
       setSaving(false);
     }
@@ -233,46 +230,31 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 flex items-center gap-3">
               <User className="w-8 h-8 text-[#F0B90B]" />
-              {t.member.profile.title}
+              {t("member.profile.title")}
             </h1>
             <p className="text-white/70 text-lg">
-              {t.member.profile.subtitle}
+              {t("member.profile.subtitle")}
             </p>
           </div>
 
           {success && (
-            <NoticeBox variant="success" title={t.member.profile.saved} className="mb-6">
-              {t.member.profile.saved}
+            <NoticeBox variant="success" title={t("member.profile.saved")} className="mb-6">
+              {t("member.profile.saved")}
             </NoticeBox>
           )}
 
           <PremiumCard className="mb-6">
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
               <User className="w-5 h-5 text-[#F0B90B]" />
-              {t.member.profile.sectionIdentity}
+              {t("member.profile.sectionIdentity")}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
                 <div className="flex-shrink-0">
-                  <div className="relative">
-                    {formData.avatar_url ? (
-                      <img
-                        src={formData.avatar_url}
-                        alt="Avatar"
-                        className="w-24 h-24 rounded-full object-cover border-2 border-white/10"
-                      />
-                    ) : (
-                      <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#F0B90B]/20 to-[#F0B90B]/5 border-2 border-white/10 flex items-center justify-center">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#F0B90B]/20 to-[#F0B90B]/5 border-2 border-white/10 flex items-center justify-center">
                         <User className="w-10 h-10 text-[#F0B90B]/50" />
                       </div>
-                    )}
-                    {uploading && (
-                      <div className="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center">
-                        <Loader2 className="w-6 h-6 text-[#F0B90B] animate-spin" />
-                      </div>
-                    )}
-                  </div>
                 </div>
 
                 <div className="flex-1">
@@ -290,7 +272,7 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
                     className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white text-sm font-medium transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Upload className="w-4 h-4" />
-                    {uploading ? t.member.profile.uploading : t.member.profile.upload}
+                    {uploading ? t("member.profile.uploading") : t("member.profile.upload")}
                   </button>
                   <p className="text-xs text-white/50 mt-2">
                     PNG, JPEG, WebP. Max 2MB
@@ -300,7 +282,7 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
 
               <div>
                 <label className="block text-sm font-medium text-white/80 mb-2">
-                  {t.member.profile.fullName} *
+                  {t("member.profile.fullName")} *
                 </label>
                 <input
                   type="text"
@@ -314,7 +296,7 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
 
               <div>
                 <label className="block text-sm font-medium text-white/80 mb-2">
-                  {t.member.profile.username} *
+                  {t("member.profile.username")} *
                 </label>
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40">
@@ -344,13 +326,13 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
                   </div>
                 </div>
                 <p className="text-xs text-white/50 mt-2">
-                  {t.member.profile.usernameHelp}
+                  {t("member.profile.usernameHelp")}
                 </p>
                 {usernameStatus === 'taken' && (
-                  <p className="text-xs text-red-400 mt-1">{t.member.profile.usernameTaken}</p>
+                  <p className="text-xs text-red-400 mt-1">{t("member.profile.usernameTaken")}</p>
                 )}
                 {usernameStatus === 'invalid' && (
-                  <p className="text-xs text-orange-400 mt-1">{t.member.profile.usernameInvalid}</p>
+                  <p className="text-xs text-orange-400 mt-1">{t("member.profile.usernameInvalid")}</p>
                 )}
                 {usernameStatus === 'available' && (
                   <p className="text-xs text-green-400 mt-1">Username available</p>
@@ -369,7 +351,7 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
                   disabled={saving || usernameStatus === 'checking' || usernameStatus === 'taken' || usernameStatus === 'invalid'}
                 >
                   <Save className="w-5 h-5" />
-                  {saving ? t.member.profile.saving : t.member.profile.save}
+                  {saving ? t("member.profile.saving") : t("member.profile.save")}
                 </PremiumButton>
               </div>
             </form>
@@ -378,11 +360,11 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
           <PremiumCard className="mb-6">
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
               <Shield className="w-5 h-5 text-[#F0B90B]" />
-              {t.member.profile.sectionStatus}
+              {t("member.profile.sectionStatus")}
             </h2>
             <TrustBadges
-              role={profile.role}
-              is_verified={profile.is_verified}
+              role={profile.role as any}
+              is_verified={profile.verified}
               can_invite={profile.can_invite}
               vendor_status={profile.vendor_status || 'none'}
               mode="member"
@@ -397,11 +379,11 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
                   <Store className="w-6 h-6 text-[#F0B90B]" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold text-white mb-2">{t.profile.vendor.applyCta}</h3>
-                  <p className="text-white/70 text-sm mb-4">{t.profile.vendor.applyDesc}</p>
+                  <h3 className="text-lg font-bold text-white mb-2">{t("profile.vendor.applyCta")}</h3>
+                  <p className="text-white/70 text-sm mb-4">{t("profile.vendor.applyDesc")}</p>
                   <PremiumButton onClick={() => window.location.href = getLangPath(lang, '/member/vendor/apply')}>
                     <Store className="w-4 h-4" />
-                    {t.marketplace.applyAsVendor}
+                    {t("marketplace.applyAsVendor")}
                   </PremiumButton>
                 </div>
               </div>
@@ -415,8 +397,8 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
                   <CheckCircle className="w-6 h-6 text-green-400" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold text-white mb-2">{t.profile.vendor.approvedAs}</h3>
-                  <p className="text-white/70 text-sm">{t.profile.vendor.approvedDesc}</p>
+                  <h3 className="text-lg font-bold text-white mb-2">{t("profile.vendor.approvedAs")}</h3>
+                  <p className="text-white/70 text-sm">{t("profile.vendor.approvedDesc")}</p>
                 </div>
               </div>
             </PremiumCard>
@@ -429,8 +411,8 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
                   <AlertCircle className="w-6 h-6 text-yellow-400" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold text-white mb-2">{t.profile.vendor.status}</h3>
-                  <p className="text-white/70 text-sm">{t.profile.vendor.pendingDesc}</p>
+                  <h3 className="text-lg font-bold text-white mb-2">{t("profile.vendor.status")}</h3>
+                  <p className="text-white/70 text-sm">{t("profile.vendor.pendingDesc")}</p>
                 </div>
               </div>
             </PremiumCard>
@@ -439,11 +421,11 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
           <PremiumCard>
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
               <Users className="w-5 h-5 text-[#F0B90B]" />
-              {t.member.profile.sectionReferral}
+              {t("member.profile.sectionReferral")}
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-white/60 mb-2">{t.member.profile.referralCode}</label>
+                <label className="block text-sm font-medium text-white/60 mb-2">{t("member.profile.referralCode")}</label>
                 <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg flex items-center gap-2">
                   <Tag className="w-4 h-4 text-[#F0B90B]" />
                   <p className="text-white/80 font-mono">{profile.referral_code}</p>
@@ -452,7 +434,7 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
 
               {profile.referred_by && (
                 <div>
-                  <label className="block text-sm font-medium text-white/60 mb-2">{t.member.profile.referredBy}</label>
+                  <label className="block text-sm font-medium text-white/60 mb-2">{t("member.profile.referredBy")}</label>
                   <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg">
                     <p className="text-white/80 font-mono">{profile.referred_by}</p>
                   </div>
@@ -464,25 +446,25 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
           <PremiumCard>
             <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
               <Globe className="w-5 h-5 text-[#F0B90B]" />
-              {t.member.profile.directory.title}
+              {t("member.profile.directory.title")}
             </h2>
 
             {directorySuccess && (
               <NoticeBox variant="success" className="mb-6">
-                {t.member.profile.directory.saved}
+                {t("member.profile.directory.saved")}
               </NoticeBox>
             )}
 
             <div className="space-y-6">
               <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
                 <p className="text-sm text-blue-300">
-                  {t.member.profile.directory.privacyNote}
+                  {t("member.profile.directory.privacyNote")}
                 </p>
               </div>
 
               <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-lg">
                 <div className="flex-1">
-                  <p className="font-medium text-white mb-1">{t.member.profile.directory.toggle}</p>
+                  <p className="font-medium text-white mb-1">{t("member.profile.directory.toggle")}</p>
                   <p className="text-sm text-white/60">Allow other members to see your profile</p>
                 </div>
                 <button
@@ -502,9 +484,9 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
 
               <div>
                 <label className="block text-sm font-medium text-white/80 mb-2">
-                  {t.member.profile.directory.bio}
+                  {t("member.profile.directory.bio")}
                   <span className="text-white/40 font-normal ml-2">
-                    ({directorySettings.bio.length}/160 {t.member.profile.directory.charLeft})
+                    ({directorySettings.bio.length}/160 {t("member.profile.directory.charLeft")})
                   </span>
                 </label>
                 <textarea
@@ -522,7 +504,7 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
 
               <div>
                 <label className="block text-sm font-medium text-white/80 mb-2">
-                  {t.member.profile.directory.country}
+                  {t("member.profile.directory.country")}
                   <span className="text-white/40 font-normal ml-2">(Optional)</span>
                 </label>
                 <input
@@ -555,7 +537,7 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
                       }
                     } catch (err) {
                       console.error('Error updating directory settings:', err);
-                      setError(t.member.profile.genericError);
+                      setError(t("member.profile.genericError"));
                     } finally {
                       setSavingDirectory(false);
                     }
@@ -563,7 +545,7 @@ const ProfilePage = ({ lang }: ProfilePageProps) => {
                   disabled={savingDirectory}
                 >
                   <Save className="w-5 h-5" />
-                  {savingDirectory ? t.member.profile.saving : t.member.profile.directory.save}
+                  {savingDirectory ? t("member.profile.saving") : t("member.profile.directory.save")}
                 </PremiumButton>
               </div>
             </div>

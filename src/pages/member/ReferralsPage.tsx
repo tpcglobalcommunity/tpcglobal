@@ -42,7 +42,7 @@ const ReferralsPage = ({ lang }: ReferralsPageProps) => {
         referrals.map(async (referral) => {
           const { data: profile } = await supabase
             .from('profiles')
-            .select('username, full_name, avatar_url, created_at')
+            .select('username, full_name, created_at')
             .eq('id', referral.referred_id)
             .single();
           

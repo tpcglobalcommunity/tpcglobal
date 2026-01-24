@@ -1,87 +1,158 @@
-import { useEffect, useState } from 'react';
-import { getLanguageFromPath, getLangPath } from './i18n';
-import AppHeader from './components/AppHeader';
-import LegalFooter from './components/LegalFooter';
-import BottomNav from './components/BottomNav';
-import AuthLayout from './components/auth/AuthLayout';
-import Home from './pages/Home';
-import Docs from './pages/Docs';
-import DAOLite from './pages/DAOLite';
-import Transparency from './pages/Transparency';
-import CommunityFund from './pages/CommunityFund';
-import Legal from './pages/Legal';
-import LaunchChecklist from './pages/LaunchChecklist';
-import Security from './pages/Security';
-import Support from './pages/Support';
-import Whitepaper from './pages/Whitepaper';
-import Roadmap from './pages/Roadmap';
-import Faq from './pages/Faq';
-import SignUp from './pages/auth/SignUp';
-import SignIn from './pages/auth/SignIn';
-import ForgotPassword from './pages/auth/ForgotPassword';
-import ResetPassword from './pages/auth/ResetPassword';
-import CompleteProfile from './pages/member/CompleteProfilePage';
-import MemberGate from './components/guards/MemberGuard';
-import MemberStatusGuard from './components/member/MemberGuard';
-import ProfileGate from './components/guards/ProfileGate';
-import AdminGuard from './components/guards/AdminGuard';
-import MemberHome from './pages/member/MemberHome';
-import Services from './pages/member/Services';
-import SecurityPage from './pages/member/SecurityPage';
-import ProfilePage from './pages/member/ProfilePage';
-import AnnouncementsPage from './pages/member/AnnouncementsPage';
-import ReferralsPage from './pages/member/ReferralsPage';
-import DirectoryPage from './pages/member/DirectoryPage';
-import VerifyPage from './pages/VerifyPage';
-import PublicProfilePage from './pages/PublicProfilePage';
-import NewsPage from './pages/NewsPage';
-import NewsDetailPage from './pages/NewsDetailPage';
-import NewsEditorPage from './pages/admin/NewsEditorPage';
-import NewsAdminListPage from './pages/admin/NewsAdminListPage';
-import AnnouncementsAdminListPage from './pages/admin/AnnouncementsAdminListPage';
-import AnnouncementEditorPage from './pages/admin/AnnouncementEditorPage';
-import AuthLogsPage from './pages/admin/AuthLogsPage';
-import VendorsAdminPage from './pages/admin/VendorsAdminPage';
-import VerificationQueuePage from './pages/admin/VerificationQueuePage';
-import MemberDetailPage from './pages/admin/MemberDetailPage';
-import AuditLogPage from './pages/admin/AuditLogPage';
-import AdminLayout from './pages/admin/AdminLayout';
-import AdminControlCenterPage from './pages/admin/AdminControlCenterPage';
-import EmailQueuePage from './pages/admin/EmailQueuePage';
-import AdminSettingsPage from './pages/admin/AdminSettingsPage';
-import AdminBroadcastCenter from './pages/admin/AdminBroadcastCenter';
-import AdminTransparencyPage from './pages/admin/AdminTransparencyPage';
-import TransparencyPage from './pages/public/TransparencyPage';
-import VendorApplyPage from './pages/member/VendorApplyPage';
-import MarketplacePage from './pages/MarketplacePage';
-import MaintenancePage from './pages/system/MaintenancePage';
-import GlobalBanner from './components/system/GlobalBanner';
-import ToastHost from './components/ui/ToastHost';
-import WelcomePage from './pages/member/WelcomePage';
-import MemberDashboardPage from './pages/member/MemberDashboardPage';
-import ProgramsPage from './pages/member/ProgramsPage';
-import MemberVerifyPage from './pages/member/VerifyPage';
-import NotificationsPage from './pages/member/NotificationsPage';
-import MemberSettingsPage from './pages/member/MemberSettingsPage';
-import WalletPage from './pages/member/WalletPage';
-import WalletTiersPage from './pages/admin/WalletTiersPage';
-import { getAppSettings, type AppSettings } from './lib/settings';
-import { supabase } from './lib/supabase';
+import { useEffect, useMemo, useState } from "react";
+import { normalizePathname, storeLanguage, type Language } from "./utils/langPath";
 
-function App() {
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+import AppHeader from "./components/AppHeader";
+import LegalFooter from "./components/LegalFooter";
+import BottomNav from "./components/BottomNav";
+import AuthLayout from "./components/auth/AuthLayout";
+import GlobalBanner from "./components/system/GlobalBanner";
+import ToastHost from "./components/ui/ToastHost";
+
+import Home from "./pages/Home";
+import Docs from "./pages/Docs";
+import DAOLite from "./pages/DAOLite";
+import Transparency from "./pages/Transparency";
+import CommunityFund from "./pages/CommunityFund";
+import Legal from "./pages/Legal";
+import LaunchChecklist from "./pages/LaunchChecklist";
+import Security from "./pages/Security";
+import Support from "./pages/Support";
+import Whitepaper from "./pages/Whitepaper";
+import Roadmap from "./pages/Roadmap";
+import Faq from "./pages/Faq";
+import MarketplacePage from "./pages/MarketplacePage";
+
+import SignUp from "./pages/auth/SignUp";
+import SignIn from "./pages/auth/SignIn";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+
+import VerifyPage from "./pages/VerifyPage";
+import PublicProfilePage from "./pages/PublicProfilePage";
+import NewsPage from "./pages/NewsPage";
+import NewsDetailPage from "./pages/NewsDetailPage";
+
+import MaintenancePage from "./pages/system/MaintenancePage";
+
+import CompleteProfile from "./pages/member/CompleteProfilePage";
+import WelcomePage from "./pages/member/WelcomePage";
+import MemberHome from "./pages/member/MemberHome";
+import MemberDashboardPage from "./pages/member/MemberDashboardPage";
+import ProgramsPage from "./pages/member/ProgramsPage";
+import MemberVerifyPage from "./pages/member/VerifyPage";
+import NotificationsPage from "./pages/member/NotificationsPage";
+import MemberSettingsPage from "./pages/member/MemberSettingsPage";
+import WalletPage from "./pages/member/WalletPage";
+import Services from "./pages/member/Services";
+import SecurityPage from "./pages/member/SecurityPage";
+import ProfilePage from "./pages/member/ProfilePage";
+import AnnouncementsPage from "./pages/member/AnnouncementsPage";
+import ReferralsPage from "./pages/member/ReferralsPage";
+import DirectoryPage from "./pages/member/DirectoryPage";
+import VendorApplyPage from "./pages/member/VendorApplyPage";
+
+import MemberGate from "./components/guards/MemberGuard";
+import ProfileGate from "./components/guards/ProfileGate";
+import MemberStatusGuard from "./components/member/MemberGuard";
+import AdminGuard from "./components/guards/AdminGuard";
+import AdminLayout from "./pages/admin/AdminLayout";
+
+import NewsEditorPage from "./pages/admin/NewsEditorPage";
+import NewsAdminListPage from "./pages/admin/NewsAdminListPage";
+import AnnouncementsAdminListPage from "./pages/admin/AnnouncementsAdminListPage";
+import AnnouncementEditorPage from "./pages/admin/AnnouncementEditorPage";
+import AuthLogsPage from "./pages/admin/AuthLogsPage";
+import VendorsAdminPage from "./pages/admin/VendorsAdminPage";
+import VerificationQueuePage from "./pages/admin/VerificationQueuePage";
+import MemberDetailPage from "./pages/admin/MemberDetailPage";
+import AuditLogPage from "./pages/admin/AuditLogPage";
+import AdminControlCenterPage from "./pages/admin/AdminControlCenterPage";
+import EmailQueuePage from "./pages/admin/EmailQueuePage";
+import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
+import AdminBroadcastCenter from "./pages/admin/AdminBroadcastCenter";
+import AdminTransparencyPage from "./pages/admin/AdminTransparencyPage";
+import WalletTiersPage from "./pages/admin/WalletTiersPage";
+
+import TransparencyPage from "./pages/public/TransparencyPage";
+
+import { getAppSettings, type AppSettings } from "./lib/settings";
+import { supabase } from "./lib/supabase";
+
+function getFullPath() {
+  return `${window.location.pathname}${window.location.search}${window.location.hash}`;
+}
+
+function normalizeFullUrl(): { full: string; lang: Language; redirected: boolean } {
+  const { pathname, search, hash } = window.location;
+  const norm = normalizePathname(pathname);
+
+  // persist lang always
+  storeLanguage(norm.lang);
+
+  const full = `${norm.pathname}${search ?? ""}${hash ?? ""}`;
+  const current = `${pathname}${search ?? ""}${hash ?? ""}`;
+  return { full, lang: norm.lang, redirected: norm.redirect && full !== current };
+}
+
+export default function App() {
+  const [currentFullPath, setCurrentFullPath] = useState<string>(() => getFullPath());
   const [appSettings, setAppSettings] = useState<AppSettings | null>(null);
-  const lang = getLanguageFromPath(currentPath);
 
+  // HARD LOCK: Normalize on every navigation (initial + popstate + pushState/replaceState)
   useEffect(() => {
-    const handleLocationChange = () => {
-      setCurrentPath(window.location.pathname);
+    const apply = () => {
+      const { full, redirected } = normalizeFullUrl();
+      if (redirected) {
+        window.history.replaceState({}, "", full);
+      }
+      setCurrentFullPath(full);
     };
 
-    window.addEventListener('popstate', handleLocationChange);
-    return () => window.removeEventListener('popstate', handleLocationChange);
-  }, [appSettings]);
+    // initial
+    apply();
 
+    // back/forward
+    window.addEventListener("popstate", apply);
+
+    // patch pushState/replaceState so SPA navigations also normalize
+    const origPush = window.history.pushState;
+    const origReplace = window.history.replaceState;
+
+    window.history.pushState = function (...args: any[]) {
+      origPush.apply(window.history, args as any);
+      apply();
+    } as any;
+
+    window.history.replaceState = function (...args: any[]) {
+      origReplace.apply(window.history, args as any);
+      apply();
+    } as any;
+
+    return () => {
+      window.removeEventListener("popstate", apply);
+      window.history.pushState = origPush;
+      window.history.replaceState = origReplace;
+    };
+  }, []);
+
+  // Extract lang from normalized path (guaranteed)
+  const lang = useMemo(() => {
+    const m = currentFullPath.match(/^\/(en|id)(\/|$)/);
+    return ((m?.[1] as Language) ?? "en");
+  }, [currentFullPath]);
+
+  // Only pathname for route decisions
+  const currentPath = useMemo(() => {
+    const pathnameOnly = currentFullPath.split("?")[0].split("#")[0];
+    return pathnameOnly;
+  }, [currentFullPath]);
+
+  const pathWithoutLang = useMemo(
+    () => currentPath.replace(/^\/(en|id)(?=\/|$)/, "") || "/",
+    [currentPath]
+  );
+
+  // Fetch settings once
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -89,9 +160,8 @@ function App() {
         const s = await getAppSettings(supabase);
         if (!alive) return;
         setAppSettings(s);
-      } catch (e: any) {
+      } catch {
         if (!alive) return;
-        // Settings error handled by WelcomePage
       }
     })();
     return () => {
@@ -99,161 +169,128 @@ function App() {
     };
   }, []);
 
+  // Maintenance redirect (keep lang, SPA replace)
   useEffect(() => {
-    // Only redirect if NOT already on maintenance page
-    if (appSettings?.maintenance_mode === true && !currentPath.includes('/maintenance')) {
-      window.location.href = getLangPath(lang, '/maintenance');
-      return;
+    if (!appSettings) return;
+    if (appSettings.maintenance_mode === true && !currentPath.includes("/maintenance")) {
+      const target = `/${lang}/maintenance`;
+      window.history.replaceState({}, "", target);
+      setCurrentFullPath(target);
     }
   }, [appSettings, lang, currentPath]);
 
-  useEffect(() => {
-    const path = window.location.pathname || "/";
+  const isAuthPage = useMemo(() => {
+    return ["/signin", "/signup", "/forgot", "/reset"].includes(pathWithoutLang);
+  }, [pathWithoutLang]);
 
-    // root -> default
-    if (path === "/" || path === "") {
-      window.history.replaceState({}, "", "/en/home");
-      setCurrentPath("/en/home");
-      return;
-    }
+  const isAdminPage = useMemo(() => {
+    return pathWithoutLang.startsWith("/admin");
+  }, [pathWithoutLang]);
 
-    // handle /id or /en without trailing path
-    if (path === "/id" || path === "/id/") {
-      window.history.replaceState({}, "", "/id/home");
-      setCurrentPath("/id/home");
-      return;
-    }
-    
-    if (path === "/en" || path === "/en/") {
-      window.history.replaceState({}, "", "/en/home");
-      setCurrentPath("/en/home");
-      return;
-    }
+  const shouldShowBottomNav = !isAuthPage && !isAdminPage;
 
-    // kalau tidak diawali /en/ atau /id/, paksa ke /en + path
-    if (!/^\/(en|id)\//.test(path)) {
-      const next = `/en${path.startsWith("/") ? path : `/${path}`}`;
-      window.history.replaceState({}, "", next);
-      setCurrentPath(next);
-      return;
-    }
-
-    // normal
-    setCurrentPath(path);
-  }, []);
-
-  const isAuthPage = (path: string) => {
-    const pathWithoutLang = path.replace(/^\/(en|id)/, '');
-    return ['/signin', '/signup', '/forgot', '/reset'].includes(pathWithoutLang);
-  };
-
-  const isAdminPage = (path: string) => {
-    const pathWithoutLang = path.replace(/^\/(en|id)/, '');
-    return pathWithoutLang.startsWith('/admin');
-  };
-
-  const shouldShowBottomNav = !isAuthPage(currentPath) && !isAdminPage(currentPath);
-
-  // Maintenance mode guard - FINAL RULE
+  // Maintenance gate - FINAL RULE
   const maintenanceOn = appSettings?.maintenance_mode === true;
-  const isAdminRoute = isAdminPage(currentPath);
-  const isMaintenanceRoute = currentPath.includes('/maintenance');
-  
-  // Auth routes that bypass maintenance
-  const authBypassRoutes = ['/signin', '/signup', '/forgot', '/reset'];
-  const isAuthBypassRoute = authBypassRoutes.some(route => 
-    currentPath.replace(/^\/(en|id)/, '') === route
-  );
-  
-  // Maintenance page HANYA tampil jika maintenance === true
-  // Auth routes HARUS bypass maintenance gate
-  if (maintenanceOn && !isAdminRoute && !isMaintenanceRoute && !isAuthBypassRoute) {
+  const isMaintenanceRoute = pathWithoutLang === "/maintenance";
+  const authBypassRoutes = ["/signin", "/signup", "/forgot", "/reset"];
+  const isAuthBypassRoute = authBypassRoutes.includes(pathWithoutLang);
+
+  if (maintenanceOn && !isAdminPage && !isMaintenanceRoute && !isAuthBypassRoute) {
     return <MaintenancePage lang={lang} />;
   }
 
   const renderPage = () => {
-    const pathWithoutLang = currentPath.replace(/^\/(en|id)/, '');
-
-    if (pathWithoutLang === '/admin/news') {
-      return <NewsAdminListPage />;
+    // HOME: /en or /id (index)
+    if (pathWithoutLang === "/" || pathWithoutLang === "" || pathWithoutLang === "/home") {
+      return <Home lang={lang} />;
     }
 
-    if (pathWithoutLang === '/admin/news/new') {
-      return <NewsEditorPage />;
-    }
-
-    if (pathWithoutLang.startsWith('/admin/news/') && pathWithoutLang.endsWith('/edit')) {
-      const postId = pathWithoutLang.replace('/admin/news/', '').replace('/edit', '');
+    // Admin special routes first
+    if (pathWithoutLang === "/admin/news") return <NewsAdminListPage />;
+    if (pathWithoutLang === "/admin/news/new") return <NewsEditorPage />;
+    if (pathWithoutLang.startsWith("/admin/news/") && pathWithoutLang.endsWith("/edit")) {
+      const postId = pathWithoutLang.replace("/admin/news/", "").replace("/edit", "");
       return <NewsEditorPage postId={postId} />;
     }
 
-    if (pathWithoutLang.startsWith('/news/')) {
-      const slug = pathWithoutLang.replace('/news/', '');
-      return <NewsDetailPage slug={slug} />;
-    }
-
-    if (pathWithoutLang === '/admin/announcements') {
-      return <AnnouncementsAdminListPage lang={lang} />;
-    }
-
-    if (pathWithoutLang === '/admin/announcements/new') {
-      return <AnnouncementEditorPage lang={lang} />;
-    }
-
-    if (pathWithoutLang.startsWith('/admin/announcements/') && pathWithoutLang.endsWith('/edit')) {
-      const announcementId = pathWithoutLang.replace('/admin/announcements/', '').replace('/edit', '');
+    if (pathWithoutLang === "/admin/announcements") return <AnnouncementsAdminListPage lang={lang} />;
+    if (pathWithoutLang === "/admin/announcements/new") return <AnnouncementEditorPage lang={lang} />;
+    if (pathWithoutLang.startsWith("/admin/announcements/") && pathWithoutLang.endsWith("/edit")) {
+      const announcementId = pathWithoutLang.replace("/admin/announcements/", "").replace("/edit", "");
       return <AnnouncementEditorPage lang={lang} announcementId={announcementId} />;
     }
 
-    if (pathWithoutLang.startsWith('/u/')) {
-      const username = pathWithoutLang.replace('/u/', '');
+    // Public profile
+    if (pathWithoutLang.startsWith("/u/")) {
+      const username = pathWithoutLang.replace("/u/", "");
       return <PublicProfilePage lang={lang} username={username} />;
     }
 
+    // News detail
+    if (pathWithoutLang.startsWith("/news/")) {
+      const slug = pathWithoutLang.replace("/news/", "");
+      return <NewsDetailPage slug={slug} />;
+    }
+
     switch (pathWithoutLang) {
-      case '/home':
-        return <Home lang={lang} />;
-      case '/docs':
+      case "/docs":
         return <Docs lang={lang} />;
-      case '/dao':
+      case "/dao":
         return <DAOLite lang={lang} />;
-      case '/transparency':
+      case "/transparency":
         return <Transparency lang={lang} />;
-      case '/public/transparency':
+      case "/public/transparency":
         return <TransparencyPage />;
-      case '/fund':
+      case "/fund":
         return <CommunityFund lang={lang} />;
-      case '/legal':
+      case "/legal":
         return <Legal lang={lang} />;
-      case '/whitepaper':
+      case "/whitepaper":
         return <Whitepaper lang={lang} />;
-      case '/roadmap':
+      case "/roadmap":
         return <Roadmap lang={lang} />;
-      case '/faq':
+      case "/faq":
         return <Faq lang={lang} />;
-      case '/launch':
+      case "/launch":
         return <LaunchChecklist lang={lang} />;
-      case '/security':
+      case "/security":
         return <Security lang={lang} />;
-      case '/support':
+      case "/support":
         return <Support lang={lang} />;
-      case '/signup':
-      case '/en/signup':
-      case '/id/signup':
+      case "/marketplace":
+        return <MarketplacePage lang={lang} />;
+
+      // AUTH
+      case "/signup":
         return <SignUp />;
-      case '/signin':
+      case "/signin":
         return <SignIn />;
-      case '/admin/login':
+      case "/admin/login":
         return <SignIn lang={lang} />;
-      case '/forgot':
+      case "/forgot":
         return <ForgotPassword lang={lang} />;
-      case '/reset':
+      case "/reset":
         return <ResetPassword lang={lang} />;
-      case '/complete-profile':
+
+      // Verify
+      case "/verify":
+        return <VerifyPage lang={lang} />;
+
+      // News list
+      case "/news":
+        return <NewsPage />;
+
+      // Maintenance route
+      case "/maintenance":
+        return <MaintenancePage lang={lang} />;
+
+      // Profile completion
+      case "/complete-profile":
+      case "/member/complete-profile":
         return <CompleteProfile lang={lang} />;
-      case '/member/complete-profile':
-        return <CompleteProfile lang={lang} />;
-      case '/member':
+
+      // MEMBER AREA
+      case "/member":
         return (
           <MemberGate>
             <ProfileGate>
@@ -261,45 +298,53 @@ function App() {
             </ProfileGate>
           </MemberGate>
         );
-      case '/member/welcome':
+
+      case "/member/welcome":
         return <WelcomePage lang={lang} />;
-      case '/member/dashboard':
+
+      case "/member/dashboard":
         return (
           <MemberStatusGuard lang={lang} allowPending={true}>
             <MemberDashboardPage lang={lang} />
           </MemberStatusGuard>
         );
-      case '/member/programs':
+
+      case "/member/programs":
         return (
           <MemberStatusGuard lang={lang}>
             <ProgramsPage lang={lang} />
           </MemberStatusGuard>
         );
-      case '/member/verify':
+
+      case "/member/verify":
         return (
           <MemberStatusGuard lang={lang}>
             <MemberVerifyPage lang={lang} />
           </MemberStatusGuard>
         );
-      case '/member/notifications':
+
+      case "/member/notifications":
         return (
           <MemberStatusGuard lang={lang}>
             <NotificationsPage lang={lang} />
           </MemberStatusGuard>
         );
-      case '/member/settings':
+
+      case "/member/settings":
         return (
           <MemberStatusGuard lang={lang}>
             <MemberSettingsPage lang={lang} />
           </MemberStatusGuard>
         );
-      case '/member/wallet':
+
+      case "/member/wallet":
         return (
           <MemberStatusGuard lang={lang}>
             <WalletPage />
           </MemberStatusGuard>
         );
-      case '/member/security':
+
+      case "/member/security":
         return (
           <MemberGate>
             <ProfileGate>
@@ -307,7 +352,8 @@ function App() {
             </ProfileGate>
           </MemberGate>
         );
-      case '/member/profile':
+
+      case "/member/profile":
         return (
           <MemberGate>
             <ProfileGate>
@@ -315,7 +361,8 @@ function App() {
             </ProfileGate>
           </MemberGate>
         );
-      case '/member/announcements':
+
+      case "/member/announcements":
         return (
           <MemberGate>
             <ProfileGate>
@@ -323,7 +370,8 @@ function App() {
             </ProfileGate>
           </MemberGate>
         );
-      case '/member/referrals':
+
+      case "/member/referrals":
         return (
           <MemberGate>
             <ProfileGate>
@@ -331,7 +379,8 @@ function App() {
             </ProfileGate>
           </MemberGate>
         );
-      case '/member/directory':
+
+      case "/member/directory":
         return (
           <MemberGate>
             <ProfileGate>
@@ -339,7 +388,8 @@ function App() {
             </ProfileGate>
           </MemberGate>
         );
-      case '/member/vendor/apply':
+
+      case "/member/vendor/apply":
         return (
           <MemberGate>
             <ProfileGate>
@@ -347,7 +397,8 @@ function App() {
             </ProfileGate>
           </MemberGate>
         );
-      case '/member/services':
+
+      case "/member/services":
         return (
           <MemberGate>
             <ProfileGate>
@@ -355,31 +406,30 @@ function App() {
             </ProfileGate>
           </MemberGate>
         );
-      case '/marketplace':
-        return <MarketplacePage lang={lang} />;
-      case '/verify':
-        return <VerifyPage lang={lang} />;
-      case '/news':
-        return <NewsPage />;
-      case '/admin/auth-logs':
+
+      // ADMIN PAGES (guarded)
+      case "/admin/auth-logs":
         return (
           <AdminGuard lang={lang}>
             <AuthLogsPage lang={lang} />
           </AdminGuard>
         );
-      case '/admin/vendors':
+
+      case "/admin/vendors":
         return (
           <AdminGuard lang={lang}>
             <VendorsAdminPage lang={lang} />
           </AdminGuard>
         );
-      case '/admin/verification':
+
+      case "/admin/verification":
         return (
           <AdminGuard lang={lang}>
             <VerificationQueuePage lang={lang} />
           </AdminGuard>
         );
-      case '/admin/member':
+
+      case "/admin/member":
         return (
           <AdminGuard lang={lang}>
             <AdminLayout lang={lang}>
@@ -387,7 +437,8 @@ function App() {
             </AdminLayout>
           </AdminGuard>
         );
-      case '/admin/audit':
+
+      case "/admin/audit":
         return (
           <AdminGuard lang={lang}>
             <AdminLayout lang={lang}>
@@ -395,7 +446,8 @@ function App() {
             </AdminLayout>
           </AdminGuard>
         );
-      case '/admin/settings':
+
+      case "/admin/settings":
         return (
           <AdminGuard lang={lang}>
             <AdminLayout lang={lang}>
@@ -403,7 +455,8 @@ function App() {
             </AdminLayout>
           </AdminGuard>
         );
-      case '/admin/email-queue':
+
+      case "/admin/email-queue":
         return (
           <AdminGuard lang={lang}>
             <AdminLayout lang={lang}>
@@ -411,50 +464,51 @@ function App() {
             </AdminLayout>
           </AdminGuard>
         );
-      case '/admin/control':
+
+      case "/admin/control":
         return (
           <AdminGuard lang={lang}>
             <AdminControlCenterPage />
           </AdminGuard>
         );
-      case '/admin/broadcast':
+
+      case "/admin/broadcast":
         return (
           <AdminGuard lang={lang}>
             <AdminBroadcastCenter />
           </AdminGuard>
         );
-      case '/admin/wallet-tiers':
+
+      case "/admin/wallet-tiers":
         return (
           <AdminGuard lang={lang}>
             <WalletTiersPage lang={lang} />
           </AdminGuard>
         );
-      case '/admin/transparency-input':
+
+      case "/admin/transparency-input":
         return (
           <AdminGuard lang={lang}>
             <AdminLayout lang={lang}>
-              <AdminTransparencyPage />
+              <AdminTransparencyPage lang={lang} />
             </AdminLayout>
           </AdminGuard>
         );
+
       default:
         return <Home lang={lang} />;
     }
   };
 
-  if (isAuthPage(currentPath)) {
-    return (
-      <AuthLayout lang={lang}>
-        {renderPage()}
-      </AuthLayout>
-    );
+  if (isAuthPage) {
+    return <AuthLayout lang={lang}>{renderPage()}</AuthLayout>;
   }
 
   return (
     <div className="min-h-screen flex flex-col">
       <GlobalBanner lang={lang} />
       <AppHeader lang={lang} currentPath={currentPath} />
-      <main className={`flex-1 ${shouldShowBottomNav ? 'pb-[calc(72px+env(safe-area-inset-bottom)+16px)] xl:pb-0' : ''}`}>
+      <main className={`flex-1 ${shouldShowBottomNav ? "pb-[calc(72px+env(safe-area-inset-bottom)+16px)] xl:pb-0" : ""}`}>
         {renderPage()}
       </main>
       <LegalFooter lang={lang} />
@@ -463,5 +517,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

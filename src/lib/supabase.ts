@@ -56,10 +56,8 @@ export interface Profile {
   city: string | null;
   role: string;
   verified: boolean;
-  avatar_url: string | null;
   referral_code: string;
   referred_by: string | null;
-  referral_count: number;
   can_invite: boolean;
   tpc_tier: string;
   tpc_balance: number;
@@ -232,7 +230,7 @@ export const validateReferralCode = async (code: string): Promise<boolean> => {
 export const getProfile = async (userId: string): Promise<Profile | null> => {
   const { data, error } = await supabase
     .from('profiles')
-    .select("id,email,username,full_name,phone,telegram,city,role,verified,avatar_url,referral_code,referred_by,referral_count,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
+    .select("id,email,username,full_name,phone,telegram,city,role,verified,referral_code,referred_by,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
     .eq('id', userId)
     .maybeSingle();
 
@@ -247,16 +245,13 @@ export const getProfile = async (userId: string): Promise<Profile | null> => {
 export const updateProfileSafe = async ({
   full_name,
   username,
-  avatar_url,
 }: {
   full_name: string;
   username: string;
-  avatar_url: string;
 }): Promise<Profile> => {
   const { data, error } = await supabase.rpc('update_profile_safe', {
     p_full_name: full_name,
     p_username: username,
-    p_avatar_url: avatar_url,
   });
 
   if (error) {
@@ -438,7 +433,6 @@ export interface LeaderboardItem {
   username: string;
   full_name: string;
   avatar_url: string | null;
-  referral_count: number;
   is_verified: boolean;
 }
 
@@ -791,7 +785,6 @@ export interface AdminUserListItem {
   is_verified: boolean;
   can_invite: boolean;
   referral_code: string;
-  referral_count: number;
   created_at: string;
   show_in_directory: boolean;
   vendor_status: string;
@@ -1271,7 +1264,7 @@ export const createProfileIfMissing = async (userId: string, email: string, full
     console.log('[PROFILE] Checking if profile exists...');
     const { data: existingProfile, error: checkError } = await supabase
       .from('profiles')
-      .select("id,email,username,full_name,phone,telegram,city,role,verified,avatar_url,referral_code,referred_by,referral_count,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
+      .select("id,email,username,full_name,phone,telegram,city,role,verified,referral_code,referred_by,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
       .eq('id', userId)
       .maybeSingle();
 
@@ -1296,7 +1289,6 @@ export const createProfileIfMissing = async (userId: string, email: string, full
       role: 'member',
       is_verified: false,
       can_invite: false,
-      referral_count: 0,
     };
 
     console.log('[PROFILE] Inserting profile data:', profileData);
@@ -1341,7 +1333,7 @@ export async function getMyProfile(): Promise<Profile | null> {
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("id,email,username,full_name,phone,telegram,city,role,verified,avatar_url,referral_code,referred_by,referral_count,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
+    .select("id,email,username,full_name,phone,telegram,city,role,verified,avatar_url,referral_code,referred_by,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
     .eq("id", user.id)
     .maybeSingle();
 

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../i18n';
 import { supabase } from '../../lib/supabase';
 import { langPath } from '../../utils/langPath';
-import { User, Phone, MessageSquare, MapPin, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { User, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 interface ProfileData {
   full_name: string;
@@ -72,7 +72,7 @@ export default function CompleteProfile() {
                          data?.city?.trim();
 
         if (isComplete) {
-          navigate(langPath(lang, '/member/dashboard'));
+          navigate(langPath(lang, '/member/update-profit'));
         }
       } catch (error) {
         console.error('[CompleteProfile] Error:', error);
@@ -224,7 +224,7 @@ export default function CompleteProfile() {
             </p>
             
             <button
-              onClick={() => navigate(langPath(lang, '/member/dashboard'))}
+              onClick={() => navigate(langPath(lang, '/member/update-profit'))}
               className="w-full h-12 rounded-xl bg-[#f0b90b] text-[#0b0f17] font-semibold hover:bg-[#f0b90b]/90 transition-colors"
             >
               {t('profile.goToDashboard')}

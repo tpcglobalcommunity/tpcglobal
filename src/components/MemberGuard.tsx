@@ -53,7 +53,7 @@ export default function MemberGuard({ children, allowIncomplete }: Props) {
       // 2) Fetch profile
       const { data: prof, error: profErr } = await supabase
         .from("profiles")
-        .select("id,email,username,full_name,phone,telegram,city,role,verified,avatar_url,referral_code,referred_by,referral_count,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
+        .select("id,email,username,full_name,phone,telegram,city,role,verified,avatar_url,referral_code,referred_by,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
         .eq("id", userId)
         .maybeSingle();
 
@@ -67,7 +67,7 @@ export default function MemberGuard({ children, allowIncomplete }: Props) {
 
         const { data: prof2 } = await supabase
           .from("profiles")
-          .select("id,email,username,full_name,phone,telegram,city,role,verified,avatar_url,referral_code,referred_by,referral_count,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
+          .select("id,email,username,full_name,phone,telegram,city,role,verified,avatar_url,referral_code,referred_by,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
           .eq("id", userId)
           .maybeSingle();
 

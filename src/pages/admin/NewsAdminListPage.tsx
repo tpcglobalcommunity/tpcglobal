@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLanguage } from '../../i18n';
+import { useI18n } from '../../i18n';
 import {
   supabase,
   getProfile,
@@ -21,7 +21,7 @@ interface NewsPost {
 }
 
 export default function NewsAdminListPage() {
-  const { t, language } = useLanguage();
+  const { t, language } = useI18n();
   const translations = t;
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);

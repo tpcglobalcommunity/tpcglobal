@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { useLanguage } from "../../i18n";
+import { useI18n } from "../../i18n";
 import type { Language } from "../../i18n";
 
 function go(path: string) {
@@ -16,7 +16,7 @@ type RoleGuardProps = {
 
 export default function RoleGuard({ allowedRoles, allow, children }: RoleGuardProps) {
   const { session, profile, loading } = useAuth();
-  const { language } = useLanguage();
+  const { language } = useI18n();
 
   // Gunakan allowedRoles jika ada, fallback ke allow
   const roles = allowedRoles || allow || [];

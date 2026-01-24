@@ -108,9 +108,6 @@ export default function CompleteProfilePage({ lang }: CompleteProfilePageProps) 
 
       console.log('[CompleteProfile] Profile saved successfully');
       
-      // Refresh canonical profile state
-      await refreshProfile();
-      
       setSuccess(true);
       
       // Wait a moment then redirect

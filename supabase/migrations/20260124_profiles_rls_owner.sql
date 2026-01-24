@@ -27,6 +27,6 @@ begin
     create policy profiles_insert_own
     on public.profiles for insert
     to authenticated
-    with check (auth.uid() = id);
+    with check (auth.uid() = id and auth.email_confirmed_at IS NOT NULL);
   end if;
 end$$;

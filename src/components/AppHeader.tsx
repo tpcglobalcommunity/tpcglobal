@@ -1,9 +1,8 @@
-import { Home, BookOpen, Shield, BadgeCheck, Wallet, Scale, Store } from 'lucide-react';
+import { Home, BookOpen, Shield, BadgeCheck, Wallet, Scale, Store, Users } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
-import { Language, useI18n, getLangPath, stripLang, storeLanguage } from '../i18n';
-import { ensureLangPath } from '../utils/langPath';
+import { Language, useI18n, getLangPath, storeLanguage } from '../i18n';
 import { Link } from './Router';
 import TPMonogram from './brand/TPMonogram';
 import { HeaderAuthActions } from './auth/HeaderAuthActions';
@@ -19,7 +18,6 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
   const [scrolled, setScrolled] = useState(false);
   const { profile } = useAuth();
   const { t } = useI18n();
-  const navigate = useNavigate();
   const location = useLocation();
 
   const isAdmin = profile?.role === "admin" || profile?.role === "super_admin";
@@ -50,35 +48,33 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
   // Safe nav items with fallbacks
   const navItems = [
-    { label: t('nav.home', 'Home'), path: getLangPath(lang, '/home'), icon: Home },
-    { label: t('nav.docs', 'Docs'), path: getLangPath(lang, '/docs'), icon: BookOpen },
-    { label: t('nav.dao', 'DAO'), path: getLangPath(lang, '/dao'), icon: Shield },
-    { label: t('nav.marketplace', 'Marketplace'), path: getLangPath(lang, '/marketplace'), icon: Store },
-    { label: t('nav.transparency', 'Transparency'), path: getLangPath(lang, '/transparency'), icon: BadgeCheck },
-    { label: t('nav.fund', 'Fund'), path: getLangPath(lang, '/fund'), icon: Wallet },
-    { label: t('nav.legal', 'Legal'), path: getLangPath(lang, '/legal'), icon: Scale },
-    ...(isAdmin ? [{ label: t('nav.admin', 'Admin'), path: getLangPath(lang, '/admin/control'), icon: Shield }] : [])
+    { label: t('nav.home'), path: getLangPath(lang, '/home'), icon: Home },
+    { label: t('nav.docs'), path: getLangPath(lang, '/docs'), icon: BookOpen },
+    { label: t('nav.dao'), path: getLangPath(lang, '/dao'), icon: Users },
+    { label: t('nav.marketplace'), path: getLangPath(lang, '/marketplace'), icon: Store },
+    { label: t('nav.transparency'), path: getLangPath(lang, '/transparency'), icon: BadgeCheck },
+    { label: t('nav.fund'), path: getLangPath(lang, '/fund'), icon: Wallet },
+    { label: t('nav.legal'), path: getLangPath(lang, '/legal'), icon: Scale },
+    ...(isAdmin ? [{ label: t('nav.admin'), path: getLangPath(lang, '/admin/control'), icon: Shield }] : [])
   ];
 
   const handleLanguageChange = (newLang: Language) => {
     // Prevent unnecessary navigation
     if (newLang === lang) return;
     
-    // Get current path without language prefix
-    const currentPath = location.pathname;
-    const basePath = stripLang(currentPath) || '/home';
-    
-    // Build new path with target language
-    const newPath = ensureLangPath(newLang, basePath);
-    
-    // Preserve query string and hash
-    const fullPath = newPath + location.search + location.hash;
-    
-    // Store language preference in localStorage
+    // Use the provided switchLangPath function
+    const switchLangPath = (pathname: string, next: "en"|"id") => {
+      const p = pathname.startsWith("/") ? pathname : `/${pathname}`;
+      const stripped = p.replace(/^\/(en|id)(?=\/|$)/, "");
+      const tail = stripped.startsWith("/") ? stripped : `/${stripped}`;
+      const cleaned = tail === "/home" ? "" : tail;
+      return (`/${next}${cleaned}`).replace(/\/{2,}/g, "/");
+    };
+
+    const nextPath = switchLangPath(location.pathname, newLang);
     storeLanguage(newLang);
-    
-    // Use React Router navigate for proper SPA navigation
-    navigate(fullPath, { replace: false });
+    window.history.replaceState({}, "", nextPath + location.search + location.hash);
+    window.dispatchEvent(new PopStateEvent("popstate"));
   };
 
   return (

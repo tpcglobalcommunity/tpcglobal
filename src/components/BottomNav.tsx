@@ -11,7 +11,7 @@ interface BottomNavProps {
 
 const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { t } = useI18n(lang);
+  const { t } = useI18n();
   const { profile } = useAuth();
 
   const isAdmin = profile?.role === "admin" || profile?.role === "super_admin";
@@ -26,31 +26,31 @@ const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
     };
   }, []);
 
-  // Safe nav items with fallbacks
+  // Safe nav items with i18n
   const navItems = [
     { 
-      label: t('nav.home', 'Home'), 
+      label: t('nav.home'), 
       path: getLangPath(lang, '/home'), 
       icon: Home 
     },
     { 
-      label: t('nav.docs', 'Docs'), 
+      label: t('nav.docs'), 
       path: getLangPath(lang, '/docs'), 
       icon: FileText 
     },
     { 
-      label: t('nav.dao', 'DAO'), 
+      label: t('nav.dao'), 
       path: getLangPath(lang, '/dao'), 
       icon: Users 
     },
     { 
-      label: t('nav.transparency', 'Transparency'), 
+      label: t('nav.transparency'), 
       path: getLangPath(lang, '/transparency'), 
       icon: Eye 
     },
     ...(isAdmin ? [
       { 
-        label: t('nav.admin', 'Admin'), 
+        label: 'Admin', // Admin key not in translations, keep hardcoded
         path: getLangPath(lang, '/admin/control'), 
         icon: Shield 
       }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLanguage } from '../i18n';
+import { useI18n } from '../i18n';
 import { getNewsPostBySlug, type NewsPostDetail } from '../lib/supabase';
 import { PremiumShell, PremiumSection, PremiumButton } from '../components/ui';
 import { ArrowLeft, Calendar, Tag, ExternalLink } from 'lucide-react';
@@ -9,7 +9,7 @@ interface NewsDetailPageProps {
 }
 
 export default function NewsDetailPage({ slug }: NewsDetailPageProps) {
-  const { t, language } = useLanguage();
+  const { t, language } = useI18n();
   const [post, setPost] = useState<NewsPostDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
