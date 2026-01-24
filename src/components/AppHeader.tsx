@@ -2,11 +2,12 @@ import { Home, BookOpen, Shield, BadgeCheck, Wallet, Scale, Store, Users } from 
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
-import { Language, useI18n, getLangPath, storeLanguage } from '../i18n';
+import { Language, getLangPath, storeLanguage } from '../i18n';
 import { Link } from './Router';
 import TPMonogram from './brand/TPMonogram';
 import { HeaderAuthActions } from './auth/HeaderAuthActions';
 import { useAuth } from '../contexts/AuthContext';
+import { getNavSafe } from '../utils/nav';
 
 interface AppHeaderProps {
   lang: Language;
@@ -17,7 +18,6 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { profile } = useAuth();
-  const { t } = useI18n();
   const location = useLocation();
 
   const isAdmin = profile?.role === "admin" || profile?.role === "super_admin";
@@ -48,14 +48,14 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
   // Safe nav items with fallbacks
   const navItems = [
-    { label: t('nav.home'), path: getLangPath(lang, '/home'), icon: Home },
-    { label: t('nav.docs'), path: getLangPath(lang, '/docs'), icon: BookOpen },
-    { label: t('nav.dao'), path: getLangPath(lang, '/dao'), icon: Users },
-    { label: t('nav.marketplace'), path: getLangPath(lang, '/marketplace'), icon: Store },
-    { label: t('nav.transparency'), path: getLangPath(lang, '/transparency'), icon: BadgeCheck },
-    { label: t('nav.fund'), path: getLangPath(lang, '/fund'), icon: Wallet },
-    { label: t('nav.legal'), path: getLangPath(lang, '/legal'), icon: Scale },
-    ...(isAdmin ? [{ label: t('nav.admin'), path: getLangPath(lang, '/admin/control'), icon: Shield }] : [])
+    { label: getNavSafe(lang, 'nav.home'), path: getLangPath(lang, '/home'), icon: Home },
+    { label: getNavSafe(lang, 'nav.docs'), path: getLangPath(lang, '/docs'), icon: BookOpen },
+    { label: getNavSafe(lang, 'nav.dao'), path: getLangPath(lang, '/dao'), icon: Users },
+    { label: getNavSafe(lang, 'nav.marketplace'), path: getLangPath(lang, '/marketplace'), icon: Store },
+    { label: getNavSafe(lang, 'nav.transparency'), path: getLangPath(lang, '/transparency'), icon: BadgeCheck },
+    { label: getNavSafe(lang, 'nav.fund'), path: getLangPath(lang, '/fund'), icon: Wallet },
+    { label: getNavSafe(lang, 'nav.legal'), path: getLangPath(lang, '/legal'), icon: Scale },
+    ...(isAdmin ? [{ label: getNavSafe(lang, 'nav.admin'), path: getLangPath(lang, '/admin/control'), icon: Shield }] : [])
   ];
 
   const handleLanguageChange = (newLang: Language) => {
