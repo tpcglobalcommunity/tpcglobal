@@ -54,7 +54,6 @@ export interface Profile {
   phone: string | null;
   telegram: string | null;
   city: string | null;
-  profile_completed: boolean;
   role: string;
   verified: boolean;
   avatar_url: string | null;
@@ -233,7 +232,7 @@ export const validateReferralCode = async (code: string): Promise<boolean> => {
 export const getProfile = async (userId: string): Promise<Profile | null> => {
   const { data, error } = await supabase
     .from('profiles')
-    .select("id,email,username,full_name,phone,telegram,city,profile_completed,role,verified,avatar_url,referral_code,referred_by,referral_count,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
+    .select("id,email,username,full_name,phone,telegram,city,role,verified,avatar_url,referral_code,referred_by,referral_count,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
     .eq('id', userId)
     .maybeSingle();
 
@@ -1272,7 +1271,7 @@ export const createProfileIfMissing = async (userId: string, email: string, full
     console.log('[PROFILE] Checking if profile exists...');
     const { data: existingProfile, error: checkError } = await supabase
       .from('profiles')
-      .select("id,email,username,full_name,phone,telegram,city,profile_completed,role,verified,avatar_url,referral_code,referred_by,referral_count,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
+      .select("id,email,username,full_name,phone,telegram,city,role,verified,avatar_url,referral_code,referred_by,referral_count,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
       .eq('id', userId)
       .maybeSingle();
 
@@ -1342,7 +1341,7 @@ export async function getMyProfile(): Promise<Profile | null> {
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("id,email,username,full_name,phone,telegram,city,profile_completed,role,verified,avatar_url,referral_code,referred_by,referral_count,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
+    .select("id,email,username,full_name,phone,telegram,city,role,verified,avatar_url,referral_code,referred_by,referral_count,can_invite,tpc_tier,tpc_balance,wallet_address,wallet_verified_at,created_at,updated_at")
     .eq("id", user.id)
     .maybeSingle();
 
