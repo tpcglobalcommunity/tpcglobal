@@ -3,6 +3,7 @@ export type MarketplaceCategory = "all"|"trading"|"education"|"services"|"techno
 export interface MarketplaceItem {
   id: string;
   category: MarketplaceCategory;
+  verified: boolean;
   title: {
     en: string;
     id: string;
@@ -44,6 +45,7 @@ export const marketplaceItems: MarketplaceItem[] = [
   {
     id: "demo-robot-01",
     category: "trading",
+    verified: true,
     title: {
       en: "Algo Trading Robot Pro",
       id: "Robot Trading Algo Pro"
@@ -111,6 +113,7 @@ export const marketplaceItems: MarketplaceItem[] = [
   {
     id: "trading-mastery-02",
     category: "education",
+    verified: false,
     title: {
       en: "Trading Mastery Course",
       id: "Kursus Penguasaan Trading"
@@ -178,6 +181,7 @@ export const marketplaceItems: MarketplaceItem[] = [
   {
     id: "risk-template-03",
     category: "services",
+    verified: true,
     title: {
       en: "Risk Management Template",
       id: "Template Manajemen Risiko"
@@ -245,6 +249,7 @@ export const marketplaceItems: MarketplaceItem[] = [
   {
     id: "chart-indicators-04",
     category: "technology",
+    verified: true,
     title: {
       en: "Chart Indicator Pack",
       id: "Paket Indikator Chart"
@@ -312,6 +317,7 @@ export const marketplaceItems: MarketplaceItem[] = [
   {
     id: "mentoring-05",
     category: "consulting",
+    verified: false,
     title: {
       en: "1-on-1 Trading Mentorship",
       id: "Mentorship Trading 1-on-1"
@@ -379,6 +385,7 @@ export const marketplaceItems: MarketplaceItem[] = [
   {
     id: "signal-room-06",
     category: "trading",
+    verified: true,
     title: {
       en: "Signal Room Access",
       id: "Akses Signal Room"
@@ -446,6 +453,7 @@ export const marketplaceItems: MarketplaceItem[] = [
   {
     id: "community-tools-07",
     category: "other",
+    verified: false,
     title: {
       en: "Community Tools Suite",
       id: "Paket Tools Komunitas"
@@ -511,6 +519,7 @@ export const marketplaceItems: MarketplaceItem[] = [
   {
     id: "content-media-08",
     category: "media",
+    verified: true,
     title: {
       en: "Content & Media Package",
       id: "Paket Konten & Media"
@@ -578,6 +587,7 @@ export const marketplaceItems: MarketplaceItem[] = [
   {
     id: "prop-firm-prep-09",
     category: "education",
+    verified: false,
     title: {
       en: "Prop Firm Preparation",
       id: "Persiapan Prop Firm"
@@ -647,6 +657,7 @@ export const marketplaceItems: MarketplaceItem[] = [
   {
     id: "api-service-10",
     category: "services",
+    verified: true,
     title: {
       en: "API Integration Service",
       id: "Layanan Integrasi API"

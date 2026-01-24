@@ -246,6 +246,13 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "footer.links.support": "Support",
     "footer.links.contact": "Contact",
 
+    // Marketplace verified gating
+    "marketplace.verifiedOnly": "Verified Partners",
+    "marketplace.badgeVerified": "Verified",
+    "marketplace.emptyVerifiedTitle": "No verified partners yet",
+    "marketplace.emptyVerifiedSubtitle": "We're onboarding verified vendors. Check back soon.",
+    "marketplace.emptyVerifiedCta": "Join Telegram for updates",
+
     "updateProfit.title": "Update Profit",
     "updateProfit.subtitle": "Share your trading results with the TPC community",
     "updateProfit.disclaimer": "This is for educational and community tracking purposes only. Trading involves risk and past performance does not guarantee future results.",
@@ -500,6 +507,13 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "footer.links.youtube": "YouTube",
     "footer.links.support": "Bantuan",
     "footer.links.contact": "Kontak",
+
+    // Marketplace verified gating
+    "marketplace.verifiedOnly": "Mitra Terverifikasi",
+    "marketplace.badgeVerified": "Terverifikasi",
+    "marketplace.emptyVerifiedTitle": "Belum ada mitra terverifikasi",
+    "marketplace.emptyVerifiedSubtitle": "Kami sedang onboarding vendor terverifikasi. Silakan cek kembali.",
+    "marketplace.emptyVerifiedCta": "Gabung Telegram untuk update",
 
     "updateProfit.title": "Update Laporan Profit",
     "updateProfit.subtitle": "Bagikan hasil trading Anda dengan komunitas TPC",

@@ -35,6 +35,7 @@ export default function MarketplacePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<MarketplaceCategory>("all");
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [items, setItems] = useState<MarketplaceItem[]>([]);
 
   // Load items safely
@@ -73,11 +74,17 @@ export default function MarketplacePage() {
   const subtitle = tf(t, "marketplace.subtitle", "Alat, layanan, dan edukasi profesional");
   const badgeTrusted = tf(t, "marketplace.badgeTrusted", "Mitra Terverifikasi");
   const filterByCategory = tf(t, "marketplace.filterByCategory", "Filter berdasarkan kategori");
+  const verifiedOnlyLabel = tf(t, "marketplace.verifiedOnly", "Mitra Terverifikasi");
+  const badgeVerified = tf(t, "marketplace.badgeVerified", "Terverifikasi");
 
   const emptyTitle = tf(t, "marketplace.emptyTitle", "Belum ada item");
   const emptyDesc = tf(t, "marketplace.emptyDesc", "Belum ada item untuk kategori ini. Coba pilih kategori lain atau daftar sebagai vendor.");
   const applyAsVendor = tf(t, "marketplace.applyAsVendor", "Daftar sebagai Vendor");
   const viewDetails = tf(t, "marketplace.viewDetails", "Lihat Detail");
+
+  const emptyVerifiedTitle = tf(t, "marketplace.emptyVerifiedTitle", "Belum ada mitra terverifikasi");
+  const emptyVerifiedSubtitle = tf(t, "marketplace.emptyVerifiedSubtitle", "Kami sedang onboarding vendor terverifikasi. Silakan cek kembali.");
+  const emptyVerifiedCta = tf(t, "marketplace.emptyVerifiedCta", "Gabung Telegram untuk update");
 
   const errorTitle = tf(t, "marketplace.errorTitle", "Gagal memuat marketplace");
   const errorDesc = tf(t, "marketplace.errorDesc", "Terjadi kendala saat memuat data. Silakan coba lagi.");
@@ -101,6 +108,15 @@ export default function MarketplacePage() {
     };
     return map;
   }, [t]);
+
+  // Apply verified filter after category filter
+  const filteredItems = useMemo(() => {
+    let result = items;
+    if (verifiedOnly) {
+      result = result.filter(item => item.verified === true);
+    }
+    return result;
+  }, [items, verifiedOnly]);
 
   const renderStars = (rating: number) => (
     <div className="flex items-center gap-1">
@@ -184,6 +200,27 @@ export default function MarketplacePage() {
     </PremiumCard>
   );
 
+  const EmptyVerifiedState = () => (
+    <PremiumCard>
+      <div className="text-center py-16">
+        <div className="w-20 h-20 bg-gradient-to-br from-[#F0B90B]/10 to-[#F0B90B]/5 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Shield className="w-10 h-10 text-[#F0B90B]/60" />
+        </div>
+        <h3 className="text-xl font-semibold text-white mb-3">{emptyVerifiedTitle}</h3>
+        <p className="text-sm text-white/60 mb-8 max-w-md mx-auto">{emptyVerifiedSubtitle}</p>
+
+        <a
+          href="https://t.me/tpcglobalcommunity"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F0B90B] to-[#F0B90B]/90 hover:from-[#F0B90B]/90 hover:to-[#F0B90B] text-black font-medium rounded-lg transition-all shadow-lg shadow-[#F0B90B]/25"
+        >
+          {emptyVerifiedCta}
+        </a>
+      </div>
+    </PremiumCard>
+  );
+
   return (
     <PremiumShell>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
@@ -219,9 +256,23 @@ export default function MarketplacePage() {
 
         {/* Filter */}
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Filter className="w-5 h-5 text-white/40" />
-            <span className="text-sm font-medium text-white/60">{filterByCategory}</span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Filter className="w-5 h-5 text-white/40" />
+              <span className="text-sm font-medium text-white/60">{filterByCategory}</span>
+            </div>
+            
+            <button
+              onClick={() => setVerifiedOnly(v => !v)}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
+                verifiedOnly
+                  ? "bg-[#F0B90B]/20 border-[#F0B90B] text-[#F0B90B] shadow-lg shadow-[#F0B90B]/20"
+                  : "bg-white/5 border-white/20 text-white/60 hover:bg-white/10"
+              }`}
+            >
+              <Shield className="w-4 h-4" />
+              <span className="text-sm font-medium">{verifiedOnlyLabel}</span>
+            </button>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -250,11 +301,11 @@ export default function MarketplacePage() {
           </div>
         ) : error ? (
           <ErrorState />
-        ) : items.length === 0 ? (
-          <EmptyState />
+        ) : filteredItems.length === 0 ? (
+          verifiedOnly ? <EmptyVerifiedState /> : <EmptyState />
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {items.map((item) => {
+            {filteredItems.map((item) => {
               const id = item?.id ?? "unknown";
               const itemTitle = item?.title?.[lang] ?? "Untitled";
               const itemDesc = item?.shortDesc?.[lang] ?? "No description available";
@@ -283,6 +334,11 @@ export default function MarketplacePage() {
                     </div>
 
                     <div className="flex flex-wrap gap-1 mb-3">
+                      {item?.verified && (
+                        <span className="px-2 py-1 text-xs bg-gradient-to-r from-[#F0B90B]/20 to-[#F0B90B]/10 text-[#F0B90B] rounded-full border border-[#F0B90B]/40 shadow-sm shadow-[#F0B90B]/10">
+                          {badgeVerified}
+                        </span>
+                      )}
                       {Array.isArray(item?.badges)
                         ? item.badges.map((badge, index) => (
                             <span
