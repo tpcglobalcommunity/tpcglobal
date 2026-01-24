@@ -1242,17 +1242,6 @@ export const translations: Record<Language, any> = {
           passwordMinLength: "Password must be at least 8 characters",
           passwordTooShort: "Password is too short",
           passwordMismatch: "Passwords do not match",
-          fullNameMinLength: "Full name must be at least 2 characters",
-          emailTaken: "Email is already registered",
-          network: "Network error. Please check your connection and try again",
-          invitationInvalid: "Invalid invitation code",
-          invitationRequired: "Invitation code is required",
-          emailNotVerified: "Please verify your email before logging in.",
-          usernameInvalid: "Username must be 3–20 characters (lowercase, numbers, underscore).",
-          passwordMismatch: "Password confirmation does not match.",
-          success: {
-            title: "Account created successfully",
-            subtitle: "Check your email to verify your account."
           }
         },
         disabledSubmit: "Please complete all required fields first."
@@ -3331,7 +3320,7 @@ export const translations: Record<Language, any> = {
       },
       profileCompletion: {
         title: "Lengkapi Profil Anda",
-        subtitle: "Satu langkah lagi untuk mengaktifkan akses penuh member TPC.",
+        subtitle: "Nama lengkap, nomor WhatsApp, Telegram, dan kota wajib diisi.",
         body: "Untuk menjaga kualitas komunitas dan transparansi data, kami memerlukan beberapa informasi dasar sebelum Anda melanjutkan.",
         requiredNotice: "Kolom berikut wajib diisi: Nama Lengkap, Nomor WhatsApp, Telegram, dan Kota.",
         warning: "Profil belum lengkap. Lengkapi data wajib untuk melanjutkan aktivitas Anda.",
