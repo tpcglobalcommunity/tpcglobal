@@ -1,105 +1,83 @@
-import { createClient } from '@supabase/supabase-js';
-import { User } from '@supabase/supabase-js';
+import { supabase } from "./supabase";
+import { ensureLangPath, detectLangFromPath } from "../utils/langPath";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+export type Lang = "en" | "id";
 
 export interface AuthState {
   isAuthed: boolean;
   isEmailVerified: boolean;
-  user: User | null;
-  loading: boolean;
+  user: any | null;
 }
 
-export const AUTH_PATHS = [
-  '/login',
-  '/signup', 
-  '/forgot',
-  '/verify',
-  '/invite',
-  '/magic'
-] as const;
-
+/**
+ * Get current authentication state
+ */
 export async function getAuthState(): Promise<AuthState> {
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
-  
   try {
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    const { data } = await supabase.auth.getSession();
+    const user = data.session?.user ?? null;
     
-    if (sessionError || !session) {
-      return {
-        isAuthed: false,
-        isEmailVerified: false,
-        user: null,
-        loading: false
-      };
-    }
-
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
-    if (userError || !user) {
-      return {
-        isAuthed: false,
-        isEmailVerified: false,
-        user: null,
-        loading: false
-      };
-    }
-
     return {
-      isAuthed: true,
-      isEmailVerified: !!user.email_confirmed_at,
+      isAuthed: !!user,
+      isEmailVerified: Boolean(user?.email_confirmed_at),
       user,
-      loading: false
     };
-  } catch (error) {
-    console.error('Auth state check error:', error);
+  } catch {
     return {
       isAuthed: false,
       isEmailVerified: false,
       user: null,
-      loading: false
     };
   }
 }
 
-export function isAuthPath(pathname: string): boolean {
-  const normalizedPath = pathname.replace(/^\/(en|id)/, '');
-  return AUTH_PATHS.some(authPath => normalizedPath.startsWith(authPath));
+/**
+ * Extract language from pathname
+ */
+export function getLanguageFromPath(pathname: string): Lang {
+  const detected = detectLangFromPath(pathname);
+  return (detected as Lang) || "en";
 }
 
-export function getLanguageFromPath(pathname: string): 'en' | 'id' {
-  const match = pathname.match(/^\/(en|id)(?:\/|$)/);
-  return (match?.[1] as 'en' | 'id') || 'en';
-}
+/**
+ * REQUIRED EXPORT — used by SignIn.tsx
+ * Overload for backward compatibility
+ */
+export async function getAuthRedirectPath(lang: Lang): Promise<string>;
+export async function getAuthRedirectPath(authState: AuthState, lang: Lang): Promise<string>;
+export async function getAuthRedirectPath(authStateOrLang: AuthState | Lang, lang?: Lang): Promise<string> {
+  try {
+    // Handle backward compatibility: single param (lang)
+    if (typeof authStateOrLang === "string") {
+      const authState = await getAuthState();
+      const targetLang = authStateOrLang;
+      
+      if (!authState.isAuthed) {
+        return ensureLangPath(targetLang, "/login");
+      }
 
-export function stripLang(pathname: string): string {
-  return pathname.replace(/^\/(en|id)/, '') || '/';
-}
+      if (!authState.isEmailVerified) {
+        return ensureLangPath(targetLang, "/verify");
+      }
 
-export function ensureLangPath(lang: 'en' | 'id', pathWithoutLang: string): string {
-  const cleanPath = pathWithoutLang.startsWith('/') ? pathWithoutLang : `/${pathWithoutLang}`;
-  return `/${lang}${cleanPath === '/' ? '' : cleanPath}`;
-}
+      return ensureLangPath(targetLang, "/member/update-profit");
+    }
+    
+    // Handle new signature: (authState, lang)
+    const authState = authStateOrLang;
+    const targetLang = lang!;
+    
+    if (!authState.isAuthed) {
+      return ensureLangPath(targetLang, "/login");
+    }
 
-export function getAuthRedirectPath(authState: AuthState, currentLang: 'en' | 'id'): string {
-  if (!authState.isAuthed) {
-    return ensureLangPath(currentLang, '/login');
-  }
-  
-  if (!authState.isEmailVerified) {
-    return ensureLangPath(currentLang, '/verify');
-  }
-  
-  // For verified users, redirect to update-profit after login
-  return ensureLangPath(currentLang, '/member/update-profit');
-}
+    if (!authState.isEmailVerified) {
+      return ensureLangPath(targetLang, "/verify");
+    }
 
-export async function signOutIfUnverified(): Promise<void> {
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
-  const authState = await getAuthState();
-  
-  if (authState.isAuthed && !authState.isEmailVerified) {
-    await supabase.auth.signOut();
+    return ensureLangPath(targetLang, "/member/update-profit");
+  } catch {
+    const fallbackLang = typeof authStateOrLang === "string" ? authStateOrLang : lang || "en";
+    return ensureLangPath(fallbackLang, "/login");
   }
 }
