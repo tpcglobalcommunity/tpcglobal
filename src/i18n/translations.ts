@@ -263,6 +263,11 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "marketplace.modal.close": "Close",
     "marketplace.modal.comingSoon": "Checkout coming soon",
 
+    // Marketplace not found
+    "marketplace.notFound.title": "Item Not Found",
+    "marketplace.notFound.desc": "The item you're looking for doesn't exist or has been removed.",
+    "marketplace.notFound.back": "Back to Marketplace",
+
     "updateProfit.title": "Update Profit",
     "updateProfit.subtitle": "Share your trading results with the TPC community",
     "updateProfit.disclaimer": "This is for educational and community tracking purposes only. Trading involves risk and past performance does not guarantee future results.",
@@ -534,6 +539,11 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "marketplace.modal.ctaProceed": "Lanjut",
     "marketplace.modal.close": "Tutup",
     "marketplace.modal.comingSoon": "Checkout segera hadir",
+
+    // Marketplace not found
+    "marketplace.notFound.title": "Item Tidak Ditemukan",
+    "marketplace.notFound.desc": "Item yang Anda cari tidak ada atau telah dihapus.",
+    "marketplace.notFound.back": "Kembali ke Marketplace",
 
     "updateProfit.title": "Update Laporan Profit",
     "updateProfit.subtitle": "Bagikan hasil trading Anda dengan komunitas TPC",

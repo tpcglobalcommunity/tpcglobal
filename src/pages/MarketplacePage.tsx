@@ -141,9 +141,15 @@ export default function MarketplacePage() {
       const found = items.find(item => item.slug === slugFromUrl);
       if (found) {
         setSelected(found);
+      } else {
+        // Slug not found - show not found state
+        setSelected(null);
       }
     }
   }, [slugFromUrl, items]);
+
+  // Check if we have an invalid slug
+  const hasInvalidSlug = slugFromUrl && items.length > 0 && !items.find(item => item.slug === slugFromUrl);
 
   // Update URL when modal opens/closes
   useEffect(() => {
@@ -183,6 +189,10 @@ export default function MarketplacePage() {
   const modalCtaProceed = tf(t, "marketplace.modal.ctaProceed", "Lanjut");
   const modalClose = tf(t, "marketplace.modal.close", "Tutup");
   const modalComingSoon = tf(t, "marketplace.modal.comingSoon", "Checkout segera hadir");
+
+  const notFoundTitle = tf(t, "marketplace.notFound.title", "Item tidak ditemukan");
+  const notFoundDesc = tf(t, "marketplace.notFound.desc", "Item yang Anda cari tidak ada atau telah dihapus.");
+  const notFoundBack = tf(t, "marketplace.notFound.back", "Kembali ke Marketplace");
 
   const errorTitle = tf(t, "marketplace.errorTitle", "Gagal memuat marketplace");
   const errorDesc = tf(t, "marketplace.errorDesc", "Terjadi kendala saat memuat data. Silakan coba lagi.");
@@ -319,6 +329,25 @@ export default function MarketplacePage() {
     </PremiumCard>
   );
 
+  const NotFoundState = () => (
+    <PremiumCard>
+      <div className="text-center py-16">
+        <div className="w-20 h-20 bg-gradient-to-br from-red-500/10 to-red-500/5 rounded-full flex items-center justify-center mx-auto mb-6">
+          <AlertCircle className="w-10 h-10 text-red-500/60" />
+        </div>
+        <h3 className="text-xl font-semibold text-white mb-3">{notFoundTitle}</h3>
+        <p className="text-sm text-white/60 mb-8 max-w-md mx-auto">{notFoundDesc}</p>
+
+        <button
+          onClick={() => navigate(`/${lang}/marketplace`)}
+          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F0B90B] to-[#F0B90B]/90 hover:from-[#F0B90B]/90 hover:to-[#F0B90B] text-black font-medium rounded-lg transition-all shadow-lg shadow-[#F0B90B]/25"
+        >
+          {notFoundBack}
+        </button>
+      </div>
+    </PremiumCard>
+  );
+
   return (
     <PremiumShell>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
@@ -399,6 +428,8 @@ export default function MarketplacePage() {
           </div>
         ) : error ? (
           <ErrorState />
+        ) : hasInvalidSlug ? (
+          <NotFoundState />
         ) : filteredItems.length === 0 ? (
           verifiedOnly ? <EmptyVerifiedState /> : <EmptyState />
         ) : (

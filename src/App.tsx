@@ -259,17 +259,20 @@ export default function App() {
         return <Security lang={lang} />;
       case "/support":
         return <Support lang={lang} />;
+
+      // Marketplace routes (handle both list and detail with slug)
       case "/marketplace":
         return <MarketplacePage />;
       case "/marketplace/item":
         return <MarketplaceItemPage lang={lang} />;
 
-      // Marketplace item detail with slug
+      // Marketplace item detail with slug - check before other routes
       if (pathWithoutLang.startsWith("/marketplace/") && pathWithoutLang !== "/marketplace/item") {
         return <MarketplacePage />;
       }
 
-      // AUTH
+      case "/dao":
+        return <DAOLite lang={lang} />;
       case "/signup":
         return <SignUp />;
       case "/signin":
