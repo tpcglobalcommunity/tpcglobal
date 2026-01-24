@@ -2,7 +2,8 @@
 // This module provides safe profile fetching with comprehensive error handling
 
 import { supabase } from './supabase';
-import { isUuid, formatSbError, debugLog } from './profileHelpers';
+import { isUuid, formatSbError } from './profileHelpers';
+import { devLog } from './devLog';
 
 export interface SafeProfile {
   id: string;
@@ -25,22 +26,22 @@ export interface SafeProfile {
  */
 export async function safeFetchProfile(userId: string): Promise<SafeProfile | null> {
   try {
-    debugLog('safeFetchProfile', 'Starting fetch for', userId);
+    devLog('safeFetchProfile', 'Starting fetch for', userId);
     
     // Validate UUID before making request
     if (!userId || !isUuid(userId)) {
-      debugLog('safeFetchProfile', 'Invalid UUID, returning null');
+      devLog('safeFetchProfile', 'Invalid UUID, returning null');
       return null;
     }
 
     // Check session before fetching
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
     if (sessionError || !session?.user?.id) {
-      debugLog('safeFetchProfile', 'No session found, returning null');
+      devLog('safeFetchProfile', 'No session found, returning null');
       return null;
     }
 
-    debugLog('safeFetchProfile', 'Querying profiles table', { userId });
+    devLog('safeFetchProfile', 'Querying profiles table', { userId });
     
     const { data, error } = await supabase
       .from('profiles')
@@ -58,7 +59,7 @@ export async function safeFetchProfile(userId: string): Promise<SafeProfile | nu
       return null;
     }
 
-    debugLog('safeFetchProfile', 'Profile loaded successfully');
+    devLog('safeFetchProfile', 'Profile loaded successfully');
     return data as SafeProfile;
   } catch (err: any) {
     console.error('❌ [safeFetchProfile] Exception:', formatSbError(err));
@@ -71,22 +72,22 @@ export async function safeFetchProfile(userId: string): Promise<SafeProfile | nu
  */
 export async function safeFetchRoleAndVerified(userId: string): Promise<{ role: string; verified: boolean }> {
   try {
-    debugLog('safeFetchRoleAndVerified', 'Starting fetch for', userId);
+    devLog('safeFetchRoleAndVerified', 'Starting fetch for', userId);
     
     // Validate UUID before making request
     if (!userId || !isUuid(userId)) {
-      debugLog('safeFetchRoleAndVerified', 'Invalid UUID, returning fallback');
+      devLog('safeFetchRoleAndVerified', 'Invalid UUID, returning fallback');
       return { role: 'viewer', verified: false };
     }
 
     // Check session before fetching
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
     if (sessionError || !session?.user?.id) {
-      debugLog('safeFetchRoleAndVerified', 'No session found, returning fallback');
+      devLog('safeFetchRoleAndVerified', 'No session found, returning fallback');
       return { role: 'viewer', verified: false };
     }
 
-    debugLog('safeFetchRoleAndVerified', 'Querying profiles table for role/verified', { userId });
+    devLog('safeFetchRoleAndVerified', 'Querying profiles table for role/verified', { userId });
     
     const { data, error } = await supabase
       .from('profiles')
@@ -104,7 +105,7 @@ export async function safeFetchRoleAndVerified(userId: string): Promise<{ role: 
       return { role: 'viewer', verified: false };
     }
 
-    debugLog('safeFetchRoleAndVerified', 'Role/verified loaded:', { role: data.role, verified: data.verified });
+    devLog('safeFetchRoleAndVerified', 'Role/verified loaded:', { role: data.role, verified: data.verified });
     return {
       role: data.role || 'viewer',
       verified: !!data.verified
