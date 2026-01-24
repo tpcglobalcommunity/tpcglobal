@@ -27,6 +27,6 @@ jobs:
       - name: Check Routes (PROD)
         env:
           BASE_URL: https://tpcglobal.io
-          FAIL_ON_TEXT: "i18n missing,[i18n missing],Missing translation,ErrorBoundary,Something went wrong"
+          FAIL_ON_TEXT: "errorboundary,something went wrong,application error,i18n missing,[i18n missing],missing translation,hydration failed"
           TIMEOUT_MS: "12000"
         run: npm run check:routes

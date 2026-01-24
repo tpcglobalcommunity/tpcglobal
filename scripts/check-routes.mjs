@@ -6,35 +6,112 @@ const DEFAULT_ROUTES = [
   "/",
   "/en",
   "/id",
-  "/id/docs",
-  "/id/dao",
+  "/en/signup",
+  "/id/signup",
+  "/en/login", 
+  "/id/login",
+  "/en/forgot",
+  "/id/forgot",
+  "/en/verify",
+  "/id/verify",
+  "/en/invite",
+  "/id/invite",
+  "/en/magic",
+  "/id/magic",
+  "/en/maintenance",
+  "/id/maintenance",
+  "/en/marketplace",
+  "/id/marketplace",
   "/en/docs",
+  "/id/docs",
   "/en/dao",
+  "/id/dao",
 ];
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:5173";
 const TIMEOUT_MS = Number(process.env.TIMEOUT_MS || 12000);
 
 const FAIL_TEXTS = [
+  "errorboundary",
+  "something went wrong",
+  "application error",
   "i18n missing",
   "[i18n missing]",
-  "Missing translation",
-  "ErrorBoundary",
-  "Something went wrong",
+  "missing translation",
+  "hydration failed",
 ];
 
-function checkRoute(url) {
+async function checkRoute(url, maxRedirects = 5) {
+  let currentUrl = url;
+  let redirectCount = 0;
+  const startTime = Date.now();
+
+  while (redirectCount <= maxRedirects) {
+    try {
+      const result = await fetchSingle(currentUrl);
+      const responseTime = Date.now() - startTime;
+
+      if (result.status >= 300 && result.status < 400 && result.location) {
+        redirectCount++;
+        currentUrl = new URL(result.location, currentUrl).href;
+        continue;
+      }
+
+      return {
+        url,
+        finalUrl: currentUrl,
+        status: result.status,
+        body: result.body,
+        redirectCount,
+        responseTime,
+      };
+    } catch (err) {
+      return {
+        url,
+        finalUrl: currentUrl,
+        status: 0,
+        body: "",
+        redirectCount,
+        responseTime: Date.now() - startTime,
+        error: err.message,
+      };
+    }
+  }
+
+  return {
+    url,
+    finalUrl: currentUrl,
+    status: 0,
+    body: "",
+    redirectCount,
+    responseTime: Date.now() - startTime,
+    error: "Too many redirects",
+  };
+}
+
+function fetchSingle(url) {
   return new Promise((resolve, reject) => {
     const u = new URL(url);
     const lib = u.protocol === "https:" ? https : http;
 
-    const req = lib.get(u, (res) => {
+    const options = {
+      hostname: u.hostname,
+      port: u.port || (u.protocol === "https:" ? 443 : 80),
+      path: u.pathname + u.search,
+      method: "GET",
+      headers: {
+        "User-Agent": "tpc-route-check/1.0",
+        "Accept": "text/html",
+      },
+    };
+
+    const req = lib.request(options, (res) => {
       let data = "";
       res.on("data", (chunk) => (data += chunk));
       res.on("end", () => {
         resolve({
-          url,
           status: res.statusCode,
+          location: res.headers.location,
           body: data,
         });
       });
@@ -45,50 +122,62 @@ function checkRoute(url) {
       req.destroy();
       reject(new Error(`Timeout after ${TIMEOUT_MS}ms`));
     });
+    req.end();
   });
 }
 
 (async () => {
   console.log(`🔍 CHECKING ROUTES: ${BASE_URL}`);
   console.log(`⏱️  TIMEOUT: ${TIMEOUT_MS}ms`);
+  console.log(`📋 ROUTES: ${DEFAULT_ROUTES.length} routes`);
   console.log("");
 
+  let passed = 0;
   let failed = 0;
+  const failedRoutes = [];
 
   for (const route of DEFAULT_ROUTES) {
     const fullUrl = `${BASE_URL}${route}`;
+    const result = await checkRoute(fullUrl);
 
-    try {
-      const result = await checkRoute(fullUrl);
-      
-      if (result.status >= 400) {
-        console.log(`❌ FAIL ${fullUrl} ${result.status}`);
-        failed++;
-        continue;
-      }
+    const statusOk = result.status >= 200 && result.status < 400;
+    const bodyLower = result.body.toLowerCase();
+    const foundFailText = FAIL_TEXTS.find(text => 
+      bodyLower.includes(text.toLowerCase())
+    );
 
-      const bodyLower = result.body.toLowerCase();
-      const foundFailText = FAIL_TEXTS.find(text => 
-        bodyLower.includes(text.toLowerCase())
-      );
+    const isOk = statusOk && !foundFailText && !result.error;
 
-      if (foundFailText) {
-        console.log(`❌ FAIL ${fullUrl} "${foundFailText}"`);
-        failed++;
-        continue;
-      }
-
-      console.log(`✅ OK ${fullUrl}`);
-      
-    } catch (err) {
-      console.log(`❌ FAIL ${fullUrl} ${err.message}`);
+    if (isOk) {
+      passed++;
+      const redirectInfo = result.redirectCount > 0 ? ` → ${result.redirectCount} redirects` : "";
+      console.log(`✅ OK ${fullUrl} [${result.status}]${redirectInfo} (${result.responseTime}ms)`);
+    } else {
       failed++;
+      failedRoutes.push(fullUrl);
+      const redirectInfo = result.redirectCount > 0 ? ` → ${result.redirectCount} redirects` : "";
+      console.log(`❌ FAIL ${fullUrl} [${result.status}]${redirectInfo} (${result.responseTime}ms)`);
+      
+      if (result.error) {
+        console.log(`    ERROR: ${result.error}`);
+      } else if (!statusOk) {
+        console.log(`    REASON: HTTP ${result.status} (expected 200-399)`);
+      } else if (foundFailText) {
+        console.log(`    REASON: Found error text "${foundFailText}"`);
+      }
     }
   }
 
   console.log("");
+  console.log("=".repeat(60));
+  console.log(`📊 SUMMARY: ${DEFAULT_ROUTES.length} total, ${passed} passed, ${failed} failed`);
+  
   if (failed > 0) {
-    console.log(`❌ FAILED: ${failed} route(s)`);
+    console.log("");
+    console.log("❌ FAILED ROUTES:");
+    failedRoutes.forEach(route => console.log(`   ${route}`));
+    console.log("");
+    console.log(`❌ CI FAILED: ${failed} route(s) failed validation`);
     process.exit(1);
   } else {
     console.log("✅ ALL ROUTES PASSED");
