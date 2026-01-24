@@ -1,11 +1,11 @@
 import { useState, useMemo, useEffect } from "react";
 import { Mail, Lock, Loader2, ArrowRight } from "lucide-react";
-import { useI18n, type Language, getLangPath } from "../../i18n";
-import { Link } from "../../components/Router";
-import { signIn, supabase } from "../../lib/supabase";
-import { useAuthError } from "../../hooks/useAuthError";
-import AuthShell from "../../components/auth/AuthShell";
-import { AuthBuildMarker } from "../../components/auth/AuthBuildMarker";
+import { type Language, useI18n, getLanguageFromPath, getLangPath } from "@/i18n";
+import { Link } from "@/components/Router";
+import { signIn, supabase } from "@/lib/supabase";
+import { useAuthError } from "@/hooks/useAuthError";
+import AuthShell from "@/components/auth/AuthShell";
+import { AuthBuildMarker } from "@/components/auth/AuthBuildMarker";
 
 interface SignInProps {
   lang?: Language;
@@ -15,72 +15,94 @@ function safeNext(nextRaw: string | null, fallback: string) {
   if (!nextRaw) return fallback;
   try {
     const decoded = decodeURIComponent(nextRaw);
+
+    // must be internal path only
     if (!decoded.startsWith("/")) return fallback;
     if (decoded.startsWith("//")) return fallback;
     if (decoded.includes("://")) return fallback;
+
     return decoded;
   } catch {
     return fallback;
   }
 }
 
-export default function SignIn({ }: SignInProps) {
+export default function SignIn({}: SignInProps) {
   const { language } = useI18n();
-  const L = language;
+  const L = language ?? getLanguageFromPath();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const { error, handleError, clearError } = useAuthError();
 
-  // Check auth state and redirect if needed
-  useEffect(() => {
-    const checkAuthAndRedirect = async () => {
-      const { data } = await supabase.auth.getSession();
-      const user = data.session?.user ?? null;
-      const currentLang = language;
-      
-      if (user && user.email_confirmed_at) {
-        // Already verified - redirect to update-profit
-        const redirectPath = getLangPath(currentLang, "/member/update-profit");
-        window.location.assign(redirectPath);
-        return;
-      }
-      
-      if (user && !user.email_confirmed_at) {
-        // Logged in but not verified - redirect to verify
-        const verifyPath = getLangPath(currentLang, "/verify");
-        window.location.assign(verifyPath);
-        return;
-      }
-    };
+  const verifiedRedirect = getLangPath(L, "/member/update-profit");
+  const verifyBase = getLangPath(L, "/verify");
 
-    checkAuthAndRedirect();
-  }, [language]);
-
-  const fallback = getLangPath(L, "/member/update-profit");
+  // NEXT (lang-aware + safe)
   const nextUrl = useMemo(() => {
     const params = new URLSearchParams(window.location.search);
     const nextParam = params.get("next");
-    return safeNext(nextParam, fallback);
-  }, [fallback]);
+
+    // default: verifiedRedirect
+    const raw = safeNext(nextParam, verifiedRedirect);
+
+    // ensure lang prefix exists, but don't double-prefix
+    // if raw already starts with /en or /id, keep it as-is
+    if (/^\/(en|id)(\/|$)/.test(raw)) return raw;
+
+    // otherwise prefix it
+    return getLangPath(L, raw);
+  }, [L, verifiedRedirect]);
+
+  // Guard: if already logged in, route immediately (lang-aware)
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (cancelled) return;
+
+        const user = data.session?.user ?? null;
+        if (!user) return;
+
+        if (user.email_confirmed_at) {
+          window.location.replace(verifiedRedirect);
+          return;
+        }
+
+        // logged in but not verified
+        const e = user.email ?? "";
+        const verifyUrl = `${verifyBase}?email=${encodeURIComponent(e)}`;
+        window.location.replace(verifyUrl);
+      } catch {
+        // ignore - stay on signin
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [verifiedRedirect, verifyBase]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearError();
     setSubmitting(true);
+
     try {
-      const result = await signIn({ email: email.trim(), password });
-      
-      if (result.needsVerification) {
-        // Redirect to email verification page
-        const verifyUrl = `${getLangPath(L, "/verify")}?email=${encodeURIComponent(email.trim())}`;
-        window.location.assign(verifyUrl);
+      const cleanEmail = email.trim();
+      const result = await signIn({ email: cleanEmail, password });
+
+      if (result?.needsVerification) {
+        const verifyUrl = `${verifyBase}?email=${encodeURIComponent(cleanEmail)}`;
+        window.location.replace(verifyUrl);
         return;
       }
-      
-      // Email is verified, proceed to update-profit
-      window.location.assign(nextUrl);
+
+      // verified -> go next
+      window.location.replace(nextUrl);
     } catch (err: any) {
       handleError(err);
     } finally {
@@ -89,13 +111,8 @@ export default function SignIn({ }: SignInProps) {
   };
 
   return (
-    <AuthShell 
-      lang={L}
-      title="Sign In"
-      subtitle="Welcome back to TPC"
-    >
+    <AuthShell lang={L} title="Sign In" subtitle="Welcome back to TPC">
       <form onSubmit={onSubmit} className="space-y-4">
-        {/* Email Field */}
         <div>
           <label className="block text-sm font-semibold text-white/80 mb-2.5">
             Email
@@ -104,7 +121,7 @@ export default function SignIn({ }: SignInProps) {
             <Mail className="w-4 h-4 text-white/50 shrink-0" />
             <input
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(ev) => setEmail(ev.target.value)}
               placeholder="name@email.com"
               type="email"
               className="flex-1 bg-transparent outline-none text-white placeholder:text-white/30 text-sm"
@@ -113,7 +130,6 @@ export default function SignIn({ }: SignInProps) {
           </div>
         </div>
 
-        {/* Password Field */}
         <div>
           <label className="block text-sm font-semibold text-white/80 mb-2.5">
             Password
@@ -122,7 +138,7 @@ export default function SignIn({ }: SignInProps) {
             <Lock className="w-4 h-4 text-white/50 shrink-0" />
             <input
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(ev) => setPassword(ev.target.value)}
               placeholder="•••••••••"
               type="password"
               className="flex-1 bg-transparent outline-none text-white placeholder:text-white/30 text-sm"
@@ -131,14 +147,12 @@ export default function SignIn({ }: SignInProps) {
           </div>
         </div>
 
-        {/* Error Display */}
         {error ? (
           <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3.5 text-sm text-red-200">
             {error}
           </div>
         ) : null}
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={submitting || !email.trim() || password.length < 1}
@@ -158,19 +172,25 @@ export default function SignIn({ }: SignInProps) {
         </button>
       </form>
 
-      {/* Bottom Navigation */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-white/60 mt-6">
-        <Link to={getLangPath(L, "/forgot")} className="text-[#F0B90B] hover:underline underline-offset-4 transition-colors">
+        <Link
+          to={getLangPath(L, "/forgot")}
+          className="text-[#F0B90B] hover:underline underline-offset-4 transition-colors"
+        >
           Forgot password?
         </Link>
+
         <div className="text-center sm:text-right">
           <span>Don't have an account?</span>{" "}
-          <Link to={getLangPath(L, "/signup")} className="text-[#F0B90B] hover:underline underline-offset-4 font-medium">
+          <Link
+            to={getLangPath(L, "/signup")}
+            className="text-[#F0B90B] hover:underline underline-offset-4 font-medium"
+          >
             Create account
           </Link>
         </div>
       </div>
-      
+
       <AuthBuildMarker />
     </AuthShell>
   );

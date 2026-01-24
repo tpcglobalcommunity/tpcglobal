@@ -1,8 +1,8 @@
 import { ShieldAlert, Link2, BadgeCheck, AlertTriangle, ExternalLink, ChevronRight, Copy, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
-import { Language, useTranslations, getLangPath } from '../i18n';
-import { Link } from '../components/Router';
-import { PremiumShell, PremiumSection, PremiumCard, PremiumButton, NoticeBox } from '../components/ui';
+import { Language, useTranslations, getLangPath } from "@/i18n";
+import { Link } from "@/components/Router";
+import { PremiumShell, PremiumSection, PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 
 interface SecurityProps {
   lang: Language;

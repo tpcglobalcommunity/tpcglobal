@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { type Language, useI18n, getLangPath } from "../../i18n";
-import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { supabase } from "@/lib/supabase";
+import { type Language, useI18n, getLangPath } from "@/i18n";
+import { PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import { Settings, Save, RefreshCcw, ShieldAlert } from "lucide-react";
-import { getAppSettings, type AppSettings } from "../../lib/settings";
-import { upsertSetting } from "../../lib/adminRpc";
+import { getAppSettings, type AppSettings } from "@/lib/settings";
+import { upsertSetting } from "@/lib/adminRpc";
 import { useMyRole, canManageSettings } from "../../hooks/useMyRole";
-import NotAuthorized from "../../components/NotAuthorized";
+import NotAuthorized from "@/components/NotAuthorized";
 
 export default function AdminSettingsPage({ lang }: { lang: Language }) {
   const { t } = useI18n(lang);

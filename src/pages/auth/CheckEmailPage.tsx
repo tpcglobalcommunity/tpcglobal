@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, ArrowLeft, CheckCircle, ExternalLink, Users, RefreshCw } from 'lucide-react';
-import { PremiumShell } from '../../components/ui/PremiumShell';
-import { PremiumCard } from '../../components/ui/PremiumCard';
-import { supabase } from '../../lib/supabase';
+import { PremiumShell } from '@/components/ui/PremiumShell';
+import { PremiumCard } from '@/components/ui/PremiumCard';
+import { supabase } from '@/lib/supabase';
 
 export default function CheckEmailPage() {
   const navigate = useNavigate();

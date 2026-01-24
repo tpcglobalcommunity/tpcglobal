@@ -1,6 +1,6 @@
 import { CheckCircle } from 'lucide-react';
-import { Language, useI18n, tArr } from '../i18n';
-import { PremiumShell, PremiumSection, PremiumCard, NoticeBox } from '../components/ui';
+import { Language, useI18n, tArr } from "@/i18n";
+import { PremiumShell, PremiumSection, PremiumCard, NoticeBox } from "@/components/ui";
 
 interface CommunityFundProps {
   lang: Language;

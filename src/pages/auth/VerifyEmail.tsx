@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Mail, ArrowLeft, RefreshCw, CheckCircle2 } from "lucide-react";
-import { useI18n, type Language, getLangPath } from "../../i18n";
+import { useI18n, type Language, getLangPath } from "@/i18n";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { supabase } from "../../lib/supabase";
-import AuthShell from "../../components/auth/AuthShell";
-import { AuthBuildMarker } from "../../components/auth/AuthBuildMarker";
+import { supabase } from "@/lib/supabase";
+import AuthShell from "@/components/auth/AuthShell";
+import { AuthBuildMarker } from "@/components/auth/AuthBuildMarker";
 
 interface VerifyEmailProps {
   lang?: Language;

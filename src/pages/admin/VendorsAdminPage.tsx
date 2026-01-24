@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Store, Filter, CheckCircle, XCircle, User, ExternalLink, Calendar, AlertCircle } from 'lucide-react';
-import { Language, useI18n } from '../../i18n';
-import { PremiumShell, PremiumCard, PremiumButton } from '../../components/ui';
-import MemberGuard from '../../components/guards/MemberGuard';
-import RoleGuard from '../../components/guards/RoleGuard';
-import { getVendorApplicationsAdmin, updateVendorApplicationStatus, VendorApplication } from '../../lib/supabase';
+import { Language, useI18n } from '@/i18n';
+import { PremiumShell, PremiumCard, PremiumButton } from '@/components/ui';
+import MemberGuard from '@/components/guards/MemberGuard';
+import RoleGuard from '@/components/guards/RoleGuard';
+import { getVendorApplicationsAdmin, updateVendorApplicationStatus, VendorApplication } from '@/lib/supabase';
 
 interface VendorsAdminPageProps {
   lang: Language;

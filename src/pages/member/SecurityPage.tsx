@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Shield, LogOut, Activity, CheckCircle, AlertTriangle, User, Clock, Monitor } from 'lucide-react';
-import { Language, useTranslations } from '../../i18n';
-import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from '../../components/ui';
-import MemberGuard from '../../components/guards/MemberGuard';
-import { supabase, getProfile, Profile, signOutLocal, signOutAllDevices, getMemberAuthEvents, MemberAuthEvent, logAuthEvent } from '../../lib/supabase';
+import { Language, useTranslations } from '@/i18n';
+import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from '@/components/ui';
+import MemberGuard from '@/components/guards/MemberGuard';
+import { supabase, getProfile, Profile, signOutLocal, signOutAllDevices, getMemberAuthEvents, MemberAuthEvent, logAuthEvent } from '@/lib/supabase';
 
 interface SecurityPageProps {
   lang: Language;

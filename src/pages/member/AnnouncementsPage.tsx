@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Megaphone, Search, Calendar } from 'lucide-react';
-import { Language, useTranslations } from '../../i18n';
-import { PremiumShell, PremiumCard, PremiumButton } from '../../components/ui';
-import MemberGuard from '../../components/guards/MemberGuard';
-import { getPublishedAnnouncements, Announcement } from '../../lib/supabase';
+import { Language, useTranslations } from '@/i18n';
+import { PremiumShell, PremiumCard, PremiumButton } from '@/components/ui';
+import MemberGuard from '@/components/guards/MemberGuard';
+import { getPublishedAnnouncements, Announcement } from '@/lib/supabase';
 
 interface AnnouncementsPageProps {
   lang: Language;

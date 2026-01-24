@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useI18n, type Language } from '../../i18n';
+import { useI18n, type Language } from '@/i18n';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, Home } from 'lucide-react';
 import { PremiumCard, PremiumButton } from '../ui';

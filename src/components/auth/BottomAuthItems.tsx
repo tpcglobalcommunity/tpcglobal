@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { LayoutDashboard, UserPlus } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
-import { useI18n, type Language, getLangPath } from '../../i18n';
+import { supabase } from '@/lib/supabase';
+import { useI18n, type Language, getLangPath } from '@/i18n';
 import { Link } from '../Router';
 
 function useSession() {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "../../components/Router";
-import { supabase } from "../../lib/supabase";
-import { ensureProfile } from "../../lib/ensureProfile";
+import { useNavigate } from "@/components/Router";
+import { supabase } from "@/lib/supabase";
+import { ensureProfile } from "@/lib/ensureProfile";
 import { Loader2 } from "lucide-react";
 
 export default function AuthCallback() {

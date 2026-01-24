@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../../lib/supabase";
-import { PremiumSection, PremiumCard } from "../../components/ui";
-import { TierBadge } from "../../components/ui/TierBadge";
+import { supabase } from "@/lib/supabase";
+import { PremiumSection, PremiumCard } from "@/components/ui";
+import { TierBadge } from "@/components/ui/TierBadge";
 import AdminGuard from "../../guards/AdminGuard";
 
 type WalletTier = {

@@ -1,12 +1,12 @@
 import { useEffect, useState, useMemo } from "react";
-import { supabase } from "../../lib/supabase";
-import { type Language, useI18n } from "../../i18n";
-import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { supabase } from "@/lib/supabase";
+import { type Language, useI18n } from "@/i18n";
+import { PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import { BadgeCheck, Eye, CheckCircle, XCircle, RefreshCcw, User, Wallet } from "lucide-react";
-import { approveVerification, rejectVerification } from "../../lib/adminRpc";
+import { approveVerification, rejectVerification } from "@/lib/adminRpc";
 import { useMyRole, canManageVerification } from "../../hooks/useMyRole";
 import { useActionCooldown } from "../../hooks/useActionCooldown";
-import NotAuthorized from "../../components/NotAuthorized";
+import NotAuthorized from "@/components/NotAuthorized";
 
 type Row = {
   id: number;

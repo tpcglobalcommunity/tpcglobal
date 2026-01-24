@@ -1,7 +1,7 @@
-import { type Language, useI18n, getLangPath } from "../../i18n";
-import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { type Language, useI18n, getLangPath } from "@/i18n";
+import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import { Ban, LogOut, ExternalLink, Shield } from "lucide-react";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 export default function MemberBannedPage({ lang }: { lang: Language }) {
   const { t } = useI18n();

@@ -1,4 +1,4 @@
-import { tierLabel } from "../../lib/tier";
+import { tierLabel } from "@/lib/tier";
 
 interface TierBadgeProps {
   tier?: string | null;

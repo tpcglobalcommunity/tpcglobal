@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { type Language, useTranslations } from "../../i18n";
-import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { supabase } from "@/lib/supabase";
+import { type Language, useTranslations } from "@/i18n";
+import { PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import { Users, ShieldCheck, Clock, Ban, RefreshCcw, Link2, Search } from "lucide-react";
 
 type Stat = { label: string; value: string; icon: any };

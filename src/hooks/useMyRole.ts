@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '@/lib/supabase';
 import type { Session } from '@supabase/supabase-js';
 
 export type AdminRole = 'super_admin' | 'admin' | 'viewer' | 'member' | null;

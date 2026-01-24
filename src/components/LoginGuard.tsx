@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { ensureProfileAfterVerifiedLogin } from '../lib/ensureProfileAfterVerifiedLogin';
-import { getProfileCompletionStatus } from '../lib/getProfileCompletionStatus';
-import { langPath } from '../utils/langPath';
+import { supabase } from '@/lib/supabase';
+import { ensureProfileAfterVerifiedLogin } from '@/lib/ensureProfileAfterVerifiedLogin';
+import { getProfileCompletionStatus } from '@/lib/getProfileCompletionStatus';
+import { langPath } from '@/utils/langPath';
 import { Loader2 } from 'lucide-react';
-import { formatSbError } from '../lib/profileHelpers';
+import { formatSbError } from '@/lib/profileHelpers';
 
 interface LoginGuardProps {
   lang: 'en' | 'id';

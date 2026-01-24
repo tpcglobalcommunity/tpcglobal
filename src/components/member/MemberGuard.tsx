@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { type Language, getLangPath } from "../../i18n";
+import { supabase } from "@/lib/supabase";
+import { type Language, getLangPath } from "@/i18n";
 import MemberPendingPage from "../../pages/member/MemberPendingPage";
 import MemberBannedPage from "../../pages/member/MemberBannedPage";
 

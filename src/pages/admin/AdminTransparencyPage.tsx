@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { useMyRole } from "../../hooks/useMyRole";
-import { getLangPath, type Language } from "../../i18n";
+import { getLangPath, type Language } from "@/i18n";
 import {
   ShieldCheck,
   FileText,

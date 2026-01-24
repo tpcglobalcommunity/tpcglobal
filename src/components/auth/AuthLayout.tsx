@@ -1,4 +1,4 @@
-import { Language } from '../../i18n';
+import { Language } from '@/i18n';
 import AuthHeader from './AuthHeader';
 
 interface AuthLayoutProps {

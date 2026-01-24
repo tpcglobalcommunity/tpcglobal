@@ -1,9 +1,9 @@
 import { Home, FileText, Users, Eye, Shield } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { Language, getLangPath } from '../i18n';
-import { translations } from '../i18n/translations';
+import { Language } from '@/i18n';
+import { translations } from '@/i18n/translations';
 import { Link } from './Router';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface BottomNavProps {
   lang: Language;
@@ -53,33 +53,13 @@ const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
   };
 
   const navItems = [
-    { 
-      label: getNavLabel('nav.home'), 
-      path: getLangPath(lang, '/home'), 
-      icon: Home 
-    },
-    { 
-      label: getNavLabel('nav.docs'), 
-      path: getLangPath(lang, '/docs'), 
-      icon: FileText 
-    },
-    { 
-      label: getNavLabel('nav.dao'), 
-      path: getLangPath(lang, '/dao'), 
-      icon: Users 
-    },
-    { 
-      label: getNavLabel('nav.transparency'), 
-      path: getLangPath(lang, '/transparency'), 
-      icon: Eye 
-    },
-    ...(isAdmin ? [
-      { 
-        label: 'Admin', // Admin key not in translations, keep hardcoded
-        path: getLangPath(lang, '/admin/control'), 
-        icon: Shield 
-      }
-    ] : [])
+    { label: getNavLabel('nav.home'), path: '/home', icon: Home },
+    { label: getNavLabel('nav.docs'), path: '/docs', icon: FileText },
+    { label: getNavLabel('nav.dao'), path: '/dao', icon: Users },
+    { label: getNavLabel('nav.transparency'), path: '/transparency', icon: Eye },
+    ...(isAdmin
+      ? [{ label: 'Admin', path: '/admin/control', icon: Shield }]
+      : []),
   ];
 
   if (isMenuOpen) {
@@ -94,7 +74,7 @@ const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
       <div className="flex justify-around items-center px-2 h-[72px]">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = currentPath === item.path;
+          const isActive = currentPath === item.path || currentPath.endsWith(item.path);
           return (
             <Link
               key={item.path}

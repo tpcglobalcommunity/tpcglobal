@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useI18n, type Language } from '../../i18n';
-import { supabase } from '../../lib/supabase';
-import { getAppSettings } from '../../lib/appSettings';
-import { Link } from 'react-router-dom';
+import { useI18n, type Language } from '@/i18n';
+import { supabase } from '@/lib/supabase';
+import { getAppSettings } from '@/lib/appSettings';
+import { Link } from '@/components/Router';
 import { Shield, Activity, Users, CheckCircle2, AlertCircle, ExternalLink } from 'lucide-react';
-import { PremiumShell, PremiumCard, PremiumButton } from '../../components/ui';
+import { PremiumShell, PremiumCard, PremiumButton } from '@/components/ui';
 
 export default function TrustHubPage({ lang }: { lang: Language }) {
   const { t } = useI18n(lang);
@@ -138,28 +138,28 @@ export default function TrustHubPage({ lang }: { lang: Language }) {
               </h3>
               <div className="space-y-3">
                 <Link 
-                  to={`/${lang}/public/transparency`}
+                  to="/public/transparency"
                   className="flex items-center gap-3 text-white/70 hover:text-white transition-colors"
                 >
                   <ExternalLink className="w-4 h-4" />
                   <span>{t('trust.transparency.transparency') || 'Transparency Report'}</span>
                 </Link>
                 <Link 
-                  to={`/${lang}/public/disclaimer`}
+                  to="/public/disclaimer"
                   className="flex items-center gap-3 text-white/70 hover:text-white transition-colors"
                 >
                   <ExternalLink className="w-4 h-4" />
                   <span>{t('trust.transparency.disclaimer') || 'Disclaimer'}</span>
                 </Link>
                 <Link 
-                  to={`/${lang}/public/terms`}
+                  to="/public/terms"
                   className="flex items-center gap-3 text-white/70 hover:text-white transition-colors"
                 >
                   <ExternalLink className="w-4 h-4" />
                   <span>{t('trust.transparency.terms') || 'Terms of Service'}</span>
                 </Link>
                 <Link 
-                  to={`/${lang}/public/privacy`}
+                  to="/public/privacy"
                   className="flex items-center gap-3 text-white/70 hover:text-white transition-colors"
                 >
                   <ExternalLink className="w-4 h-4" />
@@ -177,7 +177,7 @@ export default function TrustHubPage({ lang }: { lang: Language }) {
               </p>
               <div className="flex gap-3">
                 <Link 
-                  to={`/${lang}/public/about`}
+                  to="/public/about"
                   className="text-[#F0B90B] hover:text-[#F8D568] transition-colors"
                 >
                   {t('trust.transparency.learnMore') || 'Learn More'}
@@ -197,7 +197,7 @@ export default function TrustHubPage({ lang }: { lang: Language }) {
               <p className="text-white/70 max-w-[60ch] mx-auto">
                 {t('trust.cta.subtitle') || 'Become part of our exclusive community and start your journey today.'}
               </p>
-              <Link to={`/${lang}/auth/signup`}>
+              <Link to="/auth/signup">
                 <PremiumButton className="px-8 py-3">
                   {t('trust.cta.signup') || 'Sign Up Now'}
                 </PremiumButton>
@@ -215,7 +215,7 @@ export default function TrustHubPage({ lang }: { lang: Language }) {
                 }
               </p>
               <div className="flex justify-center gap-4">
-                <Link to={`/${lang}/public/transparency`}>
+                <Link to="/public/transparency">
                   <PremiumButton variant="secondary">
                     {t('trust.cta.viewStatus') || 'View Full Status'}
                   </PremiumButton>

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { BookOpen, Target, Coins, HelpCircle } from 'lucide-react';
-import { Language, useI18n } from '../i18n';
-import { PremiumShell, PremiumCard, Accordion, AccordionItem, NoticeBox } from '../components/ui';
+import { Language, useI18n } from "@/i18n";
+import { PremiumShell, PremiumCard, Accordion, AccordionItem, NoticeBox } from "@/components/ui";
 
 interface DocsProps {
   lang: Language;

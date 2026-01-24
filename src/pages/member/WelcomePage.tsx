@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { type Language, useI18n, getLangPath } from "../../i18n";
-import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { supabase } from "@/lib/supabase";
+import { type Language, useI18n, getLangPath } from "@/i18n";
+import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import { Shield, CheckCircle2, AlertTriangle, ExternalLink, BookOpen, Home, User, LayoutDashboard } from "lucide-react";
 
 type ProfileRow = {

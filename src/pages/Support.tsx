@@ -1,7 +1,7 @@
 import { Headphones, MessageCircle, Mail, ExternalLink, ShieldAlert, FileText, Scale } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../i18n';
-import { Link } from '../components/Router';
-import { PremiumShell, PremiumSection, PremiumCard, NoticeBox } from '../components/ui';
+import { Language, useTranslations, getLangPath } from "@/i18n";
+import { Link } from "@/components/Router";
+import { PremiumShell, PremiumSection, PremiumCard, NoticeBox } from "@/components/ui";
 
 interface SupportProps {
   lang: Language;

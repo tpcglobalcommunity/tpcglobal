@@ -1,7 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
-import { useI18n } from "../../i18n";
+import { useI18n } from "@/i18n";
 import { User, Home } from "lucide-react";
-import { ensureLangPath } from "../../utils/langPath";
+import { ensureLangPath } from "@/utils/langPath";
 
 export default function AlreadySignedIn() {
   const { t, language: lang } = useI18n();

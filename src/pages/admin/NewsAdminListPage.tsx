@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useI18n } from '../../i18n';
+import { useI18n } from '@/i18n';
 import {
   supabase,
   getProfile,
   type NewsCategory,
-} from '../../lib/supabase';
-import { PremiumShell, PremiumSection, PremiumButton, PremiumCard, NoticeBox } from '../../components/ui';
+} from '@/lib/supabase';
+import { PremiumShell, PremiumSection, PremiumButton, PremiumCard, NoticeBox } from '@/components/ui';
 import { Plus, Edit, Eye, EyeOff, Pin, PinOff, Trash2, Search } from 'lucide-react';
 
 interface NewsPost {

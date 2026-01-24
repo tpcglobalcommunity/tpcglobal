@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getAppSettings, type AppSettings } from "../../lib/settings";
+import { getAppSettings, type AppSettings } from "@/lib/settings";
 import { X } from "lucide-react";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 type GlobalBannerProps = {
   lang: string;

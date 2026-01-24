@@ -1,7 +1,7 @@
 import { Wallet, ExternalLink, TrendingUp, CheckCircle2, FileText, Users } from 'lucide-react';
-import { Language, useI18n, getLangPath, tStr, tArr } from '../i18n';
-import { PremiumShell, PremiumCard, NoticeBox, PremiumButton } from '../components/ui';
-import { Link } from '../components/Router';
+import { Language, useI18n, getLangPath, tStr, tArr } from "@/i18n";
+import { PremiumShell, PremiumCard, NoticeBox, PremiumButton } from "@/components/ui";
+import { Link } from "@/components/Router";
 
 // Safe string helpers
 const toStr = (v: unknown) => (v == null ? "" : String(v));

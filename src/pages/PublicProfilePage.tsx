@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { User, MapPin, Calendar, CheckCircle, AlertCircle, ExternalLink, MessageCircle } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../i18n';
-import { PremiumShell, PremiumCard, PremiumButton } from '../components/ui';
-import { getPublicProfileByUsername, DirectoryMemberItem } from '../lib/supabase';
-import { TrustBadges } from '../components/trust/TrustBadges';
+import { Language, useTranslations, getLangPath } from "@/i18n";
+import { PremiumShell, PremiumCard, PremiumButton } from "@/components/ui";
+import { getPublicProfileByUsername, DirectoryMemberItem } from "@/lib/supabase";
+import { TrustBadges } from "@/components/trust/TrustBadges";
 
 interface PublicProfilePageProps {
   lang: Language;

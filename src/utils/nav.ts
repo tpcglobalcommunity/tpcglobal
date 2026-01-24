@@ -1,5 +1,5 @@
-import { Language } from '../i18n';
-import { translations } from '../i18n/translations';
+import { Language } from '@/i18n';
+import { translations } from '@/i18n/translations';
 
 /**
  * Safe navigation resolver that prevents crashes when accessing nested translation keys

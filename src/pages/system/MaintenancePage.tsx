@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { type Language, useI18n, getLangPath } from "../../i18n";
-import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { type Language, useI18n, getLangPath } from "@/i18n";
+import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import { Wrench, Shield, ArrowLeft, ExternalLink } from "lucide-react";
-import { getAppSettings, type AppSettings } from "../../lib/settings";
-import { supabase } from "../../lib/supabase";
+import { getAppSettings, type AppSettings } from "@/lib/settings";
+import { supabase } from "@/lib/supabase";
 
 export default function MaintenancePage({ lang }: { lang: Language }) {
   const { t } = useI18n(lang);

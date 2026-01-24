@@ -1,21 +1,21 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Loader2, CheckCircle2, XCircle, Mail, User, Lock, Shield, AlertCircle } from "lucide-react";
-import { useI18n } from "../../i18n";
+import { useI18n } from "@/i18n";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { supabase } from "../../lib/supabase";
-import { getAppSettings } from "../../lib/appSettings";
-import { buildAuthRedirect } from "../../lib/authRedirect";
-import { ensureLangPath } from "../../utils/langPath";
-import { devLog } from "../../utils/devLog";
-import { normalizeInviteCode, isInviteCodeFormatValid } from "../../utils/inviteCode";
+import { supabase } from "@/lib/supabase";
+import { getAppSettings } from "@/lib/appSettings";
+import { buildAuthRedirect } from "@/lib/authRedirect";
+import { ensureLangPath } from "@/utils/langPath";
+import { devLog } from "@/utils/devLog";
+import { normalizeInviteCode, isInviteCodeFormatValid } from "@/utils/inviteCode";
 import { 
   validateForm, 
   isFormValid, 
   normalizeUsername,
   type FormTouched,
   type FormState
-} from "../../utils/validators";
-import { BUILD_ID } from "../../utils/buildInfo";
+} from "@/utils/validators";
+import { BUILD_ID } from "@/utils/buildInfo";
 import RegistrationsClosedPage from "../system/RegistrationsClosedPage";
 
 type ReferralStatus = "idle" | "checking" | "valid" | "invalid";

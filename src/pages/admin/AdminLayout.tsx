@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { type Language, useI18n } from "../../i18n";
-import { PremiumShell, NoticeBox } from "../../components/ui";
-import { supabase } from "../../lib/supabase";
-import AdminNav from "../../components/admin/AdminNav";
+import { type Language, useI18n } from "@/i18n";
+import { PremiumShell, NoticeBox } from "@/components/ui";
+import { supabase } from "@/lib/supabase";
+import AdminNav from "@/components/admin/AdminNav";
 
 export default function AdminLayout({
   lang,

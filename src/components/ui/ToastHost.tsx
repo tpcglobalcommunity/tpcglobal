@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { X, ExternalLink } from 'lucide-react';
 import { PremiumCard, PremiumButton } from './index';
 import { useToastListener, showToast, type ToastOptions } from '../../hooks/useRealtimeNotifications';
-import { type Language, getLangPath } from '../../i18n';
+import { type Language, getLangPath } from '@/i18n';
 
 interface ToastItem extends ToastOptions {
   id: string;

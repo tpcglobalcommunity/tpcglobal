@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { User, Save, CheckCircle, AlertCircle, Upload, Loader2, Check, X, Shield, Tag, Users, Globe, Store } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../../i18n';
-import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from '../../components/ui';
-import MemberGuard from '../../components/guards/MemberGuard';
-import { supabase, getProfile, Profile, updateProfileSafe, uploadAvatar, checkUsernameAvailable, updateDirectorySettings } from '../../lib/supabase';
-import { TrustBadges } from '../../components/trust/TrustBadges';
+import { Language, useTranslations, getLangPath } from '@/i18n';
+import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from '@/components/ui';
+import MemberGuard from '@/components/guards/MemberGuard';
+import { supabase, getProfile, Profile, updateProfileSafe, uploadAvatar, checkUsernameAvailable, updateDirectorySettings } from '@/lib/supabase';
+import { TrustBadges } from '@/components/trust/TrustBadges';
 
 interface ProfilePageProps {
   lang: Language;

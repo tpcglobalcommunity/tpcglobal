@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { AlertCircle, User, ChevronRight } from 'lucide-react';
-import { useI18n } from '../../i18n';
+import { useI18n } from '@/i18n';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
-import { ensureLangPath } from '../../utils/langPath';
+import { supabase } from '@/lib/supabase';
+import { ensureLangPath } from '@/utils/langPath';
 
 interface ProfileCompletionBannerProps {
   lang: string;

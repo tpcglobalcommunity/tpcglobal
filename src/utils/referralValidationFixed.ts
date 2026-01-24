@@ -3,7 +3,7 @@
 // Sesuai dengan format response validate_referral_code_public
 // =========================================================
 
-import { supabase } from "../lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 // =========================================================
 // BASIC VALIDATION (sesuai contoh Anda)

@@ -1,4 +1,4 @@
-import { Language, useI18n, getLangPath } from '../i18n';
+import { Language, useI18n, getLangPath } from '@/i18n';
 import { Link } from './Router';
 import TPMonogram from './brand/TPMonogram';
 

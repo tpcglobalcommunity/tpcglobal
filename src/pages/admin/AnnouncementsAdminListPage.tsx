@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Megaphone, Plus, Edit, Trash2, Eye, EyeOff, Pin, PinOff, Filter } from 'lucide-react';
-import { Language, useI18n, getLangPath } from '../../i18n';
-import { PremiumShell, PremiumCard, PremiumButton } from '../../components/ui';
-import MemberGuard from '../../components/guards/MemberGuard';
-import RoleGuard from '../../components/guards/RoleGuard';
-import { listAnnouncementsAdmin, upsertAnnouncement, deleteAnnouncement, Announcement } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
+import { Language, useI18n, getLangPath } from '@/i18n';
+import { PremiumShell, PremiumCard, PremiumButton } from '@/components/ui';
+import MemberGuard from '@/components/guards/MemberGuard';
+import RoleGuard from '@/components/guards/RoleGuard';
+import { listAnnouncementsAdmin, upsertAnnouncement, deleteAnnouncement, Announcement } from '@/lib/supabase';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface AnnouncementsAdminListPageProps {
   lang: Language;

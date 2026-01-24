@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { NoticeBox, PremiumButton, PremiumCard, PremiumSection } from "../../components/ui";
-import { TierBadge } from "../../components/ui/TierBadge";
+import { supabase } from "@/lib/supabase";
+import { NoticeBox, PremiumButton, PremiumCard, PremiumSection } from "@/components/ui";
+import { TierBadge } from "@/components/ui/TierBadge";
 
 declare global {
   interface Window {

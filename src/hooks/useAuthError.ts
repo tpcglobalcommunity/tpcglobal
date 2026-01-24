@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getAuthErrorMessage, AUTH_ERRORS, type AuthErrorKey } from "../lib/auth-errors";
+import { getAuthErrorMessage, AUTH_ERRORS, type AuthErrorKey } from "@/lib/auth-errors";
 
 export function useAuthError() {
   const [error, setError] = useState<string | null>(null);

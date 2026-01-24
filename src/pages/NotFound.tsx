@@ -1,5 +1,5 @@
-import { Link } from "../components/Router";
-import { getLangPath, getLanguage } from "../i18n";
+import { Link } from "@/components/Router";
+import { getLangPath, getLanguage } from "@/i18n";
 
 export default function NotFound() {
   const lang = getLanguage();

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { type Language, useI18n, getLangPath } from "../../i18n";
-import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { supabase } from "@/lib/supabase";
+import { type Language, useI18n, getLangPath } from "@/i18n";
+import { PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import { ScrollText, Search, RefreshCcw, ArrowLeft, ArrowRight, Download } from "lucide-react";
-import { downloadCSV, formatDateForFilename } from "../../lib/csv";
-import { downloadTextFile } from "../../lib/download";
+import { downloadCSV, formatDateForFilename } from "@/lib/csv";
+import { downloadTextFile } from "@/lib/download";
 
 type Row = {
   id: number;

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Store, Send, CheckCircle } from 'lucide-react';
-import { Language, useTranslations } from '../../i18n';
-import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from '../../components/ui';
-import MemberGuard from '../../components/guards/MemberGuard';
-import { submitVendorApplication } from '../../lib/supabase';
+import { Language, useTranslations } from '@/i18n';
+import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from '@/components/ui';
+import MemberGuard from '@/components/guards/MemberGuard';
+import { submitVendorApplication } from '@/lib/supabase';
 
 interface VendorApplyPageProps {
   lang: Language;

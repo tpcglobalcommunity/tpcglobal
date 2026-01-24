@@ -23,6 +23,37 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../i18n', '../../i18n', '../../../i18n'],
+              message: 'Use @/ alias for src imports (no relative imports to src/*).'
+            },
+            {
+              group: ['../components/*', '../../components/*', '../../../components/*'],
+              message: 'Use @/ alias for src imports (no relative imports to src/*).'
+            },
+            {
+              group: ['../lib/*', '../../lib/*', '../../../lib/*'],
+              message: 'Use @/ alias for src imports (no relative imports to src/*).'
+            },
+            {
+              group: ['../contexts/*', '../../contexts/*', '../../../contexts/*'],
+              message: 'Use @/ alias for src imports (no relative imports to src/*).'
+            },
+            {
+              group: ['../utils/*', '../../utils/*', '../../../utils/*'],
+              message: 'Use @/ alias for src imports (no relative imports to src/*).'
+            },
+            {
+              group: ['../data/*', '../../data/*', '../../../data/*'],
+              message: 'Use @/ alias for src imports (no relative imports to src/*).'
+            }
+          ]
+        }
+      ]
     },
   }
 );

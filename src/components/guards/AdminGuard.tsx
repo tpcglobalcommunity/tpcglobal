@@ -1,6 +1,6 @@
 import { useEffect, type ReactNode } from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import { getLangPath, type Language } from "../../i18n";
+import { useAuth } from "@/contexts/AuthContext";
+import { getLangPath, type Language } from "@/i18n";
 import { NoticeBox } from "../ui";
 
 export default function AdminGuard({

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { ProfileData, getProfileWithNavigation } from "../types/profile";
 
 export { default as MemberGuard } from "./MemberGuard";

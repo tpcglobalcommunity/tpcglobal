@@ -1,8 +1,8 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { useNavigate } from '../../components/Router';
-import { useProfileStatus } from '../../lib/useProfileStatus';
-import { supabase } from '../../lib/supabase';
-import { PremiumShell, PremiumCard, PremiumButton } from '../../components/ui';
+import { useNavigate } from '@/components/Router';
+import { useProfileStatus } from '@/lib/useProfileStatus';
+import { supabase } from '@/lib/supabase';
+import { PremiumShell, PremiumCard, PremiumButton } from '@/components/ui';
 import { User, Phone, Send, MapPin, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface CompleteProfilePageProps {

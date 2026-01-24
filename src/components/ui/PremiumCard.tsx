@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { fadeInUp } from '../../lib/animations';
+import { fadeInUp } from '@/lib/animations';
 
 interface PremiumCardProps {
   children: ReactNode;

@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { devLog } from '../utils/devLog';
+import { devLog } from '@/utils/devLog';
 
 // Get environment variables ONLY from ENV
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;

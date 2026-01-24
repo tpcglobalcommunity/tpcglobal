@@ -1,4 +1,5 @@
-// src/utils/langPath.ts
+// src/utils/langPath.ts (REPLACE ALL - FINAL LOCKED)
+
 export type Language = "en" | "id";
 
 export const LANGS: Language[] = ["en", "id"];
@@ -23,66 +24,118 @@ export function storeLanguage(lang: Language) {
   } catch {}
 }
 
+// -------------------------
+// Core normalization
+// -------------------------
+function ensureLeadingSlash(p: string): string {
+  if (!p) return "/";
+  return p.startsWith("/") ? p : `/${p}`;
+}
+
+function collapseSlashes(p: string): string {
+  return p.replace(/\/{2,}/g, "/");
+}
+
 export function detectLangFromPath(pathname: string): Language | null {
-  const m = pathname.match(/^\/(en|id)(\/|$)/);
+  const p = ensureLeadingSlash(pathname);
+  const m = p.match(/^\/(en|id)(\/|$)/);
   return (m?.[1] as Language) ?? null;
 }
 
+/**
+ * Collapses double-lang prefixes repeatedly:
+ * - /en/en/x -> /en/x
+ * - /en/en/en/x -> /en/x
+ * - /en//en//x -> /en/x
+ */
 export function collapseDoubleLang(pathname: string): string {
-  let p = pathname.startsWith("/") ? pathname : `/${pathname}`;
-  // /en/en/... or /id/id/...
-  p = p.replace(/^\/(en|id)\/\1(\/|$)/, "/$1$2");
-  // edge case: /en//en/...
-  p = p.replace(/^\/(en|id)\/+(\1)(\/|$)/, "/$1$3");
+  let p = collapseSlashes(ensureLeadingSlash(pathname));
+
+  // repeat until stable
+  while (true) {
+    const next = p
+      .replace(/^\/(en|id)\/\1(\/|$)/, "/$1$2")     // /en/en -> /en
+      .replace(/^\/(en|id)\/+(\1)(\/|$)/, "/$1$3"); // /en//en -> /en
+    if (next === p) break;
+    p = collapseSlashes(next);
+  }
+
   return p;
 }
 
 export function stripLangPrefix(pathname: string): string {
-  return pathname.replace(/^\/(en|id)(?=\/|$)/, "") || "/";
+  const p = ensureLeadingSlash(pathname);
+  const out = p.replace(/^\/(en|id)(?=\/|$)/, "");
+  return out === "" ? "/" : out;
 }
 
 export function ensureLangPath(lang: Language, path: string): string {
-  const raw = path.startsWith("/") ? path : `/${path}`;
+  const raw = ensureLeadingSlash(path);
   const collapsed = collapseDoubleLang(raw);
   const hasLang = detectLangFromPath(collapsed);
-  if (hasLang) return collapsed;
+  if (hasLang) return collapseSlashes(collapsed);
 
   const without = stripLangPrefix(collapsed);
-  const clean = without.startsWith("/") ? without : `/${without}`;
-  return `/${lang}${clean === "/" ? "" : clean}`.replace(/\/{2,}/g, "/");
+  const clean = ensureLeadingSlash(without);
+  const out = `/${lang}${clean === "/" ? "" : clean}`;
+  return collapseSlashes(collapseDoubleLang(out));
 }
 
 export function pickBestLang(pathname: string): Language {
-  return detectLangFromPath(pathname) ?? getStoredLanguage() ?? "en";
+  const p = ensureLeadingSlash(pathname);
+  return detectLangFromPath(p) ?? getStoredLanguage() ?? "en";
 }
 
 export function switchLangInPath(pathname: string, next: Language): string {
-  const p = pathname.startsWith("/") ? pathname : `/${pathname}`;
-  const stripped = p.replace(/^\/(en|id)(?=\/|$)/, "");
-  const tail = stripped.startsWith("/") ? stripped : `/${stripped}`;
-  const normalizedTail = tail === "/home" ? "" : tail; // canonical home
-  return `/${next}${normalizedTail}`.replace(/\/{2,}/g, "/");
+  const p = collapseDoubleLang(collapseSlashes(ensureLeadingSlash(pathname)));
+
+  // strip current prefix (if any)
+  const stripped = stripLangPrefix(p);
+  const tail = ensureLeadingSlash(stripped);
+
+  // canonical home: "/home" becomes ""
+  const normalizedTail = tail === "/home" ? "" : tail;
+
+  return collapseSlashes(`/${next}${normalizedTail === "/" ? "" : normalizedTail}`);
 }
 
+// -------------------------
+// Public normalizer for Router
+// -------------------------
 export function normalizePathname(pathname: string): {
   pathname: string;
   redirect: boolean;
   lang: Language;
 } {
-  const original = pathname.startsWith("/") ? pathname : `/${pathname}`;
-  let collapsed = collapseDoubleLang(original);
+  const original = ensureLeadingSlash(pathname);
 
-  // canonical home: /en/home -> /en ; /id/home -> /id (also handles trailing slash)
-  collapsed = collapsed.replace(/^\/(en|id)\/home\/?$/, "/$1");
+  // Normalize original FIRST (so redirect compare is fair)
+  let normalizedOriginal = collapseDoubleLang(collapseSlashes(original));
 
-  const lang = pickBestLang(collapsed);
-  const enforced = detectLangFromPath(collapsed)
-    ? collapsed
-    : ensureLangPath(lang, collapsed);
+  // remove trailing slash (except root)
+  if (normalizedOriginal.length > 1) {
+    normalizedOriginal = normalizedOriginal.replace(/\/+$/, "");
+  }
+
+  // canonical home:
+  // /en/home -> /en
+  // /id/home -> /id
+  normalizedOriginal = normalizedOriginal.replace(/^\/(en|id)\/home\/?$/, "/$1");
+
+  const lang = pickBestLang(normalizedOriginal);
+
+  // enforce prefix if missing + final cleanup
+  let enforced = detectLangFromPath(normalizedOriginal)
+    ? normalizedOriginal
+    : ensureLangPath(lang, normalizedOriginal);
+
+  enforced = collapseDoubleLang(collapseSlashes(enforced));
+  if (enforced.length > 1) enforced = enforced.replace(/\/+$/, "");
+  enforced = enforced.replace(/^\/(en|id)\/home\/?$/, "/$1");
 
   return {
     pathname: enforced,
-    redirect: enforced !== original,
+    redirect: enforced !== normalizedOriginal,
     lang,
   };
 }

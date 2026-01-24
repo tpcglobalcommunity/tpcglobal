@@ -1,6 +1,6 @@
 import { CheckCircle, ArrowRight } from 'lucide-react';
-import { Language, useI18n } from '../i18n';
-import { PremiumShell, PremiumSection, PremiumCard, NoticeBox } from '../components/ui';
+import { Language, useI18n } from "@/i18n";
+import { PremiumShell, PremiumSection, PremiumCard, NoticeBox } from "@/components/ui";
 
 interface DAOLiteProps {
   lang: Language;

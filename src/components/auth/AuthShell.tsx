@@ -1,5 +1,5 @@
 import { Shield } from 'lucide-react';
-import { useI18n, type Language, getLangPath } from '../../i18n';
+import { useI18n, type Language, getLangPath } from '@/i18n';
 import { Link } from '../Router';
 import { PremiumShell } from '../ui';
 import type { ReactNode } from 'react';

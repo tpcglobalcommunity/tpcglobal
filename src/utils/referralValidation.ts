@@ -3,7 +3,7 @@
 // Frontend helpers untuk validate_referral_code_public RPC
 // =========================================================
 
-import { supabase } from "../lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 // =========================================================
 // BASIC VALIDATION

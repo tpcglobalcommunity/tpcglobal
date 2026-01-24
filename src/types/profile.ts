@@ -3,7 +3,7 @@
 // TypeScript interfaces untuk ensure_profile system
 // =========================================================
 
-import { supabase } from '../lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 export interface ProfileData {
   id: string;

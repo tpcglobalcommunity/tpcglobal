@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Store, Filter, AlertCircle, Star, Shield, TrendingUp, Sparkles, X } from "lucide-react";
-import { useI18n, getLangPath } from "../i18n";
-import { PremiumShell, PremiumCard } from "../components/ui";
-import { useAuth } from "../contexts/AuthContext";
-import { getMarketplaceItemsByCategory, type MarketplaceItem, type MarketplaceCategory } from "../data/marketplace.mock";
-import { Link, useNavigate } from "../components/Router";
-import { getBuildInfo } from "../lib/buildInfo";
-import { supabase } from "../lib/supabase";
+import { useI18n, getLangPath } from "@/i18n";
+import { PremiumShell, PremiumCard } from "@/components/ui";
+import { useAuth } from "@/contexts/AuthContext";
+import { getMarketplaceItemsByCategory, type MarketplaceItem, type MarketplaceCategory } from "@/data/marketplace.mock";
+import { Link, useNavigate } from "@/components/Router";
+import { getBuildInfo } from "@/lib/buildInfo";
+import { supabase } from "@/lib/supabase";
 
 const CATEGORIES: MarketplaceCategory[] = [
   "all",
@@ -122,7 +122,7 @@ export default function MarketplacePage() {
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape" && selected) {
-        setSelected(null);
+        closeModal();
       }
     };
 
@@ -141,28 +141,30 @@ export default function MarketplacePage() {
       const found = items.find(item => item.slug === slugFromUrl);
       if (found) {
         setSelected(found);
+        // Set document title for SEO when auto-opening from URL
+        document.title = `${found.title?.[lang] || found.title?.en || 'Item'} — TPC Marketplace`;
       } else {
         // Slug not found - show not found state
         setSelected(null);
       }
     }
-  }, [slugFromUrl, items]);
+  }, [slugFromUrl, items, lang]);
 
   // Check if we have an invalid slug
   const hasInvalidSlug = slugFromUrl && items.length > 0 && !items.find(item => item.slug === slugFromUrl);
 
-  // Update URL when modal opens/closes
-  useEffect(() => {
-    if (selected) {
-      navigate(`/${lang}/marketplace/${selected.slug}`);
-      // Update document title for SEO
-      document.title = `${selected.title?.[lang] || selected.title?.en || 'Item'} — TPC Marketplace`;
-    } else {
-      navigate(`/${lang}/marketplace`);
-      // Restore document title
-      document.title = 'Marketplace — TPC';
-    }
-  }, [selected, lang, navigate]);
+  // Handler functions for modal navigation
+  const openItem = (item: MarketplaceItem) => {
+    setSelected(item);
+    navigate(getLangPath(lang, `/marketplace/${item.slug}`));
+    document.title = `${item.title?.[lang] || item.title?.en || "Item"} — TPC Marketplace`;
+  };
+
+  const closeModal = () => {
+    setSelected(null);
+    navigate(getLangPath(lang, `/marketplace`));
+    document.title = "Marketplace — TPC";
+  };
 
   const title = tf(t, "marketplace.title", "Marketplace");
   const subtitle = tf(t, "marketplace.subtitle", "Alat, layanan, dan edukasi profesional");
@@ -352,33 +354,43 @@ export default function MarketplacePage() {
     <PremiumShell>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#F0B90B]/20 to-[#F0B90B]/10 rounded-full mb-6 relative">
-            <Store className="w-10 h-10 text-[#F0B90B]" />
-            <Sparkles className="w-6 h-6 text-[#F0B90B] absolute -top-2 -right-2" />
+        <div className="flex flex-col gap-4 mb-12">
+          {/* Hero Content */}
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#F0B90B]/20 to-[#F0B90B]/10 rounded-full mb-6 relative">
+              <Store className="w-10 h-10 text-[#F0B90B]" />
+              <Sparkles className="w-6 h-6 text-[#F0B90B] absolute -top-2 -right-2" />
+            </div>
+
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+              {title}
+            </h1>
+
+            <p className="text-xl text-white/70 max-w-3xl mx-auto mb-6 leading-relaxed">{subtitle}</p>
+
+            <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F0B90B]/10 to-transparent border border-[#F0B90B]/30 rounded-full mb-6">
+              <Shield className="w-5 h-5 text-[#F0B90B]" />
+              <span className="text-sm font-medium text-[#F0B90B]">{badgeTrusted}</span>
+            </div>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
-            {title}
-          </h1>
-
-          <p className="text-xl text-white/70 max-w-3xl mx-auto mb-6 leading-relaxed">{subtitle}</p>
-
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F0B90B]/10 to-transparent border border-[#F0B90B]/30 rounded-full mb-6">
-            <Shield className="w-5 h-5 text-[#F0B90B]" />
-            <span className="text-sm font-medium text-[#F0B90B]">{badgeTrusted}</span>
+          {/* Header Row with CTA */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div className="flex-1" />
+            
+            {/* Only show CTA when logged in */}
+            {user ? (
+              <Link
+                to={getLangPath(lang, "/member/vendor/apply")}
+                className="self-center md:self-auto inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F0B90B] to-[#F0B90B]/90 hover:from-[#F0B90B]/90 hover:to-[#F0B90B] text-black font-medium rounded-lg transition-all shadow-lg shadow-[#F0B90B]/25"
+              >
+                <Store className="w-5 h-5" />
+                {applyAsVendor}
+              </Link>
+            ) : (
+              <div className="self-center md:self-auto" />
+            )}
           </div>
-
-          {/* Only show CTA when logged in */}
-          {user ? (
-            <Link
-              to={getLangPath(lang, "/member/vendor/apply")}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F0B90B] to-[#F0B90B]/90 hover:from-[#F0B90B]/90 hover:to-[#F0B90B] text-black font-medium rounded-lg transition-all shadow-lg shadow-[#F0B90B]/25"
-            >
-              <Store className="w-5 h-5" />
-              {applyAsVendor}
-            </Link>
-          ) : null}
         </div>
 
         {/* Filter */}
@@ -446,13 +458,13 @@ export default function MarketplacePage() {
                 <div
                   key={id}
                   className="cursor-pointer"
-                  onClick={() => setSelected(item)}
+                  onClick={() => openItem(item)}
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e: React.KeyboardEvent) => {
                     if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault();
-                      setSelected(item);
+                      openItem(item);
                     }
                   }}
                 >
@@ -510,7 +522,7 @@ export default function MarketplacePage() {
 
                   <div className="border-t border-white/10 pt-4 mt-4">
                     <button
-                      onClick={() => setSelected(item)}
+                      onClick={() => openItem(item)}
                       className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#F0B90B] to-[#F0B90B]/90 hover:from-[#F0B90B]/90 hover:to-[#F0B90B] text-black font-medium rounded-lg transition-all shadow-lg shadow-[#F0B90B]/25"
                     >
                       {viewDetails}
@@ -528,7 +540,7 @@ export default function MarketplacePage() {
         {selected && (
           <div 
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            onClick={() => setSelected(null)}
+            onClick={() => closeModal()}
           >
             {/* Backdrop */}
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
@@ -550,7 +562,7 @@ export default function MarketplacePage() {
                     </p>
                   </div>
                   <button
-                    onClick={() => setSelected(null)}
+                    onClick={() => closeModal()}
                     className="p-2 text-white/40 hover:text-white transition-colors"
                   >
                     <X className="w-5 h-5" />
@@ -629,7 +641,7 @@ export default function MarketplacePage() {
                 
                 {/* Close Button */}
                 <button
-                  onClick={() => setSelected(null)}
+                  onClick={() => closeModal()}
                   className="px-6 py-3 bg-white/10 hover:bg-white/15 text-white font-medium rounded-lg transition-colors border border-white/20"
                 >
                   {modalClose}

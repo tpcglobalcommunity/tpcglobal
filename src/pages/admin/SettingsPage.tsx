@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { type Language, useI18n } from "../../i18n";
-import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { supabase } from "@/lib/supabase";
+import { type Language, useI18n } from "@/i18n";
+import { PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import { Settings, Save, RefreshCcw, ShieldAlert } from "lucide-react";
-import { fetchAppSettings, type AppSettings } from "../../lib/settings";
+import { fetchAppSettings, type AppSettings } from "@/lib/settings";
 
 export default function SettingsPage({ lang }: { lang: Language }) {
   const { t } = useI18n(lang);

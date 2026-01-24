@@ -5,7 +5,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { validateReferralCode } from "../../types/profile";
 import { CheckCircle2, XCircle, Loader2, User, Users, LogOut } from "lucide-react";
 

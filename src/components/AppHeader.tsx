@@ -2,12 +2,13 @@ import { Home, BookOpen, Shield, BadgeCheck, Wallet, Scale, Store, Users } from 
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
-import { Language, getLangPath, storeLanguage } from '../i18n';
+import { Language, storeLanguage } from '@/i18n';
+import { switchLangInPath } from '@/utils/langPath';
 import { Link } from './Router';
 import TPMonogram from './brand/TPMonogram';
 import { HeaderAuthActions } from './auth/HeaderAuthActions';
-import { useAuth } from '../contexts/AuthContext';
-import { getNavSafe } from '../utils/nav';
+import { useAuth } from '@/contexts/AuthContext';
+import { getNavSafe } from '@/utils/nav';
 
 interface AppHeaderProps {
   lang: Language;
@@ -46,32 +47,21 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
     };
   }, [mobileMenuOpen]);
 
-  // Safe nav items with fallbacks
+  // Safe nav items with fallbacks (NO PREFIX - Router handles it)
   const navItems = [
-    { label: getNavSafe(lang, 'nav.home'), path: getLangPath(lang, '/home'), icon: Home },
-    { label: getNavSafe(lang, 'nav.docs'), path: getLangPath(lang, '/docs'), icon: BookOpen },
-    { label: getNavSafe(lang, 'nav.dao'), path: getLangPath(lang, '/dao'), icon: Users },
-    { label: getNavSafe(lang, 'nav.marketplace'), path: getLangPath(lang, '/marketplace'), icon: Store },
-    { label: getNavSafe(lang, 'nav.transparency'), path: getLangPath(lang, '/transparency'), icon: BadgeCheck },
-    { label: getNavSafe(lang, 'nav.fund'), path: getLangPath(lang, '/fund'), icon: Wallet },
-    { label: getNavSafe(lang, 'nav.legal'), path: getLangPath(lang, '/legal'), icon: Scale },
-    ...(isAdmin ? [{ label: getNavSafe(lang, 'nav.admin'), path: getLangPath(lang, '/admin/control'), icon: Shield }] : [])
+    { label: getNavSafe(lang, 'nav.home'), path: '/home', icon: Home },
+    { label: getNavSafe(lang, 'nav.docs'), path: '/docs', icon: BookOpen },
+    { label: getNavSafe(lang, 'nav.dao'), path: '/dao', icon: Users },
+    { label: getNavSafe(lang, 'nav.marketplace'), path: '/marketplace', icon: Store },
+    { label: getNavSafe(lang, 'nav.transparency'), path: '/transparency', icon: BadgeCheck },
+    { label: getNavSafe(lang, 'nav.fund'), path: '/fund', icon: Wallet },
+    { label: getNavSafe(lang, 'nav.legal'), path: '/legal', icon: Scale },
+    ...(isAdmin ? [{ label: getNavSafe(lang, 'nav.admin'), path: '/admin/control', icon: Shield }] : [])
   ];
 
   const handleLanguageChange = (newLang: Language) => {
-    // Prevent unnecessary navigation
     if (newLang === lang) return;
-    
-    // Use the provided switchLangPath function
-    const switchLangPath = (pathname: string, next: "en"|"id") => {
-      const p = pathname.startsWith("/") ? pathname : `/${pathname}`;
-      const stripped = p.replace(/^\/(en|id)(?=\/|$)/, "");
-      const tail = stripped.startsWith("/") ? stripped : `/${stripped}`;
-      const cleaned = tail === "/home" ? "" : tail;
-      return (`/${next}${cleaned}`).replace(/\/{2,}/g, "/");
-    };
-
-    const nextPath = switchLangPath(location.pathname, newLang);
+    const nextPath = switchLangInPath(location.pathname, newLang);
     storeLanguage(newLang);
     window.history.replaceState({}, "", nextPath + location.search + location.hash);
     window.dispatchEvent(new PopStateEvent("popstate"));
@@ -91,7 +81,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
       <div className="relative z-10 h-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         <div className="flex items-center h-full gap-3">
           <Link
-            to={getLangPath(lang, '/home')}
+            to="/home"
             className="relative flex items-center gap-2.5 group shrink-0"
             aria-label="TPC Home"
           >
@@ -109,7 +99,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
           <nav className="hidden xl:flex items-center gap-6 text-sm font-semibold" role="navigation">
             {navItems.map((item) => {
-              const isActive = currentPath === item.path;
+              const isActive = currentPath.endsWith(item.path) || currentPath === item.path;
               return (
                 <Link
                   key={item.path}
@@ -213,7 +203,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                   {/* NAV LINKS - Premium card style */}
                   <div className="grid gap-2">
                     {navItems.map((item) => {
-                      const isActive = currentPath === item.path;
+                      const isActive = currentPath.endsWith(item.path) || currentPath === item.path;
                       const Icon = item.icon;
 
                       return (

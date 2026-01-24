@@ -5,9 +5,9 @@
 
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
-import { useProfileStatus } from "../lib/useProfileStatus";
-import { getLangPath, getLanguageFromPath } from "../i18n";
+import { supabase } from "@/lib/supabase";
+import { useProfileStatus } from "@/lib/useProfileStatus";
+import { getLangPath, getLanguageFromPath } from "@/i18n";
 import { 
   Home, 
   User, 

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { type Language, useI18n } from "../../i18n";
-import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { supabase } from "@/lib/supabase";
+import { type Language, useI18n } from "@/i18n";
+import { PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import { Search, RefreshCcw, ToggleLeft, ToggleRight, Filter, Link2, ChevronLeft, ChevronRight } from "lucide-react";
 
 type CodeRow = {

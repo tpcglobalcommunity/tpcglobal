@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { layout, typography } from '../../lib/designTokens';
+import { layout, typography } from '@/lib/designTokens';
 
 interface PremiumSectionProps {
   children: ReactNode;

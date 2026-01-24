@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '@/lib/supabase';
 import type { Session, User } from '@supabase/supabase-js';
-import { useProfileStatus } from '../lib/useProfileStatus';
-import type { Profile } from '../lib/supabase';
-import { getProfile } from '../lib/supabase';
+import { useProfileStatus } from '@/lib/useProfileStatus';
+import type { Profile } from '@/lib/supabase';
+import { getProfile } from '@/lib/supabase';
 
 interface AuthContextType {
   loading: boolean;

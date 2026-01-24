@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { type Language, useI18n, getLangPath } from "../../i18n";
-import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { supabase } from "@/lib/supabase";
+import { type Language, useI18n, getLangPath } from "@/i18n";
+import { PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import { User, Wallet, BadgeCheck, ArrowLeft, RefreshCcw, Copy } from "lucide-react";
-import { updateMember } from "../../lib/adminRpc";
+import { updateMember } from "@/lib/adminRpc";
 
 function qs(name: string) {
   if (typeof window === "undefined") return null;

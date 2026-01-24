@@ -1,7 +1,7 @@
 // src/components/guards/ServiceAccessGate.tsx
 import React, { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { useProfileStatus } from "../../lib/useProfileStatus";
+import { supabase } from "@/lib/supabase";
+import { useProfileStatus } from "@/lib/useProfileStatus";
 import { Loader2, AlertCircle, Wallet, Lock, CheckCircle } from "lucide-react";
 
 type Props = {

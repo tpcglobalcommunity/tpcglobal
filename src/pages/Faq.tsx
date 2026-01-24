@@ -1,8 +1,8 @@
 import { HelpCircle, FileText, Eye, ExternalLink, Users, Shield, Globe, Coins, HeadphonesIcon } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../i18n';
-import { PremiumShell, PremiumCard, NoticeBox, PremiumButton } from '../components/ui';
-import { Accordion, AccordionItem } from '../components/ui/Accordion';
-import { Link } from '../components/Router';
+import { Language, useTranslations, getLangPath } from "@/i18n";
+import { PremiumShell, PremiumCard, NoticeBox, PremiumButton } from "@/components/ui";
+import { Accordion, AccordionItem } from "@/components/ui/Accordion";
+import { Link } from "@/components/Router";
 
 interface FaqProps {
   lang: Language;

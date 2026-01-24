@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { translations } from "./translations";
 import type { Language } from "./translations";
-import { getStoredLanguage, storeLanguage } from "../utils/langPath";
+import { getStoredLanguage, storeLanguage } from "@/utils/langPath";
 import { resolvePath } from "./resolve";
 import "./validation"; // Auto-run validation in development
 

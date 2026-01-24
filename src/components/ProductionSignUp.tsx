@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useI18n } from '../i18n';
-import { signUpWithInvitation, validateInvitationCode, checkUsernameAvailable } from '../lib/supabase';
-import { langPath } from '../utils/langPath';
+import { useI18n } from '@/i18n';
+import { signUpWithInvitation, validateInvitationCode, checkUsernameAvailable } from '@/lib/supabase';
+import { langPath } from '@/utils/langPath';
 import { Mail, User, Lock, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 interface FormData {

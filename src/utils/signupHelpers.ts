@@ -3,7 +3,7 @@
 // Complete signup flow dengan username dan referral_code di meta data
 // =========================================================
 
-import { supabase } from "../lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { validateReferralForForm } from "./referralValidationFixed";
 
 // =========================================================

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useI18n } from '../../i18n';
+import { useI18n } from '@/i18n';
 import {
   adminGetNewsPost,
   createNewsPost,
@@ -8,8 +8,8 @@ import {
   getProfile,
   type NewsCategory,
   supabase,
-} from '../../lib/supabase';
-import { PremiumShell, PremiumSection, PremiumButton, PremiumCard } from '../../components/ui';
+} from '@/lib/supabase';
+import { PremiumShell, PremiumSection, PremiumButton, PremiumCard } from '@/components/ui';
 import { ArrowLeft, Save, Eye, EyeOff, Trash2, Pin } from 'lucide-react';
 
 interface NewsEditorPageProps {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { type Language, useI18n, getLangPath } from "../../i18n";
-import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { supabase } from "@/lib/supabase";
+import { type Language, useI18n, getLangPath } from "@/i18n";
+import { PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import {
   Users,
   Search,
@@ -11,11 +11,11 @@ import {
   ArrowRight,
   Eye,
 } from "lucide-react";
-import { updateMember } from "../../lib/adminRpc";
-import { downloadCSV, formatDateForFilename } from "../../lib/csv";
-import { downloadTextFile } from "../../lib/download";
+import { updateMember } from "@/lib/adminRpc";
+import { downloadCSV, formatDateForFilename } from "@/lib/csv";
+import { downloadTextFile } from "@/lib/download";
 import { useMyRole, canEditMembers } from "../../hooks/useMyRole";
-import NotAuthorized from "../../components/NotAuthorized";
+import NotAuthorized from "@/components/NotAuthorized";
 
 type MemberRow = {
   id: string;

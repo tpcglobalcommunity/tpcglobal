@@ -1,6 +1,6 @@
-import { type Language, useI18n, getLangPath } from "../../i18n";
+import { type Language, useI18n, getLangPath } from "@/i18n";
 import MemberLayout from "./MemberLayout";
-import { PremiumCard, PremiumButton } from "../../components/ui";
+import { PremiumCard, PremiumButton } from "@/components/ui";
 import { Layers, ExternalLink, BookOpen } from "lucide-react";
 
 export default function ProgramsPage({ lang }: { lang: Language }) {

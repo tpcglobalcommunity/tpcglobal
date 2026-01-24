@@ -1,6 +1,6 @@
-import { type Language, useI18n } from "../../i18n";
-import { PremiumShell } from "../../components/ui";
-import MemberNav from "../../components/member/MemberNav";
+import { type Language, useI18n } from "@/i18n";
+import { PremiumShell } from "@/components/ui";
+import MemberNav from "@/components/member/MemberNav";
 
 export default function MemberLayout({
   lang,

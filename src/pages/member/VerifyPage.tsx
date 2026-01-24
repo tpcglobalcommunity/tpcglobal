@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { type Language, useI18n } from "../../i18n";
+import { supabase } from "@/lib/supabase";
+import { type Language, useI18n } from "@/i18n";
 import MemberLayout from "./MemberLayout";
-import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import { Wallet, Save, BadgeCheck, RefreshCcw, AlertTriangle } from "lucide-react";
 
 type Profile = {

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import { useI18n } from "../../i18n";
-import type { Language } from "../../i18n";
+import { useAuth } from "@/contexts/AuthContext";
+import { useI18n } from "@/i18n";
+import type { Language } from "@/i18n";
 
 function go(path: string) {
   window.location.assign(path);

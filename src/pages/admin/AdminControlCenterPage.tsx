@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Users, Package, FileText, Search, X, Check, AlertTriangle, RefreshCw, Download } from 'lucide-react';
-import { PremiumShell } from '../../components/ui/PremiumShell';
-import { PremiumCard } from '../../components/ui/PremiumCard';
-import { PremiumButton } from '../../components/ui/PremiumButton';
-import { useI18n } from '../../i18n';
+import { PremiumShell } from '@/components/ui/PremiumShell';
+import { PremiumCard } from '@/components/ui/PremiumCard';
+import { PremiumButton } from '@/components/ui/PremiumButton';
+import { useI18n } from '@/i18n';
 import {
   adminListUsers,
   adminSetUserRole,
@@ -16,8 +16,8 @@ import {
   type AdminUserListItem,
   type VendorApplication,
   type AdminAction,
-} from '../../lib/supabase';
-import { TrustBadges } from '../../components/trust/TrustBadges';
+} from '@/lib/supabase';
+import { TrustBadges } from '@/components/trust/TrustBadges';
 
 type TabType = 'users' | 'vendors' | 'audit';
 

@@ -24,6 +24,10 @@ jobs:
         run: npm ci
       - name: Typecheck
         run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Audit Imports
+        run: npm run audit:imports
       - name: Validate i18n (enterprise gate)
         run: npm run validate:i18n
       - name: Build

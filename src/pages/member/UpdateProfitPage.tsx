@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { User, Phone, Send, MapPin, Save, AlertCircle, CheckCircle2 } from "lucide-react";
-import { useI18n, type Language, getLangPath } from "../../i18n";
+import { useI18n, type Language, getLangPath } from "@/i18n";
 import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "@/lib/supabase";
 import MemberLayout from "./MemberLayout";
 
 interface UpdateProfitProps {

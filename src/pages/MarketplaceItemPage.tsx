@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { ArrowLeft, Star, Shield, CheckCircle, AlertCircle, ExternalLink, MessageCircle, Clock, Users, Award, Sparkles, Calendar } from 'lucide-react';
-import { Language, useI18n, getLangPath } from '../i18n';
-import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from '../components/ui';
-import { getMarketplaceItemById, type MarketplaceItem } from '../data/marketplace.mock';
-import { Link } from '../components/Router';
+import { Language, useI18n, getLangPath } from "@/i18n";
+import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
+import { getMarketplaceItemById, type MarketplaceItem } from "@/data/marketplace.mock";
+import { Link } from "@/components/Router";
 
 interface MarketplaceItemPageProps {
   lang: Language;

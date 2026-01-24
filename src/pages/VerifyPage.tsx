@@ -1,10 +1,10 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { Shield, Search, CheckCircle, Copy, Link as LinkIcon, User, Calendar, Award, ExternalLink } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../i18n';
-import { PremiumShell, NoticeBox, PremiumButton, PremiumCard } from '../components/ui';
-import { Link } from '../components/Router';
-import { supabase, verifyMember, getProfile, MemberVerification, Profile } from '../lib/supabase';
-import { TrustBadges } from '../components/trust/TrustBadges';
+import { Language, useTranslations, getLangPath } from "@/i18n";
+import { PremiumShell, NoticeBox, PremiumButton, PremiumCard } from "@/components/ui";
+import { Link } from "@/components/Router";
+import { supabase, verifyMember, getProfile, MemberVerification, Profile } from "@/lib/supabase";
+import { TrustBadges } from "@/components/trust/TrustBadges";
 
 interface VerifyPageProps {
   lang: Language;

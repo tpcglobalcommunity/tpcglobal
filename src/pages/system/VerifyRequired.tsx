@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useI18n } from "../../i18n";
+import { useI18n } from "@/i18n";
 import { Mail, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
-import { supabase } from "../../lib/supabase";
-import { ensureLangPath } from "../../utils/langPath";
+import { supabase } from "@/lib/supabase";
+import { ensureLangPath } from "@/utils/langPath";
 
 export default function VerifyRequired() {
   const { t, language: lang } = useI18n();

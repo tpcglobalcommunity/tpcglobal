@@ -1,7 +1,7 @@
 import { Shield, AlertTriangle, FileText, Lock, Cookie, Mail, ExternalLink, BookOpen, Eye, Users } from 'lucide-react';
-import { Language, useI18n, getLangPath, tArr } from '../i18n';
-import { PremiumShell, PremiumCard, NoticeBox, Accordion, AccordionItem, PremiumButton } from '../components/ui';
-import { Link } from '../components/Router';
+import { Language, useI18n, getLangPath, tArr } from "@/i18n";
+import { PremiumShell, PremiumCard, NoticeBox, Accordion, AccordionItem, PremiumButton } from "@/components/ui";
+import { Link } from "@/components/Router";
 
 interface LegalProps {
   lang: Language;

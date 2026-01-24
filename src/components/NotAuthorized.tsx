@@ -1,6 +1,6 @@
 import { PremiumCard, PremiumButton, NoticeBox } from './ui';
 import { ShieldX, ArrowLeft } from 'lucide-react';
-import { type Language, useI18n, getLangPath } from '../i18n';
+import { type Language, useI18n, getLangPath } from '@/i18n';
 
 interface NotAuthorizedProps {
   lang: Language;

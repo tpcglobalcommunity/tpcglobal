@@ -1,5 +1,5 @@
-import { type Language, useI18n, getLangPath } from "../../i18n";
-import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { type Language, useI18n, getLangPath } from "@/i18n";
+import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import { Lock, ExternalLink, LogIn, Shield } from "lucide-react";
 
 export default function RegistrationsClosedPage({ lang }: { lang: Language }) {

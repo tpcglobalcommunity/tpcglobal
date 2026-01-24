@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { useMyRole, canViewAudit } from "../../hooks/useMyRole";
 import { Shield, CheckCircle, XCircle, Bell, Clock } from "lucide-react";
 

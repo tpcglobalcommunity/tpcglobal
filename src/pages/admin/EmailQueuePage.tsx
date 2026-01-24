@@ -1,10 +1,10 @@
 import { useEffect, useState, useMemo } from "react";
-import { supabase } from "../../lib/supabase";
-import { type Language, useI18n } from "../../i18n";
-import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { supabase } from "@/lib/supabase";
+import { type Language, useI18n } from "@/i18n";
+import { PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import { RefreshCcw, Mail, CheckCircle, XCircle, AlertCircle, Clock, Send } from "lucide-react";
 import { useMyRole, canManageSystem } from "../../hooks/useMyRole";
-import NotAuthorized from "../../components/NotAuthorized";
+import NotAuthorized from "@/components/NotAuthorized";
 
 type EmailRow = {
   id: number;

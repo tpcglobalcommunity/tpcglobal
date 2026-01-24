@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
-import { useAuth } from "../../contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "../Router"; // kalau kamu pakai router custom
-import type { Language } from "../../i18n";
-import { computeProfileCompletion } from "../../lib/profileHelpers";
+import type { Language } from "@/i18n";
+import { computeProfileCompletion } from "@/lib/profileHelpers";
 // atau gunakan navigate sesuai router kamu
 
 type Props = {

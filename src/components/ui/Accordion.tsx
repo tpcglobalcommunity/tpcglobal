@@ -1,7 +1,7 @@
 import { ReactNode, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
-import { accordionVariants } from '../../lib/animations';
+import { accordionVariants } from '@/lib/animations';
 
 interface AccordionItemProps {
   title: string;

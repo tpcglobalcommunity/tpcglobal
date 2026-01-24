@@ -1,15 +1,59 @@
-import { useState, useEffect } from 'react';
-import { Tag, Copy, CheckCircle, Users, LogOut, AlertCircle, Megaphone, BookOpen, MessageCircle, Shield, User, Newspaper, ExternalLink, Check } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../../i18n';
-import { PremiumShell, PremiumCard, NoticeBox, PremiumButton } from '../../components/ui';
-import { supabase, getProfile, Profile, getPublishedAnnouncements, Announcement, getOnboardingState, upsertOnboardingState, ensureOnboardingRow, ensureReferralCode } from '../../lib/supabase';
+import { useState, useEffect, useMemo } from "react";
+import {
+  Tag,
+  Copy,
+  CheckCircle,
+  Users,
+  LogOut,
+  AlertCircle,
+  Megaphone,
+  BookOpen,
+  MessageCircle,
+  Shield,
+  User,
+  Newspaper,
+  ExternalLink,
+  Check,
+} from "lucide-react";
+import { type Language, useTranslations } from "@/i18n";
+import { Link } from "@/components/Router";
+import { PremiumShell, PremiumCard, NoticeBox, PremiumButton } from "@/components/ui";
+import {
+  supabase,
+  getProfile,
+  type Profile,
+  getPublishedAnnouncements,
+  type Announcement,
+  getOnboardingState,
+  upsertOnboardingState,
+  ensureOnboardingRow,
+  ensureReferralCode,
+} from "@/lib/supabase";
 
 interface DashboardProps {
   lang?: Language;
 }
 
+function isLangPrefixed(path: string) {
+  return /^\/(en|id)(\/|$)/.test(path);
+}
+
+function joinPath(a: string, b: string) {
+  const left = a.endsWith("/") ? a.slice(0, -1) : a;
+  const right = b.startsWith("/") ? b : `/${b}`;
+  return `${left}${right}`;
+}
+
 const Dashboard = ({ lang = "en" }: DashboardProps) => {
   const t = useTranslations(lang);
+
+  // ✅ ONE SOURCE OF TRUTH: lang-prefixed path helper (anti /en/en, anti missing lang)
+  const lp = (to: string) => {
+    if (!to) return `/${lang}`;
+    if (!to.startsWith("/")) to = `/${to}`;
+    if (isLangPrefixed(to)) return to; // already prefixed
+    return joinPath(`/${lang}`, to);
+  };
 
   // Safe string helpers to prevent runtime errors
   const safeUpper = (v: unknown, fallback = "") => {
@@ -24,71 +68,75 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
   const [onboarding, setOnboarding] = useState<any>(null);
   const [updatingOnboarding, setUpdatingOnboarding] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [runtimeError, setRuntimeError] = useState<string | null>(null);
   const [pinnedAnnouncements, setPinnedAnnouncements] = useState<Announcement[]>([]);
   const [latestAnnouncements, setLatestAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [generatingCode, setGeneratingCode] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
     const init = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
 
         if (!user) {
-          window.location.href = getLangPath(lang, '/signin');
+          window.location.replace(lp("/signin"));
           return;
         }
 
         const profileData = await getProfile(user.id);
 
         if (!profileData) {
-          setError('Failed to load profile');
+          if (!cancelled) setError("Failed to load profile");
           return;
         }
 
         // Debug log for referral code
         if (!profileData.referral_code) {
-          console.warn('[Dashboard] referral_code missing for user', user.id);
+          console.warn("[Dashboard] referral_code missing for user", user.id);
         } else {
-          console.log('[Dashboard] referral_code loaded:', profileData.referral_code);
+          console.log("[Dashboard] referral_code loaded:", profileData.referral_code);
         }
 
+        if (cancelled) return;
         setProfile(profileData);
 
         await ensureOnboardingRow();
         const onboardingData = await getOnboardingState();
-        setOnboarding(onboardingData);
+        if (!cancelled) setOnboarding(onboardingData);
 
         const announcements = await getPublishedAnnouncements({
           page: 1,
           pageSize: 10,
-          query: ''
+          query: "",
         });
 
         const safeAnnouncements = announcements || [];
-        setPinnedAnnouncements(safeAnnouncements.filter(a => a.is_pinned).slice(0, 3));
-        setLatestAnnouncements(safeAnnouncements.filter(a => !a.is_pinned).slice(0, 5));
-
+        if (!cancelled) {
+          setPinnedAnnouncements(safeAnnouncements.filter((a) => a.is_pinned).slice(0, 3));
+          setLatestAnnouncements(safeAnnouncements.filter((a) => !a.is_pinned).slice(0, 5));
+        }
       } catch (err) {
-        console.error('Error initializing dashboard:', err);
-        setError('Failed to load dashboard data');
+        console.error("Error initializing dashboard:", err);
+        if (!cancelled) setError("Failed to load dashboard data");
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     init();
-  }, [lang]);
-
-  const [generatingCode, setGeneratingCode] = useState(false);
+    return () => {
+      cancelled = true;
+    };
+  }, [lang]); // ok (re-run when language changes)
 
   const handleGenerateReferralCode = async () => {
     try {
       setGeneratingCode(true);
       const newCode = await ensureReferralCode();
       if (newCode) {
-        // Refresh profile data
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
           const updatedProfile = await getProfile(user.id);
@@ -96,7 +144,7 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
         }
       }
     } catch (err) {
-      console.error('Error generating referral code:', err);
+      console.error("Error generating referral code:", err);
     } finally {
       setGeneratingCode(false);
     }
@@ -111,13 +159,16 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error("Failed to copy:", err);
     }
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    window.location.href = getLangPath(lang, '/home');
+    try {
+      await supabase.auth.signOut();
+    } finally {
+      window.location.replace(lp("/home"));
+    }
   };
 
   const handleAcceptDisclaimer = async () => {
@@ -127,14 +178,10 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
       const updated = await upsertOnboardingState({ accepted_disclaimer: true });
       setOnboarding(updated);
     } catch (err) {
-      console.error('Error updating onboarding:', err);
+      console.error("Error updating onboarding:", err);
     } finally {
       setUpdatingOnboarding(false);
     }
-  };
-
-  const handleReadDocs = () => {
-    window.location.href = getLangPath(lang, '/docs');
   };
 
   const handleMarkDocsRead = async () => {
@@ -144,14 +191,10 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
       const updated = await upsertOnboardingState({ read_docs: true });
       setOnboarding(updated);
     } catch (err) {
-      console.error('Error updating onboarding:', err);
+      console.error("Error updating onboarding:", err);
     } finally {
       setUpdatingOnboarding(false);
     }
-  };
-
-  const handleJoinTelegram = () => {
-    window.open('https://t.me/tpcglobal', '_blank');
   };
 
   const handleConfirmJoinedTelegram = async () => {
@@ -161,19 +204,27 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
       const updated = await upsertOnboardingState({ joined_telegram: true });
       setOnboarding(updated);
     } catch (err) {
-      console.error('Error updating onboarding:', err);
+      console.error("Error updating onboarding:", err);
     } finally {
       setUpdatingOnboarding(false);
     }
   };
 
   const getAnnouncementTitle = (announcement: Announcement): string => {
-    return lang === 'id' ? announcement.title_id : announcement.title_en;
+    return lang === "id" ? announcement.title_id : announcement.title_en;
   };
 
   const getAnnouncementBody = (announcement: Announcement): string => {
-    return lang === 'id' ? announcement.body_id : announcement.body_en;
+    return lang === "id" ? announcement.body_id : announcement.body_en;
   };
+
+  const telegramUrl = "https://t.me/tpcglobalcommunity";
+
+  const stats = useMemo(() => {
+    const role = profile?.role ?? "-";
+    const status = profile?.verified ? "Verified" : "Member";
+    return { role, status };
+  }, [profile?.role, profile?.verified]);
 
   if (loading) {
     return (
@@ -194,7 +245,12 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
           <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-10">
             <div className="text-center">
               <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-              <p className="text-white/70">{error || 'Profile not found'}</p>
+              <p className="text-white/70">{error || "Profile not found"}</p>
+              <div className="mt-6 flex justify-center">
+                <Link to={lp("/signin")}>
+                  <PremiumButton>Go to Sign In</PremiumButton>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -202,80 +258,78 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
     );
   }
 
-  // Render with error boundary
-  const renderDashboard = () => {
-    try {
-      return (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                {t.member.dashboard.title}
-              </h1>
-              <p className="text-white/70">
-                {t.member.dashboard.welcome}, {profile.full_name || profile.username}
-              </p>
-            </div>
-            <PremiumButton variant="secondary" onClick={handleSignOut}>
-              <LogOut className="w-5 h-5" />
-              Sign Out
-            </PremiumButton>
+  return (
+    <PremiumShell>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+              {t.member.dashboard.title}
+            </h1>
+            <p className="text-white/70">
+              {t.member.dashboard.welcome}, {profile.full_name || profile.username}
+            </p>
           </div>
+          <PremiumButton variant="secondary" onClick={handleSignOut}>
+            <LogOut className="w-5 h-5" />
+            Sign Out
+          </PremiumButton>
+        </div>
 
+        {/* Onboarding */}
         {onboarding && !onboarding.completed && (
           <PremiumCard className="mb-8 border-2 border-[#F0B90B]/30">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-white mb-2">
-                {t.member.onboarding.title}
-              </h2>
-              <p className="text-white/60">
-                {t.member.onboarding.subtitle}
-              </p>
+              <h2 className="text-2xl font-bold text-white mb-2">{t.member.onboarding.title}</h2>
+              <p className="text-white/60">{t.member.onboarding.subtitle}</p>
             </div>
 
             <div className="space-y-4">
+              {/* Disclaimer */}
               <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/10">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${onboarding.accepted_disclaimer ? 'bg-green-500/20 border-2 border-green-500' : 'bg-white/5 border-2 border-white/20'}`}>
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    onboarding.accepted_disclaimer
+                      ? "bg-green-500/20 border-2 border-green-500"
+                      : "bg-white/5 border-2 border-white/20"
+                  }`}
+                >
                   {onboarding.accepted_disclaimer && <Check className="w-5 h-5 text-green-400" />}
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-white mb-1">
                     {t.member.onboarding.acceptDisclaimerTitle}
                   </h3>
-                  <p className="text-white/60 text-sm mb-3">
-                    {t.member.onboarding.acceptDisclaimerDesc}
-                  </p>
+                  <p className="text-white/60 text-sm mb-3">{t.member.onboarding.acceptDisclaimerDesc}</p>
                   {!onboarding.accepted_disclaimer && (
-                    <PremiumButton
-                      onClick={handleAcceptDisclaimer}
-                      disabled={updatingOnboarding}
-                      size="sm"
-                    >
+                    <PremiumButton onClick={handleAcceptDisclaimer} disabled={updatingOnboarding} size="sm">
                       {t.member.onboarding.acceptDisclaimerAction}
                     </PremiumButton>
                   )}
                 </div>
               </div>
 
+              {/* Docs */}
               <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/10">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${onboarding.read_docs ? 'bg-green-500/20 border-2 border-green-500' : 'bg-white/5 border-2 border-white/20'}`}>
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    onboarding.read_docs
+                      ? "bg-green-500/20 border-2 border-green-500"
+                      : "bg-white/5 border-2 border-white/20"
+                  }`}
+                >
                   {onboarding.read_docs && <Check className="w-5 h-5 text-green-400" />}
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-1">
-                    {t.member.onboarding.readDocsTitle}
-                  </h3>
-                  <p className="text-white/60 text-sm mb-3">
-                    {t.member.onboarding.readDocsDesc}
-                  </p>
+                  <h3 className="text-lg font-semibold text-white mb-1">{t.member.onboarding.readDocsTitle}</h3>
+                  <p className="text-white/60 text-sm mb-3">{t.member.onboarding.readDocsDesc}</p>
+
                   {!onboarding.read_docs && (
                     <div className="flex gap-2">
-                      <PremiumButton
-                        onClick={handleReadDocs}
-                        size="sm"
-                      >
-                        {t.member.onboarding.readDocsAction}
-                      </PremiumButton>
+                      <Link to={lp("/docs")}>
+                        <PremiumButton size="sm">{t.member.onboarding.readDocsAction}</PremiumButton>
+                      </Link>
                       <PremiumButton
                         variant="secondary"
                         onClick={handleMarkDocsRead}
@@ -289,26 +343,33 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
                 </div>
               </div>
 
+              {/* Telegram */}
               <div className="flex items-start gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/10">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${onboarding.joined_telegram ? 'bg-green-500/20 border-2 border-green-500' : 'bg-white/5 border-2 border-white/20'}`}>
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    onboarding.joined_telegram
+                      ? "bg-green-500/20 border-2 border-green-500"
+                      : "bg-white/5 border-2 border-white/20"
+                  }`}
+                >
                   {onboarding.joined_telegram && <Check className="w-5 h-5 text-green-400" />}
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-1">
-                    {t.member.onboarding.joinTelegramTitle}
-                  </h3>
-                  <p className="text-white/60 text-sm mb-3">
-                    {t.member.onboarding.joinTelegramDesc}
-                  </p>
+                  <h3 className="text-lg font-semibold text-white mb-1">{t.member.onboarding.joinTelegramTitle}</h3>
+                  <p className="text-white/60 text-sm mb-3">{t.member.onboarding.joinTelegramDesc}</p>
+
                   {!onboarding.joined_telegram && (
                     <div className="flex gap-2">
-                      <PremiumButton
-                        onClick={handleJoinTelegram}
-                        size="sm"
+                      <a
+                        href={telegramUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
-                        <ExternalLink className="w-4 h-4" />
-                        {t.member.onboarding.joinTelegramAction}
-                      </PremiumButton>
+                        <PremiumButton size="sm">
+                          <ExternalLink className="w-4 h-4" />
+                          {t.member.onboarding.joinTelegramAction}
+                        </PremiumButton>
+                      </a>
                       <PremiumButton
                         variant="secondary"
                         onClick={handleConfirmJoinedTelegram}
@@ -331,6 +392,7 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
           </NoticeBox>
         )}
 
+        {/* Stats */}
         <div className="grid gap-6 lg:grid-cols-3 mb-8">
           <PremiumCard>
             <div className="flex items-start gap-4 mb-3">
@@ -338,21 +400,16 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
                 <Users className="w-6 h-6 text-[#F0B90B]" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-white mb-1">
-                  {t.member.referral.countLabel}
-                </h3>
-                <p className="text-3xl font-bold text-[#F0B90B]">
-                  {0}
-                </p>
+                <h3 className="text-lg font-semibold text-white mb-1">{t.member.referral.countLabel}</h3>
+                <p className="text-3xl font-bold text-[#F0B90B]">{0}</p>
               </div>
             </div>
-            <button
-              onClick={() => window.location.href = getLangPath(lang, '/member/referrals')}
-              className="w-full px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white text-sm font-medium transition-all flex items-center justify-center gap-2"
-            >
-              <ExternalLink className="w-4 h-4" />
-              View Analytics
-            </button>
+            <Link to={lp("/member/referrals")} className="block">
+              <div className="w-full px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white text-sm font-medium transition-all flex items-center justify-center gap-2">
+                <ExternalLink className="w-4 h-4" />
+                View Analytics
+              </div>
+            </Link>
           </PremiumCard>
 
           <PremiumCard>
@@ -362,9 +419,7 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-white mb-1">Role</h3>
-                <p className="text-xl font-semibold text-white/90 capitalize">
-                  {profile.role}
-                </p>
+                <p className="text-xl font-semibold text-white/90 capitalize">{stats.role}</p>
               </div>
             </div>
           </PremiumCard>
@@ -376,14 +431,13 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-white mb-1">Status</h3>
-                <p className="text-xl font-semibold text-white/90">
-                  {profile?.verified ? 'Verified' : 'Member'}
-                </p>
+                <p className="text-xl font-semibold text-white/90">{stats.status}</p>
               </div>
             </div>
           </PremiumCard>
         </div>
 
+        {/* Pinned Announcements */}
         {pinnedAnnouncements.length > 0 && (
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
@@ -391,12 +445,12 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
                 <Megaphone className="w-6 h-6 text-[#F0B90B]" />
                 {t.member.dashboard.pinnedTitle}
               </h2>
-              <a
-                href={getLangPath(lang, '/member/announcements')}
+              <Link
+                to={lp("/member/announcements")}
                 className="text-[#F0B90B] hover:text-[#F0B90B]/80 text-sm font-medium transition-colors"
               >
                 View All
-              </a>
+              </Link>
             </div>
             <div className="grid gap-4">
               {pinnedAnnouncements.map((announcement) => (
@@ -422,11 +476,10 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
           </div>
         )}
 
+        {/* Latest Announcements */}
         {latestAnnouncements.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-4">
-              {t.member.dashboard.latestTitle}
-            </h2>
+            <h2 className="text-2xl font-bold text-white mb-4">{t.member.dashboard.latestTitle}</h2>
             <div className="grid gap-4">
               {latestAnnouncements.map((announcement) => (
                 <PremiumCard key={announcement.id}>
@@ -456,68 +509,52 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
           </div>
         )}
 
+        {/* Quick Actions */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white mb-4">
-            {t.member.dashboard.quickActions}
-          </h2>
+          <h2 className="text-2xl font-bold text-white mb-4">{t.member.dashboard.quickActions}</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <a
-              href={getLangPath(lang, '/member/profile')}
-              className="group block p-4 rounded-xl bg-white/[0.02] border border-white/10 hover:border-[#F0B90B]/50 hover:bg-white/[0.04] transition-all"
-            >
+            <Link to={lp("/member/profile")} className="group block p-4 rounded-xl bg-white/[0.02] border border-white/10 hover:border-[#F0B90B]/50 hover:bg-white/[0.04] transition-all">
               <div className="flex items-center gap-3 mb-2">
                 <User className="w-5 h-5 text-[#F0B90B]" />
                 <h3 className="font-semibold text-white">{t.member.dashboard.goProfile}</h3>
               </div>
               <p className="text-sm text-white/60">Manage your profile</p>
-            </a>
+            </Link>
 
-            <a
-              href={getLangPath(lang, '/member/security')}
-              className="group block p-4 rounded-xl bg-white/[0.02] border border-white/10 hover:border-[#F0B90B]/50 hover:bg-white/[0.04] transition-all"
-            >
+            <Link to={lp("/member/security")} className="group block p-4 rounded-xl bg-white/[0.02] border border-white/10 hover:border-[#F0B90B]/50 hover:bg-white/[0.04] transition-all">
               <div className="flex items-center gap-3 mb-2">
                 <Shield className="w-5 h-5 text-[#F0B90B]" />
                 <h3 className="font-semibold text-white">{t.member.dashboard.goSecurity}</h3>
               </div>
               <p className="text-sm text-white/60">Security settings</p>
-            </a>
+            </Link>
 
-            <a
-              href={getLangPath(lang, '/verify')}
-              className="group block p-4 rounded-xl bg-white/[0.02] border border-white/10 hover:border-[#F0B90B]/50 hover:bg-white/[0.04] transition-all"
-            >
+            <Link to={lp("/verify")} className="group block p-4 rounded-xl bg-white/[0.02] border border-white/10 hover:border-[#F0B90B]/50 hover:bg-white/[0.04] transition-all">
               <div className="flex items-center gap-3 mb-2">
                 <CheckCircle className="w-5 h-5 text-[#F0B90B]" />
                 <h3 className="font-semibold text-white">{t.member.dashboard.goVerify}</h3>
               </div>
               <p className="text-sm text-white/60">Verify members</p>
-            </a>
+            </Link>
 
-            <a
-              href={getLangPath(lang, '/docs')}
-              className="group block p-4 rounded-xl bg-white/[0.02] border border-white/10 hover:border-[#F0B90B]/50 hover:bg-white/[0.04] transition-all"
-            >
+            <Link to={lp("/docs")} className="group block p-4 rounded-xl bg-white/[0.02] border border-white/10 hover:border-[#F0B90B]/50 hover:bg-white/[0.04] transition-all">
               <div className="flex items-center gap-3 mb-2">
                 <BookOpen className="w-5 h-5 text-[#F0B90B]" />
                 <h3 className="font-semibold text-white">{t.member.dashboard.goDocs}</h3>
               </div>
               <p className="text-sm text-white/60">Read documentation</p>
-            </a>
+            </Link>
 
-            <a
-              href={getLangPath(lang, '/news')}
-              className="group block p-4 rounded-xl bg-white/[0.02] border border-white/10 hover:border-[#F0B90B]/50 hover:bg-white/[0.04] transition-all"
-            >
+            <Link to={lp("/news")} className="group block p-4 rounded-xl bg-white/[0.02] border border-white/10 hover:border-[#F0B90B]/50 hover:bg-white/[0.04] transition-all">
               <div className="flex items-center gap-3 mb-2">
                 <Newspaper className="w-5 h-5 text-[#F0B90B]" />
                 <h3 className="font-semibold text-white">{t.member.dashboard.goNews}</h3>
               </div>
               <p className="text-sm text-white/60">Latest news</p>
-            </a>
+            </Link>
 
             <a
-              href="https://t.me/tpcglobal"
+              href={telegramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="group block p-4 rounded-xl bg-white/[0.02] border border-white/10 hover:border-[#F0B90B]/50 hover:bg-white/[0.04] transition-all"
@@ -531,15 +568,14 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
           </div>
         </div>
 
+        {/* Referral */}
         <PremiumCard>
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
               <Tag className="w-6 h-6 text-[#F0B90B]" />
               {t.member.referral.title}
             </h2>
-            <p className="text-white/60">
-              {t.member.referral.subtitle}
-            </p>
+            <p className="text-white/60">{t.member.referral.subtitle}</p>
           </div>
 
           <div className="space-y-4">
@@ -578,18 +614,14 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
                 <div className="flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
                   <div className="text-xs flex-1">
-                    <p className="text-yellow-400 font-medium mb-1">
-                      Referral code belum tersedia
-                    </p>
-                    <p className="text-white/60 mb-2">
-                      Coba refresh halaman atau kontak support jika masalah berlanjut.
-                    </p>
+                    <p className="text-yellow-400 font-medium mb-1">Referral code belum tersedia</p>
+                    <p className="text-white/60 mb-2">Coba refresh halaman atau kontak support jika masalah berlanjut.</p>
                     <button
                       onClick={handleGenerateReferralCode}
                       disabled={generatingCode}
                       className="px-3 py-1 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 text-xs font-medium rounded transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {generatingCode ? 'Generating...' : 'Generate Code'}
+                      {generatingCode ? "Generating..." : "Generate Code"}
                     </button>
                   </div>
                 </div>
@@ -610,43 +642,11 @@ const Dashboard = ({ lang = "en" }: DashboardProps) => {
           <PremiumCard className="mt-6">
             <div className="text-center py-4">
               <p className="text-white/60 text-sm mb-2">You were referred by</p>
-              <code className="text-lg font-mono font-semibold text-[#F0B90B]">
-                {profile.referred_by}
-              </code>
+              <code className="text-lg font-mono font-semibold text-[#F0B90B]">{profile.referred_by}</code>
             </div>
           </PremiumCard>
         )}
       </div>
-    );
-    } catch (err) {
-      console.error('[Dashboard] Runtime error:', err);
-      setRuntimeError((err as any)?.message || 'Unexpected error rendering dashboard');
-      return null;
-    }
-  };
-
-  if (runtimeError) {
-    return (
-      <PremiumShell>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 pb-24 md:pb-28">
-          <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-10">
-            <div className="text-center">
-              <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-white mb-2">Something went wrong</h2>
-              <p className="text-white/70 mb-4">{runtimeError}</p>
-              <PremiumButton onClick={() => window.location.reload()}>
-                Reload Page
-              </PremiumButton>
-            </div>
-          </div>
-        </div>
-      </PremiumShell>
-    );
-  }
-
-  return (
-    <PremiumShell>
-      {renderDashboard()}
     </PremiumShell>
   );
 };

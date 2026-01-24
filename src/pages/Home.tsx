@@ -1,7 +1,7 @@
 import { Shield, BookOpen, ExternalLink } from 'lucide-react';
-import { Language, useI18n, getLangPath } from '../i18n';
-import { Link } from '../components/Router';
-import { PremiumShell, PremiumButton, NoticeBox } from '../components/ui';
+import { Language, useI18n, getLangPath } from "@/i18n";
+import { Link } from "@/components/Router";
+import { PremiumShell, PremiumButton, NoticeBox } from "@/components/ui";
 
 interface HomeProps {
   lang?: Language;

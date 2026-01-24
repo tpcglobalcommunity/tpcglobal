@@ -1,4 +1,4 @@
-import { hasTier } from "../../lib/tier";
+import { hasTier } from "@/lib/tier";
 
 interface FeatureGateProps {
   profile: any;

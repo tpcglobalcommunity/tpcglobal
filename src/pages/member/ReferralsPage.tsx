@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Users, TrendingUp, Copy, Check, Link as LinkIcon, CheckCircle, UserPlus, Calendar } from 'lucide-react';
-import { Language, useTranslations } from '../../i18n';
-import { PremiumShell, PremiumCard, NoticeBox } from '../../components/ui';
-import MemberGuard from '../../components/guards/MemberGuard';
-import { ReferralAnalytics, supabase, ensureReferralCode, getReferrals } from '../../lib/supabase';
+import { Language, useTranslations } from '@/i18n';
+import { PremiumShell, PremiumCard, NoticeBox } from '@/components/ui';
+import MemberGuard from '@/components/guards/MemberGuard';
+import { ReferralAnalytics, supabase, ensureReferralCode, getReferrals } from '@/lib/supabase';
 
 interface ReferralsPageProps {
   lang: Language;

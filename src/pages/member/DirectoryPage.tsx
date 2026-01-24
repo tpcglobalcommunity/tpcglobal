@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Users, Search, MapPin, User, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../../i18n';
-import { PremiumShell, PremiumCard } from '../../components/ui';
-import MemberGuard from '../../components/guards/MemberGuard';
-import { getMemberDirectory, DirectoryMemberItem } from '../../lib/supabase';
-import { TrustBadges } from '../../components/trust/TrustBadges';
+import { Language, useTranslations, getLangPath } from '@/i18n';
+import { PremiumShell, PremiumCard } from '@/components/ui';
+import MemberGuard from '@/components/guards/MemberGuard';
+import { getMemberDirectory, DirectoryMemberItem } from '@/lib/supabase';
+import { TrustBadges } from '@/components/trust/TrustBadges';
 
 interface DirectoryPageProps {
   lang: Language;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { TrendingUp, Target, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
-import { useI18n, type Language, getLangPath, getLanguageFromPath } from "../../i18n";
-import { Link } from "../../components/Router";
+import { useI18n, type Language, getLangPath, getLanguageFromPath } from "@/i18n";
+import { Link } from "@/components/Router";
 import { createClient } from '@supabase/supabase-js';
 
 // Safety: Ensure environment variables are available

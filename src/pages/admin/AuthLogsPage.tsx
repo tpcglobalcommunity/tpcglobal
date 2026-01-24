@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { FileText, User, Calendar } from 'lucide-react';
-import { Language } from '../../i18n';
-import { PremiumShell, PremiumSection, PremiumCard, PremiumButton } from '../../components/ui';
-import { useI18n } from '../../i18n';
-import { supabase } from '../../lib/supabase';
-import MemberGuard from '../../components/guards/MemberGuard';
-import RoleGuard from '../../components/guards/RoleGuard';
+import { Language } from '@/i18n';
+import { PremiumShell, PremiumSection, PremiumCard, PremiumButton } from '@/components/ui';
+import { useI18n } from '@/i18n';
+import { supabase } from '@/lib/supabase';
+import MemberGuard from '@/components/guards/MemberGuard';
+import RoleGuard from '@/components/guards/RoleGuard';
 
 interface AuthLogsPageProps {
   lang: Language;

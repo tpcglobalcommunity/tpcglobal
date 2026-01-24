@@ -1,10 +1,10 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { Lock, ArrowRight, CheckCircle } from 'lucide-react';
-import { useI18n, type Language } from '../../i18n';
-import { Link } from '../../components/Router';
-import { useAuth } from '../../contexts/AuthContext';
-import AuthShell from '../../components/auth/AuthShell';
-import { AuthBuildMarker } from '../../components/auth/AuthBuildMarker';
+import { useI18n, type Language } from '@/i18n';
+import { Link } from '@/components/Router';
+import { useAuth } from '@/contexts/AuthContext';
+import AuthShell from '@/components/auth/AuthShell';
+import { AuthBuildMarker } from '@/components/auth/AuthBuildMarker';
 
 export default function ResetPassword({ lang }: { lang?: Language }) {
   const { t } = useI18n(lang || "en");

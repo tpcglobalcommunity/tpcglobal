@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { supabase } from "../../lib/supabase";
-import { ensureLangPath } from "../../utils/langPath";
+import { supabase } from "@/lib/supabase";
+import { ensureLangPath } from "@/utils/langPath";
 
 interface ProfileCompletionGuardProps {
   children: React.ReactNode;

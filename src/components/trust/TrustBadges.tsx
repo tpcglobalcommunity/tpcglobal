@@ -1,5 +1,5 @@
 import { CheckCircle, Shield, UserCheck, Store, UserX } from 'lucide-react';
-import { Language, useTranslations } from '../../i18n';
+import { Language, useTranslations } from '@/i18n';
 
 interface TrustBadgesProps {
   role: 'member' | 'moderator' | 'admin' | 'super_admin';

@@ -20,8 +20,8 @@ import Support from "./pages/Support";
 import Whitepaper from "./pages/Whitepaper";
 import Roadmap from "./pages/Roadmap";
 import Faq from "./pages/Faq";
-import MarketplacePage from "./pages/MarketplacePage";
-import MarketplaceItemPage from "./pages/MarketplaceItemPage";
+import MarketplaceList from "./pages/marketplace/MarketplaceList";
+import MarketplaceDetail from "./pages/marketplace/MarketplaceDetail";
 
 import SignUp from "./pages/auth/SignUp";
 import SignIn from "./pages/auth/SignIn";
@@ -260,15 +260,14 @@ export default function App() {
       case "/support":
         return <Support lang={lang} />;
 
-      // Marketplace routes (handle both list and detail with slug)
+      // Marketplace routes - handle both list and detail with slug (must be before general fallback)
       case "/marketplace":
-        return <MarketplacePage />;
-      case "/marketplace/item":
-        return <MarketplaceItemPage lang={lang} />;
+        return <MarketplaceList lang={lang} />;
 
       // Marketplace item detail with slug - check before other routes
-      if (pathWithoutLang.startsWith("/marketplace/") && pathWithoutLang !== "/marketplace/item") {
-        return <MarketplacePage />;
+      if (pathWithoutLang.startsWith("/marketplace/") && pathWithoutLang !== "/marketplace") {
+        const slug = pathWithoutLang.replace("/marketplace/", "");
+        return <MarketplaceDetail lang={lang} slug={slug} />;
       }
 
       case "/dao":

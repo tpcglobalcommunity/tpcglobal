@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "../lib/supabase";
-import { type Language, getLangPath, useTranslations } from "../i18n";
-import { PremiumShell, NoticeBox, PremiumButton } from "../components/ui";
+import { supabase } from "@/lib/supabase";
+import { type Language, getLangPath, useTranslations } from "@/i18n";
+import { PremiumShell, NoticeBox, PremiumButton } from "@/components/ui";
 import { ShieldAlert, LogIn, ArrowLeft } from "lucide-react";
 
 type GuardState =

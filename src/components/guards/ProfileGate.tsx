@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useProfileStatus } from "../../lib/useProfileStatus";
-import { isProfileDataComplete, safeFetchProfile } from "../../lib/profileHelpers";
+import { useProfileStatus } from "@/lib/useProfileStatus";
+import { isProfileDataComplete, safeFetchProfile } from "@/lib/profileHelpers";
 import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
-import { useNavigate } from "../../components/Router";
-import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "@/components/Router";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Props = {
   children: React.ReactNode;

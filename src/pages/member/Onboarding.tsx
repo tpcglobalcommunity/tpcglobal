@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useI18n } from "../../i18n";
-import { Link } from "../../components/Router";
-import { supabase } from "../../lib/supabase";
+import { useI18n } from "@/i18n";
+import { Link } from "@/components/Router";
+import { supabase } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
 
 export default function Onboarding() {

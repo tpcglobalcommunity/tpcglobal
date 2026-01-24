@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useI18n } from '../i18n';
-import { getNewsPostBySlug, type NewsPostDetail } from '../lib/supabase';
-import { PremiumShell, PremiumSection, PremiumButton } from '../components/ui';
+import { useI18n } from "@/i18n";
+import { getNewsPostBySlug, type NewsPostDetail } from "@/lib/supabase";
+import { PremiumShell, PremiumSection, PremiumButton } from "@/components/ui";
 import { ArrowLeft, Calendar, Tag, ExternalLink } from 'lucide-react';
 
 interface NewsDetailPageProps {

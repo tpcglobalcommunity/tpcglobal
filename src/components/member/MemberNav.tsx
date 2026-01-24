@@ -1,7 +1,7 @@
-import { type Language, getLangPath, useI18n } from "../../i18n";
+import { type Language, getLangPath, useI18n } from "@/i18n";
 import { LayoutDashboard, Layers, Wallet, Settings, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { useRealtimeNotifications } from "../../hooks/useRealtimeNotifications";
 import { Link } from "../Router";
 

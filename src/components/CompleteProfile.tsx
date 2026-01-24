@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useI18n } from '../i18n';
-import { completeRequiredProfile, getProfileCompletionStatus } from '../lib/supabase';
-import { langPath } from '../utils/langPath';
+import { useI18n } from '@/i18n';
+import { completeRequiredProfile, getProfileCompletionStatus } from '@/lib/supabase';
+import { langPath } from '@/utils/langPath';
 import { User, Phone, MessageSquare, MapPin, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 interface ProfileData {

@@ -1,7 +1,7 @@
 import { FileText, Target, Users, Coins, TrendingUp, ShoppingCart, Vote, MapPin, AlertTriangle, BookOpen, Eye, ExternalLink } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../i18n';
-import { PremiumShell, PremiumCard, NoticeBox, PremiumButton } from '../components/ui';
-import { Link } from '../components/Router';
+import { Language, useTranslations, getLangPath } from "@/i18n";
+import { PremiumShell, PremiumCard, NoticeBox, PremiumButton } from "@/components/ui";
+import { Link } from "@/components/Router";
 
 interface WhitepaperProps {
   lang: Language;

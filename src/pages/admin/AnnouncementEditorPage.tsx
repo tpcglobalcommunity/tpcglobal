@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Save, ArrowLeft } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../../i18n';
-import { PremiumShell, PremiumCard, PremiumButton } from '../../components/ui';
-import MemberGuard from '../../components/guards/MemberGuard';
-import RoleGuard from '../../components/guards/RoleGuard';
-import { getAnnouncement, upsertAnnouncement, AnnouncementCategory } from '../../lib/supabase';
+import { Language, useTranslations, getLangPath } from '@/i18n';
+import { PremiumShell, PremiumCard, PremiumButton } from '@/components/ui';
+import MemberGuard from '@/components/guards/MemberGuard';
+import RoleGuard from '@/components/guards/RoleGuard';
+import { getAnnouncement, upsertAnnouncement, AnnouncementCategory } from '@/lib/supabase';
 
 interface AnnouncementEditorPageProps {
   lang: Language;

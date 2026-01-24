@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { LogIn, UserPlus, LayoutDashboard, LogOut } from "lucide-react";
-import { supabase } from "../../lib/supabase";
-import { useI18n, type Language, getLangPath } from "../../i18n";
+import { supabase } from "@/lib/supabase";
+import { useI18n, type Language, getLangPath } from "@/i18n";
 import { Link } from "../Router";
 import { PremiumButton } from "../ui";
 

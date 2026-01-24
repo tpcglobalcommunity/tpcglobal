@@ -1,6 +1,6 @@
-import { type Language, useI18n, getLangPath } from "../../i18n";
+import { type Language, useI18n, getLangPath } from "@/i18n";
 import MemberLayout from "./MemberLayout";
-import { PremiumCard, PremiumButton, NoticeBox } from "../../components/ui";
+import { PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
 import { Clock, ExternalLink, BookOpen } from "lucide-react";
 
 export default function MemberPendingPage({ lang }: { lang: Language }) {
