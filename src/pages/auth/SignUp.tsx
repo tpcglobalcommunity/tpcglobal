@@ -29,7 +29,6 @@ export default function SignUp() {
   const [settings, setSettings] = useState<any | null>(null);
   const [settingsErr, setSettingsErr] = useState<string | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const [buildProbe, setBuildProbe] = useState<any>( null);
 
   // Form state
   const [formState, setFormState] = useState<FormState>({
@@ -126,25 +125,6 @@ export default function SignUp() {
       setFormState(prev => ({ ...prev, inviteCode: refParam }));
     }
   }, [searchParams]);
-
-  // Fetch build probe for deploy verification
-  useEffect(() => {
-    const fetchBuildProbe = async () => {
-      try {
-        const response = await fetch(`/__build_probe__.json?ts=${Date.now()}`);
-        if (response.ok) {
-          const data = await response.json();
-          setBuildProbe(data);
-        } else {
-          setBuildProbe({ error: "not found" });
-        }
-      } catch (err) {
-        setBuildProbe({ error: "fetch failed" });
-      }
-    };
-
-    fetchBuildProbe();
-  }, []);
 
   // Computed values
   const code = useMemo(() => normalizeInviteCode(formState.inviteCode), [formState.inviteCode]);
