@@ -271,7 +271,8 @@ export default function SignUp() {
       return { status: 'error', available: true };
     }
 
-    const available = !!(data?.available);
+    // RPC returns boolean directly
+    const available = typeof data === 'boolean' ? data : true;
     return { status: 'ok', available };
   };
 
