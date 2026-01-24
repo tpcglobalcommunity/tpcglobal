@@ -4,7 +4,6 @@ import { useI18n, type Language, getLangPath, getLanguageFromPath } from "../../
 import { Link } from "../../components/Router";
 import AuthShell from "../../components/auth/AuthShell";
 import { AuthBuildMarker } from "../../components/auth/AuthBuildMarker";
-import { getAuthState, getAuthRedirectPath } from "../../lib/authGuards";
 import { supabase } from "../../lib/supabase";
 
 interface VerifyProps {
@@ -25,17 +24,16 @@ export default function Verify({ }: VerifyProps) {
     const checkAuthAndRedirect = async () => {
       const { data } = await supabase.auth.getSession();
       const user = data.session?.user ?? null;
-      const authState = getAuthState(user);
       const currentLang = getLanguageFromPath(window.location.pathname);
       
-      if (authState === "authenticated" && user?.email_confirmed_at) {
+      if (user && user.email_confirmed_at) {
         // Already verified - redirect to update-profit
-        const redirectPath = getAuthRedirectPath(currentLang, "/member/update-profit");
+        const redirectPath = getLangPath(currentLang, "/member/update-profit");
         window.location.assign(redirectPath);
         return;
       }
       
-      if (authState === "unauthenticated") {
+      if (!user) {
         // Not logged in - redirect to login
         const loginPath = `/${currentLang}/login`;
         window.location.assign(loginPath);

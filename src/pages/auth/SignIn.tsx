@@ -6,7 +6,6 @@ import { signIn, supabase } from "../../lib/supabase";
 import { useAuthError } from "../../hooks/useAuthError";
 import AuthShell from "../../components/auth/AuthShell";
 import { AuthBuildMarker } from "../../components/auth/AuthBuildMarker";
-import { getAuthState, getAuthRedirectPath } from "../../lib/authGuards";
 
 interface SignInProps {
   lang?: Language;
@@ -39,19 +38,18 @@ export default function SignIn({ }: SignInProps) {
     const checkAuthAndRedirect = async () => {
       const { data } = await supabase.auth.getSession();
       const user = data.session?.user ?? null;
-      const authState = getAuthState(user);
       const currentLang = language;
       
-      if (authState === "authenticated" && user?.email_confirmed_at) {
+      if (user && user.email_confirmed_at) {
         // Already verified - redirect to update-profit
-        const redirectPath = getAuthRedirectPath(currentLang, "/member/update-profit");
+        const redirectPath = getLangPath(currentLang, "/member/update-profit");
         window.location.assign(redirectPath);
         return;
       }
       
-      if (authState === "authenticated" && !user?.email_confirmed_at) {
+      if (user && !user.email_confirmed_at) {
         // Logged in but not verified - redirect to verify
-        const verifyPath = getAuthRedirectPath(currentLang, "/verify");
+        const verifyPath = getLangPath(currentLang, "/verify");
         window.location.assign(verifyPath);
         return;
       }
