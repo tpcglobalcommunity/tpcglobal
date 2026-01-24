@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Mail, RefreshCw, CheckCircle, AlertCircle, ArrowRight } from "lucide-react";
 import { useI18n, type Language, getLangPath } from "../../i18n";
 import { Link } from "../../components/Router";
@@ -11,7 +11,7 @@ interface VerifyProps {
 }
 
 export default function Verify({ lang }: VerifyProps) {
-  const { t, language } = useI18n(lang || "en");
+  const { t, language } = useI18n();
   const L = language;
 
   const [email, setEmail] = useState("");

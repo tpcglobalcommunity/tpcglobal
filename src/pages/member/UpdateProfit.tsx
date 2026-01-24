@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { TrendingUp, DollarSign, Target, Award, ArrowRight } from "lucide-react";
 import { useI18n, type Language, getLangPath } from "../../i18n";
 import { Link } from "../../components/Router";
@@ -9,7 +9,7 @@ interface UpdateProfitProps {
 }
 
 export default function UpdateProfit({ lang }: UpdateProfitProps) {
-  const { t, language } = useI18n(lang || "en");
+  const { t, language } = useI18n();
   const L = language;
 
   const [profitData, setProfitData] = useState({

@@ -37,7 +37,9 @@ export function ensureLangPath(lang: Language, to: string): string {
 }
 
 // Legacy compatibility: getLangPath alias
-export function getLangPath(lang: Language, pathWithoutLang: string): string {
+export function getLangPath(lang?: Language, pathWithoutLang?: string): string {
+  if (!lang) return '/';
+  if (!pathWithoutLang) return `/${lang}`;
   const clean = pathWithoutLang.startsWith("/") ? pathWithoutLang.slice(1) : pathWithoutLang;
   return `/${lang}/${clean}`;
 }

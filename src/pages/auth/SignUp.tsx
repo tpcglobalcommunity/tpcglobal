@@ -12,7 +12,6 @@ import {
   validateForm, 
   isFormValid, 
   normalizeUsername,
-  type FormErrors,
   type FormTouched,
   type FormState
 } from "../../utils/validators";

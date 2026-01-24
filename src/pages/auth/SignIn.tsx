@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { useI18n, type Language, getLangPath } from "../../i18n";
 import { Link } from "../../components/Router";
@@ -26,7 +26,7 @@ function safeNext(nextRaw: string | null, fallback: string) {
 }
 
 export default function SignIn({ lang }: SignInProps) {
-  const { t, language } = useI18n(lang || "en");
+  const { t, language } = useI18n();
   const L = language;
 
   const [email, setEmail] = useState("");
@@ -91,14 +91,14 @@ export default function SignIn({ lang }: SignInProps) {
   return (
     <AuthShell 
       lang={lang}
-      title={t("auth.signin.title")}
-      subtitle={t("auth.signin.subtitle")}
+      title="Sign In"
+      subtitle="Welcome back to TPC"
     >
       <form onSubmit={onSubmit} className="space-y-4">
         {/* Email Field */}
         <div>
           <label className="block text-sm font-semibold text-white/80 mb-2.5">
-            {t("auth.signin.email")}
+            Email
           </label>
           <div className="flex items-center gap-3 h-12 rounded-2xl border border-white/10 bg-white/5 px-4 hover:border-white/15 focus-within:border-[#F0B90B]/45 focus-within:bg-white/7 focus-within:ring-1 focus-within:ring-[#F0B90B]/25 transition-all">
             <Mail className="w-4 h-4 text-white/50 shrink-0" />
@@ -116,7 +116,7 @@ export default function SignIn({ lang }: SignInProps) {
         {/* Password Field */}
         <div>
           <label className="block text-sm font-semibold text-white/80 mb-2.5">
-            {t("auth.signin.password")}
+            Password
           </label>
           <div className="flex items-center gap-3 h-12 rounded-2xl border border-white/10 bg-white/5 px-4 hover:border-white/15 focus-within:border-[#F0B90B]/45 focus-within:bg-white/7 focus-within:ring-1 focus-within:ring-[#F0B90B]/25 transition-all">
             <Lock className="w-4 h-4 text-white/50 shrink-0" />
@@ -147,11 +147,11 @@ export default function SignIn({ lang }: SignInProps) {
           {submitting ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
-              {t("auth.signin.submitting") || "Signing in..."}
+              Signing in...
             </>
           ) : (
             <>
-              {t("auth.signin.signIn") || "Sign In"}
+              Sign In
               <ArrowRight className="w-4 h-4" />
             </>
           )}
@@ -161,12 +161,12 @@ export default function SignIn({ lang }: SignInProps) {
       {/* Bottom Navigation */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-white/60 mt-6">
         <Link to={getLangPath(L, "/forgot")} className="text-[#F0B90B] hover:underline underline-offset-4 transition-colors">
-          {t("auth.signin.forgot") || "Forgot password?"}
+          Forgot password?
         </Link>
         <div className="text-center sm:text-right">
-          <span>{t("auth.signin.noAccount") || "Don't have an account?"}</span>{" "}
+          <span>Don't have an account?</span>{" "}
           <Link to={getLangPath(L, "/signup")} className="text-[#F0B90B] hover:underline underline-offset-4 font-medium">
-            {t("auth.signin.createAccount") || "Create account"}
+            Create account
           </Link>
         </div>
       </div>
