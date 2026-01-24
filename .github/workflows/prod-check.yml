@@ -1,0 +1,32 @@
+name: Prod Route Check
+
+on:
+  push:
+    branches: ["main"]
+
+concurrency:
+  group: prod-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prod-routes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Check Routes (PROD)
+        env:
+          BASE_URL: https://tpcglobal.io
+          FAIL_ON_TEXT: "i18n missing,[i18n missing],Missing translation,ErrorBoundary,Something went wrong"
+          TIMEOUT_MS: "12000"
+        run: npm run check:routes
