@@ -7,14 +7,14 @@ import { User, Phone, MessageSquare, MapPin, CheckCircle, AlertCircle, Loader2 }
 
 interface ProfileData {
   full_name: string;
-  phone_wa: string;
+  phone: string;
   telegram: string;
   city: string;
 }
 
 interface ValidationErrors {
   full_name?: string;
-  phone_wa?: string;
+  phone?: string;
   telegram?: string;
   city?: string;
 }
@@ -26,7 +26,7 @@ export default function CompleteProfile() {
 
   const [profileData, setProfileData] = useState<ProfileData>({
     full_name: '',
-    phone_wa: '',
+    phone: '',
     telegram: '',
     city: ''
   });
@@ -56,7 +56,7 @@ export default function CompleteProfile() {
 
         const { data, error } = await supabase
           .from('profiles')
-          .select('profile_required_completed')
+          .select('full_name, phone, telegram, city')
           .eq('id', session.user.id)
           .single();
 
@@ -65,7 +65,13 @@ export default function CompleteProfile() {
           return;
         }
 
-        if (data?.profile_required_completed) {
+        // Check if all required fields are filled
+        const isComplete = data?.full_name?.trim() && 
+                         data?.phone?.trim() && 
+                         data?.telegram?.trim() && 
+                         data?.city?.trim();
+
+        if (isComplete) {
           navigate(langPath(lang, '/member/dashboard'));
         }
       } catch (error) {
@@ -87,7 +93,7 @@ export default function CompleteProfile() {
           return t('profile.errors.fullNameMinLength');
         }
         break;
-      case 'phone_wa':
+      case 'phone':
         const normalizedPhone = value.replace(/[^0-9+]/g, '');
         if (!normalizedPhone.startsWith('+62') && !normalizedPhone.startsWith('62')) {
           return t('profile.errors.phoneFormat');
@@ -133,8 +139,8 @@ export default function CompleteProfile() {
   const normalizeAndValidateData = (): ProfileData => {
     const normalized = { ...profileData };
 
-    if (normalized.phone_wa.startsWith('8')) {
-      normalized.phone_wa = '+62' + normalized.phone_wa;
+    if (normalized.phone.startsWith('8')) {
+      normalized.phone = '+62' + normalized.phone;
     }
 
     if (normalized.telegram && !normalized.telegram.startsWith('@') && !normalized.telegram.startsWith('https://t.me/')) {
@@ -178,10 +184,7 @@ export default function CompleteProfile() {
 
       const { error } = await supabase
         .from('profiles')
-        .update({
-          ...normalizedData,
-          profile_required_completed: true
-        })
+        .update(normalizedData)
         .eq('id', session.user.id);
 
       if (error) {
@@ -298,16 +301,16 @@ export default function CompleteProfile() {
                   </label>
                   <input
                     type="tel"
-                    value={profileData.phone_wa}
-                    onChange={handleInputChange('phone_wa')}
-                    onBlur={() => handleBlur('phone_wa')}
+                    value={profileData.phone}
+                    onChange={handleInputChange('phone')}
+                    onBlur={() => handleBlur('phone')}
                     placeholder={t('profile.phonePlaceholder')}
                     className={`w-full h-12 rounded-xl bg-white/5 border px-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#f0b90b]/50 focus:border-transparent transition-all ${
-                      errors.phone_wa ? 'border-red-500/50 bg-red-500/5' : 'border-white/20'
+                      errors.phone ? 'border-red-500/50 bg-red-500/5' : 'border-white/20'
                     }`}
                   />
-                  {errors.phone_wa && (
-                    <p className="mt-2 text-sm text-red-400">{errors.phone_wa}</p>
+                  {errors.phone && (
+                    <p className="mt-2 text-sm text-red-400">{errors.phone}</p>
                   )}
                 </div>
 
