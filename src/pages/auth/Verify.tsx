@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { Mail, RefreshCw, CheckCircle, AlertCircle, ArrowRight } from "lucide-react";
-import { useI18n, type Language, getLangPath } from "../../i18n";
+import { useI18n, type Language, getLangPath, getLanguageFromPath } from "../../i18n";
 import { Link } from "../../components/Router";
 import AuthShell from "../../components/auth/AuthShell";
 import { AuthBuildMarker } from "../../components/auth/AuthBuildMarker";
-import { getAuthState, getAuthRedirectPath, getLanguageFromPath, signOutIfUnverified } from "../../lib/authGuards";
+import { getAuthState, getAuthRedirectPath } from "../../lib/authGuards";
+import { supabase } from "../../lib/supabase";
 
 interface VerifyProps {
   lang?: Language;
@@ -22,17 +23,19 @@ export default function Verify({ }: VerifyProps) {
   // Check auth state and redirect if needed
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
-      const authState = await getAuthState();
+      const { data } = await supabase.auth.getSession();
+      const user = data.session?.user ?? null;
+      const authState = getAuthState(user);
       const currentLang = getLanguageFromPath(window.location.pathname);
       
-      if (authState.isAuthed && authState.isEmailVerified) {
+      if (authState === "authenticated" && user?.email_confirmed_at) {
         // Already verified - redirect to update-profit
-        const redirectPath = getAuthRedirectPath(authState, currentLang);
+        const redirectPath = getAuthRedirectPath(currentLang, "/member/update-profit");
         window.location.assign(redirectPath);
         return;
       }
       
-      if (!authState.isAuthed) {
+      if (authState === "unauthenticated") {
         // Not logged in - redirect to login
         const loginPath = `/${currentLang}/login`;
         window.location.assign(loginPath);
@@ -40,8 +43,8 @@ export default function Verify({ }: VerifyProps) {
       }
 
       // Set email from user data
-      if (authState.user?.email) {
-        setEmail(authState.user.email);
+      if (user?.email) {
+        setEmail(user.email);
       }
     };
 
@@ -77,8 +80,8 @@ export default function Verify({ }: VerifyProps) {
   };
 
   const handleContinueAfterVerification = async () => {
-    // Sign out unverified user first
-    await signOutIfUnverified();
+    // Sign out user first
+    await supabase.auth.signOut();
     
     // Redirect to login
     const currentLang = getLanguageFromPath(window.location.pathname);

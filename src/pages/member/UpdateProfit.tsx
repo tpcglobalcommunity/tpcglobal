@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { TrendingUp, Target, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
-import { useI18n, type Language, getLangPath } from "../../i18n";
+import { useI18n, type Language, getLangPath, getLanguageFromPath } from "../../i18n";
 import { Link } from "../../components/Router";
 import { createClient } from '@supabase/supabase-js';
-import { getLanguageFromPath } from "../../lib/authGuards";
 
 // Safety: Ensure environment variables are available
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
