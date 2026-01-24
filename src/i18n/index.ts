@@ -1,14 +1,18 @@
-import { translations, Language } from './translations';
-import { stripLang, ensureLangPath, getLanguageFromPath } from '../utils/langPath';
+import { translations } from "./translations";
+import type { Language } from "./translations";
+import { useI18n } from "./context";
 
 export type { Language };
 
-const STORAGE_KEY = 'tpc_lang';
+// Simplified type to avoid deep inference
+export type TranslationKey = string;
+
+const STORAGE_KEY = "tpc_lang";
 
 export function getStoredLanguage(): Language | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw === 'en' || raw === 'id' ? raw : null;
+    return raw === "en" || raw === "id" ? (raw as Language) : null;
   } catch {
     return null;
   }
@@ -20,102 +24,143 @@ export function storeLanguage(lang: Language) {
   } catch {}
 }
 
-export { getLanguageFromPath, stripLang };
+export function setLanguage(lang: Language) {
+  storeLanguage(lang);
+}
 
-// Legacy function for backward compatibility
+export function getLanguageFromPath(pathname?: string): Language {
+  const path = pathname || (typeof window !== "undefined" ? window.location.pathname : "");
+  const m = path.match(/^\/(en|id)(\/|$)/);
+  if (m) return m[1] as Language;
+  return getStoredLanguage() ?? "en";
+}
+
+export function stripLang(pathname: string): string {
+  return pathname.replace(/^\/(en|id)(?=\/|$)/, "");
+}
+
 export function getLangPath(lang: Language, pathWithoutLang: string): string {
-  return ensureLangPath(lang, pathWithoutLang);
+  const clean = pathWithoutLang.startsWith("/") ? pathWithoutLang.slice(1) : pathWithoutLang;
+  return `/${lang}/${clean}`;
 }
 
-/**
- * Change language while staying on same page (preserve path after /en or /id).
- * MUST dispatch popstate to force App state refresh.
- */
-export function setLanguage(newLang: Language, currentPath: string = window.location.pathname) {
-  storeLanguage(newLang);
-
-  const without = stripLang(currentPath);
-  const next = ensureLangPath(newLang, without === '' ? '/home' : without);
-
-  if (window.location.pathname !== next) {
-    window.history.pushState({}, '', next);
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  }
+// Helper type guards
+function isRecord(v: unknown): v is Record<string, any> {
+  return v !== null && typeof v === 'object' && !Array.isArray(v);
 }
 
-export const useTranslations = (lang?: Language) => {
-  const targetLang = lang || getLanguageFromPath(window.location.pathname);
-  return translations[targetLang];
-};
-
-export const useLanguage = () => {
-  const language = getLanguageFromPath(window.location.pathname);
-  const t = useTranslations(language);
-  const translate = (key: string, fallback?: string) => {
-    const value = getNestedTranslation(t, key);
-    if (value !== null && value !== undefined && value !== "") {
-      return value;
-    }
-    
-    // Key is missing or empty - show visible fallback
-    const missingKey = `[${language}] ${key}`;
-    
-    // Log warning once per missing key
-    if (!missingKeys.has(key)) {
-      missingKeys.add(key);
-      console.warn(`Missing translation key: ${key} for language: ${language}`);
-    }
-    
-    return (fallback && fallback !== "") ? fallback : missingKey;
-  };
-  return { language, t: translate };
-};
-
-function getNestedTranslation(obj: any, path: string): string | null {
-  const result = path.split('.').reduce((acc, part) => acc?.[part], obj);
-  if (result !== undefined && result !== null) {
-    return result;
-  }
-  
-  // Return null instead of fallback to humanized key
+function safeString(v: unknown): string | null {
+  if (typeof v === 'string') return v;
+  if (typeof v === 'number' || typeof v === 'boolean') return String(v);
   return null;
 }
 
-// Track missing keys to avoid duplicate warnings
-const missingKeys = new Set<string>();
-
-export const useI18n = (lang?: Language) => {
-  const detectedLang = lang || getLanguageFromPath(window.location.pathname);
-  const currentTranslations = useTranslations(detectedLang);
-  const enTranslations = translations.en; // Fallback ke EN
+function resolveAny(obj: any, path: string): any {
+  if (!isRecord(obj)) return undefined;
+  if (typeof path !== 'string' || !path.trim()) return undefined;
   
-  const t = (key: string, fallback?: string) => {
-    // Coba di current language
-    const result = getNestedTranslation(currentTranslations, key);
-    if (result !== null && result !== undefined && result !== "") {
-      return result;
+  const parts = path.split('.').filter(Boolean);
+  let current = obj;
+  
+  for (const part of parts) {
+    // Handle array indices like "cards[2]"
+    const arrayMatch = part.match(/^(\w+)\[(\d+)\]$/);
+    if (arrayMatch) {
+      const [, arrayName, index] = arrayMatch;
+      if (!isRecord(current) || !(arrayName in current)) {
+        return undefined;
+      }
+      const array = current[arrayName];
+      const arrayIndex = parseInt(index, 10);
+      if (!Array.isArray(array) || arrayIndex >= array.length) {
+        return undefined;
+      }
+      current = array[arrayIndex];
+    } else {
+      if (!isRecord(current) || !(part in current)) {
+        return undefined;
+      }
+      current = current[part];
     }
-    
-    // Fallback ke EN
-    const enResult = getNestedTranslation(enTranslations, key);
-    if (enResult !== null && enResult !== undefined && enResult !== "") {
-      return enResult;
+  }
+  
+  return current;
+}
+
+export function t(key: TranslationKey, fallback?: string, lang?: Language): string {
+  const targetLang = lang || getLanguageFromPath();
+  const dict = (translations as any)[targetLang] ?? (translations as any).en;
+  const value = resolveAny(dict, key);
+  
+  const stringResult = safeString(value);
+  if (stringResult !== null) return stringResult;
+  
+  if (fallback) return fallback;
+  console.warn(`[i18n] Missing key "${key}" for lang "${targetLang}"`);
+  return typeof key === 'string' ? key : '';
+}
+
+// Re-export React components from context.tsx
+export { useI18n, I18nProvider } from "./context";
+
+// Legacy compatibility exports
+export { translations } from "./translations";
+
+// Compatibility helper functions
+export function tStr(key: string, fallback?: string, lang?: Language): string {
+  const targetLang = lang || getLanguageFromPath();
+  const dict = (translations as any)[targetLang] ?? (translations as any).en;
+  const value = resolveAny(dict, key);
+  
+  const stringResult = safeString(value);
+  if (stringResult !== null) return stringResult;
+  
+  return fallback || key;
+}
+
+export function tArr(key: string, lang?: Language): string[] {
+  const targetLang = lang || getLanguageFromPath();
+  const dict = (translations as any)[targetLang] ?? (translations as any).en;
+  const value = resolveAny(dict, key);
+  
+  // If it's already an array, ensure all elements are strings
+  if (Array.isArray(value)) {
+    return value.map(item => safeString(item) || '').filter(Boolean);
+  }
+  
+  // If it's a string, try to split it
+  const stringResult = safeString(value);
+  if (stringResult !== null) {
+    // Try common delimiters
+    if (stringResult.includes('\n')) {
+      return stringResult.split('\n').map(s => s.trim()).filter(Boolean);
     }
-    
-    // Key is missing or empty - show visible fallback
-    const missingKey = `[${detectedLang}] ${key}`;
-    
-    // Log warning once per missing key
-    if (!missingKeys.has(key)) {
-      missingKeys.add(key);
-      console.warn(`Missing translation key: ${key} for language: ${detectedLang}`);
+    if (stringResult.includes('|')) {
+      return stringResult.split('|').map(s => s.trim()).filter(Boolean);
     }
-    
-    // Return fallback if provided and non-empty, otherwise the missing key indicator
-    return (fallback && fallback !== "") ? fallback : missingKey;
+    // Single item array
+    return [stringResult.trim()].filter(Boolean);
+  }
+  
+  // Missing or invalid value
+  return [];
+}
+
+// Legacy compatibility alias
+export function useTranslations() {
+  // Fallback implementation - doesn't need React context
+  const language = getLanguageFromPath();
+  return {
+    language,
+    setLanguage,
+    t: (key: string) => t(key, undefined, language),
+    tStr: (key: string, fallback?: string) => tStr(key, fallback, language),
+    tArr: (key: string) => tArr(key, language)
   };
-  
-  return { t, language: detectedLang };
-};
+}
 
-export const defaultLanguage: Language = 'en';
+// Compatibility export for useLanguage
+export function useLanguage() {
+  const { language, setLanguage } = useI18n();
+  return { language, setLanguage };
+}

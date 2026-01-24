@@ -1,5 +1,5 @@
 import { CheckCircle, ArrowRight } from 'lucide-react';
-import { Language, useTranslations } from '../i18n';
+import { Language, useI18n } from '../i18n';
 import { PremiumShell, PremiumSection, PremiumCard, NoticeBox } from '../components/ui';
 
 interface DAOLiteProps {
@@ -7,43 +7,43 @@ interface DAOLiteProps {
 }
 
 const DAOLite = ({ lang }: DAOLiteProps) => {
-  const t = useTranslations(lang);
+  const { t } = useI18n(lang);
 
   const steps = [
-    { num: 1, text: t.dao.step1 },
-    { num: 2, text: t.dao.step2 },
-    { num: 3, text: t.dao.step3 },
-    { num: 4, text: t.dao.step4 },
+    { num: 1, text: t('dao.step1', 'Proposal Submission') },
+    { num: 2, text: t('dao.step2', 'Community Discussion') },
+    { num: 3, text: t('dao.step3', 'Voting Period') },
+    { num: 4, text: t('dao.step4', 'Implementation') },
   ];
 
   const rules = [
-    t.dao.rule1,
-    t.dao.rule2,
-    t.dao.rule3,
-    t.dao.rule4,
+    t('dao.rule1', 'All members can propose initiatives'),
+    t('dao.rule2', 'Voting power is based on token holdings'),
+    t('dao.rule3', 'Proposals require minimum quorum'),
+    t('dao.rule4', 'Results are transparent and binding'),
   ];
 
   return (
     <PremiumShell>
       <PremiumSection
-        title={t.dao.title}
-        subtitle={t.dao.subtitle}
+        title={t('dao.title', 'DAO Lite')}
+        subtitle={t('dao.subtitle', 'Community-Driven Governance')}
         centered
         variant="tight"
         isLast
       >
         <PremiumCard className="text-center mb-12" hover={false}>
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4">
-            {t.dao.whatIsDAOLite}
+            {t('dao.whatIsDAOLite', 'What is DAO Lite?')}
           </h2>
           <p className="text-white/75 text-base leading-relaxed max-w-[70ch] mx-auto">
-            {t.dao.whatIsDAOLiteContent}
+            {t('dao.whatIsDAOLiteContent', 'A simplified governance model for community decision-making')}
           </p>
         </PremiumCard>
 
         <div className="mb-12">
           <h2 className="text-2xl md:text-3xl font-semibold text-white text-center mb-8">
-            {t.dao.howToParticipate}
+            {t('dao.howToParticipate', 'How to Participate')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {steps.map((step) => (
@@ -66,7 +66,7 @@ const DAOLite = ({ lang }: DAOLiteProps) => {
           <div className="flex items-center gap-3 mb-6">
             <CheckCircle className="w-6 h-6 text-[#F0B90B]" />
             <h2 className="text-2xl font-semibold text-white">
-              {t.dao.rules}
+              {t('dao.rules', 'DAO Rules')}
             </h2>
           </div>
           <div className="space-y-3">
@@ -81,7 +81,7 @@ const DAOLite = ({ lang }: DAOLiteProps) => {
 
         <div className="pb-0">
           <NoticeBox variant="info">
-            {t.dao.notice}
+            {t('dao.notice', 'Participation is voluntary and requires token holdings')}
           </NoticeBox>
         </div>
       </PremiumSection>

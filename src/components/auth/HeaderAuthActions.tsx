@@ -35,7 +35,9 @@ function useSession() {
 
 async function doLogout() {
   await supabase.auth.signOut();
-  window.location.href = "/";
+  // Get current language and redirect to language-specific home
+  const currentLang = window.location.pathname.match(/^\/(en|id)/)?.[1] || 'en';
+  window.location.href = `/${currentLang}/home`;
 }
 
 interface HeaderAuthActionsProps {

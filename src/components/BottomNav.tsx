@@ -1,6 +1,6 @@
 import { Home, FileText, Users, Eye, Shield } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { Language, useTranslations, getLangPath } from '../i18n';
+import { Language, useI18n, getLangPath } from '../i18n';
 import { Link } from './Router';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -11,7 +11,7 @@ interface BottomNavProps {
 
 const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const t = useTranslations(lang);
+  const { t } = useI18n(lang);
   const { profile } = useAuth();
 
   const isAdmin = profile?.role === "admin" || profile?.role === "super_admin";
@@ -26,13 +26,34 @@ const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
     };
   }, []);
 
+  // Safe nav items with fallbacks
   const navItems = [
-    { label: t.nav.home, path: getLangPath(lang, '/home'), icon: Home },
-    { label: t.nav.docs, path: getLangPath(lang, '/docs'), icon: FileText },
-    { label: t.nav.dao, path: getLangPath(lang, '/dao'), icon: Users },
-    { label: t.nav.transparency, path: getLangPath(lang, '/transparency'), icon: Eye },
+    { 
+      label: t('nav.home', 'Home'), 
+      path: getLangPath(lang, '/home'), 
+      icon: Home 
+    },
+    { 
+      label: t('nav.docs', 'Docs'), 
+      path: getLangPath(lang, '/docs'), 
+      icon: FileText 
+    },
+    { 
+      label: t('nav.dao', 'DAO'), 
+      path: getLangPath(lang, '/dao'), 
+      icon: Users 
+    },
+    { 
+      label: t('nav.transparency', 'Transparency'), 
+      path: getLangPath(lang, '/transparency'), 
+      icon: Eye 
+    },
     ...(isAdmin ? [
-      { label: t.nav.admin, path: getLangPath(lang, '/admin/control'), icon: Shield }
+      { 
+        label: t('nav.admin', 'Admin'), 
+        path: getLangPath(lang, '/admin/control'), 
+        icon: Shield 
+      }
     ] : [])
   ];
 

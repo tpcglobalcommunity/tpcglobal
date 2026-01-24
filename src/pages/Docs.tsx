@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { BookOpen, Target, Coins, HelpCircle } from 'lucide-react';
-import { Language, useTranslations } from '../i18n';
+import { Language, useI18n } from '../i18n';
 import { PremiumShell, PremiumCard, Accordion, AccordionItem, NoticeBox } from '../components/ui';
 
 interface DocsProps {
@@ -10,15 +10,15 @@ interface DocsProps {
 const HEADER_OFFSET = 100;
 
 const Docs = ({ lang }: DocsProps) => {
-  const t = useTranslations(lang);
+  const { t, language: currentLang } = useI18n(lang);
   const [activeSection, setActiveSection] = useState('overview');
   const sectionsRef = useRef<{ [key: string]: HTMLElement | null }>({});
 
   const sections = [
-    { id: 'overview', label: t.docs.whatIsTPC, icon: BookOpen },
-    { id: 'how-it-works', label: t.docs.howItWorks, icon: Target },
-    { id: 'token-utility', label: t.docs.tokenUtility, icon: Coins },
-    { id: 'faq', label: t.docs.faq, icon: HelpCircle },
+    { id: 'overview', label: t("docs.whatIsTPC", "What is TPC?"), icon: BookOpen },
+    { id: 'how-it-works', label: t("docs.howItWorks", "How It Works"), icon: Target },
+    { id: 'token-utility', label: t("docs.tokenUtility", "Token Utility"), icon: Coins },
+    { id: 'faq', label: t("docs.faq", "FAQ"), icon: HelpCircle },
   ];
 
   useEffect(() => {
@@ -66,10 +66,10 @@ const Docs = ({ lang }: DocsProps) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            {t.docs.title}
+            {t("docs.title", "Documentation")}
           </h1>
           <p className="text-xl text-white/70">
-            {t.docs.subtitle}
+            {t("docs.subtitle", "Everything you need to know about TPC")}
           </p>
         </div>
 
@@ -113,11 +113,11 @@ const Docs = ({ lang }: DocsProps) => {
                       <BookOpen className="w-6 h-6 text-black" />
                     </div>
                     <h2 className="text-2xl font-semibold text-white mt-2">
-                      {t.docs.whatIsTPC}
+                      {t("docs.whatIsTPC", "What is TPC?")}
                     </h2>
                   </div>
                   <p className="text-white/75 text-base leading-relaxed">
-                    {t.docs.whatIsTPCContent}
+                    {t("docs.whatIsTPCContent", "TPC (Trader Professional Community) is an education-based community built to support traders through collaboration, knowledge sharing, and transparency.")}
                   </p>
                 </PremiumCard>
               </section>
@@ -132,11 +132,11 @@ const Docs = ({ lang }: DocsProps) => {
                       <Target className="w-6 h-6 text-black" />
                     </div>
                     <h2 className="text-2xl font-semibold text-white mt-2">
-                      {t.docs.howItWorks}
+                      {t("docs.howItWorks", "How It Works")}
                     </h2>
                   </div>
                   <p className="text-white/75 text-base leading-relaxed">
-                    {t.docs.howItWorksContent}
+                    {t("docs.howItWorksContent", "TPC operates as an open community that prioritizes education and member participation. Governance features will be implemented gradually based on technical readiness and community decisions.")}
                   </p>
                 </PremiumCard>
               </section>
@@ -151,11 +151,11 @@ const Docs = ({ lang }: DocsProps) => {
                       <Coins className="w-6 h-6 text-black" />
                     </div>
                     <h2 className="text-2xl font-semibold text-white mt-2">
-                      {t.docs.tokenUtility}
+                      {t("docs.tokenUtility", "Token Utility")}
                     </h2>
                   </div>
                   <p className="text-white/75 text-base leading-relaxed">
-                    {t.docs.tokenUtilityContent}
+                    {t("docs.tokenUtilityContent", "The TPC Token is designed as a utility and community governance token. It is not an investment, not a financial instrument, and does not promise any profits or returns.")}
                   </p>
                 </PremiumCard>
               </section>
@@ -167,27 +167,27 @@ const Docs = ({ lang }: DocsProps) => {
                 <div className="flex items-center gap-3 mb-6">
                   <HelpCircle className="w-6 h-6 text-[#F0B90B]" />
                   <h2 className="text-2xl md:text-3xl font-semibold text-white">
-                    {t.docs.faq}
+                    {t("docs.faq", "FAQ")}
                   </h2>
                 </div>
                 <Accordion>
                   <AccordionItem
-                    title={t.docs.faqQ1}
+                    title={t("docs.faqQ1", "Is the TPC Token an investment?")}
                     defaultOpen
                   >
-                    {t.docs.faqA1}
+                    {t("docs.faqA1", "No. The TPC Token is a utility and governance token only. It is not an investment or financial product and offers no guarantee of profit.")}
                   </AccordionItem>
                   <AccordionItem
-                    title={t.docs.faqQ2}
+                    title={t("docs.faqQ2", "How can I participate in governance?")}
                   >
-                    {t.docs.faqA2}
+                    {t("docs.faqA2", "Participation in governance will be possible once DAO Lite features are activated and made available to the community.")}
                   </AccordionItem>
                 </Accordion>
               </section>
 
               <section>
                 <NoticeBox variant="info">
-                  {t.docs.disclaimer}
+                  {t("docs.disclaimer", "All information on this website is for educational and community purposes only. TPC is not a financial advisor or investment platform.")}
                 </NoticeBox>
               </section>
             </div>

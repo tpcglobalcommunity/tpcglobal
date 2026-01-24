@@ -1,14 +1,44 @@
 import { Wallet, ExternalLink, TrendingUp, CheckCircle2, FileText, Users } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../i18n';
+import { Language, useI18n, getLangPath, tStr, tArr } from '../i18n';
 import { PremiumShell, PremiumCard, NoticeBox, PremiumButton } from '../components/ui';
 import { Link } from '../components/Router';
+
+// Safe string helpers
+const toStr = (v: unknown) => (v == null ? "" : String(v));
+const safeSplit = (v: unknown, delimiter: string) => toStr(v).split(delimiter);
+const safeTrim = (v: unknown) => toStr(v).trim();
 
 interface TransparencyProps {
   lang: Language;
 }
 
 const Transparency = ({ lang }: TransparencyProps) => {
-  const t = useTranslations(lang);
+  const { t } = useI18n();
+
+  const title = tStr(t("transparency.hero.title"), "Transparency", lang);
+  const subtitle = tStr(t("transparency.hero.subtitle"), "Public logs and on-chain proof.", lang);
+  const noticeTitle = tStr(t("transparency.live.title"), "Live Transparency", lang);
+  const noticeBody = tStr(t("transparency.live.desc"), "All community funds and transactions are publicly verifiable on-chain.", lang);
+
+  const wallets = tArr("transparency.wallets.items", lang);
+  const safeWallets = Array.isArray(wallets) ? wallets : [];
+
+  const policyTitle = tStr(t("transparency.revenue.title"), "Revenue Policy", lang);
+  const youtubeTitle = tStr(t("transparency.revenue.youtube"), "YouTube Revenue Split", lang);
+  const youtubePolicy = tArr("transparency.policy.youtube", lang);
+  const safeYoutubePolicy = Array.isArray(youtubePolicy) ? youtubePolicy : [];
+  const revenueLabel = tStr(t("transparency.revenue.community"), "Revenue to Community", lang);
+  const revenueDesc = tStr(t("transparency.revenueDesc"), "All revenue goes back to community members and development.", lang);
+
+  const updatesTitle = tStr(t("transparency.updates.title"), "Recent Updates", lang);
+  const updates = tArr("transparency.wallets.items", lang);
+  const safeUpdates = Array.isArray(updates) ? updates : [];
+
+  const ctaTitle = tStr(t("transparency.cta.title"), "Join Our Community", lang);
+  const ctaSubtitle = tStr(t("transparency.cta.subtitle"), "Be part of a transparent and education-first trading community.", lang);
+  const ctaDocs = tStr(t("transparency.cta.docs"), "Read Documentation", lang);
+  const ctaCommunity = tStr(t("transparency.cta.join"), "Join Community", lang);
+  const walletAction = tStr(t("transparency.walletAction"), "View on Explorer", lang);
 
   return (
     <PremiumShell>
@@ -16,18 +46,18 @@ const Transparency = ({ lang }: TransparencyProps) => {
         <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-10 mb-12">
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              {t.transparency.header.title}
+              {title}
             </h1>
             <p className="text-lg md:text-xl text-white/70 max-w-3xl mx-auto">
-              {t.transparency.header.subtitle}
+              {subtitle}
             </p>
           </div>
 
           <NoticeBox
             variant="info"
-            title={t.transparency.header.noticeTitle}
+            title={noticeTitle}
           >
-            {t.transparency.header.noticeBody}
+            {noticeBody}
           </NoticeBox>
         </div>
 
@@ -38,36 +68,36 @@ const Transparency = ({ lang }: TransparencyProps) => {
                 <Wallet className="w-6 h-6 text-black" />
               </div>
               <h2 className="text-2xl md:text-3xl font-semibold text-white">
-                {t.transparency.wallets.title}
+                {t("transparency.sections.officialWallets") || "Community Wallets"}
               </h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {t.transparency.wallets.items.map((wallet, index) => (
+              {safeWallets.map((wallet: any, index: number) => (
                 <PremiumCard key={index}>
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="text-lg font-semibold text-white">
-                      {wallet.label}
+                      {tStr(wallet?.label, "Wallet")}
                     </h3>
                     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-500/10 text-green-400 text-xs font-medium">
                       <CheckCircle2 className="w-3 h-3" />
-                      {wallet.status}
+                      {tStr(wallet?.status, "Active")}
                     </span>
                   </div>
 
                   <div className="bg-white/[0.04] rounded-lg p-3 mb-4 border border-white/10">
                     <p className="text-white/60 text-xs font-mono break-all">
-                      {wallet.address}
+                      {tStr(wallet?.address, "0x0000...0000")}
                     </p>
                   </div>
 
                   <p className="text-white/70 text-sm leading-relaxed mb-4">
-                    {wallet.purpose}
+                    {tStr(wallet?.purpose, "Wallet purpose")}
                   </p>
 
                   <button className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 hover:border-[#F0B90B]/30 text-white/70 hover:text-[#F0B90B] transition-all duration-200 text-sm font-medium">
                     <ExternalLink className="w-4 h-4" />
-                    {t.transparency.walletAction}
+                    {walletAction}
                   </button>
                 </PremiumCard>
               ))}
@@ -80,7 +110,7 @@ const Transparency = ({ lang }: TransparencyProps) => {
                 <TrendingUp className="w-6 h-6 text-black" />
               </div>
               <h2 className="text-2xl md:text-3xl font-semibold text-white">
-                {t.transparency.policy.title}
+                {policyTitle}
               </h2>
             </div>
 
@@ -89,22 +119,22 @@ const Transparency = ({ lang }: TransparencyProps) => {
                 <div>
                   <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                     <FileText className="w-5 h-5 text-[#F0B90B]" />
-                    {t.transparency.youtubeTitle}
+                    {youtubeTitle}
                   </h3>
                   <div className="space-y-3">
-                    {t.transparency.policy.youtube.map((item, index) => (
+                    {safeYoutubePolicy.map((item: any, index: number) => (
                       <div
                         key={index}
                         className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/10"
                       >
                         <div className="w-8 h-8 bg-[#F0B90B]/20 rounded-lg flex items-center justify-center flex-shrink-0">
                           <span className="text-[#F0B90B] font-bold text-sm">
-                            {item.split('%')[0]}%
+                            {toStr(safeSplit(tStr(item), '%')[0])}%
                           </span>
                         </div>
                         <div className="flex-1">
                           <p className="text-white font-medium text-sm">
-                            {item.split('—')[1].trim()}
+                            {safeTrim(safeSplit(tStr(item), '—')[1])}
                           </p>
                         </div>
                       </div>
@@ -118,10 +148,10 @@ const Transparency = ({ lang }: TransparencyProps) => {
                       100%
                     </div>
                     <p className="text-white/70 text-sm">
-                      {t.transparency.revenueLabel}
+                      {revenueLabel}
                     </p>
                     <p className="text-white/50 text-xs mt-2 max-w-[24ch] mx-auto leading-relaxed">
-                      {t.transparency.revenueDesc}
+                      {revenueDesc}
                     </p>
                   </div>
                 </div>
@@ -135,27 +165,27 @@ const Transparency = ({ lang }: TransparencyProps) => {
                 <FileText className="w-6 h-6 text-black" />
               </div>
               <h2 className="text-2xl md:text-3xl font-semibold text-white">
-                {t.transparency.updates.title}
+                {updatesTitle}
               </h2>
             </div>
 
             <div className="space-y-4">
-              {t.transparency.updates.items.map((update, index) => (
+              {safeUpdates.map((update: any, index: number) => (
                 <PremiumCard key={index}>
                   <div className="flex flex-col md:flex-row md:items-start gap-4">
                     <div className="flex-shrink-0">
                       <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-[#F0B90B]/10 border border-[#F0B90B]/30">
                         <span className="text-[#F0B90B] font-semibold text-sm">
-                          {update.date}
+                          {tStr(update?.date, "2026-01-18")}
                         </span>
                       </div>
                     </div>
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold text-white mb-2">
-                        {update.title}
+                        {tStr(update?.title, "Update Title")}
                       </h3>
                       <p className="text-white/70 text-sm leading-relaxed">
-                        {update.desc}
+                        {tStr(update?.desc, "Update description")}
                       </p>
                     </div>
                   </div>
@@ -170,17 +200,17 @@ const Transparency = ({ lang }: TransparencyProps) => {
                 <div className="flex items-center justify-center gap-3 mb-4">
                   <Users className="w-8 h-8 text-[#F0B90B]" />
                   <h2 className="text-2xl md:text-3xl font-semibold text-white">
-                    {t.transparency.cta.title}
+                    {ctaTitle}
                   </h2>
                 </div>
                 <p className="text-white/70 text-base mb-8 max-w-2xl mx-auto">
-                  {t.transparency.cta.subtitle}
+                  {ctaSubtitle}
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Link to={getLangPath(lang, '/docs')}>
                     <PremiumButton variant="primary">
                       <FileText className="w-5 h-5" />
-                      {t.transparency.cta.docs}
+                      {ctaDocs}
                     </PremiumButton>
                   </Link>
                   <PremiumButton
@@ -190,7 +220,7 @@ const Transparency = ({ lang }: TransparencyProps) => {
                     rel="noopener noreferrer"
                   >
                     <Users className="w-5 h-5" />
-                    {t.transparency.cta.community}
+                    {ctaCommunity}
                   </PremiumButton>
                 </div>
               </div>

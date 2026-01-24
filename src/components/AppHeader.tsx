@@ -1,7 +1,9 @@
 import { Home, BookOpen, Shield, BadgeCheck, Wallet, Scale, Store } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
-import { Language, useTranslations, setLanguage, getLangPath } from '../i18n';
+import { Language, useI18n, getLangPath, stripLang, storeLanguage } from '../i18n';
+import { ensureLangPath } from '../utils/langPath';
 import { Link } from './Router';
 import TPMonogram from './brand/TPMonogram';
 import { HeaderAuthActions } from './auth/HeaderAuthActions';
@@ -16,7 +18,9 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { profile } = useAuth();
-  const t = useTranslations(lang);
+  const { t } = useI18n();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const isAdmin = profile?.role === "admin" || profile?.role === "super_admin";
 
@@ -44,40 +48,58 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
     };
   }, [mobileMenuOpen]);
 
+  // Safe nav items with fallbacks
   const navItems = [
-    { label: t.nav.home, path: getLangPath(lang, '/home'), icon: Home },
-    { label: t.nav.docs, path: getLangPath(lang, '/docs'), icon: BookOpen },
-    { label: t.nav.dao, path: getLangPath(lang, '/dao'), icon: Shield },
-    { label: t.nav.marketplace, path: getLangPath(lang, '/marketplace'), icon: Store },
-    { label: t.nav.transparency, path: getLangPath(lang, '/transparency'), icon: BadgeCheck },
-    { label: t.nav.fund, path: getLangPath(lang, '/fund'), icon: Wallet },
-    { label: t.nav.legal, path: getLangPath(lang, '/legal'), icon: Scale },
-    ...(isAdmin ? [{ label: t.nav.admin, path: getLangPath(lang, '/admin/control'), icon: Shield }] : [])
+    { label: t('nav.home', 'Home'), path: getLangPath(lang, '/home'), icon: Home },
+    { label: t('nav.docs', 'Docs'), path: getLangPath(lang, '/docs'), icon: BookOpen },
+    { label: t('nav.dao', 'DAO'), path: getLangPath(lang, '/dao'), icon: Shield },
+    { label: t('nav.marketplace', 'Marketplace'), path: getLangPath(lang, '/marketplace'), icon: Store },
+    { label: t('nav.transparency', 'Transparency'), path: getLangPath(lang, '/transparency'), icon: BadgeCheck },
+    { label: t('nav.fund', 'Fund'), path: getLangPath(lang, '/fund'), icon: Wallet },
+    { label: t('nav.legal', 'Legal'), path: getLangPath(lang, '/legal'), icon: Scale },
+    ...(isAdmin ? [{ label: t('nav.admin', 'Admin'), path: getLangPath(lang, '/admin/control'), icon: Shield }] : [])
   ];
 
   const handleLanguageChange = (newLang: Language) => {
-    setLanguage(newLang, currentPath);
+    // Prevent unnecessary navigation
+    if (newLang === lang) return;
+    
+    // Get current path without language prefix
+    const currentPath = location.pathname;
+    const basePath = stripLang(currentPath) || '/home';
+    
+    // Build new path with target language
+    const newPath = ensureLangPath(newLang, basePath);
+    
+    // Preserve query string and hash
+    const fullPath = newPath + location.search + location.hash;
+    
+    // Store language preference in localStorage
+    storeLanguage(newLang);
+    
+    // Use React Router navigate for proper SPA navigation
+    navigate(fullPath, { replace: false });
   };
 
   return (
     <>
     <header
-      className={`sticky top-0 z-50 border-b border-white/10 transition-all duration-300 ease-out before:absolute before:top-0 before:left-1/2 before:-translate-x-1/2 before:w-1/2 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-[#F0B90B]/30 before:to-transparent before:opacity-60 before:blur-[1px] ${
+      className={`sticky top-0 z-50 border-b border-white/10 transition-all duration-300 ease-out before:absolute before:top-0 before:left-1/2 before:-translate-x-1/2 before:w-1/2 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-[#F0B90B]/30 before:to-transparent before:opacity-60 before:blur-[1px] before:pointer-events-none ${
         scrolled
           ? 'h-12 bg-black/75 backdrop-blur-2xl shadow-lg shadow-black/30'
           : 'h-14 bg-black/60 backdrop-blur-2xl shadow-md shadow-black/10'
       }`}
     >
-      <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#F0B90B]/40 to-transparent"></div>
+      <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#F0B90B]/40 to-transparent pointer-events-none"></div>
 
-      <div className="h-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+      <div className="relative z-10 h-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         <div className="flex items-center h-full gap-3">
           <Link
             to={getLangPath(lang, '/home')}
             className="relative flex items-center gap-2.5 group shrink-0"
             aria-label="TPC Home"
           >
-            <div className="absolute -left-2 -top-2 w-16 h-16 bg-gradient-radial from-[#F0B90B]/15 via-transparent to-transparent blur-[80px] opacity-20"></div>
+            <div className="absolute -left-2 -top-2 w-16 h-16 bg-gradient-radial from-[#F0B90B]/15 via-transparent to-transparent blur-[80px] opacity-20 pointer-events-none"></div>
 
             <TPMonogram size={30} />
 
@@ -123,10 +145,11 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
               <HeaderAuthActions lang={lang} />
             </div>
 
-            <div className="flex items-center rounded-full bg-white/12 backdrop-blur-lg border border-white/15 p-[3px] shrink-0 transition-all duration-200 hover:border-[#F0B90B]/40 hover:-translate-y-[0.5px]">
+            <div className="relative z-50 flex items-center rounded-full bg-white/12 backdrop-blur-lg border border-white/15 p-[3px] shrink-0 transition-all duration-200 hover:border-[#F0B90B]/40 hover:-translate-y-[0.5px] pointer-events-auto">
               <button
+                type="button"
                 onClick={() => handleLanguageChange('en')}
-                className={`px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-semibold rounded-full transition-all duration-200 ${
+                className={`relative z-50 px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-semibold rounded-full transition-all duration-200 pointer-events-auto ${
                   lang === 'en'
                     ? 'bg-[#F0B90B] text-black shadow-lg shadow-[#F0B90B]/25'
                     : 'text-white/60 hover:text-white/80 hover:-translate-y-[0.5px]'
@@ -136,8 +159,9 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                 EN
               </button>
               <button
+                type="button"
                 onClick={() => handleLanguageChange('id')}
-                className={`px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-semibold rounded-full transition-all duration-200 ${
+                className={`relative z-50 px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-semibold rounded-full transition-all duration-200 pointer-events-auto ${
                   lang === 'id'
                     ? 'bg-[#F0B90B] text-black shadow-lg shadow-[#F0B90B]/25'
                     : 'text-white/60 hover:text-white/80 hover:-translate-y-[0.5px]'

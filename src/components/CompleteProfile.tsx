@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useI18n } from '../../i18n';
-import { supabase } from '../../lib/supabase';
-import { langPath } from '../../utils/langPath';
+import { useI18n } from '../i18n';
+import { completeRequiredProfile, getProfileCompletionStatus } from '../lib/supabase';
+import { langPath } from '../utils/langPath';
 import { User, Phone, MessageSquare, MapPin, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 interface ProfileData {
@@ -19,10 +19,9 @@ interface ValidationErrors {
   city?: string;
 }
 
-export default function CompleteProfile() {
+export const CompleteProfile: React.FC<{ lang: 'en' | 'id' }> = ({ lang }) => {
   const { t } = useI18n();
   const navigate = useNavigate();
-  const [lang, setLang] = useState<'en' | 'id'>('en');
 
   const [profileData, setProfileData] = useState<ProfileData>({
     full_name: '',
@@ -35,41 +34,16 @@ export default function CompleteProfile() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Get language from URL
-  useEffect(() => {
-    const pathLang = window.location.pathname.split('/')[1];
-    if (pathLang === 'id' || pathLang === 'en') {
-      setLang(pathLang);
-    }
-  }, []);
-
   // Check if profile is already completed
   useEffect(() => {
     const checkProfileStatus = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session?.user) {
-          navigate(langPath(lang, '/signin'));
-          return;
-        }
-
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('profile_required_completed')
-          .eq('id', session.user.id)
-          .single();
-
-        if (error) {
-          console.error('[CompleteProfile] Error checking status:', error);
-          return;
-        }
-
-        if (data?.profile_required_completed) {
+        const status = await getProfileCompletionStatus();
+        if (status?.profile_required_completed) {
           navigate(langPath(lang, '/member/dashboard'));
         }
       } catch (error) {
-        console.error('[CompleteProfile] Error:', error);
+        console.error('[PROFILE_STATUS] Error:', error);
       }
     };
 
@@ -88,6 +62,7 @@ export default function CompleteProfile() {
         }
         break;
       case 'phone_wa':
+        // Normalize and validate WhatsApp number
         const normalizedPhone = value.replace(/[^0-9+]/g, '');
         if (!normalizedPhone.startsWith('+62') && !normalizedPhone.startsWith('62')) {
           return t('profile.errors.phoneFormat');
@@ -97,6 +72,7 @@ export default function CompleteProfile() {
         }
         break;
       case 'telegram':
+        // Validate Telegram username or link
         const telegramValue = value.trim();
         if (!telegramValue.startsWith('@') && !telegramValue.startsWith('https://t.me/')) {
           return t('profile.errors.telegramFormat');
@@ -118,6 +94,7 @@ export default function CompleteProfile() {
     const value = e.target.value;
     setProfileData(prev => ({ ...prev, [field]: value }));
     
+    // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
@@ -133,10 +110,12 @@ export default function CompleteProfile() {
   const normalizeAndValidateData = (): ProfileData => {
     const normalized = { ...profileData };
 
+    // Normalize WhatsApp number
     if (normalized.phone_wa.startsWith('8')) {
       normalized.phone_wa = '+62' + normalized.phone_wa;
     }
 
+    // Normalize Telegram username
     if (normalized.telegram && !normalized.telegram.startsWith('@') && !normalized.telegram.startsWith('https://t.me/')) {
       normalized.telegram = '@' + normalized.telegram;
     }
@@ -170,27 +149,10 @@ export default function CompleteProfile() {
 
     try {
       const normalizedData = normalizeAndValidateData();
-      
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
-        throw new Error('User not authenticated');
-      }
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          ...normalizedData,
-          profile_required_completed: true
-        })
-        .eq('id', session.user.id);
-
-      if (error) {
-        throw error;
-      }
-
+      await completeRequiredProfile(normalizedData);
       setIsSuccess(true);
     } catch (error: any) {
-      console.error('[CompleteProfile] Error:', error);
+      console.error('[PROFILE] Error:', error);
       setErrors(prev => ({ 
         ...prev, 
         submit: error.message || t('profile.errors.saveError') 
@@ -236,6 +198,7 @@ export default function CompleteProfile() {
     <div className="min-h-screen bg-[#0b0f17] flex items-center justify-center p-4">
       <div className="max-w-2xl w-full">
         <div className="bg-gradient-to-br from-[#101827] to-[#0b0f17] border border-[rgba(240,185,11,0.18)] rounded-2xl p-8">
+          {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">
               {t('profileCompletion.title')}
@@ -245,6 +208,7 @@ export default function CompleteProfile() {
             </p>
           </div>
 
+          {/* Profile Completion Notice */}
           <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 mb-6">
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
@@ -266,6 +230,7 @@ export default function CompleteProfile() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Required Fields Section */}
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
               <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
                 <User className="w-5 h-5 text-[#f0b90b]" />
@@ -273,6 +238,7 @@ export default function CompleteProfile() {
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Full Name */}
                 <div>
                   <label className="block text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
                     {t('profile.fullName')} *
@@ -292,6 +258,7 @@ export default function CompleteProfile() {
                   )}
                 </div>
 
+                {/* WhatsApp */}
                 <div>
                   <label className="block text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
                     {t('profile.phoneWa')} *
@@ -311,6 +278,7 @@ export default function CompleteProfile() {
                   )}
                 </div>
 
+                {/* Telegram */}
                 <div>
                   <label className="block text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
                     {t('profile.telegram')} *
@@ -330,6 +298,7 @@ export default function CompleteProfile() {
                   )}
                 </div>
 
+                {/* City */}
                 <div>
                   <label className="block text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
                     {t('profile.city')} *
@@ -351,12 +320,14 @@ export default function CompleteProfile() {
               </div>
             </div>
 
+            {/* Submit Error */}
             {(errors as any).submit && (
               <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
                 <p className="text-red-400 text-sm">{(errors as any).submit}</p>
               </div>
             )}
 
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={isSubmitting || !isFormValid()}
@@ -376,4 +347,4 @@ export default function CompleteProfile() {
       </div>
     </div>
   );
-}
+};

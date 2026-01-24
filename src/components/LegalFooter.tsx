@@ -1,4 +1,4 @@
-import { Language, useTranslations, getLangPath } from '../i18n';
+import { Language, useI18n, getLangPath } from '../i18n';
 import { Link } from './Router';
 import TPMonogram from './brand/TPMonogram';
 
@@ -7,11 +7,26 @@ interface LegalFooterProps {
 }
 
 const LegalFooter = ({ lang }: LegalFooterProps) => {
-  const t = useTranslations(lang);
+  const { t } = useI18n(lang);
   const currentYear = new Date().getFullYear();
   const copyrightText = lang === 'en'
     ? `© ${currentYear} TPC. All rights reserved.`
     : `© ${currentYear} TPC. Hak cipta dilindungi.`;
+
+  // Safe footer data with fallbacks
+  const footerData = {
+    brand: t('footer.brand', 'TPC'),
+    tagline: t('footer.tagline', 'Education-first trading community'),
+    quickLinks: t('footer.quickLinks', 'Quick Links'),
+    links: {
+      home: t('footer.links.home', 'Home'),
+      docs: t('footer.links.docs', 'Documentation'),
+      transparency: t('footer.links.transparency', 'Transparency'),
+      community: t('footer.links.community', 'Community'),
+      telegram: t('footer.links.telegram', 'Telegram')
+    },
+    madeWith: t('footer.madeWith', 'Made with care by TPC')
+  };
 
   return (
     <footer
@@ -34,13 +49,13 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
               </div>
               <span className="text-lg font-bold tracking-tight text-white">TPC</span>
             </div>
-            <p className="text-[11px] text-white/65 mb-0.5 font-medium">{t.footer.brand}</p>
-            <p className="text-xs text-white/50 leading-relaxed max-w-[38ch]">{t.footer.tagline}</p>
+            <p className="text-[11px] text-white/65 mb-0.5 font-medium">{footerData.brand}</p>
+            <p className="text-xs text-white/50 leading-relaxed max-w-[38ch]">{footerData.tagline}</p>
           </div>
 
           <div className="opacity-0 animate-[fadeInUp_0.6s_ease-out_0.1s_forwards]">
             <div className="mb-1.5">
-              <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-white/70 mb-1">{t.footer.quickLinks}</h3>
+              <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-white/70 mb-1">{footerData.quickLinks}</h3>
               <div className="w-10 h-[2px] bg-gradient-to-r from-[#F0B90B] to-transparent opacity-90 blur-[1px]"></div>
             </div>
             <ul className="space-y-1">
@@ -50,7 +65,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
                   className="group relative flex items-center text-[13px] text-white/70 hover:text-white transition-all duration-200"
                 >
                   <span className="absolute -left-3 w-1 h-1 rounded-full bg-[#F0B90B] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
-                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{t.footer.links.home}</span>
+                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{footerData.links.home}</span>
                 </Link>
               </li>
               <li>
@@ -59,7 +74,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
                   className="group relative flex items-center text-[13px] text-white/70 hover:text-white transition-all duration-200"
                 >
                   <span className="absolute -left-3 w-1 h-1 rounded-full bg-[#F0B90B] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
-                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{t.footer.links.docs}</span>
+                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{footerData.links.docs}</span>
                 </Link>
               </li>
               <li>
@@ -68,7 +83,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
                   className="group relative flex items-center text-[13px] text-white/70 hover:text-white transition-all duration-200"
                 >
                   <span className="absolute -left-3 w-1 h-1 rounded-full bg-[#F0B90B] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
-                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{t.footer.links.transparency}</span>
+                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{footerData.links.transparency}</span>
                 </Link>
               </li>
             </ul>
@@ -76,7 +91,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
 
           <div className="opacity-0 animate-[fadeInUp_0.6s_ease-out_0.2s_forwards]">
             <div className="mb-1.5">
-              <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-white/70 mb-1">{t.footer.links.community}</h3>
+              <h3 className="text-[11px] uppercase tracking-[0.2em] font-semibold text-white/70 mb-1">{footerData.links.community}</h3>
               <div className="w-10 h-[2px] bg-gradient-to-r from-[#F0B90B] to-transparent opacity-90 blur-[1px]"></div>
             </div>
             <ul className="space-y-1">
@@ -88,7 +103,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
                   className="group relative flex items-center text-[13px] text-white/70 hover:text-white transition-all duration-200"
                 >
                   <span className="absolute -left-3 w-1 h-1 rounded-full bg-[#F0B90B] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
-                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{t.footer.links.telegram}</span>
+                  <span className="group-hover:translate-x-[3px] transition-transform duration-200">{footerData.links.telegram}</span>
                 </a>
               </li>
             </ul>
@@ -112,7 +127,7 @@ const LegalFooter = ({ lang }: LegalFooterProps) => {
                 <span>DAO Driven</span>
               </div>
             </div>
-            <p className="text-[9px] text-white/45 tracking-wide">{t.footer.madeWith}</p>
+            <p className="text-[9px] text-white/45 tracking-wide">{footerData.madeWith}</p>
           </div>
         </div>
       </div>

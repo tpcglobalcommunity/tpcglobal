@@ -3,6 +3,7 @@ import { LayoutDashboard, Layers, Wallet, Settings, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { useRealtimeNotifications } from "../../hooks/useRealtimeNotifications";
+import { Link } from "../Router";
 
 type Item = { key: string; label: string; href: string; icon: any; badge?: number };
 
@@ -68,9 +69,9 @@ export default function MemberNav({ lang }: { lang: Language }) {
                 const Icon = i.icon;
                 const active = isActive(i.href);
                 return (
-                  <a
+                  <Link
                     key={i.key}
-                    href={i.href}
+                    to={i.href}
                     className={[
                       "flex items-center gap-3 px-3 py-2 rounded-2xl border transition",
                       active
@@ -97,7 +98,7 @@ export default function MemberNav({ lang }: { lang: Language }) {
                       )}
                       {active ? <div className="w-1.5 h-6 rounded-full bg-[#F0B90B]" /> : null}
                     </div>
-                  </a>
+                  </Link>
                 );
               })}
             </div>
@@ -118,9 +119,9 @@ export default function MemberNav({ lang }: { lang: Language }) {
                 const Icon = i.icon;
                 const active = isActive(i.href);
                 return (
-                  <a
+                  <Link
                     key={i.key}
-                    href={i.href}
+                    to={i.href}
                     className="py-3 flex flex-col items-center justify-center gap-1 relative"
                   >
                     <Icon className={["w-5 h-5", active ? "text-[#F0B90B]" : "text-white/55"].join(" ")} />
@@ -133,7 +134,7 @@ export default function MemberNav({ lang }: { lang: Language }) {
                       </span>
                     )}
                     <span className={["h-1 w-1 rounded-full", active ? "bg-[#F0B90B]" : "bg-transparent"].join(" ")} />
-                  </a>
+                  </Link>
                 );
               })}
             </div>

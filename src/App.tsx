@@ -117,6 +117,19 @@ function App() {
       return;
     }
 
+    // handle /id or /en without trailing path
+    if (path === "/id" || path === "/id/") {
+      window.history.replaceState({}, "", "/id/home");
+      setCurrentPath("/id/home");
+      return;
+    }
+    
+    if (path === "/en" || path === "/en/") {
+      window.history.replaceState({}, "", "/en/home");
+      setCurrentPath("/en/home");
+      return;
+    }
+
     // kalau tidak diawali /en/ atau /id/, paksa ke /en + path
     if (!/^\/(en|id)\//.test(path)) {
       const next = `/en${path.startsWith("/") ? path : `/${path}`}`;

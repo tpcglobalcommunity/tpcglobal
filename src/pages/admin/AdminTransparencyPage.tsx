@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { useMyRole } from "../../hooks/useMyRole";
+import { getLangPath, type Language } from "../../i18n";
 import {
   ShieldCheck,
   FileText,
@@ -119,7 +120,7 @@ const CATEGORIES = [
   { value: "ops", label: "Operations" },
 ];
 
-export default function AdminTransparencyPage() {
+export default function AdminTransparencyPage({ lang }: { lang: Language }) {
   const navigate = useNavigate();
   const { role, loading: roleLoading } = useMyRole();
   const [submitting, setSubmitting] = useState(false);
@@ -365,7 +366,7 @@ export default function AdminTransparencyPage() {
                   <FileText className="w-4 h-4 text-white/40" />
                   <span className="text-white/60">Public Transparency:</span>
                   <a 
-                    href="/en/public/transparency" 
+                    href={getLangPath(lang, "/public/transparency")} 
                     className="text-[#F0B90B] hover:underline"
                   >
                     View Public Page

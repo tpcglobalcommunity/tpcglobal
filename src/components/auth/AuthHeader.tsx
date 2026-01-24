@@ -1,4 +1,4 @@
-import { Language, setLanguage, getLangPath } from '../../i18n';
+import { Language, getLangPath, stripLang, storeLanguage } from '../../i18n';
 import { Link } from '../Router';
 import TPMonogram from '../brand/TPMonogram';
 
@@ -8,8 +8,24 @@ interface AuthHeaderProps {
 
 export default function AuthHeader({ lang }: AuthHeaderProps) {
   const handleLanguageChange = (newLang: Language) => {
+    // Prevent unnecessary navigation
+    if (newLang === lang) return;
+    
+    // Get current path without language prefix
     const currentPath = window.location.pathname;
-    setLanguage(newLang, currentPath);
+    const basePath = stripLang(currentPath) || '/home';
+    
+    // Build new path with target language
+    const newPath = `/${newLang}${basePath === '/' ? '' : basePath}`;
+    
+    // Preserve query string and hash
+    const fullPath = newPath + window.location.search + window.location.hash;
+    
+    // Store language preference in localStorage
+    storeLanguage(newLang);
+    
+    // Navigate to new path
+    window.location.href = fullPath;
   };
 
   return (
@@ -31,24 +47,26 @@ export default function AuthHeader({ lang }: AuthHeaderProps) {
           </div>
         </Link>
 
-        <div className="flex items-center rounded-2xl bg-white/12 backdrop-blur-lg border border-white/15 h-9 p-[3px]">
+        <div className="relative z-50 flex items-center rounded-full bg-white/12 backdrop-blur-lg border border-white/15 p-[3px] shrink-0 transition-all duration-200 hover:border-[#F0B90B]/40 hover:-translate-y-[0.5px] pointer-events-auto">
           <button
+            type="button"
             onClick={() => handleLanguageChange('en')}
-            className={`px-2 sm:px-3 py-1 text-xs font-semibold rounded-2xl transition-all duration-200 ${
+            className={`relative z-50 px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-semibold rounded-full transition-all duration-200 pointer-events-auto ${
               lang === 'en'
-                ? 'bg-[#F0B90B] text-black shadow-md shadow-[#F0B90B]/20'
-                : 'text-white/60 hover:text-white/80'
+                ? 'bg-[#F0B90B] text-black shadow-lg shadow-[#F0B90B]/25'
+                : 'text-white/60 hover:text-white/80 hover:-translate-y-[0.5px]'
             }`}
             aria-label="Switch to English"
           >
             EN
           </button>
           <button
+            type="button"
             onClick={() => handleLanguageChange('id')}
-            className={`px-2 sm:px-3 py-1 text-xs font-semibold rounded-2xl transition-all duration-200 ${
+            className={`relative z-50 px-2 sm:px-3 py-1 text-[11px] sm:text-[12px] font-semibold rounded-full transition-all duration-200 pointer-events-auto ${
               lang === 'id'
-                ? 'bg-[#F0B90B] text-black shadow-md shadow-[#F0B90B]/20'
-                : 'text-white/60 hover:text-white/80'
+                ? 'bg-[#F0B90B] text-black shadow-lg shadow-[#F0B90B]/25'
+                : 'text-white/60 hover:text-white/80 hover:-translate-y-[0.5px]'
             }`}
             aria-label="Switch to Indonesian"
           >

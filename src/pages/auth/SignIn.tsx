@@ -45,7 +45,16 @@ export default function SignIn({ lang }: SignInProps) {
     clearError();
     setSubmitting(true);
     try {
-      await signIn({ email: email.trim(), password });
+      const result = await signIn({ email: email.trim(), password });
+      
+      if (result.needsVerification) {
+        // Redirect to email verification page
+        const verifyUrl = `${getLangPath(L, "/verify-email")}?email=${encodeURIComponent(email.trim())}`;
+        window.location.assign(verifyUrl);
+        return;
+      }
+      
+      // Email is verified, proceed to member area
       window.location.assign(nextUrl);
     } catch (err: any) {
       handleError(err);

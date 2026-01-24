@@ -582,10 +582,11 @@ export interface VendorApplication {
   updated_at: string;
 }
 
-export const getPublicVendors = async (category?: string): Promise<PublicVendor[]> => {
+export const getPublicVendors = async (category?: string | undefined): Promise<PublicVendor[]> => {
   try {
     const { data, error } = await supabase.rpc('get_public_vendors', {
       p_category: category || null,
+      p_lang: 'en', // TODO: Get from i18n context
     });
 
     if (error) {
@@ -593,7 +594,12 @@ export const getPublicVendors = async (category?: string): Promise<PublicVendor[
       return [];
     }
 
-    return (data || []) as PublicVendor[];
+    // Handle both structured returns and JSONB returns
+    if (Array.isArray(data)) {
+      return data as PublicVendor[];
+    }
+
+    return [];
   } catch (err) {
     console.error('Error in getPublicVendors:', err);
     return [];
@@ -1167,8 +1173,8 @@ export const ensureOnboardingRow = async (): Promise<OnboardingState | null> => 
   return data;
 };
 
-export const signIn = async ({ email, password }: { email: string; password: string }): Promise<void> => {
-  const { error } = await supabase.auth.signInWithPassword({
+export const signIn = async ({ email, password }: { email: string; password: string }): Promise<{ user?: any; needsVerification?: boolean }> => {
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
@@ -1176,6 +1182,18 @@ export const signIn = async ({ email, password }: { email: string; password: str
   if (error) {
     throw error;
   }
+
+  // Check if email is verified
+  if (data.user && !data.user.email_confirmed_at) {
+    // Sign out the user since email is not verified
+    await supabase.auth.signOut();
+    return { 
+      user: data.user, 
+      needsVerification: true 
+    };
+  }
+
+  return { user: data.user, needsVerification: false };
 };
 
 export const signUpInviteOnly = async ({
@@ -1337,3 +1355,255 @@ export async function getMyProfile(): Promise<Profile | null> {
 
 // Re-export from new appSettings module for backward compatibility
 export { getAppSettings } from './appSettings';
+
+// Production-ready signup functions
+export interface SignUpData {
+  username: string;
+  email: string;
+  password: string;
+  invitationCode: string;
+}
+
+export interface CompleteProfileData {
+  full_name: string;
+  phone_wa: string;
+  telegram: string;
+  city: string;
+}
+
+export const signUpWithInvitation = async ({ username, email, password, invitationCode }: SignUpData) => {
+  console.log('[SIGNUP] Starting production signup');
+  
+  try {
+    // Validate invitation code using public-safe RPC
+    const { data: inviteValid, error: inviteError } = await supabase.rpc('validate_referral_code_public', {
+      p_code: invitationCode
+    });
+
+    if (inviteError) {
+      throw new Error('Failed to validate invitation code');
+    }
+
+    if (!inviteValid) {
+      throw new Error('Invalid invitation code');
+    }
+
+    // Check username availability using public-safe RPC (NO PROFILE QUERY)
+    const { data: usernameAvailable, error: usernameError } = await supabase.rpc('check_username_available', {
+      p_username: username
+    });
+
+    if (usernameError) {
+      throw new Error('Failed to check username availability');
+    }
+
+    if (!usernameAvailable) {
+      throw new Error('Username is already taken');
+    }
+
+    // Create user with metadata (NO PROFILE CREATION, NO PROFILE QUERIES)
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          username // Store username in metadata for later profile creation
+        }
+      }
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    // DO NOT create profile here - profile is created after email verification
+    // DO NOT query profiles table during signup
+    return data;
+  } catch (err: any) {
+    const normalizedError = normalizeSupabaseError(err);
+    console.error('[SIGNUP] Error:', normalizedError);
+    throw normalizedError;
+  }
+};
+
+export const signInWithVerification = async ({ email, password }: { email: string; password: string }) => {
+  console.log('[SIGNIN] Starting production sign in');
+  
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    // Check if email is verified - BLOCK LOGIN IF NOT VERIFIED
+    if (data.user && !data.user.email_confirmed_at) {
+      // Sign out the user since email is not verified
+      await supabase.auth.signOut();
+      throw new Error('Please verify your email before logging in.');
+    }
+
+    return data;
+  } catch (err: any) {
+    const normalizedError = normalizeSupabaseError(err);
+    console.error('[SIGNIN] Error:', normalizedError);
+    throw normalizedError;
+  }
+};
+
+export const completeRequiredProfile = async (profileData: CompleteProfileData) => {
+  console.log('[PROFILE] Completing required profile');
+  
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({
+        ...profileData,
+        profile_required_completed: true
+      })
+      .eq('id', user.id)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (err: any) {
+    const normalizedError = normalizeSupabaseError(err);
+    console.error('[PROFILE] Error:', normalizedError);
+    throw normalizedError;
+  }
+};
+
+export const validateInvitationCode = async (code: string) => {
+  try {
+    const { data, error } = await supabase.rpc('validate_invitation_code', {
+      code_input: code
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (err: any) {
+    const normalizedError = normalizeSupabaseError(err);
+    console.error('[INVITE_CHECK] Error:', normalizedError);
+    throw normalizedError;
+  }
+};
+
+export const getProfileCompletionStatus = async () => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return null;
+    }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('profile_required_completed')
+      .eq('id', user.id)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (err: any) {
+    const normalizedError = normalizeSupabaseError(err);
+    console.error('[PROFILE_STATUS] Error:', normalizedError);
+    throw normalizedError;
+  }
+};
+
+export const createProfileAfterVerification = async (username: string) => {
+  console.log('[PROFILE] Creating profile after email verification');
+  
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    // Create profile using upsert (only works when authenticated and email verified)
+    const { data, error } = await supabase
+      .from('profiles')
+      .upsert({
+        id: user.id,
+        username: username,
+        profile_required_completed: false
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (err: any) {
+    const normalizedError = normalizeSupabaseError(err);
+    console.error('[PROFILE_CREATE] Error:', normalizedError);
+    throw normalizedError;
+  }
+};
+
+// Ensure profile exists after verified login
+export const ensureProfileAfterLogin = async () => {
+  console.log('[PROFILE] Ensuring profile exists after verified login');
+  
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    // Check if user email is verified
+    if (!user.email_confirmed_at) {
+      throw new Error('Email not verified');
+    }
+
+    // Get username from user metadata (stored during signup)
+    const username = user.user_metadata?.username;
+    if (!username) {
+      throw new Error('Username not found in user metadata');
+    }
+
+    // Create profile if it doesn't exist
+    const { data, error } = await supabase
+      .from('profiles')
+      .upsert({
+        id: user.id,
+        username: username,
+        profile_required_completed: false
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (err: any) {
+    const normalizedError = normalizeSupabaseError(err);
+    console.error('[PROFILE_ENSURE] Error:', normalizedError);
+    throw normalizedError;
+  }
+};

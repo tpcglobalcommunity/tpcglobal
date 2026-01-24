@@ -1,21 +1,13 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Loader2, CheckCircle2, XCircle, Mail, User, Lock, Shield, AlertCircle } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, Mail, User, Lock, Shield } from "lucide-react";
 import { useI18n } from "../../i18n";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { getAppSettings } from "../../lib/appSettings";
 import { buildAuthRedirect } from "../../lib/authRedirect";
 import { ensureLangPath } from "../../utils/langPath";
 import { devLog } from "../../utils/devLog";
 import { normalizeInviteCode, isInviteCodeFormatValid } from "../../utils/inviteCode";
-import { 
-  validateForm, 
-  isFormValid, 
-  normalizeUsername,
-  type FormErrors,
-  type FormTouched,
-  type FormState
-} from "../../utils/validators";
 import { BUILD_ID } from "../../utils/buildInfo";
 import RegistrationsClosedPage from "../system/RegistrationsClosedPage";
 
@@ -24,40 +16,10 @@ type ReferralStatus = "idle" | "checking" | "valid" | "invalid";
 export default function SignUp() {
   const { t, language: lang } = useI18n();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  
-  // Settings and guard states
   const [settings, setSettings] = useState<any | null>(null);
   const [settingsErr, setSettingsErr] = useState<string | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const [buildProbe, setBuildProbe] = useState<any>( null);
-
-  // Form state
-  const [formState, setFormState] = useState<FormState>({
-    inviteCode: "",
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: ""
-  });
-
-  const [touched, setTouched] = useState<FormTouched>({
-    inviteCode: false,
-    username: false,
-    email: false,
-    password: false,
-    confirmPassword: false
-  });
-
-  const [submitAttempted, setSubmitAttempted] = useState(false);
-  const [refStatus, setRefStatus] = useState<ReferralStatus>("idle");
-  const [refMessage, setRefMessage] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [successEmail, setSuccessEmail] = useState<string | null>(null);
-
-  const debounceRef = useRef<number | null>(null);
-  const lastCheckedRef = useRef<string>("");
+  const [buildProbe, setBuildProbe] = useState<any>(null);
 
   // Guard: Redirect authenticated users away from signup
   useEffect(() => {
@@ -97,7 +59,6 @@ export default function SignUp() {
     };
   }, [lang, navigate]);
 
-  // Load app settings
   useEffect(() => {
     let alive = true;
 
@@ -120,13 +81,47 @@ export default function SignUp() {
     };
   }, []);
 
-  // Prefill invite code from URL
-  useEffect(() => {
-    const refParam = searchParams.get('ref');
-    if (refParam) {
-      setFormState(prev => ({ ...prev, inviteCode: refParam }));
-    }
-  }, [searchParams]);
+  // Form state
+  const [inviteCode, setInviteCode] = useState("");
+  const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [refStatus, setRefStatus] = useState<ReferralStatus>("idle");
+  const [refMessage, setRefMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successEmail, setSuccessEmail] = useState<string | null>(null);
+
+  const debounceRef = useRef<number | null>(null);
+  const lastCheckedRef = useRef<string>("");
+
+  // Computed values
+  const code = useMemo(() => normalizeInviteCode(inviteCode), [inviteCode]);
+  const uname = useMemo(() => username.trim().toLowerCase(), [username]);
+  const emailTrim = useMemo(() => email.trim(), [email]);
+
+  const usernameRegex = /^[a-z0-9_]{3,20}$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const referralEnabled = settings?.referral_enabled ?? true;
+  const maintenance = settings?.maintenance_mode === true;
+  const registrationsOpen = settings?.registrations_open ?? true;
+
+  // Validation helpers
+  const isInviteFormatValid = useMemo(() => {
+    return !referralEnabled || isInviteCodeFormatValid(code);
+  }, [code, referralEnabled]);
+
+  const isUsernameValid = useMemo(() => {
+    return usernameRegex.test(uname);
+  }, [uname]);
+
+  const isEmailValid = useMemo(() => {
+    return emailRegex.test(emailTrim);
+  }, [emailTrim]);
 
   // Fetch build probe for deploy verification
   useEffect(() => {
@@ -147,23 +142,33 @@ export default function SignUp() {
     fetchBuildProbe();
   }, []);
 
-  // Computed values
-  const code = useMemo(() => normalizeInviteCode(formState.inviteCode), [formState.inviteCode]);
-  const uname = useMemo(() => normalizeUsername(formState.username), [formState.username]);
-  const emailTrim = useMemo(() => formState.email.trim(), [formState.email]);
+  const isPasswordValid = useMemo(() => {
+    return password.length >= 8;
+  }, [password]);
 
-  const referralEnabled = settings?.referral_enabled ?? true;
-  const maintenance = settings?.maintenance_mode === true;
-  const registrationsOpen = settings?.registrations_open ?? true;
-
-  // Form validation
-  const errors = useMemo(() => {
-    return validateForm(formState, touched, referralEnabled, submitAttempted);
-  }, [formState, touched, referralEnabled, submitAttempted]);
+  const isPasswordMatch = useMemo(() => {
+    return password === confirmPassword;
+  }, [password, confirmPassword]);
 
   const canSubmit = useMemo(() => {
-    return !isSubmitting && isFormValid(formState, referralEnabled, refStatus);
-  }, [isSubmitting, formState, referralEnabled, refStatus]);
+    const inviteOk = referralEnabled ? refStatus === "valid" : true;
+    return (
+      !isSubmitting &&
+      inviteOk &&
+      isUsernameValid &&
+      isEmailValid &&
+      isPasswordValid &&
+      isPasswordMatch
+    );
+  }, [
+    isSubmitting,
+    refStatus,
+    referralEnabled,
+    isUsernameValid,
+    isEmailValid,
+    isPasswordValid,
+    isPasswordMatch,
+  ]);
 
   // Referral validation (debounced)
   useEffect(() => {
@@ -185,7 +190,7 @@ export default function SignUp() {
       return;
     }
 
-    if (!isInviteCodeFormatValid(code)) {
+    if (!isInviteFormatValid) {
       setRefStatus("idle");
       setRefMessage(null);
       return;
@@ -232,133 +237,14 @@ export default function SignUp() {
         setRefStatus("invalid");
         setRefMessage(t("signup.inviteCode.invalid"));
       }
-    }, 500);
+    }, 450);
 
     return () => {
       alive = false;
       if (debounceRef.current) window.clearTimeout(debounceRef.current);
       debounceRef.current = null;
     };
-  }, [code, t, referralEnabled]);
-
-  // Form field handlers
-  const handleFieldChange = (field: keyof FormState, value: string) => {
-    setFormState(prev => ({ ...prev, [field]: value }));
-    setTouched(prev => ({ ...prev, [field]: true }));
-    setError(null); // Clear general errors when user types
-  };
-
-  const handleBlur = (field: keyof FormTouched) => {
-    setTouched(prev => ({ ...prev, [field]: true }));
-  };
-
-  // Check username availability using RPC (NO PROFILE QUERY)
-  const checkUsernameAvailability = async (username: string): Promise<boolean> => {
-    try {
-      const { data, error } = await supabase.rpc('check_username_available', {
-        p_username: username
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      return data === true; // Return true if username is available
-    } catch {
-      return false; // Assume taken on error
-    }
-  };
-
-  // Form submission
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitAttempted(true);
-    setError(null);
-
-    if (!canSubmit) {
-      const errorList = [];
-      if (referralEnabled && refStatus !== "valid") errorList.push(t("signup.errors.inviteRequired"));
-      if (!errors.username) errorList.push(t("signup.errors.usernameFormat"));
-      if (!errors.email) errorList.push(t("signup.errors.invalidEmail"));
-      if (!errors.password) errorList.push(t("signup.errors.passwordWeak"));
-      if (!errors.confirmPassword) errorList.push(t("signup.errors.passwordMismatch"));
-      
-      setError(errorList.join(". "));
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      // Check username availability
-      const isUsernameAvailable = await checkUsernameAvailability(uname);
-      if (!isUsernameAvailable) {
-        setError(t("signup.errors.usernameTaken"));
-        return;
-      }
-
-      // Validate invite code if required
-      if (referralEnabled) {
-        const { data: valid, error: refErr } = await supabase.rpc("validate_referral_code_public", {
-          p_code: code,
-        });
-        if (refErr || valid !== true) throw new Error(t("signup.errors.inviteInvalid"));
-      }
-
-      // Create Supabase auth user
-      const { data, error: signUpErr } = await supabase.auth.signUp({
-        email: emailTrim,
-        password: formState.password,
-        options: { 
-          data: { 
-            username: uname, 
-            referral_code: code 
-          },
-          emailRedirectTo: buildAuthRedirect(`/${lang}/auth/callback`)
-        },
-      });
-
-      if (signUpErr) {
-        if (signUpErr.message.includes('already registered')) {
-          setError(t("signup.errors.emailTaken"));
-        } else if (signUpErr.message.includes('weak password')) {
-          setError(t("signup.errors.passwordWeak"));
-        } else {
-          setError(signUpErr?.message || t("signup.errors.generic"));
-        }
-        return;
-      }
-
-      // DO NOT create profile here - profile is created after email verification
-      // NO PROFILE INSERT DURING SIGNUP - this causes 401/406 errors
-
-      setSuccessEmail(data.user?.email ?? emailTrim);
-      
-      // Reset form
-      setFormState({
-        inviteCode: "",
-        username: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
-      });
-      setTouched({
-        inviteCode: false,
-        username: false,
-        email: false,
-        password: false,
-        confirmPassword: false
-      });
-    } catch (err: any) {
-      console.error('Signup error:', err);
-      if (err.message.includes('network') || err.message.includes('fetch')) {
-        setError(t("signup.errors.network"));
-      } else {
-        setError(err?.message || t("signup.errors.generic"));
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  }, [code, t, referralEnabled, isInviteFormatValid]);
 
   // Conditional rendering
   if (!settings || isRedirecting) {
@@ -375,6 +261,56 @@ export default function SignUp() {
   if (!registrationsOpen) {
     return <RegistrationsClosedPage lang={lang} />;
   }
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccessEmail(null);
+
+    if (!canSubmit) {
+      const errors = [];
+      if (referralEnabled && refStatus !== "valid") errors.push(t("signup.errors.inviteRequired"));
+      if (!isUsernameValid) errors.push(t("signup.errors.usernameInvalid"));
+      if (!isEmailValid) errors.push(t("signup.email.invalid"));
+      if (!isPasswordValid) errors.push(t("signup.password.minLength"));
+      if (!isPasswordMatch) errors.push(t("signup.password.mismatch"));
+      
+      setError(errors.join(". "));
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      if (referralEnabled) {
+        const { data: valid, error: refErr } = await supabase.rpc("validate_referral_code_public", {
+          p_code: code,
+        });
+        if (refErr || valid !== true) throw new Error(t("signup.inviteCode.invalid"));
+      }
+
+      const { data, error: signUpErr } = await supabase.auth.signUp({
+        email: emailTrim,
+        password,
+        options: { 
+          data: { username: uname, full_name: fullName, referral_code: code },
+          emailRedirectTo: buildAuthRedirect(`/${lang}/auth/callback`)
+        },
+      });
+
+      if (signUpErr) {
+        setError(signUpErr?.message || t("signup.errors.generic"));
+        return;
+      }
+
+      setSuccessEmail(data.user?.email ?? emailTrim);
+      setPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      setError(err?.message || t("signup.errors.generic"));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Success state
   if (successEmail) {
@@ -410,7 +346,7 @@ export default function SignUp() {
               </button>
               
               <button
-                onClick={() => navigate(ensureLangPath(lang, "/signin?justSignedUp=1"))}
+                onClick={() => navigate(ensureLangPath(lang, "/signin"))}
                 className="w-full h-12 rounded-xl border border-white/20 bg-transparent text-white font-semibold hover:bg-white/10 transition-colors"
               >
                 {t("signup.success.goToSignIn")}
@@ -477,14 +413,6 @@ export default function SignUp() {
                 </div>
               )}
 
-              {error && (
-                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-300 text-sm flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <span>{error}</span>
-                </div>
-              )}
-
-              {/* Invite Code */}
               {referralEnabled && (
                 <div>
                   <label className="block text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
@@ -496,14 +424,11 @@ export default function SignUp() {
                     </div>
                     <input
                       type="text"
-                      value={formState.inviteCode}
-                      onChange={(e) => handleFieldChange('inviteCode', e.target.value.toUpperCase())}
-                      onBlur={() => handleBlur('inviteCode')}
+                      value={inviteCode}
+                      onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
                       placeholder={t("signup.inviteCode.placeholder")}
                       className={`w-full pl-10 pr-10 h-12 rounded-xl bg-white/5 border ${
-                        errors.inviteCode 
-                          ? "border-red-500/50 bg-red-500/5" 
-                          : refStatus === "valid" 
+                        refStatus === "valid" 
                           ? "border-green-500/50 bg-green-500/5" 
                           : refStatus === "invalid" 
                           ? "border-red-500/50 bg-red-500/5"
@@ -533,15 +458,32 @@ export default function SignUp() {
                       {refMessage}
                     </p>
                   )}
-                  {errors.inviteCode && touched.inviteCode && (
-                    <p className="mt-2 text-sm text-red-400">
-                      {t(errors.inviteCode)}
+                  {!isInviteFormatValid && code && (
+                    <p className="mt-2 text-sm text-yellow-400">
+                      {t("signup.inviteCode.invalidFormat")}
                     </p>
                   )}
                 </div>
               )}
 
-              {/* Username */}
+              <div>
+                <label className="block text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
+                  {t("signup.fullName.label")} *
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-white/40" />
+                  </div>
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder={t("signup.fullName.placeholder")}
+                    className="w-full pl-10 h-12 rounded-xl bg-white/5 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/50 focus:border-transparent transition-all"
+                  />
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
                   {t("signup.username.label")} *
@@ -552,26 +494,23 @@ export default function SignUp() {
                   </div>
                   <input
                     type="text"
-                    value={formState.username}
-                    onChange={(e) => handleFieldChange('username', normalizeUsername(e.target.value))}
-                    onBlur={() => handleBlur('username')}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     placeholder={t("signup.username.placeholder")}
                     className={`w-full pl-10 h-12 rounded-xl bg-white/5 border ${
-                      errors.username ? "border-red-500/50 bg-red-500/5" : "border-white/20"
+                      username && !isUsernameValid 
+                        ? "border-red-500/50 bg-red-500/5" 
+                        : "border-white/20"
                     } text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/50 focus:border-transparent transition-all`}
                   />
                 </div>
-                {errors.username && touched.username && (
+                {username && !isUsernameValid && (
                   <p className="mt-2 text-sm text-red-400">
-                    {t(errors.username)}
+                    {t("signup.username.helper")}
                   </p>
                 )}
-                <p className="mt-2 text-xs text-white/40">
-                  {t("signup.username.helper")}
-                </p>
               </div>
 
-              {/* Email */}
               <div>
                 <label className="block text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
                   {t("signup.email.label")} *
@@ -582,23 +521,23 @@ export default function SignUp() {
                   </div>
                   <input
                     type="email"
-                    value={formState.email}
-                    onChange={(e) => handleFieldChange('email', e.target.value)}
-                    onBlur={() => handleBlur('email')}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder={t("signup.email.placeholder")}
                     className={`w-full pl-10 h-12 rounded-xl bg-white/5 border ${
-                      errors.email ? "border-red-500/50 bg-red-500/5" : "border-white/20"
+                      email && !isEmailValid 
+                        ? "border-red-500/50 bg-red-500/5" 
+                        : "border-white/20"
                     } text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/50 focus:border-transparent transition-all`}
                   />
                 </div>
-                {errors.email && touched.email && (
+                {email && !isEmailValid && (
                   <p className="mt-2 text-sm text-red-400">
-                    {t(errors.email)}
+                    {t("signup.email.invalid")}
                   </p>
                 )}
               </div>
 
-              {/* Password */}
               <div>
                 <label className="block text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
                   {t("signup.password.label")} *
@@ -609,26 +548,23 @@ export default function SignUp() {
                   </div>
                   <input
                     type="password"
-                    value={formState.password}
-                    onChange={(e) => handleFieldChange('password', e.target.value)}
-                    onBlur={() => handleBlur('password')}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder={t("signup.password.placeholder")}
                     className={`w-full pl-10 h-12 rounded-xl bg-white/5 border ${
-                      errors.password ? "border-red-500/50 bg-red-500/5" : "border-white/20"
+                      password && !isPasswordValid 
+                        ? "border-red-500/50 bg-red-500/5" 
+                        : "border-white/20"
                     } text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/50 focus:border-transparent transition-all`}
                   />
                 </div>
-                {errors.password && touched.password && (
+                {password && !isPasswordValid && (
                   <p className="mt-2 text-sm text-red-400">
-                    {t(errors.password)}
+                    {t("signup.password.helper")}
                   </p>
                 )}
-                <p className="mt-2 text-xs text-white/40">
-                  {t("signup.password.helper")}
-                </p>
               </div>
 
-              {/* Confirm Password */}
               <div>
                 <label className="block text-sm font-semibold text-white/70 uppercase tracking-wider mb-2">
                   {t("signup.confirmPassword.label")} *
@@ -639,48 +575,86 @@ export default function SignUp() {
                   </div>
                   <input
                     type="password"
-                    value={formState.confirmPassword}
-                    onChange={(e) => handleFieldChange('confirmPassword', e.target.value)}
-                    onBlur={() => handleBlur('confirmPassword')}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder={t("signup.confirmPassword.placeholder")}
                     className={`w-full pl-10 h-12 rounded-xl bg-white/5 border ${
-                      errors.confirmPassword ? "border-red-500/50 bg-red-500/5" : "border-white/20"
+                      confirmPassword && !isPasswordMatch 
+                        ? "border-red-500/50 bg-red-500/5" 
+                        : "border-white/20"
                     } text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/50 focus:border-transparent transition-all`}
                   />
                 </div>
-                {errors.confirmPassword && touched.confirmPassword && (
+                {confirmPassword && !isPasswordMatch && (
                   <p className="mt-2 text-sm text-red-400">
-                    {t(errors.confirmPassword)}
+                    {t("signup.password.mismatch")}
                   </p>
                 )}
               </div>
 
-              {/* Submit Button */}
+              {error && (
+                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-300 text-sm">
+                  {error}
+                </div>
+              )}
+
               <button
                 type="submit"
-                disabled={!canSubmit || isSubmitting}
-                className="w-full h-12 rounded-xl bg-[#F0B90B] text-black font-semibold hover:bg-[#F0B90B]/90 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#F0B90B]"
+                disabled={!canSubmit}
+                className={`w-full h-12 rounded-xl font-semibold transition-all ${
+                  canSubmit
+                    ? "bg-gradient-to-r from-[#F0B90B] to-[#F8D568] text-black hover:from-[#F0B90B]/90 hover:to-[#F8D568]/90 shadow-lg shadow-[#F0B90B]/20"
+                    : "bg-white/10 text-white/50 cursor-not-allowed"
+                }`}
               >
                 {isSubmitting ? (
-                  <>
+                  <span className="flex items-center justify-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin" />
                     {t("signup.loading")}
-                  </>
+                  </span>
                 ) : (
                   t("signup.submit")
                 )}
               </button>
+
+              <div className="text-center pt-4 border-t border-white/10">
+                <p className="text-white/60 text-sm">
+                  {t("signup.haveAccount")}{" "}
+                  <Link 
+                    to={ensureLangPath(lang, "/signin")}
+                    className="text-[#F0B90B] hover:text-[#F8D568] font-medium transition-colors"
+                  >
+                    {t("signup.signIn")}
+                  </Link>
+                </p>
+              </div>
             </form>
           </div>
 
-          <div className="text-center mt-6 text-white/40">
-            <span>{t("signup.haveAccount")} </span>
+          <div className="text-center mt-6">
             <Link 
-              to={ensureLangPath(lang, "/signin")}
-              className="text-[#F0B90B] hover:text-[#F0B90B]/80 transition-colors font-medium"
+              to={ensureLangPath(lang, "/")}
+              className="text-white/40 hover:text-white/60 text-sm transition-colors"
             >
-              {t("signup.signIn")}
+              ← {t("common.backHome")}
             </Link>
+          </div>
+          
+          {/* Build ID for debugging */}
+          <div className="text-center mt-2">
+            <span className="text-white/10 text-xs">
+              Build: {BUILD_ID}
+            </span>
+          </div>
+          
+          {/* Build Probe for deploy verification */}
+          <div className="text-center mt-1">
+            <span className="text-white/5 text-xs">
+              PROBE: {buildProbe 
+                ? `${buildProbe.probe} | TS: ${buildProbe.ts}` 
+                : buildProbe?.error || "loading..."
+              }
+            </span>
           </div>
         </div>
       </div>

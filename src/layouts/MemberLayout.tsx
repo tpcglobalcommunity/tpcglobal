@@ -7,6 +7,7 @@ import { Outlet, Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { useProfileStatus } from "../lib/useProfileStatus";
+import { getLangPath, getLanguageFromPath } from "../i18n";
 import { 
   Home, 
   User, 
@@ -26,6 +27,7 @@ export default function MemberLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const lang = getLanguageFromPath();
 
   const displayName = role === 'viewer' ? 'Guest User' : 'Member';
   const memberCode = 'TPC000000'; // TODO: Implement proper member code fetching
@@ -249,7 +251,7 @@ export default function MemberLayout() {
                     </div>
                     <div className="p-1">
                       <Link
-                        to="/member/profile"
+                        to={getLangPath(lang, '/member/profile')}
                         className="flex items-center gap-2 px-3 py-2 text-white/70 hover:text-white hover:bg-white/10 rounded transition-colors"
                         onClick={() => setProfileDropdownOpen(false)}
                       >

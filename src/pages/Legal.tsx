@@ -1,5 +1,5 @@
 import { Shield, AlertTriangle, FileText, Lock, Cookie, Mail, ExternalLink, BookOpen, Eye, Users } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from '../i18n';
+import { Language, useI18n, getLangPath, tArr } from '../i18n';
 import { PremiumShell, PremiumCard, NoticeBox, Accordion, AccordionItem, PremiumButton } from '../components/ui';
 import { Link } from '../components/Router';
 
@@ -8,7 +8,7 @@ interface LegalProps {
 }
 
 const Legal = ({ lang }: LegalProps) => {
-  const t = useTranslations(lang);
+  const { t } = useI18n(lang);
 
   const sectionIcons = {
     disclaimer: Shield,
@@ -27,22 +27,22 @@ const Legal = ({ lang }: LegalProps) => {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#F0B90B]/10 to-[#F0B90B]/5 border border-[#F0B90B]/20 mb-6">
               <Shield className="w-4 h-4 text-[#F0B90B]" />
               <span className="text-sm font-medium text-[#F0B90B]">
-                {t.legal.header.pill}
+                {t("legal.header.pill", "Trust & Safety Hub")}
               </span>
             </div>
             <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              {t.legal.header.title}
+              {t("legal.header.title", "Legal & Compliance")}
             </h1>
             <p className="text-lg md:text-xl text-white/70 max-w-3xl mx-auto">
-              {t.legal.header.subtitle}
+              {t("legal.header.subtitle", "Comprehensive terms, policies, and regulatory information")}
             </p>
           </div>
 
           <NoticeBox
             variant="warning"
-            title={t.legal.header.noticeTitle}
+            title={t("legal.header.noticeTitle", "Educational Community Only")}
           >
-            {t.legal.header.noticeBody}
+            {t("legal.header.noticeBody", "TPC is an education-focused community. We do not provide investment advice, financial services, or guarantees of any kind. All users are responsible for their own decisions and compliance with local regulations.")}
           </NoticeBox>
         </div>
 
@@ -50,19 +50,19 @@ const Legal = ({ lang }: LegalProps) => {
 
         <div className="mb-12">
           <h2 className="text-xl font-semibold text-white mb-6 text-center">
-            {t.legal.quickLinks.title}
+            {t("legal.quickLinks.title", "Quick Links")}
           </h2>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to={getLangPath(lang, '/docs')}>
               <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 hover:border-[#F0B90B]/30 text-white hover:text-[#F0B90B] transition-all duration-200 font-medium">
                 <BookOpen className="w-5 h-5" />
-                {t.legal.quickLinks.docs}
+                {t("legal.quickLinks.docs", "Documentation")}
               </button>
             </Link>
             <Link to={getLangPath(lang, '/transparency')}>
               <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 hover:border-[#F0B90B]/30 text-white hover:text-[#F0B90B] transition-all duration-200 font-medium">
                 <Eye className="w-5 h-5" />
-                {t.legal.quickLinks.transparency}
+                {t("legal.quickLinks.transparency", "Transparency")}
               </button>
             </Link>
             <a
@@ -72,19 +72,19 @@ const Legal = ({ lang }: LegalProps) => {
               className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 hover:border-[#F0B90B]/30 text-white hover:text-[#F0B90B] transition-all duration-200 font-medium"
             >
               <Users className="w-5 h-5" />
-              {t.legal.quickLinks.community}
+              {t("legal.quickLinks.community", "Community")}
             </a>
           </div>
         </div>
 
         <div className="max-w-5xl mx-auto space-y-12">
           <Accordion>
-            {Object.entries(t.legal.sections).map(([key, section]) => {
+            {Object.entries(tArr("legal.sections", [])).map(([key, section]: [string, any]) => {
               const Icon = sectionIcons[key as keyof typeof sectionIcons];
               return (
                 <AccordionItem
                   key={key}
-                  title={section.title}
+                  title={(section as any).title || ""}
                   defaultOpen={key === 'disclaimer'}
                 >
                   <div className="space-y-4">
@@ -96,13 +96,13 @@ const Legal = ({ lang }: LegalProps) => {
                       )}
                       <div className="flex-1">
                         <p className="text-white/80 text-sm leading-relaxed mb-4">
-                          {section.summary}
+                          {(section as any).summary || ""}
                         </p>
                       </div>
                     </div>
 
                     <div className="pl-13 space-y-2">
-                      {section.points.map((point: string, index: number) => (
+                      {(section as any).points?.map((point: string, index: number) => (
                         <div
                           key={index}
                           className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/[0.06]"
@@ -123,7 +123,7 @@ const Legal = ({ lang }: LegalProps) => {
           <PremiumCard hover={false}>
             <div className="text-center py-6">
               <p className="text-white/60 text-sm">
-                {t.legal.lastUpdated}: <span className="text-white/80 font-medium">2026-01-18</span>
+                {t("legal.lastUpdated", "Last updated")}: <span className="text-white/80 font-medium">2026-01-18</span>
               </p>
             </div>
           </PremiumCard>
@@ -133,23 +133,23 @@ const Legal = ({ lang }: LegalProps) => {
               <div className="flex items-center justify-center gap-3 mb-4">
                 <FileText className="w-8 h-8 text-[#F0B90B]" />
                 <h2 className="text-2xl md:text-3xl font-semibold text-white">
-                  {t.legal.cta.title}
+                  {t("legal.cta.title", "Learn More About TPC")}
                 </h2>
               </div>
               <p className="text-white/70 text-base mb-8 max-w-2xl mx-auto">
-                {t.legal.cta.subtitle}
+                {t("legal.cta.subtitle", "Explore our documentation and join the community")}
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link to={getLangPath(lang, '/docs')}>
                   <PremiumButton variant="primary">
                     <BookOpen className="w-5 h-5" />
-                    {t.legal.cta.docs}
+                    {t("legal.cta.docs", "Read Documentation")}
                   </PremiumButton>
                 </Link>
                 <Link to={getLangPath(lang, '/transparency')}>
                   <PremiumButton variant="secondary">
                     <Eye className="w-5 h-5" />
-                    {t.legal.cta.transparency}
+                    {t("legal.cta.transparency", "View Transparency")}
                   </PremiumButton>
                 </Link>
                 <PremiumButton
@@ -159,7 +159,7 @@ const Legal = ({ lang }: LegalProps) => {
                   rel="noopener noreferrer"
                 >
                   <ExternalLink className="w-5 h-5" />
-                  {t.legal.cta.community}
+                  {t("legal.cta.community", "Join Community")}
                 </PremiumButton>
               </div>
             </div>

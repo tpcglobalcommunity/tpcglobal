@@ -3,7 +3,7 @@ import { getLanguageFromPath, Language } from '../i18n';
 
 const Router = () => {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
-  const lang = getLanguageFromPath();
+  const lang = getLanguageFromPath(currentPath);
 
   useEffect(() => {
     const handleLocationChange = () => {

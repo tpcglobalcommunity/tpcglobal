@@ -3,6 +3,13 @@ import { User } from "@supabase/supabase-js";
 
 export async function ensureProfile(user: User) {
   try {
+    // Check if user email is verified - ONLY CREATE PROFILE IF VERIFIED
+    const isVerified = Boolean(user.email_confirmed_at || user.confirmed_at);
+    if (!isVerified) {
+      console.log('[ensureProfile] Email not verified, skipping profile creation');
+      return null;
+    }
+
     // Check if profile already exists
     const { data: existingProfile, error: fetchError } = await supabase
       .from("profiles")
@@ -44,7 +51,7 @@ export async function ensureProfile(user: User) {
       return existingProfile;
     }
 
-    // Create new profile
+    // Create new profile (ONLY IF EMAIL VERIFIED)
     const metadata = user.user_metadata || {};
     const { data: newProfile, error: insertError } = await supabase
       .from("profiles")
@@ -57,6 +64,7 @@ export async function ensureProfile(user: User) {
         status: "PENDING",
         verified: false,
         can_invite: false,
+        profile_required_completed: false, // Add this field
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })

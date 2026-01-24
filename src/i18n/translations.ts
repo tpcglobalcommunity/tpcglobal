@@ -1,4 +1,6 @@
-﻿export const translations = {
+export type Language = "en" | "id";
+
+export const translations: Record<Language, any> = {
   en: {
     nav: {
       home: 'Home',
@@ -46,38 +48,41 @@
       description: 'An education-based trading community built on collaboration, transparency, and shared governance.',
     },
     home: {
+      nav: {
+        home: "Home",
+        docs: "Docs",
+        dao: "DAO Lite",
+        transparency: "Transparency",
+      },
+      hero: {
+        badge: "Building Trust Through Transparency",
+        title: "Trader Professional Community",
+        subtitle: "An education-focused community empowering traders through collaboration, transparency, and shared governance.",
+        ctaPrimary: "Join the Community",
+        ctaSecondary: "Learn More",
+      },
       trust: {
-        pill: 'Trust & Safety',
-        title: 'Built on Trust and Transparency',
-        subtitle: 'We prioritize education, risk awareness, and complete transparency. No promises, no guaranteesâ€”just honest community-driven growth.',
+        title: "Why Trust TPC?",
         cards: [
           {
-            title: 'Comprehensive Docs',
-            desc: 'Learn everything about TPC, tokenomics, and governance through clear, accessible documentation.',
-            cta: 'Read Documentation',
+            title: "Transparent & Auditable",
+            desc: "Public dashboards and logs for community visibility.",
+            cta: "View Transparency",
           },
           {
-            title: 'Public Transparency',
-            desc: 'Track all wallets, revenue flows, and fund allocation in real-time on our transparency hub.',
-            cta: 'View Transparency',
+            title: "Education-First",
+            desc: "Tools, docs, and structured learning for real skill-building.",
+            cta: "Read Documentation",
           },
           {
-            title: 'Legal Compliance',
-            desc: 'Review our terms, risk disclosures, and privacy policies. Education-first with no investment promises.',
-            cta: 'Review Legal Info',
+            title: "Security & Compliance",
+            desc: "Built with security-first principles, access controls, and responsible operations.",
+            cta: "Learn Security",
           },
         ],
-        badges: [
-          'Education-First',
-          'Risk-Aware',
-          'Transparency-Driven',
-          'No Guarantees',
-        ],
-        ctaTitle: 'Ready to Learn More?',
-        ctaHelper: 'Join our community or explore our comprehensive documentation to get started.',
-        joinCommunity: 'Join Community',
-        readDocs: 'Read Documentation',
-        disclaimerLine: 'Not financial advice. Trading involves significant risk. Do your own research.',
+      },
+      disclaimer: {
+        text: "TPC Token is a utility and governance token, not an investment product. No profit guarantees or financial returns are promised.",
       },
     },
     docs: {
@@ -109,11 +114,32 @@
       rules: 'Participation Rules',
       rule1: 'One token is planned to represent one vote',
       rule2: 'Minimum token threshold may apply for proposal creation',
-      rule3: 'Proposals require majority approval to pass',
-      rule4: 'Standard voting periods apply to all proposals',
-      notice: 'All DAO Lite mechanisms are plans and may change based on community decisions and technical developments.',
     },
     transparency: {
+      hero: {
+        title: "Transparansi",
+        subtitle: "Log publik dan bukti on-chain."
+      },
+      live: {
+        title: "Transparansi Langsung",
+        desc: "Semua dana komunitas dan transaksi dapat diverifikasi secara publik di blockchain."
+      },
+      revenue: {
+        title: "Kebijakan Pendapatan",
+        youtube: "Pembagian Pendapatan YouTube",
+        community: "Pendapatan ke Komunitas"
+      },
+      updates: {
+        title: "Pembaruan Terbaru"
+      },
+      cta: {
+        title: "Bergabung ke Komunitas Kami",
+        subtitle: "Menjadi bagian dari komunitas trading yang transparan dan berbasis pendidikan.",
+        joinCommunity: "Bergabung ke Komunitas",
+        readDocumentation: "Baca Dokumentasi"
+      }
+    },
+    fund: {
       header: {
         title: 'Transparency Hub',
         subtitle: 'Complete visibility into TPC operations, wallets, and financial flows',
@@ -163,32 +189,6 @@
           '20% â€” Token Burn (Supply Reduction)',
           '10% â€” DAO Treasury Reserve',
         ],
-      },
-      updates: {
-        title: 'Transparency Updates Log',
-        items: [
-          {
-            date: '2026-01-18',
-            title: 'Website Launch',
-            desc: 'Official TPC Global website launched with multilingual support and full documentation',
-          },
-          {
-            date: '2026-01-18',
-            title: 'SEO Infrastructure',
-            desc: 'Advanced SEO system implemented with per-page OG images and hreflang support',
-          },
-          {
-            date: '2026-01-18',
-            title: 'Transparency Hub Live',
-            desc: 'Transparency page published with wallet structure and revenue policy disclosure',
-          },
-        ],
-      },
-      cta: {
-        docs: 'View Documentation',
-        community: 'Join Community',
-        title: 'Learn More About TPC',
-        subtitle: 'Explore our documentation or join the community to stay updated',
       },
       walletAction: 'View on Explorer',
       revenueLabel: 'Revenue Transparency',
@@ -330,8 +330,13 @@
         community: 'Community',
         telegram: 'Telegram',
       },
-      copyright: 'Â© 2026 TPC. All rights reserved.',
-      madeWith: 'Built with transparency',
+      copyright: '© 2026 TPC. All rights reserved.',
+      madeWith: 'Made with care by TPC',
+      rights: 'All rights reserved.',
+      terms: 'Terms',
+      privacy: 'Privacy',
+      cookies: 'Cookies',
+      disclaimer: 'Disclaimer',
     },
     security: {
       header: {
@@ -1084,6 +1089,205 @@
         tertiary: 'Join Community',
       },
     },
+    common: {
+      or: 'or',
+      backHome: 'Back to Home',
+      backToSignIn: 'Back to Sign In',
+      learnMore: 'Learn More',
+      loading: 'Loading...',
+      language: {
+        en: 'EN',
+        id: 'ID'
+      }
+    },
+    signup: {
+      settingsLoadError: "Could not load settings; proceeding with defaults.",
+      maintenanceTitle: "Registration Limited",
+      maintenanceDesc: "Platform is under maintenance. Registration is available by invitation only.",
+      maintenanceNotice: "Platform is under maintenance. Registration remains open for invited users.",
+      referralChecking: "Checking invitation code...",
+      referralValid: "Invitation verified",
+      referralInvalid: "Invalid invitation code",
+      referralError: "Failed to validate invitation code",
+      backToHome: "Back to Home",
+      alreadyHaveAccount: "Already have an account?",
+      createAccount: "Create Account",
+      title: "Create your TPC account",
+      subtitle: "Join the community and access premium features.",
+      inviteOnlyTitle: "Invitation-only",
+      inviteOnlyDesc: "Registration requires a valid invitation code.",
+      referralLabel: "Invitation Code",
+      referralPlaceholder: "TPC-XXXXX",
+      emailLabel: "Email",
+      emailPlaceholder: "name@email.com",
+      passwordLabel: "Password",
+      passwordPlaceholder: "Create a strong password",
+      fullNameLabel: "Full Name",
+      fullNamePlaceholder: "Your full name",
+      usernameLabel: "Username",
+      usernamePlaceholder: "Choose a username",
+      submit: "Create account",
+      haveAccount: "Already have an account?",
+      signIn: "Sign in",
+      inviteCode: {
+        label: "Invitation code",
+        placeholder: "TPC-XXXXX",
+        helper: "Enter your invitation code to continue",
+        checking: "Checking...",
+        valid: "Code verified",
+        invalid: "Invalid code",
+        invalidFormat: "Format: TPC-XXXXXX",
+        required: "Invitation code is required"
+      },
+      username: {
+        label: "Username",
+        placeholder: "Choose a username",
+        helper: "3-20 characters: lowercase, numbers, underscore",
+        required: "Username is required",
+        invalid: "Invalid username format"
+      },
+      fullName: {
+        label: "Full name",
+        placeholder: "Your full name",
+        required: "Full name is required"
+      },
+      email: {
+        label: "Email",
+        placeholder: "name@email.com",
+        required: "Email is required",
+        invalid: "Invalid email format"
+      },
+      password: {
+        label: "Password",
+        placeholder: "Create a strong password",
+        helper: "At least 8 characters",
+        required: "Password is required",
+        minLength: "Password must be at least 8 characters",
+        mismatch: "Passwords do not match"
+      },
+      confirmPassword: {
+        label: "Confirm Password",
+        placeholder: "Repeat your password"
+      },
+      loading: "Creating account...",
+      errors: {
+        generic: "Failed to create account. Please try again.",
+        inviteRequired: "Invitation code is required",
+        usernameInvalid: "Username format is invalid",
+        required: "This field is required",
+        invalidEmail: "Invalid email format",
+        usernameFormat: "Username must be 3-20 characters: lowercase, numbers, underscore only",
+        usernameTaken: "Username is already taken",
+        passwordWeak: "Password must include at least 1 letter and 1 number",
+        passwordMinLength: "Password must be at least 8 characters",
+        passwordMismatch: "Passwords do not match",
+        fullNameMinLength: "Full name must be at least 2 characters",
+        emailTaken: "Email is already registered",
+        network: "Network error. Please check your connection and try again"
+      },
+      success: {
+        title: "Account created successfully",
+        checkEmail: "Please check your email to verify your account",
+        sentTo: "Verification sent to:",
+        openEmail: "Open Email App",
+        goToSignIn: "Go to Sign In",
+        bodyConfirm: "We've sent a verification email to your address. Please check your inbox and click the verification link to activate your account.",
+        bodyInstant: "Your account has been created successfully! You can now sign in with your credentials."
+      },
+      profileCompletion: {
+        title: "Complete Your Profile",
+        subtitle: "One last step to unlock full TPC member access.",
+        body: "To maintain community quality and data transparency, we require some basic information before you proceed.",
+        requiredNotice: "The following fields are required: Full Name, WhatsApp Number, Telegram, and City.",
+        warning: "Your profile is incomplete. Please fill in the required fields to continue.",
+        save: "Save & Continue",
+        success: "Profile updated successfully. Welcome to TPC."
+      },
+      signup: {
+        title: "Create Account",
+        subtitle: "Join TPC Global and start your journey",
+        inviteCode: {
+          label: "Invitation Code",
+          placeholder: "Enter your invitation code"
+        },
+        username: {
+          label: "Username",
+          placeholder: "Choose a username"
+        },
+        email: {
+          label: "Email",
+          placeholder: "Enter your email"
+        },
+        password: {
+          label: "Password",
+          placeholder: "Create a strong password"
+        },
+        confirmPassword: {
+          label: "Confirm Password",
+          placeholder: "Confirm your password"
+        },
+        button: {
+          createAccount: "Create Account"
+        },
+        helpers: {
+          username: "3–20 characters. Lowercase letters, numbers, and underscores only."
+        },
+        errors: {
+          inviteInvalid: "Invalid invitation code. Please contact your sponsor.",
+          required: "This field is required",
+          invalidEmail: "Invalid email format",
+          usernameFormat: "Username must be 3-20 characters: lowercase, numbers, underscore only",
+          usernameTaken: "Username is already taken",
+          passwordWeak: "Password must include at least 1 letter and 1 number",
+          passwordMinLength: "Password must be at least 8 characters",
+          passwordTooShort: "Password is too short",
+          passwordMismatch: "Passwords do not match",
+          fullNameMinLength: "Full name must be at least 2 characters",
+          emailTaken: "Email is already registered",
+          network: "Network error. Please check your connection and try again",
+          invitationInvalid: "Invalid invitation code",
+          invitationRequired: "Invitation code is required",
+          emailNotVerified: "Please verify your email before logging in.",
+          usernameInvalid: "Invalid username format"
+        },
+        disabledSubmit: "Please complete all required fields first."
+      },
+      verifyEmail: {
+        title: "Verify Your Email",
+        subtitle: "We've sent a verification link to your email address",
+        checkInbox: "Please check your inbox and click the verification link to activate your account",
+        resend: "Resend Verification Email",
+        backToLogin: "Back to Login",
+        success: "Verification email sent successfully",
+        error: "Failed to send verification email"
+      },
+      completeProfile: {
+        title: "Complete Your Profile",
+        subtitle: "One last step to unlock full TPC member access",
+        fields: {
+          fullName: "Full Name",
+          phone: "Phone / WhatsApp",
+          telegram: "Telegram",
+          city: "City"
+        },
+        placeholders: {
+          fullName: "Enter your full name",
+          phone: "+62 812-3456-7890",
+          telegram: "@username or https://t.me/username",
+          city: "Enter your city"
+        },
+        button: {
+          save: "Save Profile"
+        },
+        errors: {
+          required: "This field is required",
+          fullNameMinLength: "Full name must be at least 2 characters",
+          phoneFormat: "Please enter a valid phone number",
+          telegramFormat: "Please enter a valid Telegram username or link",
+          cityMinLength: "City must be at least 2 characters"
+        }
+      }
+    },
     auth: {
       backToHome: "Back to Home",
       forgot: {
@@ -1099,17 +1303,19 @@
         errorGeneric: 'Unable to send reset link. Please try again.',
         reassurance: 'We\'ll never share your email with anyone else.',
       },
-      reassurance: 'Your data is protected. We never share personal information.',
-      common: {
-        or: 'or',
-        backHome: 'Back to Home',
-        backToSignIn: 'Back to Sign In',
-        loading: 'Loading...',
-        language: {
-          en: 'EN',
-          id: 'ID'
-        }
+      verifyEmail: {
+        title: "Verify Your Email",
+        subtitle: "We need to confirm that this email address belongs to you.",
+        body: "We've sent a verification email to your inbox. Please click the verification link to activate your TPC account.",
+        info: "For account and community security, login is only allowed after email verification.",
+        resend: "Resend Verification Email",
+        hint: "Didn't receive the email? Please check your spam or promotions folder.",
+        footer: "If you're still having issues, contact TPC support."
       },
+      login: {
+        emailNotVerified: "Your account cannot be accessed yet because your email is not verified. Please verify your email to continue."
+      },
+      reassurance: 'Your data is protected. We never share personal information.',
       signout: 'Sign Out',
       signup: {
         settingsLoadError: "Could not load settings; proceeding with defaults.",
@@ -1180,7 +1386,7 @@
           label: "Confirm Password",
           placeholder: "Repeat your password"
         },
-        loading: "Creating Account...",
+        loading: "Creating account...",
         errors: {
           generic: "Failed to create account. Please try again.",
           inviteRequired: "Invitation code is required",
@@ -1398,6 +1604,12 @@
         fileTooLarge: 'File too large. Maximum size is 2MB',
         fileTypeInvalid: 'Invalid file type. Please upload PNG, JPEG, or WebP images only',
         genericError: 'An error occurred. Please try again.',
+        completion: {
+          title: 'Complete Your Profile',
+          subtitle: 'Add your full name for a better experience',
+          complete: 'Complete',
+          dismiss: 'Dismiss'
+        },
         directory: {
           title: 'Directory Settings',
           toggle: 'Show in Member Directory',
@@ -1826,6 +2038,7 @@
         pinned: 'Pinned',
       },
     },
+  },
   id: {
     nav: {
       home: 'Beranda',
@@ -1873,38 +2086,41 @@
       description: 'Komunitas berbasis edukasi yang memberdayakan trader melalui kolaborasi, transparansi, dan tata kelola bersama.',
     },
     home: {
+      nav: {
+        home: "Beranda",
+        docs: "Dokumentasi",
+        dao: "DAO Lite",
+        transparency: "Transparansi",
+      },
+      hero: {
+        badge: "Membangun Kepercayaan Lewat Transparansi",
+        title: "Komunitas Trader Profesional",
+        subtitle: "Komunitas edukasi yang memberdayakan trader melalui kolaborasi, transparansi, dan tata kelola bersama.",
+        ctaPrimary: "Gabung Komunitas",
+        ctaSecondary: "Pelajari Lebih Lanjut",
+      },
       trust: {
-        pill: 'Kepercayaan & Keamanan',
-        title: 'Dibangun dengan Kepercayaan dan Transparansi',
-        subtitle: 'Kami mengutamakan edukasi, kesadaran risiko, dan transparansi penuh. Tanpa janji, tanpa jaminanâ€”hanya pertumbuhan komunitas yang jujur.',
+        title: "Kenapa Percaya TPC?",
         cards: [
           {
-            title: 'Dokumentasi Lengkap',
-            desc: 'Pelajari semua tentang TPC, tokenomics, dan tata kelola melalui dokumentasi yang jelas dan mudah diakses.',
-            cta: 'Baca Dokumentasi',
+            title: "Transparansi On-Chain",
+            desc: "Seluruh aktivitas treasury dapat diverifikasi secara publik untuk menjaga kepercayaan komunitas.",
+            cta: "Lihat Transparansi",
           },
           {
-            title: 'Transparansi Publik',
-            desc: 'Lacak semua dompet, aliran pendapatan, dan alokasi dana secara real-time di pusat transparansi kami.',
-            cta: 'Lihat Transparansi',
+            title: "DAO Governance",
+            desc: "Keputusan penting dibuka melalui mekanisme proposal dan suara komunitas secara terstruktur.",
+            cta: "Masuk DAO",
           },
           {
-            title: 'Kepatuhan Legal',
-            desc: 'Tinjau syarat, pengungkapan risiko, dan kebijakan privasi kami. Edukasi pertama tanpa janji investasi.',
-            cta: 'Lihat Info Legal',
+            title: "Keamanan & Kepatuhan",
+            desc: "Sistem dirancang dengan prinsip keamanan, kontrol akses, dan praktik operasional yang bertanggung jawab.",
+            cta: "Pelajari Keamanan",
           },
         ],
-        badges: [
-          'Edukasi Pertama',
-          'Sadar Risiko',
-          'Transparansi Penuh',
-          'Tanpa Jaminan',
-        ],
-        ctaTitle: 'Siap Belajar Lebih Lanjut?',
-        ctaHelper: 'Bergabunglah dengan komunitas kami atau jelajahi dokumentasi lengkap untuk memulai.',
-        joinCommunity: 'Bergabung',
-        readDocs: 'Baca Dokumentasi',
-        disclaimerLine: 'Bukan nasihat keuangan. Trading mengandung risiko tinggi. Lakukan riset Anda sendiri.',
+      },
+      disclaimer: {
+        text: "TPC Token adalah token utilitas dan tata kelola, bukan produk investasi. Tidak ada janji profit maupun imbal hasil finansial.",
       },
     },
     docs: {
@@ -1922,6 +2138,85 @@
       faqQ2: 'Bagaimana saya berpartisipasi dalam tata kelola?',
       faqA2: 'Partisipasi tata kelola dapat dilakukan setelah fitur DAO Lite aktif dan tersedia untuk komunitas.',
       disclaimer: 'Semua informasi di situs ini bersifat edukasi. TPC bukan penasihat keuangan atau platform investasi.',
+    },
+    marketplace: {
+      title: 'Marketplace TPC',
+      subtitle: 'Temukan vendor dan penyedia layanan terpercaya dari komunitas TPC',
+      filterByCategory: 'Filter Berdasarkan Kategori',
+      categories: {
+        all: 'Semua Kategori',
+        trading: 'Trading',
+        education: 'Edukasi',
+        services: 'Layanan',
+        technology: 'Teknologi',
+        consulting: 'Konsultasi',
+        media: 'Media',
+        other: 'Lainnya',
+      },
+      emptyTitle: 'Tidak Ada Vendor Ditemukan',
+      emptyDesc: 'Belum ada vendor yang disetujui di kategori ini.',
+      visitWebsite: 'Kunjungi Website',
+      contactTelegram: 'Kontak di Telegram',
+      disclaimer: 'Listing bersifat informatif saja. TPC tidak mendukung atau menjamin layanan atau hasil vendor.',
+      footerDisclaimer: 'Vendor independen. TPC tidak menjamin hasil atau pengembalian.',
+      applyAsVendor: 'Daftar sebagai Vendor',
+    },
+    vendor: {
+      apply: {
+        title: 'Daftar sebagai Vendor',
+        subtitle: 'Daftarkan bisnis Anda di Marketplace TPC dan terhubung dengan komunitas kami',
+        disclaimer: 'Listing bersifat informatif saja. Tidak ada jaminan, dukungan, atau janji finansial.',
+        brandName: 'Nama Merek',
+        category: 'Kategori',
+        descriptionEn: 'Deskripsi (Bahasa Inggris)',
+        descriptionId: 'Deskripsi (Bahasa Indonesia)',
+        contactInfo: 'Informasi Kontak',
+        contactInfoDesc: 'Berikan setidaknya satu metode kontak agar pelanggan dapat menghubungi Anda.',
+        website: 'Website',
+        telegram: 'Telegram',
+        email: 'Email',
+        submit: 'Kirim Aplikasi',
+        submitting: 'Mengirim...',
+        submittedTitle: 'Aplikasi Terkirim',
+        submittedDesc: 'Aplikasi vendor Anda telah dikirim dan sedang ditinjau oleh tim kami. Kami akan memberi tahu Anda setelah ditinjau.',
+      },
+    },
+    trust: {
+      verified: 'Terverifikasi',
+      invitesEnabled: 'Undangan Diaktifkan',
+      invitesRevoked: 'Undangan Dicabut',
+      vendorApproved: 'Vendor Disetujui',
+      vendorPending: 'Vendor Menunggu',
+      role: {
+        super_admin: 'Super Admin',
+        admin: 'Admin',
+        moderator: 'Moderator',
+        member: 'Member',
+        vendor: 'Vendor',
+        guest: 'Guest',
+      },
+      referralCode: 'Kode Referral',
+      referredBy: 'Direferensikan Oleh',
+      usernameHelp: '3-20 karakter, huruf kecil, angka, underscore saja. Tidak bisa dimulai atau diakhiri dengan underscore.',
+      usernameInvalid: 'Format username tidak valid',
+      usernameTaken: 'Username sudah diambil',
+      fileTooLarge: 'File terlalu besar. Maksimal ukuran 2MB',
+      fileTypeInvalid: 'Tipe file tidak valid. Silakan upload gambar PNG, JPEG, atau WebP saja',
+      genericError: 'Terjadi kesalahan. Silakan coba lagi.',
+      completion: {
+        title: 'Lengkapi Profil Anda',
+        subtitle: 'Tambahkan nama lengkap untuk pengalaman yang lebih baik',
+        complete: 'Lengkapi',
+        dismiss: 'Tutup'
+      },
+      directory: {
+        title: 'Pengaturan Direktori',
+        subtitle: 'Kelola profil dan informasi Anda',
+        editProfile: 'Edit Profil',
+        viewProfile: 'Lihat Profil',
+        backToDirectory: 'Kembali ke Direktori',
+        lastUpdated: 'Terakhir Diperbarui',
+      },
     },
     dao: {
       title: 'DAO Lite',
@@ -1941,6 +2236,36 @@
       notice: 'Semua mekanisme DAO Lite masih bersifat rencana dan dapat berubah sesuai keputusan komunitas dan perkembangan teknis.',
     },
     transparency: {
+      hero: {
+        title: "Transparansi",
+        subtitle: "Log publik dan bukti on-chain."
+      },
+      live: {
+        title: "Transparansi Langsung",
+        desc: "Seluruh dana komunitas dan transaksi dapat diverifikasi publik secara on-chain."
+      },
+      revenue: {
+        title: "Kebijakan Pendapatan",
+        youtube: "Pembagian Pendapatan YouTube",
+        community: "Pendapatan untuk Komunitas"
+      },
+      updates: {
+        title: "Pembaruan Terbaru"
+      },
+      cta: {
+        title: "Bergabung dengan Komunitas",
+        subtitle: "Jadilah bagian dari komunitas trading yang transparan dan berfokus pada edukasi.",
+        docs: "Baca Dokumentasi",
+        join: "Gabung Komunitas"
+      },
+      sections: {
+        officialWallets: "Dompet Resmi",
+        revenuePolicy: "Kebijakan Pendapatan",
+        buybackBurn: "Buyback & Burn",
+        daoTreasury: "Treasury DAO",
+        vendorRegistry: "Registrasi Vendor",
+        auditProof: "Bukti On-chain"
+      },
       header: {
         title: 'Hub Transparansi',
         subtitle: 'Visibilitas lengkap terhadap operasi TPC, dompet, dan aliran keuangan',
@@ -1990,32 +2315,6 @@
           '20% â€” Burn Token (Pengurangan Supply)',
           '10% â€” Cadangan DAO Treasury',
         ],
-      },
-      updates: {
-        title: 'Log Update Transparansi',
-        items: [
-          {
-            date: '2026-01-18',
-            title: 'Peluncuran Website',
-            desc: 'Website resmi TPC Global diluncurkan dengan dukungan multibahasa dan dokumentasi lengkap',
-          },
-          {
-            date: '2026-01-18',
-            title: 'Infrastruktur SEO',
-            desc: 'Sistem SEO canggih diimplementasikan dengan gambar OG per-halaman dan dukungan hreflang',
-          },
-          {
-            date: '2026-01-18',
-            title: 'Hub Transparansi Live',
-            desc: 'Halaman transparansi dipublikasikan dengan struktur dompet dan pengungkapan kebijakan pendapatan',
-          },
-        ],
-      },
-      cta: {
-        docs: 'Lihat Dokumentasi',
-        community: 'Bergabung dengan Komunitas',
-        title: 'Pelajari Lebih Lanjut Tentang TPC',
-        subtitle: 'Jelajahi dokumentasi atau bergabung dengan komunitas untuk tetap update',
       },
       walletAction: 'Lihat di Explorer',
       revenueLabel: 'Transparansi Pendapatan',
@@ -2157,8 +2456,13 @@
         community: 'Komunitas',
         telegram: 'Telegram',
       },
-      copyright: 'Â© 2026 TPC. Hak cipta dilindungi.',
-      madeWith: 'Dibangun dengan transparansi',
+      copyright: '© 2026 TPC. Hak cipta dilindungi.',
+      madeWith: 'Dibuat dengan penuh perhatian oleh TPC',
+      rights: 'Seluruh hak cipta dilindungi.',
+      terms: 'Syarat & Ketentuan',
+      privacy: 'Kebijakan Privasi',
+      cookies: 'Kebijakan Cookie',
+      disclaimer: 'Disclaimer',
     },
     security: {
       header: {
@@ -2911,6 +3215,201 @@
         tertiary: 'Gabung Komunitas',
       },
     },
+    common: {
+      or: 'atau',
+      backHome: 'Kembali ke Beranda',
+      backToSignIn: 'Kembali ke Masuk',
+      learnMore: 'Pelajari Lebih Lanjut',
+      loading: 'Memuat...',
+      language: {
+        en: 'EN',
+        id: 'ID'
+      }
+    },
+    signup: {
+      settingsLoadError: "Tidak dapat memuat pengaturan; melanjutkan dengan default.",
+      maintenanceTitle: "Pendaftaran Terbatas",
+      maintenanceDesc: "Platform sedang dalam maintenance. Pendaftaran tersedia hanya melalui undangan.",
+      maintenanceNotice: "Platform sedang maintenance. Pendaftaran tetap dibuka untuk pengguna dengan undangan.",
+      referralChecking: "Memverifikasi kode undangan...",
+      referralValid: "Undangan diverifikasi",
+      referralInvalid: "Kode undangan tidak valid",
+      referralError: "Gagal memverifikasi kode undangan",
+      backToHome: "Kembali ke Beranda",
+      alreadyHaveAccount: "Sudah punya akun?",
+      createAccount: "Buat Akun",
+      title: "Buat akun TPC",
+      subtitle: "Bergabung dan akses fitur premium.",
+      inviteOnlyTitle: "Khusus Undangan",
+      inviteOnlyDesc: "Pendaftaran memerlukan kode undangan yang valid.",
+      referralLabel: "Kode undangan",
+      referralPlaceholder: "TPC-XXXXX",
+      emailLabel: "Email",
+      emailPlaceholder: "nama@email.com",
+      passwordLabel: "Password",
+      passwordPlaceholder: "Buat password yang kuat",
+      fullNameLabel: "Nama lengkap",
+      fullNamePlaceholder: "Nama lengkap kita",
+      usernameLabel: "Username",
+      usernamePlaceholder: "Buat username",
+      submit: "Buat akun",
+      haveAccount: "Sudah punya akun?",
+      signIn: "Masuk",
+      inviteCode: {
+        label: "Kode undangan",
+        placeholder: "TPC-XXXXX",
+        helper: "Masukkan kode undangan Anda untuk melanjutkan",
+        checking: "Memeriksa...",
+        valid: "Kode diverifikasi",
+        invalid: "Kode tidak valid",
+        invalidFormat: "Format: TPC-XXXXXX",
+        required: "Kode undangan diperlukan"
+      },
+      username: {
+        label: "Username",
+        placeholder: "Buat username",
+        helper: "3-20 karakter: huruf kecil, angka, underscore",
+        required: "Username diperlukan",
+        invalid: "Format username tidak valid"
+      },
+      fullName: {
+        label: "Nama lengkap",
+        placeholder: "Nama lengkap kita",
+        required: "Nama lengkap diperlukan"
+      },
+      email: {
+        label: "Email",
+        placeholder: "nama@email.com",
+        required: "Email diperlukan",
+        invalid: "Format email tidak valid"
+      },
+      password: {
+        label: "Password",
+        placeholder: "Buat password yang kuat",
+        helper: "Minimal 8 karakter",
+        required: "Password diperlukan",
+        minLength: "Password minimal 8 karakter",
+        mismatch: "Password tidak cocok"
+      },
+      confirmPassword: {
+        label: "Konfirmasi Password",
+        placeholder: "Ulangi password"
+      },
+      loading: "Memproses...",
+      errors: {
+        generic: "Gagal membuat akun. Silakan coba lagi.",
+        inviteRequired: "Kode undangan diperlukan",
+        usernameInvalid: "Format username tidak valid"
+      },
+      success: {
+        title: "Akun berhasil dibuat",
+        checkEmail: "Silakan periksa email Anda untuk verifikasi akun",
+        sentTo: "Verifikasi dikirim ke:",
+        openEmail: "Buka Aplikasi Email",
+        goToSignIn: "Ke Halaman Masuk"
+      },
+      verifyEmail: {
+        title: "Verifikasi Email Anda",
+        subtitle: "Kami perlu memastikan email ini benar-benar milik Anda.",
+        body: "Kami telah mengirimkan email verifikasi ke inbox Anda. Silakan klik tautan verifikasi untuk mengaktifkan akun TPC.",
+        info: "Demi keamanan akun dan komunitas, login hanya diizinkan setelah email terverifikasi.",
+        resend: "Kirim Ulang Email Verifikasi",
+        hint: "Tidak menerima email? Periksa folder spam atau promosi.",
+        footer: "Jika masih mengalami kendala, silakan hubungi tim support TPC."
+      },
+      updateProfit: {
+        title: "Update Profit & Profil",
+        subtitle: "Lengkapi profil Anda untuk membuka semua fitur member"
+      },
+      login: {
+        emailNotVerified: "Akun Anda belum dapat login karena email belum diverifikasi. Silakan verifikasi email terlebih dahulu untuk melanjutkan."
+      },
+      profileCompletion: {
+        title: "Lengkapi Profil Anda",
+        subtitle: "Satu langkah lagi untuk mengaktifkan akses penuh member TPC.",
+        body: "Untuk menjaga kualitas komunitas dan transparansi data, kami memerlukan beberapa informasi dasar sebelum Anda melanjutkan.",
+        requiredNotice: "Kolom berikut wajib diisi: Nama Lengkap, Nomor WhatsApp, Telegram, dan Kota.",
+        warning: "Profil belum lengkap. Lengkapi data wajib untuk melanjutkan aktivitas Anda.",
+        save: "Simpan & Lanjutkan",
+        success: "Profil berhasil diperbarui. Selamat datang di komunitas TPC."
+      },
+      signup: {
+        title: "Buat Akun",
+        subtitle: "Bergabung dengan TPC Global dan mulai perjalanan Anda",
+        inviteCode: {
+          label: "Kode Undangan",
+          placeholder: "Masukkan kode undangan Anda"
+        },
+        username: {
+          label: "Username",
+          placeholder: "Pilih username"
+        },
+        email: {
+          label: "Email",
+          placeholder: "Masukkan email Anda"
+        },
+        password: {
+          label: "Password",
+          placeholder: "Buat password yang kuat"
+        },
+        confirmPassword: {
+          label: "Konfirmasi Password",
+          placeholder: "Konfirmasi password Anda"
+        },
+        button: {
+          createAccount: "Buat Akun"
+        },
+        helpers: {
+          username: "3–20 karakter. Huruf kecil, angka, dan underscore."
+        },
+        errors: {
+          inviteInvalid: "Kode undangan tidak valid. Hubungi sponsor Anda.",
+          required: "Field ini diperlukan",
+          invalidEmail: "Format email tidak valid",
+          usernameFormat: "Username harus 3-20 karakter: lowercase, angka, underscore saja",
+          usernameTaken: "Username sudah digunakan",
+          passwordWeak: "Password harus mengandung minimal 1 huruf dan 1 angka",
+          passwordMinLength: "Password minimal 8 karakter",
+          passwordTooShort: "Password terlalu pendek",
+          passwordMismatch: "Konfirmasi password tidak sama.",
+          fullNameMinLength: "Nama lengkap minimal 2 karakter",
+          emailTaken: "Email sudah terdaftar",
+          network: "Error jaringan. Silakan periksa koneksi Anda dan coba lagi",
+          invitationInvalid: "Kode undangan tidak valid",
+          invitationRequired: "Kode undangan diperlukan",
+          emailNotVerified: "Silakan verifikasi email Anda sebelum masuk.",
+          usernameInvalid: "Format username tidak valid"
+        },
+        disabledSubmit: "Lengkapi semua data wajib terlebih dahulu."
+      },
+      profile: {
+        completionRequired: "Pelengkapan Profil Diperlukan",
+        completionMessage: "Silakan lengkapi semua field profil yang diperlukan untuk mengakses fitur member lainnya.",
+        requiredFields: "Informasi Profil yang Diperlukan",
+        fullName: "Nama Lengkap",
+        fullNamePlaceholder: "Masukkan nama lengkap Anda",
+        phoneWa: "WhatsApp",
+        phonePlaceholder: "+62 812-3456-7890",
+        telegram: "Telegram",
+        telegramPlaceholder: "@username atau https://t.me/username",
+        city: "Kota",
+        cityPlaceholder: "Masukkan kota Anda",
+        save: "Simpan Profil",
+        saving: "Menyimpan...",
+        saveSuccess: "Profil berhasil diperbarui!",
+        saveError: "Gagal menyimpan profil. Silakan coba lagi.",
+        goToDashboard: "Ke Dashboard",
+        errors: {
+          required: "Field ini diperlukan",
+          fullNameMinLength: "Nama lengkap minimal 2 karakter",
+          phoneFormat: "Nomor WhatsApp harus dimulai dengan +62 atau 62",
+          phoneMinLength: "Nomor WhatsApp terlalu pendek",
+          telegramFormat: "Telegram harus berupa @username atau link t.me",
+          telegramMinLength: "Username Telegram terlalu pendek",
+          cityMinLength: "Kota minimal 2 karakter"
+        }
+      }
+    },
     auth: {
       forgot: {
         title: 'Reset kata sandi',
@@ -2926,16 +3425,6 @@
         reassurance: 'Kami tidak akan pernah membagikan email Anda ke siapa pun.',
       },
       reassurance: 'Data Anda terlindungi. Kami tidak pernah membagikan informasi pribadi.',
-      common: {
-        or: 'atau',
-        backHome: 'Kembali ke Beranda',
-        backToSignIn: 'Kembali ke Masuk',
-        loading: 'Memuat...',
-        language: {
-          en: 'EN',
-          id: 'ID'
-        }
-      },
       signout: 'Keluar',
       signup: {
         settingsLoadError: "Tidak dapat memuat pengaturan; melanjutkan dengan default.",
@@ -3006,56 +3495,30 @@
           label: "Konfirmasi Password",
           placeholder: "Ulangi password"
         },
-        loading: "Membuat Akun...",
+        loading: "Memproses...",
         errors: {
           generic: "Gagal membuat akun. Silakan coba lagi.",
           inviteRequired: "Kode undangan diperlukan",
-          usernameInvalid: "Format username tidak valid"
+          usernameInvalid: "Format username tidak valid",
+          required: "Field ini diperlukan",
+          invalidEmail: "Format email tidak valid",
+          usernameFormat: "Username harus 3-20 karakter: lowercase, angka, underscore saja",
+          usernameTaken: "Username sudah digunakan",
+          passwordWeak: "Password harus mengandung minimal 1 huruf dan 1 angka",
+          passwordMinLength: "Password minimal 8 karakter",
+          passwordMismatch: "Konfirmasi password tidak sama.",
+          fullNameMinLength: "Nama lengkap minimal 2 karakter",
+          emailTaken: "Email sudah terdaftar",
+          network: "Error jaringan. Silakan periksa koneksi Anda dan coba lagi"
         },
         success: {
           title: "Akun berhasil dibuat",
           checkEmail: "Silakan periksa email Anda untuk verifikasi akun",
           sentTo: "Verifikasi dikirim ke:",
           openEmail: "Buka Aplikasi Email",
-          goToSignIn: "Ke Halaman Masuk"
-        }
-      },
-        fullName: {
-          label: "Nama Lengkap",
-          placeholder: "John Doe",
-          required: "Nama lengkap diperlukan"
-        },
-        email: {
-          label: "Email",
-          placeholder: "email@example.com",
-          required: "Email diperlukan",
-          invalid: "Format email tidak valid"
-        },
-        password: {
-          label: "Password",
-          placeholder: "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢",
-          helper: "Minimal 8 karakter",
-          required: "Password diperlukan",
-          minLength: "Password minimal 8 karakter",
-          mismatch: "Password tidak cocok"
-        },
-        confirmPassword: {
-          label: "Konfirmasi Password",
-          placeholder: "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
-        },
-        loading: "Membuat Akun...",
-        errors: {
-          generic: "Gagal membuat akun. Silakan coba lagi.",
-          inviteRequired: "Kode undangan diperlukan",
-          usernameInvalid: "Format username tidak valid"
-        },
-        success: {
-          title: "Akun berhasil dibuat",
-          checkEmail: "Silakan periksa email Anda untuk verifikasi akun",
-          sentTo: "Verifikasi dikirim ke:",
-          openEmail: "Buka Aplikasi Email",
-          resend: "Kirim Ulang Verifikasi",
-          goToSignIn: "Ke Halaman Masuk"
+          goToSignIn: "Ke Halaman Masuk",
+          bodyConfirm: "Kami telah mengirim email verifikasi ke alamat Anda. Silakan periksa inbox dan klik link verifikasi untuk mengaktifkan akun Anda.",
+          bodyInstant: "Akun Anda berhasil dibuat! Anda sekarang dapat masuk dengan kredensial Anda."
         }
       },
       maintenance: {
@@ -3216,8 +3679,5 @@
       },
     },
   },
-} as const;
-
-export type Language = 'en' | 'id';
-export type TranslationKey = typeof translations.en;
+};
 
