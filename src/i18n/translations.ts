@@ -1248,7 +1248,12 @@ export const translations: Record<Language, any> = {
           invitationInvalid: "Invalid invitation code",
           invitationRequired: "Invitation code is required",
           emailNotVerified: "Please verify your email before logging in.",
-          usernameInvalid: "Invalid username format"
+          usernameInvalid: "Username must be 3–20 characters (lowercase, numbers, underscore).",
+          passwordMismatch: "Password confirmation does not match.",
+          success: {
+            title: "Account created successfully",
+            subtitle: "Check your email to verify your account."
+          }
         },
         disabledSubmit: "Please complete all required fields first."
       },
@@ -1263,7 +1268,7 @@ export const translations: Record<Language, any> = {
       },
       completeProfile: {
         title: "Complete Your Profile",
-        subtitle: "One last step to unlock full TPC member access",
+        subtitle: "Full name, phone/WhatsApp, Telegram, and city are required.",
         fields: {
           fullName: "Full Name",
           phone: "Phone / WhatsApp",
@@ -3534,7 +3539,7 @@ export const translations: Record<Language, any> = {
       },
       completeProfile: {
         title: 'Lengkapi Profil Anda',
-        subtitle: 'Kami membutuhkan beberapa informasi tambahan untuk melengkapi profil Anda',
+        subtitle: 'Nama lengkap, nomor WhatsApp, Telegram, dan kota wajib diisi.',
         notice: 'Lengkapi profil Anda untuk mengakses semua fitur member',
         labels: {
           fullName: 'Nama Lengkap',

@@ -48,12 +48,15 @@ export const LoginGuard: React.FC<LoginGuardProps> = ({ lang, children }) => {
         // User is verified, check profile completion
         const profileStatus = await getProfileCompletionStatus();
         
-        if (!profileStatus) {
-          // Profile doesn't exist, create minimal profile
-          await ensureProfileAfterVerifiedLogin();
-          setNeedsProfileCompletion(true);
+        if (!profileStatus || !profileStatus.isAuthenticated) {
           setIsChecking(false);
-          navigate(langPath(lang, '/member/complete-profile'));
+          return;
+        }
+
+        if (!profileStatus.isEmailVerified) {
+          setNeedsVerification(true);
+          setIsChecking(false);
+          navigate(langPath(lang, '/verify-email'));
           return;
         }
 

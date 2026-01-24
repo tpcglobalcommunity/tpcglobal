@@ -257,7 +257,7 @@ export default function SignUp() {
     const u = (username ?? '').trim().toLowerCase();
     if (!u) return { status: 'unknown', available: true };
 
-    const { data, error } = await supabase.rpc('check_username_available', { p_username: u });
+    const { data, error } = await supabase.rpc('check_username_available', { username_text: u });
 
     if (error) {
       const msg = String((error as any).message ?? '').toLowerCase();
@@ -271,8 +271,8 @@ export default function SignUp() {
       return { status: 'error', available: true };
     }
 
-    // RPC returns boolean directly
-    const available = typeof data === 'boolean' ? data : true;
+    // RPC returns JSON with available field
+    const available = data?.available === true;
     return { status: 'ok', available };
   };
 
