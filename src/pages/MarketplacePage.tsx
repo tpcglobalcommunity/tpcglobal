@@ -4,7 +4,7 @@ import { useI18n, getLangPath } from "../i18n";
 import { PremiumShell, PremiumCard } from "../components/ui";
 import { useAuth } from "../contexts/AuthContext";
 import { getMarketplaceItemsByCategory, type MarketplaceItem, type MarketplaceCategory } from "../data/marketplace.mock";
-import { Link } from "../components/Router";
+import { Link, useNavigate } from "../components/Router";
 import { getBuildInfo } from "../lib/buildInfo";
 import { supabase } from "../lib/supabase";
 
@@ -19,6 +19,14 @@ const CATEGORIES: MarketplaceCategory[] = [
   "other",
 ];
 
+// Slug utility function
+const toSlug = (s: string): string => {
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+};
+
 // Safe translator with fallback (never throws)
 function tf(t: (k: string) => any, key: string, fallback: string) {
   try {
@@ -32,6 +40,7 @@ function tf(t: (k: string) => any, key: string, fallback: string) {
 export default function MarketplacePage() {
   const { t, language: lang } = useI18n();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +49,16 @@ export default function MarketplacePage() {
   const [items, setItems] = useState<MarketplaceItem[]>([]);
   const [selected, setSelected] = useState<MarketplaceItem | null>(null);
   const [isAuthed, setIsAuthed] = useState(false);
+
+  // Extract slug from URL
+  const slugFromUrl = useMemo(() => {
+    const pathParts = window.location.pathname.split('/');
+    const langIndex = pathParts.findIndex(part => part === 'en' || part === 'id');
+    if (langIndex !== -1 && pathParts[langIndex + 1] === 'marketplace' && pathParts[langIndex + 2]) {
+      return pathParts[langIndex + 2];
+    }
+    return null;
+  }, []);
 
   // Load items safely
   useEffect(() => {
@@ -55,8 +74,14 @@ export default function MarketplacePage() {
 
         const result = getMarketplaceItemsByCategory(activeCategory);
         const safe = Array.isArray(result) ? result : [];
+        
+        // Add slug to items
+        const itemsWithSlug = safe.map(item => ({
+          ...item,
+          slug: item.slug || `${toSlug(item.title?.[lang] || item.title?.en || 'item')}-${item.id}`
+        }));
 
-        if (alive) setItems(safe);
+        if (alive) setItems(itemsWithSlug);
       } catch (e) {
         console.error("[Marketplace] load error:", e);
         if (alive) {
@@ -109,6 +134,29 @@ export default function MarketplacePage() {
       document.removeEventListener("keydown", handleEsc);
     };
   }, [selected]);
+
+  // Auto-open modal from URL slug
+  useEffect(() => {
+    if (slugFromUrl && items.length > 0) {
+      const found = items.find(item => item.slug === slugFromUrl);
+      if (found) {
+        setSelected(found);
+      }
+    }
+  }, [slugFromUrl, items]);
+
+  // Update URL when modal opens/closes
+  useEffect(() => {
+    if (selected) {
+      navigate(`/${lang}/marketplace/${selected.slug}`);
+      // Update document title for SEO
+      document.title = `${selected.title?.[lang] || selected.title?.en || 'Item'} — TPC Marketplace`;
+    } else {
+      navigate(`/${lang}/marketplace`);
+      // Restore document title
+      document.title = 'Marketplace — TPC';
+    }
+  }, [selected, lang, navigate]);
 
   const title = tf(t, "marketplace.title", "Marketplace");
   const subtitle = tf(t, "marketplace.subtitle", "Alat, layanan, dan edukasi profesional");

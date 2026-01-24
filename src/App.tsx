@@ -260,13 +260,13 @@ export default function App() {
       case "/support":
         return <Support lang={lang} />;
       case "/marketplace":
-        return <MarketplacePage lang={lang} />;
+        return <MarketplacePage />;
       case "/marketplace/item":
         return <MarketplaceItemPage lang={lang} />;
 
-      // Marketplace item detail
-      if (pathWithoutLang.startsWith("/marketplace/item/")) {
-        return <MarketplaceItemPage lang={lang} />;
+      // Marketplace item detail with slug
+      if (pathWithoutLang.startsWith("/marketplace/") && pathWithoutLang !== "/marketplace/item") {
+        return <MarketplacePage />;
       }
 
       // AUTH

@@ -4,6 +4,7 @@ export interface MarketplaceItem {
   id: string;
   category: MarketplaceCategory;
   verified: boolean;
+  slug?: string;
   title: {
     en: string;
     id: string;
