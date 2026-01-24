@@ -10,8 +10,8 @@ interface VerifyProps {
   lang?: Language;
 }
 
-export default function Verify({ lang }: VerifyProps) {
-  const { t, language } = useI18n();
+export default function Verify({ }: VerifyProps) {
+  const { language } = useI18n();
   const L = language;
 
   const [email, setEmail] = useState("");
@@ -88,7 +88,7 @@ export default function Verify({ lang }: VerifyProps) {
 
   return (
     <AuthShell 
-      lang={lang}
+      lang={L}
       title="Verify Your Email"
       subtitle="Complete your registration by verifying your email address"
     >

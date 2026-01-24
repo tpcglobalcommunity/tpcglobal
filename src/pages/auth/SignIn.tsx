@@ -25,8 +25,8 @@ function safeNext(nextRaw: string | null, fallback: string) {
   }
 }
 
-export default function SignIn({ lang }: SignInProps) {
-  const { t, language } = useI18n();
+export default function SignIn({ }: SignInProps) {
+  const { language } = useI18n();
   const L = language;
 
   const [email, setEmail] = useState("");
@@ -90,7 +90,7 @@ export default function SignIn({ lang }: SignInProps) {
 
   return (
     <AuthShell 
-      lang={lang}
+      lang={L}
       title="Sign In"
       subtitle="Welcome back to TPC"
     >

@@ -8,8 +8,8 @@ interface UpdateProfitProps {
   lang?: Language;
 }
 
-export default function UpdateProfit({ lang }: UpdateProfitProps) {
-  const { t, language } = useI18n();
+export default function UpdateProfit({ }: UpdateProfitProps) {
+  const { language } = useI18n();
   const L = language;
 
   const [profitData, setProfitData] = useState({
