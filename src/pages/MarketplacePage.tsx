@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { Store, Filter, AlertCircle, Star, Shield, TrendingUp, Sparkles } from "lucide-react";
+import { Store, Filter, AlertCircle, Star, Shield, TrendingUp, Sparkles, X } from "lucide-react";
 import { useI18n, getLangPath } from "../i18n";
 import { PremiumShell, PremiumCard } from "../components/ui";
 import { useAuth } from "../contexts/AuthContext";
 import { getMarketplaceItemsByCategory, type MarketplaceItem, type MarketplaceCategory } from "../data/marketplace.mock";
 import { Link } from "../components/Router";
 import { getBuildInfo } from "../lib/buildInfo";
+import { supabase } from "../lib/supabase";
 
 const CATEGORIES: MarketplaceCategory[] = [
   "all",
@@ -37,6 +38,8 @@ export default function MarketplacePage() {
   const [activeCategory, setActiveCategory] = useState<MarketplaceCategory>("all");
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [items, setItems] = useState<MarketplaceItem[]>([]);
+  const [selected, setSelected] = useState<MarketplaceItem | null>(null);
+  const [isAuthed, setIsAuthed] = useState(false);
 
   // Load items safely
   useEffect(() => {
@@ -70,6 +73,43 @@ export default function MarketplacePage() {
     };
   }, [activeCategory]);
 
+  // Check auth session
+  useEffect(() => {
+    let alive = true;
+
+    // Initial check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (alive) setIsAuthed(!!session);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (alive) setIsAuthed(!!session);
+    });
+
+    return () => {
+      alive = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // ESC key listener for modal
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && selected) {
+        setSelected(null);
+      }
+    };
+
+    if (selected) {
+      document.addEventListener("keydown", handleEsc);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEsc);
+    };
+  }, [selected]);
+
   const title = tf(t, "marketplace.title", "Marketplace");
   const subtitle = tf(t, "marketplace.subtitle", "Alat, layanan, dan edukasi profesional");
   const badgeTrusted = tf(t, "marketplace.badgeTrusted", "Mitra Terverifikasi");
@@ -85,6 +125,16 @@ export default function MarketplacePage() {
   const emptyVerifiedTitle = tf(t, "marketplace.emptyVerifiedTitle", "Belum ada mitra terverifikasi");
   const emptyVerifiedSubtitle = tf(t, "marketplace.emptyVerifiedSubtitle", "Kami sedang onboarding vendor terverifikasi. Silakan cek kembali.");
   const emptyVerifiedCta = tf(t, "marketplace.emptyVerifiedCta", "Gabung Telegram untuk update");
+
+  // Modal translations
+  const modalVerifiedBadge = tf(t, "marketplace.modal.verifiedBadge", "Terverifikasi");
+  const modalCategory = tf(t, "marketplace.modal.category", "Kategori");
+  const modalAboutVendor = tf(t, "marketplace.modal.aboutVendor", "Tentang Vendor");
+  const modalLegalNote = tf(t, "marketplace.modal.legalNote", "Vendor beroperasi secara independen. TPC tidak bertanggung jawab atas transaksi.");
+  const modalCtaSignIn = tf(t, "marketplace.modal.ctaSignIn", "Login untuk Lanjut");
+  const modalCtaProceed = tf(t, "marketplace.modal.ctaProceed", "Lanjut");
+  const modalClose = tf(t, "marketplace.modal.close", "Tutup");
+  const modalComingSoon = tf(t, "marketplace.modal.comingSoon", "Checkout segera hadir");
 
   const errorTitle = tf(t, "marketplace.errorTitle", "Gagal memuat marketplace");
   const errorDesc = tf(t, "marketplace.errorDesc", "Terjadi kendala saat memuat data. Silakan coba lagi.");
@@ -314,10 +364,20 @@ export default function MarketplacePage() {
               const reviews = typeof item?.reviewCount === "number" ? item.reviewCount : 0;
 
               return (
-                <PremiumCard
+                <div
                   key={id}
-                  className="flex flex-col hover:border-[#F0B90B]/30 transition-all hover:shadow-lg hover:shadow-[#F0B90B]/10"
+                  className="cursor-pointer"
+                  onClick={() => setSelected(item)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e: React.KeyboardEvent) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelected(item);
+                    }
+                  }}
                 >
+                  <PremiumCard className="flex flex-col hover:border-[#F0B90B]/30 transition-all hover:shadow-lg hover:shadow-[#F0B90B]/10">
                   <div className="flex-1">
                     <div className="flex items-start gap-4 mb-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-[#F0B90B]/20 to-[#F0B90B]/10 rounded-lg flex items-center justify-center text-2xl">
@@ -379,8 +439,124 @@ export default function MarketplacePage() {
                     </Link>
                   </div>
                 </PremiumCard>
+                </div>
               );
             })}
+          </div>
+        )}
+
+        {/* Modal */}
+        {selected && (
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            onClick={() => setSelected(null)}
+          >
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+            
+            {/* Modal Panel */}
+            <div 
+              className="relative max-w-xl w-full bg-gradient-to-br from-gray-900 to-black border border-white/10 rounded-2xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="p-6 border-b border-white/10">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-white mb-1">
+                      {selected.title?.[lang] || "Untitled"}
+                    </h3>
+                    <p className="text-sm text-white/60">
+                      {selected.provider?.name || "Unknown Vendor"}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setSelected(null)}
+                    className="p-2 text-white/40 hover:text-white transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                {/* Verified Badge */}
+                {selected.verified && (
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-[#F0B90B]/20 to-[#F0B90B]/10 text-[#F0B90B] rounded-full border border-[#F0B90B]/40 shadow-sm shadow-[#F0B90B]/10">
+                    <Shield className="w-4 h-4" />
+                    <span className="text-sm font-medium">{modalVerifiedBadge}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Body */}
+              <div className="p-6 space-y-4">
+                {/* Category */}
+                <div>
+                  <span className="text-xs text-white/40 uppercase tracking-wider">{modalCategory}</span>
+                  <p className="text-sm text-white font-medium capitalize">{selected.category}</p>
+                </div>
+
+                {/* Rating */}
+                <div className="flex items-center gap-2">
+                  {renderStars(selected.rating || 0)}
+                  <span className="text-xs text-white/40">({selected.reviewCount || 0})</span>
+                </div>
+
+                {/* Tags */}
+                {selected.tags && selected.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {selected.tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="px-2 py-1 text-xs bg-white/10 text-white/60 rounded-full"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Description */}
+                <div>
+                  <span className="text-xs text-white/40 uppercase tracking-wider">{modalAboutVendor}</span>
+                  <p className="text-sm text-white/80 leading-relaxed">
+                    {selected.desc?.[lang] || selected.shortDesc?.[lang] || "No description available"}
+                  </p>
+                </div>
+
+                {/* Legal Note */}
+                <div className="pt-4 border-t border-white/5">
+                  <p className="text-xs text-white/40 italic">{modalLegalNote}</p>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="p-6 border-t border-white/10 flex gap-3">
+                {/* Primary CTA */}
+                {isAuthed ? (
+                  <button
+                    onClick={() => alert(modalComingSoon)}
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-[#F0B90B] to-[#F0B90B]/90 hover:from-[#F0B90B]/90 hover:to-[#F0B90B] text-black font-medium rounded-lg transition-all shadow-lg shadow-[#F0B90B]/25"
+                  >
+                    {modalCtaProceed}
+                  </button>
+                ) : (
+                  <Link
+                    to={getLangPath(lang, "/signin")}
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-[#F0B90B] to-[#F0B90B]/90 hover:from-[#F0B90B]/90 hover:to-[#F0B90B] text-black font-medium rounded-lg transition-all shadow-lg shadow-[#F0B90B]/25 text-center"
+                  >
+                    {modalCtaSignIn}
+                  </Link>
+                )}
+                
+                {/* Close Button */}
+                <button
+                  onClick={() => setSelected(null)}
+                  className="px-6 py-3 bg-white/10 hover:bg-white/15 text-white font-medium rounded-lg transition-colors border border-white/20"
+                >
+                  {modalClose}
+                </button>
+              </div>
+            </div>
           </div>
         )}
 

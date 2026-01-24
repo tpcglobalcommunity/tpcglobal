@@ -253,6 +253,16 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "marketplace.emptyVerifiedSubtitle": "We're onboarding verified vendors. Check back soon.",
     "marketplace.emptyVerifiedCta": "Join Telegram for updates",
 
+    // Marketplace modal
+    "marketplace.modal.verifiedBadge": "Verified",
+    "marketplace.modal.category": "Category",
+    "marketplace.modal.aboutVendor": "About Vendor",
+    "marketplace.modal.legalNote": "Vendors operate independently. TPC is not responsible for transactions.",
+    "marketplace.modal.ctaSignIn": "Sign In to Continue",
+    "marketplace.modal.ctaProceed": "Proceed",
+    "marketplace.modal.close": "Close",
+    "marketplace.modal.comingSoon": "Checkout coming soon",
+
     "updateProfit.title": "Update Profit",
     "updateProfit.subtitle": "Share your trading results with the TPC community",
     "updateProfit.disclaimer": "This is for educational and community tracking purposes only. Trading involves risk and past performance does not guarantee future results.",
@@ -514,6 +524,16 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "marketplace.emptyVerifiedTitle": "Belum ada mitra terverifikasi",
     "marketplace.emptyVerifiedSubtitle": "Kami sedang onboarding vendor terverifikasi. Silakan cek kembali.",
     "marketplace.emptyVerifiedCta": "Gabung Telegram untuk update",
+
+    // Marketplace modal
+    "marketplace.modal.verifiedBadge": "Terverifikasi",
+    "marketplace.modal.category": "Kategori",
+    "marketplace.modal.aboutVendor": "Tentang Vendor",
+    "marketplace.modal.legalNote": "Vendor beroperasi secara independen. TPC tidak bertanggung jawab atas transaksi.",
+    "marketplace.modal.ctaSignIn": "Login untuk Lanjut",
+    "marketplace.modal.ctaProceed": "Lanjut",
+    "marketplace.modal.close": "Tutup",
+    "marketplace.modal.comingSoon": "Checkout segera hadir",
 
     "updateProfit.title": "Update Laporan Profit",
     "updateProfit.subtitle": "Bagikan hasil trading Anda dengan komunitas TPC",
