@@ -264,6 +264,11 @@ export default function App() {
       case "/marketplace/item":
         return <MarketplaceItemPage lang={lang} />;
 
+      // Marketplace item detail
+      if (pathWithoutLang.startsWith("/marketplace/item/")) {
+        return <MarketplaceItemPage lang={lang} />;
+      }
+
       // AUTH
       case "/signup":
         return <SignUp />;

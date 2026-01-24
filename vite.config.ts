@@ -11,7 +11,13 @@ export default defineConfig({
       '@pages': path.resolve(__dirname, 'src/pages'),
       '@components': path.resolve(__dirname, 'src/components'),
       '@lib': path.resolve(__dirname, 'src/lib'),
-    }
+    },
+    dedupe: ['react', 'react-dom'],
+  },
+  define: {
+    __BUILD_SHA__: JSON.stringify(process.env.CF_PAGES_COMMIT_SHA || process.env.COMMIT_REF || "dev"),
+    __BUILD_ID__: JSON.stringify(process.env.CF_PAGES_BUILD_ID || ""),
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
   },
   optimizeDeps: {
     exclude: ['lucide-react'],

@@ -6,7 +6,11 @@ import App from './App.tsx';
 import ErrorBoundary from './components/system/ErrorBoundary.tsx';
 import { I18nProvider } from './i18n';
 import { setupChunkRecovery, clearChunkReloadFlag } from './utils/chunkRecovery';
+import { BUILD_SHA, BUILD_ID, BUILD_TIME } from './lib/buildInfo';
 import './index.css';
+
+// Log build info
+console.log("[BUILD]", { sha: BUILD_SHA, id: BUILD_ID, time: BUILD_TIME });
 
 // Setup chunk recovery for handling chunk load errors
 setupChunkRecovery();
@@ -14,14 +18,26 @@ setupChunkRecovery();
 // Clear chunk reload flag on successful load
 clearChunkReloadFlag();
 
-// Service Worker: Only register in production, disabled in DEV
-if (!import.meta.env.DEV && 'serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {
-      // Service worker registration failed, continue without it
-    });
+// HARD UNREGISTER Service Worker and clear caches (production fix)
+if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+  navigator.serviceWorker.getRegistrations().then((regs) => {
+    regs.forEach((r) => r.unregister());
   });
+  
+  // Clear caches created by SW
+  if ("caches" in window) {
+    caches.keys().then((keys) => keys.forEach((k) => caches.delete(k)));
+  }
 }
+
+// Service Worker: DISABLED for now to prevent caching issues
+// if (!import.meta.env.DEV && 'serviceWorker' in navigator) {
+//   window.addEventListener('load', () => {
+//     navigator.serviceWorker.register('/sw.js').catch(() => {
+//       // Service worker registration failed, continue without it
+//     });
+//   });
+// }
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

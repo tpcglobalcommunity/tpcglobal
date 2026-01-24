@@ -1,7 +1,7 @@
-import React from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { hasTier, TpcTier } from "../../lib/tier";
 import { NoticeBox } from "../ui";
+import type { ReactNode } from "react";
 
 export default function TierGate({
   required,

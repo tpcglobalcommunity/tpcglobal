@@ -1,6 +1,7 @@
 import { Home, FileText, Users, Eye, Shield } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { Language, useI18n, getLangPath } from '../i18n';
+import { Language, getLangPath } from '../i18n';
+import { translations } from '../i18n/translations';
 import { Link } from './Router';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -11,7 +12,6 @@ interface BottomNavProps {
 
 const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { t } = useI18n();
   const { profile } = useAuth();
 
   const isAdmin = profile?.role === "admin" || profile?.role === "super_admin";
@@ -26,25 +26,50 @@ const BottomNav = ({ lang, currentPath }: BottomNavProps) => {
     };
   }, []);
 
-  // Safe nav items with i18n
+  // Safe nav items with fallbacks - PREVENT CRASH
+  const getNavLabel = (key: string) => {
+    const safeLang = lang === 'en' || lang === 'id' ? lang : 'en';
+    
+    // Try current language first - SAFE ACCESS
+    const dict = translations[safeLang];
+    if (dict && typeof dict === 'object' && dict.nav && typeof dict.nav === 'object') {
+      const value = (dict.nav as any)[key];
+      if (typeof value === 'string') {
+        return value;
+      }
+    }
+    
+    // Fallback to English - SAFE ACCESS
+    const enDict = translations.en;
+    if (enDict && typeof enDict === 'object' && enDict.nav && typeof enDict.nav === 'object') {
+      const value = (enDict.nav as any)[key];
+      if (typeof value === 'string') {
+        return value;
+      }
+    }
+    
+    // Ultimate fallback - return key name
+    return key.split('.').pop() || key;
+  };
+
   const navItems = [
     { 
-      label: t('nav.home'), 
+      label: getNavLabel('nav.home'), 
       path: getLangPath(lang, '/home'), 
       icon: Home 
     },
     { 
-      label: t('nav.docs'), 
+      label: getNavLabel('nav.docs'), 
       path: getLangPath(lang, '/docs'), 
       icon: FileText 
     },
     { 
-      label: t('nav.dao'), 
+      label: getNavLabel('nav.dao'), 
       path: getLangPath(lang, '/dao'), 
       icon: Users 
     },
     { 
-      label: t('nav.transparency'), 
+      label: getNavLabel('nav.transparency'), 
       path: getLangPath(lang, '/transparency'), 
       icon: Eye 
     },

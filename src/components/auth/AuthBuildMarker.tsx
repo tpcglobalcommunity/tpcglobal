@@ -1,6 +1,4 @@
-import React from "react";
-
-export const AuthBuildMarker: React.FC = () => {
+export const AuthBuildMarker = () => {
   const buildHash = import.meta.env.VITE_COMMIT_HASH || "08bde33";
   const buildTime = new Date().toISOString().slice(0, 10);
   

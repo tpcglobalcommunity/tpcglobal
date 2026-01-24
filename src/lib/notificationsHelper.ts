@@ -1,7 +1,7 @@
 // Safe Notifications Helper - Production Ready
 // Handles notifications with feature flag and graceful fallbacks
 
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from './supabase';
 
 export interface Notification {
@@ -164,12 +164,12 @@ export function clearNotificationsCache(): void {
  * React hook for notifications
  */
 export function useNotifications(userId: string | undefined, force = false) {
-  const [notifications, setNotifications] = React.useState<Notification[]>(DEFAULT_NOTIFICATIONS);
-  const [loading, setLoading] = React.useState(false);
-  const [unreadCount, setUnreadCount] = React.useState(0);
+  const [notifications, setNotifications] = useState<Notification[]>(DEFAULT_NOTIFICATIONS);
+  const [loading, setLoading] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   // Effect to fetch notifications
-  React.useEffect(() => {
+  useEffect(() => {
     if (!userId) return;
 
     let mounted = true;
@@ -201,6 +201,11 @@ export function useNotifications(userId: string | undefined, force = false) {
     loading,
     unreadCount,
     markAsRead: markNotificationRead,
-    refetch: () => userId && fetchNotifications(userId, true)
+    refetch: () => {
+      if (userId) {
+        return fetchNotifications(userId, true);
+      }
+      return Promise.resolve([]);
+    }
   };
 }

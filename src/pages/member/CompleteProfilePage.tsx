@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from '../../components/Router';
 import { useProfileStatus } from '../../lib/useProfileStatus';
 import { supabase } from '../../lib/supabase';
@@ -23,13 +23,13 @@ export default function CompleteProfilePage({ lang }: CompleteProfilePageProps) 
   const [success, setSuccess] = useState(false);
 
   // Skip form if already verified
-  React.useEffect(() => {
+  useEffect(() => {
     if (verified) {
       navigate('/member/dashboard');
     }
   }, [verified, navigate]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -62,7 +62,7 @@ export default function CompleteProfilePage({ lang }: CompleteProfilePageProps) 
     return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;

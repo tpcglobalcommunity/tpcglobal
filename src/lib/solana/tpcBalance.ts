@@ -92,7 +92,7 @@ export function getMockTPCBalance(walletAddress: string): number {
  */
 export async function getDevelopmentTPCBalance(walletAddress: string): Promise<number> {
   // In development, use mock data
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     return getMockTPCBalance(walletAddress);
   }
   

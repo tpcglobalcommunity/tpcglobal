@@ -5,8 +5,18 @@ import { Link } from "../../components/Router";
 import { createClient } from '@supabase/supabase-js';
 import { getLanguageFromPath } from "../../lib/authGuards";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+// Safety: Ensure environment variables are available
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+// Safety: Validate environment variables before creating client
+function validateSupabaseConfig() {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('Missing Supabase configuration. Please check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.');
+    return false;
+  }
+  return true;
+}
 
 interface UpdateProfitProps {
   lang?: Language;
@@ -53,6 +63,13 @@ export default function UpdateProfit({ }: UpdateProfitProps) {
   // Check auth state and redirect if needed
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
+      // Safety: Check configuration before proceeding
+      if (!validateSupabaseConfig()) {
+        setError('Configuration error. Please check environment variables.');
+        setLoading(false);
+        return;
+      }
+
       const supabase = createClient(supabaseUrl, supabaseAnonKey);
       
       try {

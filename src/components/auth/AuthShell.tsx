@@ -1,15 +1,15 @@
-import React from 'react';
 import { Shield } from 'lucide-react';
 import { useI18n, type Language, getLangPath } from '../../i18n';
 import { Link } from '../Router';
 import { PremiumShell } from '../ui';
+import type { ReactNode } from 'react';
 
 interface AuthShellProps {
   lang?: Language;
   title?: string;
   subtitle?: string;
-  children: React.ReactNode;
-  bottomSlot?: React.ReactNode;
+  children: ReactNode;
+  bottomSlot?: ReactNode;
 }
 
 export default function AuthShell({ 

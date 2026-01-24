@@ -20,6 +20,30 @@ type HomeObject = {
 
 type TranslationValue = string | HomeObject | TrustCard[];
 
+// Helper function for deep merge
+function deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>): T {
+  const result = { ...target };
+  
+  for (const key in source) {
+    if (source[key] !== undefined) {
+      if (
+        typeof source[key] === 'object' && 
+        source[key] !== null && 
+        !Array.isArray(source[key]) &&
+        typeof result[key] === 'object' && 
+        result[key] !== null && 
+        !Array.isArray(result[key])
+      ) {
+        result[key] = deepMerge(result[key], source[key] as any);
+      } else {
+        result[key] = source[key] as any;
+      }
+    }
+  }
+  
+  return result;
+}
+
 export const translations: Record<Language, Record<string, TranslationValue>> = {
   en: {
     "app.name": "Trader Professional Community",
@@ -240,7 +264,39 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "updateProfit.errors.invalidAmount": "Please enter a valid amount",
     "updateProfit.errors.tooLarge": "Amount cannot exceed 1,000,000",
     "updateProfit.errors.noteTooLong": "Note cannot exceed 280 characters",
-    "updateProfit.errors.mustAgree": "You must confirm this is your real trading result"
+    "updateProfit.errors.mustAgree": "You must confirm this is your real trading result",
+
+    "marketplace.title": "Marketplace",
+    "marketplace.subtitle": "Professional tools, services, and education",
+    "marketplace.emptyTitle": "No items available",
+    "marketplace.emptyDesc": "There are currently no products or services available in this category.",
+    "marketplace.disclaimer": "All services are provided by independent partners.",
+    "marketplace.applyAsVendor": "Apply as Vendor",
+    "marketplace.filterByCategory": "Filter by category",
+    "marketplace.categories.all": "All",
+    "marketplace.categories.trading": "Trading",
+    "marketplace.categories.education": "Education",
+    "marketplace.categories.services": "Services",
+    "marketplace.categories.technology": "Technology",
+    "marketplace.categories.consulting": "Consulting",
+    "marketplace.categories.media": "Media",
+    "marketplace.categories.other": "Other",
+    "marketplace.errorTitle": "Failed to load",
+    "marketplace.errorDesc": "Unable to load marketplace items. Please try again.",
+    "marketplace.retry": "Retry",
+    "marketplace.visitWebsite": "Visit Website",
+    "marketplace.contactTelegram": "Contact on Telegram",
+    "marketplace.footerDisclaimer": "All vendors are independently operated. TPC does not endorse or guarantee any services.",
+    "marketplace.badgeTrusted": "Trusted Partners",
+    "marketplace.searchPlaceholder": "Search services, tools, education…",
+    "marketplace.viewDetails": "View Details",
+    "marketplace.requestAccess": "Request Access",
+    "marketplace.sections.overview": "Overview",
+    "marketplace.sections.benefits": "What You Get",
+    "marketplace.sections.requirements": "Requirements",
+    "marketplace.sections.disclaimer": "Disclaimer",
+    "marketplace.notFoundTitle": "Service Not Found",
+    "marketplace.notFoundDesc": "The marketplace service you're looking for doesn't exist or has been removed."
   },
 
   id: {
@@ -296,8 +352,9 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
       }
     },
 
+    // CRITICAL: All nav keys explicitly defined to prevent undefined access crashes
     "nav.home": "Beranda",
-    "nav.docs": "Docs",
+    "nav.docs": "Docs", 
     "nav.dao": "DAO Lite",
     "nav.transparency": "Transparansi",
     "nav.admin": "Admin",
@@ -462,6 +519,38 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "updateProfit.errors.invalidAmount": "Masukkan jumlah yang valid",
     "updateProfit.errors.tooLarge": "Jumlah tidak boleh melebihi 1.000.000",
     "updateProfit.errors.noteTooLong": "Catatan tidak boleh melebihi 280 karakter",
-    "updateProfit.errors.mustAgree": "Anda harus konfirmasi ini adalah hasil trading real Anda"
+    "updateProfit.errors.mustAgree": "Anda harus konfirmasi ini adalah hasil trading real Anda",
+
+    "marketplace.title": "Marketplace",
+    "marketplace.subtitle": "Alat, layanan, dan edukasi profesional",
+    "marketplace.emptyTitle": "Belum ada item",
+    "marketplace.emptyDesc": "Saat ini belum ada produk atau layanan pada kategori ini.",
+    "marketplace.disclaimer": "Semua layanan disediakan oleh mitra independen.",
+    "marketplace.applyAsVendor": "Daftar sebagai Vendor",
+    "marketplace.filterByCategory": "Filter berdasarkan kategori",
+    "marketplace.categories.all": "Semua",
+    "marketplace.categories.trading": "Trading",
+    "marketplace.categories.education": "Edukasi",
+    "marketplace.categories.services": "Layanan",
+    "marketplace.categories.technology": "Teknologi",
+    "marketplace.categories.consulting": "Konsultasi",
+    "marketplace.categories.media": "Media",
+    "marketplace.categories.other": "Lainnya",
+    "marketplace.errorTitle": "Gagal memuat",
+    "marketplace.errorDesc": "Tidak dapat memuat item marketplace. Silakan coba lagi.",
+    "marketplace.retry": "Coba Lagi",
+    "marketplace.visitWebsite": "Kunjungi Website",
+    "marketplace.contactTelegram": "Kontak di Telegram",
+    "marketplace.footerDisclaimer": "Semua vendor dioperasikan secara independen. TPC tidak mendukung atau menjamin layanan apa pun.",
+    "marketplace.badgeTrusted": "Mitra Terverifikasi",
+    "marketplace.searchPlaceholder": "Cari layanan, tools, edukasi…",
+    "marketplace.viewDetails": "Lihat Detail",
+    "marketplace.requestAccess": "Minta Akses",
+    "marketplace.sections.overview": "Ringkasan",
+    "marketplace.sections.benefits": "Yang Anda Dapatkan",
+    "marketplace.sections.requirements": "Persyaratan",
+    "marketplace.sections.disclaimer": "Disclaimer",
+    "marketplace.notFoundTitle": "Layanan Tidak Ditemukan",
+    "marketplace.notFoundDesc": "Layanan marketplace yang Anda cari tidak ada atau telah dihapus."
   }
 };

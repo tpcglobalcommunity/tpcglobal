@@ -1,169 +1,84 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ExternalLink, MessageCircle, ArrowLeft, AlertCircle, Shield, CheckCircle, Loader2 } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+import { ArrowLeft, Star, Shield, CheckCircle, AlertCircle, ExternalLink, MessageCircle, Clock, Users, Award, Sparkles, Calendar } from 'lucide-react';
 import { Language, useI18n, getLangPath } from '../i18n';
 import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from '../components/ui';
-import { getPublicVendors, PublicVendor } from '../lib/supabase';
-import { TrustBadges } from '../components/trust/TrustBadges';
-import { createClient } from '@supabase/supabase-js';
-import { getLanguageFromPath } from '../lib/authGuards';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+import { getMarketplaceItemById, type MarketplaceItem } from '../data/marketplace.mock';
+import { Link } from '../components/Router';
 
 interface MarketplaceItemPageProps {
   lang: Language;
 }
 
-// Mock data for demo purposes
-const mockVendor: PublicVendor = {
-  id: 'demo',
-  brand_name: 'Demo Trading Services',
-  description_en: 'Professional trading services with proven track record. We offer education, signals, and managed accounts.',
-  description_id: 'Layanan trading profesional dengan track record terbukti. Kami menawarkan edukasi, sinyal, dan akun terkelola.',
-  category: 'trading',
-  website_url: 'https://example.com',
-  contact_telegram: '@demotrading',
-  role: 'vendor',
-  is_verified: true,
-  created_at: new Date().toISOString()
-};
-
 const MarketplaceItemPage = ({ lang }: MarketplaceItemPageProps) => {
-  const { } = useI18n();
+  const { t } = useI18n();
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
 
-  const [vendor, setVendor] = useState<PublicVendor | null>(null);
+  const [item, setItem] = useState<MarketplaceItem | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [contacting, setContacting] = useState(false);
 
   useEffect(() => {
-    checkAuthAndLoadItem();
+    if (id) {
+      const foundItem = getMarketplaceItemById(id);
+      setItem(foundItem || null);
+      setLoading(false);
+    }
   }, [id]);
 
-  const checkAuthAndLoadItem = async () => {
-    try {
-      // Check auth for member-only features
-      const supabase = createClient(supabaseUrl, supabaseAnonKey);
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        // Not logged in - redirect to login with next
-        const currentLang = getLanguageFromPath(window.location.pathname);
-        const loginPath = `${getLangPath(currentLang, '/login')}?next=${encodeURIComponent(window.location.pathname)}`;
-        window.location.assign(loginPath);
-        return;
-      }
-
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      
-      if (!authUser?.email_confirmed_at) {
-        // Not verified - redirect to verify
-        const currentLang = getLanguageFromPath(window.location.pathname);
-        const verifyPath = getLangPath(currentLang, '/verify');
-        window.location.assign(verifyPath);
-        return;
-      }
-
-      // Load item data
-      await loadItem();
-    } catch (error) {
-      console.error('Auth check error:', error);
-      setError('Authentication failed');
-      setLoading(false);
-    }
-  };
-
-  const loadItem = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      if (id === 'demo') {
-        // Use mock data for demo
-        setTimeout(() => {
-          setVendor(mockVendor);
-          setLoading(false);
-        }, 500);
-        return;
-      }
-
-      // Try to load real vendor data
-      const vendors = await getPublicVendors();
-      const foundVendor = vendors.find(v => v.id === id);
-      
-      if (foundVendor) {
-        setVendor(foundVendor);
-      } else {
-        setError('Vendor not found');
-      }
-    } catch (err) {
-      console.error('Error loading vendor:', err);
-      setError('Failed to load vendor details');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleContact = async (method: 'website' | 'telegram') => {
-    if (!vendor) return;
-
-    setContacting(true);
-    try {
-      // Simulate contact tracking
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (method === 'website' && vendor.website_url) {
-        window.open(vendor.website_url, '_blank', 'noopener,noreferrer');
-      } else if (method === 'telegram' && vendor.contact_telegram) {
-        window.open(`https://t.me/${vendor.contact_telegram.replace('@', '')}`, '_blank', 'noopener,noreferrer');
-      }
-    } catch (err) {
-      console.error('Contact error:', err);
-    } finally {
-      setContacting(false);
-    }
+  const renderStars = (rating: number) => {
+    return (
+      <div className="flex items-center gap-1">
+        {[...Array(5)].map((_, i) => (
+          <Star
+            key={i}
+            className={`w-5 h-5 ${
+              i < Math.floor(rating)
+                ? 'text-[#F0B90B] fill-current'
+                : 'text-white/20'
+            }`}
+          />
+        ))}
+        <span className="text-sm text-white/60 ml-1">{rating}</span>
+      </div>
+    );
   };
 
   if (loading) {
     return (
       <PremiumShell>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <Loader2 className="w-12 h-12 text-[#F0B90B] animate-spin mx-auto mb-4" />
-              <p className="text-white/60">Loading vendor details...</p>
-            </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+          <div className="animate-pulse">
+            <div className="h-8 bg-white/10 rounded mb-4 w-1/4"></div>
+            <div className="h-12 bg-white/10 rounded mb-6 w-3/4"></div>
+            <div className="h-64 bg-white/5 rounded mb-6"></div>
+            <div className="h-32 bg-white/5 rounded"></div>
           </div>
         </div>
       </PremiumShell>
     );
   }
 
-  if (error || !vendor) {
+  if (!item) {
     return (
       <PremiumShell>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
           <PremiumCard>
-            <div className="text-center py-12">
-              <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
+            <div className="text-center py-16">
+              <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-8 h-8 text-red-400" />
+              </div>
               <h1 className="text-2xl font-bold text-white mb-2">
-                {error || 'Vendor Not Found'}
+                {t("marketplace.notFoundTitle")}
               </h1>
               <p className="text-white/60 mb-6">
-                The vendor you're looking for doesn't exist or has been removed.
+                {t("marketplace.notFoundDesc")}
               </p>
-              <div className="flex gap-4 justify-center">
-                <PremiumButton onClick={() => navigate(getLangPath(lang, '/marketplace'))}>
+              <Link to={getLangPath(lang, '/marketplace')}>
+                <PremiumButton>
                   <ArrowLeft className="w-4 h-4" />
                   Back to Marketplace
                 </PremiumButton>
-                <PremiumButton onClick={loadItem} variant="secondary">
-                  Try Again
-                </PremiumButton>
-              </div>
+              </Link>
             </div>
           </PremiumCard>
         </div>
@@ -173,110 +88,213 @@ const MarketplaceItemPage = ({ lang }: MarketplaceItemPageProps) => {
 
   return (
     <PremiumShell>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
         {/* Back Button */}
-        <button
-          onClick={() => navigate(getLangPath(lang, '/marketplace'))}
-          className="flex items-center gap-2 text-white/60 hover:text-[#F0B90B] transition-colors mb-6"
-        >
+        <Link to={getLangPath(lang, '/marketplace')} className="inline-flex items-center gap-2 text-white/60 hover:text-white mb-6 transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Back to Marketplace
-        </button>
+        </Link>
 
-        {/* Vendor Header */}
-        <PremiumCard className="mb-8">
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-1">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h1 className="text-3xl font-bold text-white mb-2">
-                    {vendor.brand_name}
-                  </h1>
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="px-3 py-1 text-sm bg-[#F0B90B]/20 text-[#F0B90B] rounded-full border border-[#F0B90B]/30">
-                      {vendor.category.charAt(0).toUpperCase() + vendor.category.slice(1)}
+        {/* Hero Section */}
+        <div className="grid lg:grid-cols-3 gap-8 mb-12">
+          <div className="lg:col-span-2">
+            <div className="flex items-start gap-6 mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-[#F0B90B]/20 to-[#F0B90B]/10 rounded-2xl flex items-center justify-center text-3xl relative">
+                {item.coverIcon || '🚀'}
+                <Sparkles className="w-6 h-6 text-[#F0B90B] absolute -top-2 -right-2" />
+              </div>
+              <div className="flex-1">
+                <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                  {item.title[lang]}
+                </h1>
+                <div className="flex items-center gap-4 mb-4">
+                  {renderStars(item.rating)}
+                  <span className="text-sm text-white/40">({item.reviewCount} reviews)</span>
+                </div>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {item.badges.map((badge, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 text-sm bg-gradient-to-r from-[#F0B90B]/10 to-transparent text-[#F0B90B] rounded-full border border-[#F0B90B]/30"
+                    >
+                      {badge}
                     </span>
-                    {vendor.is_verified && (
-                      <div className="flex items-center gap-1 text-green-400">
-                        <CheckCircle className="w-4 h-4" />
-                        <span className="text-sm">Verified</span>
-                      </div>
-                    )}
-                  </div>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2 text-sm text-white/50">
+                  <Calendar className="w-4 h-4" />
+                  <span>Updated {item.updatedAt}</span>
                 </div>
               </div>
+            </div>
 
-              <TrustBadges
-                role={vendor.role as any}
-                is_verified={vendor.is_verified}
-                can_invite={false}
-                vendor_status="approved"
-                vendor_brand_name={vendor.brand_name}
-                mode="public"
-                lang={lang}
-              />
+            <p className="text-lg text-white/80 mb-6 leading-relaxed">
+              {item.desc[lang]}
+            </p>
+
+            {/* Provider Info */}
+            <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-white/5 to-transparent rounded-xl border border-white/10 mb-6">
+              <div className="w-12 h-12 bg-[#F0B90B]/10 rounded-full flex items-center justify-center">
+                <Shield className="w-6 h-6 text-[#F0B90B]" />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-white">{item.provider.name}</p>
+                <p className="text-sm text-white/60">Verified Provider • Since {item.provider.since}</p>
+              </div>
+              {item.provider.verified && (
+                <Shield className="w-5 h-5 text-[#F0B90B]" />
+              )}
             </div>
           </div>
-        </PremiumCard>
 
-        {/* Description */}
-        <PremiumCard className="mb-8">
-          <h2 className="text-xl font-bold text-white mb-4">About</h2>
-          <p className="text-white/70 leading-relaxed">
-            {lang === 'id' ? vendor.description_id : vendor.description_en}
-          </p>
-        </PremiumCard>
+          {/* Pricing & CTA */}
+          <div className="lg:col-span-1">
+            <PremiumCard className="sticky top-4 bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10">
+              <div className="text-center mb-6">
+                <div className="text-3xl font-bold text-[#F0B90B] mb-2 bg-gradient-to-r from-[#F0B90B] to-[#F0B90B]/80 bg-clip-text text-transparent">
+                  {item.priceLabel[lang]}
+                </div>
+                <p className="text-sm text-white/60">Starting price</p>
+              </div>
 
-        {/* Contact Actions */}
-        <PremiumCard className="mb-8">
-          <h2 className="text-xl font-bold text-white mb-4">Get in Touch</h2>
-          <div className="grid gap-4 md:grid-cols-2">
-            {vendor.website_url && (
-              <PremiumButton
-                onClick={() => handleContact('website')}
-                disabled={contacting}
-                className="w-full"
-              >
-                <ExternalLink className="w-4 h-4" />
-                Visit Website
+              <PremiumButton className="w-full mb-4 bg-gradient-to-r from-[#F0B90B] to-[#F0B90B]/90 hover:from-[#F0B90B]/90 hover:to-[#F0B90B] shadow-lg shadow-[#F0B90B]/25">
+                {t("marketplace.requestAccess")}
               </PremiumButton>
-            )}
-            {vendor.contact_telegram && (
-              <PremiumButton
-                onClick={() => handleContact('telegram')}
-                disabled={contacting}
-                variant="secondary"
-                className="w-full"
-              >
-                <MessageCircle className="w-4 h-4" />
-                Contact on Telegram
-              </PremiumButton>
-            )}
+
+              <div className="space-y-3 text-sm text-white/60">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span>Instant access</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span>24/7 support</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span>Money-back guarantee</span>
+                </div>
+              </div>
+            </PremiumCard>
           </div>
-        </PremiumCard>
+        </div>
 
-        {/* Disclaimer */}
-        <NoticeBox variant="warning" className="mb-8">
-          <div className="flex items-start gap-2">
-            <Shield className="w-5 h-5 text-[#F0B90B] mt-0.5" />
-            <div>
-              <h3 className="font-medium text-white mb-1">Important Notice</h3>
-              <p className="text-sm text-white/70">
-                Always verify vendors independently. TPC does not endorse or guarantee any services listed in the marketplace. 
-                Conduct your own due diligence before engaging with any vendor.
+        {/* Sections */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Overview */}
+          <div className="lg:col-span-2">
+            <PremiumCard className="mb-8 bg-gradient-to-br from-white/5 to-transparent">
+              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <Users className="w-5 h-5 text-[#F0B90B]" />
+                {t("marketplace.sections.overview")}
+              </h2>
+              <p className="text-white/70 leading-relaxed">
+                {item.desc[lang]}
               </p>
-            </div>
-          </div>
-        </NoticeBox>
+            </PremiumCard>
 
-        {/* Report Issue */}
-        <div className="text-center">
-          <button
-            onClick={() => navigate(getLangPath(lang, '/support'))}
-            className="text-white/60 hover:text-[#F0B90B] transition-colors text-sm"
-          >
-            Report an issue with this vendor
-          </button>
+            {/* What You Get */}
+            <PremiumCard className="mb-8 bg-gradient-to-br from-white/5 to-transparent">
+              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <Award className="w-5 h-5 text-[#F0B90B]" />
+                {t("marketplace.sections.benefits")}
+              </h2>
+              <ul className="space-y-3">
+                {item.features[lang].map((feature, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-white/70">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </PremiumCard>
+
+            {/* Requirements */}
+            <PremiumCard className="mb-8 bg-gradient-to-br from-white/5 to-transparent">
+              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-[#F0B90B]" />
+                {t("marketplace.sections.requirements")}
+              </h2>
+              <ul className="space-y-3">
+                {item.requirements[lang].map((requirement, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <Clock className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-white/70">{requirement}</span>
+                  </li>
+                ))}
+              </ul>
+            </PremiumCard>
+
+            {/* Disclaimer */}
+            <NoticeBox variant="warning" className="mb-8">
+              <h3 className="font-medium text-white mb-2">{t("marketplace.sections.disclaimer")}</h3>
+              <p className="text-sm text-white/60">
+                All marketplace services are provided by independent third-party providers. 
+                TPC does not endorse or guarantee any services listed. Please conduct your own 
+                due diligence before making any purchase decisions.
+              </p>
+            </NoticeBox>
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            {/* Quick Stats */}
+            <PremiumCard className="mb-6 bg-gradient-to-br from-white/5 to-transparent">
+              <h3 className="font-medium text-white mb-4">Quick Stats</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-white/60">Rating</span>
+                  <span className="text-white font-medium">{item.rating}/5.0</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-white/60">Reviews</span>
+                  <span className="text-white font-medium">{item.reviewCount}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-white/60">Category</span>
+                  <span className="text-white font-medium capitalize">{item.category}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-white/60">Provider</span>
+                  <span className="text-white font-medium">{item.provider.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-white/60">Updated</span>
+                  <span className="text-white font-medium">{item.updatedAt}</span>
+                </div>
+              </div>
+            </PremiumCard>
+
+            {/* Tags */}
+            <PremiumCard className="mb-6 bg-gradient-to-br from-white/5 to-transparent">
+              <h3 className="font-medium text-white mb-4">Tags</h3>
+              <div className="flex flex-wrap gap-2">
+                {item.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 text-xs bg-white/10 text-white/70 rounded-full border border-white/20"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </PremiumCard>
+
+            {/* Contact */}
+            <PremiumCard className="bg-gradient-to-br from-white/5 to-transparent">
+              <h3 className="font-medium text-white mb-4">Contact Provider</h3>
+              <div className="space-y-3">
+                <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#F0B90B] to-[#F0B90B]/90 hover:from-[#F0B90B]/90 hover:to-[#F0B90B] text-black font-medium rounded-lg transition-all shadow-lg shadow-[#F0B90B]/25">
+                  <MessageCircle className="w-4 h-4" />
+                  Contact on Telegram
+                </button>
+                <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium rounded-lg transition-all">
+                  <ExternalLink className="w-4 h-4" />
+                  Visit Website
+                </button>
+              </div>
+            </PremiumCard>
+          </div>
         </div>
       </div>
     </PremiumShell>
