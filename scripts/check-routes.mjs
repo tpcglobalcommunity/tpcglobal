@@ -81,12 +81,45 @@ function detectMissingAssets(body) {
   }
   
   const hasScripts = /<script/i.test(body);
-  const hasAssets = /src=["'][^"']*\/assets\//i.test(body);
+  
+  // More flexible asset detection
+  const hasAssets = /src=["'][^"']*\/assets\//i.test(body) ||                    // /assets/
+                      /src=["'][^"']*\/@vite\//i.test(body) ||                     // /@vite/ (preview/dev)
+                      /src=["'][^"']*\.js["'][^>]*>/i.test(body);                  // any .js files
   
   if (hasScripts && !hasAssets) {
     return "no assets scripts found";
   }
   return null;
+}
+
+function logMissingAssetsDiagnostics(result) {
+  if (!isProd) return; // Only in production mode
+  
+  console.log(`    🔍 DIAGNOSTICS:`);
+  console.log(`       FINAL_URL: ${result.finalUrl}`);
+  console.log(`       CONTENT-TYPE: ${result.contentType}`);
+  
+  // Extract script sources
+  const scriptMatches = result.body.match(/<script[^>]*src=["']([^"']+)["'][^>]*>/gi) || [];
+  if (scriptMatches.length > 0) {
+    console.log(`       SCRIPTS FOUND (${scriptMatches.length}):`);
+    scriptMatches.slice(0, 10).forEach((script, i) => {
+      const srcMatch = script.match(/src=["']([^"']+)["']/i);
+      if (srcMatch) {
+        console.log(`         ${i + 1}. ${srcMatch[1]}`);
+      }
+    });
+    if (scriptMatches.length > 10) {
+      console.log(`         ... and ${scriptMatches.length - 10} more`);
+    }
+  } else {
+    console.log(`       SCRIPTS FOUND: 0`);
+  }
+  
+  // Body preview
+  const bodyPreview = result.body.replace(/\s+/g, ' ').trim().slice(0, 200);
+  console.log(`       BODY PREVIEW: ${bodyPreview}${result.body.length > 200 ? '...' : ''}`);
 }
 
 function detectServiceWorkerError(body) {
@@ -124,6 +157,7 @@ async function checkRoute(url, maxRedirects = 5) {
         body: result.body,
         redirectCount,
         responseTime,
+        contentType: result.contentType,
       };
     } catch (err) {
       return {
@@ -134,6 +168,7 @@ async function checkRoute(url, maxRedirects = 5) {
         redirectCount,
         responseTime: Date.now() - startTime,
         error: err.message,
+        contentType: "",
       };
     }
   }
@@ -173,6 +208,7 @@ function fetchSingle(url) {
           status: res.statusCode,
           location: res.headers.location,
           body: data,
+          contentType: res.headers["content-type"] || "",
         });
       });
     });
@@ -251,6 +287,7 @@ function fetchSingle(url) {
         console.log(`    REASON: ${blankPageError}`);
       } else if (missingAssetsError) {
         console.log(`    REASON: ${missingAssetsError}`);
+        logMissingAssetsDiagnostics(result);
       } else if (serviceWorkerError) {
         console.log(`    REASON: ${serviceWorkerError}`);
       }
