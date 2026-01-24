@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { safeFetchRoleAndVerified } from "./safeProfileFetch";
+import { formatSbError, debugLog } from "./profileHelpers";
 
 export function useProfileStatus(userId?: string) {
   const [loading, setLoading] = useState(true);
@@ -11,6 +12,7 @@ export function useProfileStatus(userId?: string) {
 
     async function run() {
       if (!userId) {
+        debugLog('useProfileStatus', 'No userId provided, setting idle state');
         setLoading(false);
         return;
       }
@@ -18,7 +20,7 @@ export function useProfileStatus(userId?: string) {
       setLoading(true);
 
       try {
-        console.log('🔧 [useProfileStatus] Fetching profile for:', userId);
+        debugLog('useProfileStatus', 'Starting fetch for', userId);
         
         // Use safe fetch instead of direct supabase call
         const result = await safeFetchRoleAndVerified(userId);
@@ -28,9 +30,9 @@ export function useProfileStatus(userId?: string) {
         setRole(result.role as "viewer"|"member"|"admin"|"super_admin");
         setVerified(result.verified);
         
-        console.log('✅ [useProfileStatus] Profile loaded:', { role: result.role, verified: result.verified });
+        debugLog('useProfileStatus', 'Profile loaded successfully', { role: result.role, verified: result.verified });
       } catch (err: any) {
-        console.error('❌ [useProfileStatus] Exception:', err);
+        console.error('❌ [useProfileStatus] Exception:', formatSbError(err));
         if (!alive) return;
         setRole("viewer");
         setVerified(false);

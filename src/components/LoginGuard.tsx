@@ -5,6 +5,7 @@ import { ensureProfileAfterVerifiedLogin } from '../lib/ensureProfileAfterVerifi
 import { getProfileCompletionStatus } from '../lib/getProfileCompletionStatus';
 import { langPath } from '../utils/langPath';
 import { Loader2 } from 'lucide-react';
+import { formatSbError } from '../lib/profileHelpers';
 
 interface LoginGuardProps {
   lang: 'en' | 'id';
@@ -67,7 +68,7 @@ export const LoginGuard: React.FC<LoginGuardProps> = ({ lang, children }) => {
         // Profile completed, allow access
         setIsChecking(false);
       } catch (error) {
-        console.error('[LoginGuard] Error:', error);
+        console.error('[LoginGuard] Error:', formatSbError(error));
         setIsChecking(false);
       }
     };

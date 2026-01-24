@@ -14,6 +14,36 @@ export interface ProfileData {
 }
 
 /**
+ * Check if string is a valid UUID
+ */
+export function isUuid(v: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v);
+}
+
+/**
+ * Format Supabase error for clear logging
+ */
+export function formatSbError(err: any): string {
+  if (!err) return 'unknown error';
+  if (typeof err === 'string') return err;
+  
+  const msg = err.message ?? err.error_description ?? err.details ?? JSON.stringify(err);
+  const code = err.code ? `code=${err.code}` : '';
+  const status = err.status ? `status=${err.status}` : '';
+  
+  return [msg, code, status].filter(Boolean).join(' | ');
+}
+
+/**
+ * Debug logging helper (DEV only)
+ */
+export function debugLog(context: string, message: string, data?: any) {
+  if (import.meta.env.DEV) {
+    console.log(`🔧 [${context}] ${message}`, data || '');
+  }
+}
+
+/**
  * Check if user profile is complete with required fields
  * Required fields: full_name, phone, telegram, city
  */

@@ -2,6 +2,7 @@
 // This module provides safe profile fetching with comprehensive error handling
 
 import { supabase } from './supabase';
+import { isUuid, formatSbError, debugLog } from './profileHelpers';
 
 export interface SafeProfile {
   id: string;
@@ -24,7 +25,22 @@ export interface SafeProfile {
  */
 export async function safeFetchProfile(userId: string): Promise<SafeProfile | null> {
   try {
-    console.log('🔧 [safeFetchProfile] Fetching profile for:', userId);
+    debugLog('safeFetchProfile', 'Starting fetch for', userId);
+    
+    // Validate UUID before making request
+    if (!userId || !isUuid(userId)) {
+      debugLog('safeFetchProfile', 'Invalid UUID, returning null');
+      return null;
+    }
+
+    // Check session before fetching
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session?.user?.id) {
+      debugLog('safeFetchProfile', 'No session found, returning null');
+      return null;
+    }
+
+    debugLog('safeFetchProfile', 'Querying profiles table', { userId });
     
     const { data, error } = await supabase
       .from('profiles')
@@ -33,7 +49,7 @@ export async function safeFetchProfile(userId: string): Promise<SafeProfile | nu
       .maybeSingle(); // Use maybeSingle to avoid errors
 
     if (error) {
-      console.error('❌ [safeFetchProfile] Database error:', error);
+      console.error('❌ [safeFetchProfile] Database error:', formatSbError(error));
       return null;
     }
 
@@ -42,10 +58,10 @@ export async function safeFetchProfile(userId: string): Promise<SafeProfile | nu
       return null;
     }
 
-    console.log('✅ [safeFetchProfile] Profile loaded successfully');
+    debugLog('safeFetchProfile', 'Profile loaded successfully');
     return data as SafeProfile;
   } catch (err: any) {
-    console.error('❌ [safeFetchProfile] Exception:', err);
+    console.error('❌ [safeFetchProfile] Exception:', formatSbError(err));
     return null;
   }
 }
@@ -55,7 +71,22 @@ export async function safeFetchProfile(userId: string): Promise<SafeProfile | nu
  */
 export async function safeFetchRoleAndVerified(userId: string): Promise<{ role: string; verified: boolean }> {
   try {
-    console.log('🔧 [safeFetchRoleAndVerified] Fetching role/verified for:', userId);
+    debugLog('safeFetchRoleAndVerified', 'Starting fetch for', userId);
+    
+    // Validate UUID before making request
+    if (!userId || !isUuid(userId)) {
+      debugLog('safeFetchRoleAndVerified', 'Invalid UUID, returning fallback');
+      return { role: 'viewer', verified: false };
+    }
+
+    // Check session before fetching
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session?.user?.id) {
+      debugLog('safeFetchRoleAndVerified', 'No session found, returning fallback');
+      return { role: 'viewer', verified: false };
+    }
+
+    debugLog('safeFetchRoleAndVerified', 'Querying profiles table for role/verified', { userId });
     
     const { data, error } = await supabase
       .from('profiles')
@@ -64,7 +95,7 @@ export async function safeFetchRoleAndVerified(userId: string): Promise<{ role: 
       .maybeSingle(); // Use maybeSingle to avoid errors
 
     if (error) {
-      console.error('❌ [safeFetchRoleAndVerified] Database error:', error);
+      console.error('❌ [safeFetchRoleAndVerified] Database error:', formatSbError(error));
       return { role: 'viewer', verified: false };
     }
 
@@ -73,13 +104,13 @@ export async function safeFetchRoleAndVerified(userId: string): Promise<{ role: 
       return { role: 'viewer', verified: false };
     }
 
-    console.log('✅ [safeFetchRoleAndVerified] Role/verified loaded:', { role: data.role, verified: data.verified });
+    debugLog('safeFetchRoleAndVerified', 'Role/verified loaded:', { role: data.role, verified: data.verified });
     return {
       role: data.role || 'viewer',
       verified: !!data.verified
     };
   } catch (err: any) {
-    console.error('❌ [safeFetchRoleAndVerified] Exception:', err);
+    console.error('❌ [safeFetchRoleAndVerified] Exception:', formatSbError(err));
     return { role: 'viewer', verified: false };
   }
 }
@@ -88,12 +119,7 @@ export async function safeFetchRoleAndVerified(userId: string): Promise<{ role: 
  * Global error handler for profile operations
  */
 export function handleProfileError(error: any, context: string): void {
-  console.error(`❌ [Profile Error] ${context}:`, {
-    message: error?.message,
-    code: error?.code,
-    details: error?.details,
-    hint: error?.hint
-  });
+  console.error(`❌ [Profile Error] ${context}:`, formatSbError(error));
   
   // Never throw errors in production, just log them
   // This prevents UI crashes
