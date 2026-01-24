@@ -2,11 +2,11 @@ import { useState, useMemo, useEffect } from "react";
 import { Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { useI18n, type Language, getLangPath } from "../../i18n";
 import { Link } from "../../components/Router";
-import { signIn } from "../../lib/supabase";
+import { signIn, supabase } from "../../lib/supabase";
 import { useAuthError } from "../../hooks/useAuthError";
 import AuthShell from "../../components/auth/AuthShell";
 import { AuthBuildMarker } from "../../components/auth/AuthBuildMarker";
-import { getAuthState, getAuthRedirectPath, getLanguageFromPath } from "../../lib/authGuards";
+import { getAuthState, getAuthRedirectPath } from "../../lib/authGuards";
 
 interface SignInProps {
   lang?: Language;
@@ -37,26 +37,28 @@ export default function SignIn({ }: SignInProps) {
   // Check auth state and redirect if needed
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
-      const authState = await getAuthState();
-      const currentLang = getLanguageFromPath(window.location.pathname);
+      const { data } = await supabase.auth.getSession();
+      const user = data.session?.user ?? null;
+      const authState = getAuthState(user);
+      const currentLang = language;
       
-      if (authState.isAuthed && authState.isEmailVerified) {
+      if (authState === "authenticated" && user?.email_confirmed_at) {
         // Already verified - redirect to update-profit
-        const redirectPath = getAuthRedirectPath(authState, currentLang);
+        const redirectPath = getAuthRedirectPath(currentLang, "/member/update-profit");
         window.location.assign(redirectPath);
         return;
       }
       
-      if (authState.isAuthed && !authState.isEmailVerified) {
+      if (authState === "authenticated" && !user?.email_confirmed_at) {
         // Logged in but not verified - redirect to verify
-        const verifyPath = `/${currentLang}/verify`;
+        const verifyPath = getAuthRedirectPath(currentLang, "/verify");
         window.location.assign(verifyPath);
         return;
       }
     };
 
     checkAuthAndRedirect();
-  }, []);
+  }, [language]);
 
   const fallback = getLangPath(L, "/member/update-profit");
   const nextUrl = useMemo(() => {

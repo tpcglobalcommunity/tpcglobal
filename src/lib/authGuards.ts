@@ -1,83 +1,30 @@
-import { supabase } from "./supabase";
-import { ensureLangPath, detectLangFromPath } from "../utils/langPath";
+import type { Language } from "../i18n";
+import { ensureLangPath } from "../utils/langPath";
 
-export type Lang = "en" | "id";
+/**
+ * Auth guard utilities (Vite/Cloudflare-safe)
+ * - No `process` usage
+ * - No SSR-unsafe direct assumptions
+ * - Exports MUST match imports used by SignIn.tsx
+ */
 
-export interface AuthState {
-  isAuthed: boolean;
-  isEmailVerified: boolean;
-  user: any | null;
+export type AuthState = "authenticated" | "unauthenticated";
+
+export function getAuthState(user: any): AuthState {
+  return user ? "authenticated" : "unauthenticated";
 }
 
 /**
- * Get current authentication state
+ * Used by SignIn.tsx
+ * Returns a lang-prefixed redirect path safely.
  */
-export async function getAuthState(): Promise<AuthState> {
-  try {
-    const { data } = await supabase.auth.getSession();
-    const user = data.session?.user ?? null;
-    
-    return {
-      isAuthed: !!user,
-      isEmailVerified: Boolean(user?.email_confirmed_at),
-      user,
-    };
-  } catch {
-    return {
-      isAuthed: false,
-      isEmailVerified: false,
-      user: null,
-    };
-  }
+export function getAuthRedirectPath(lang: Language, path: string): string {
+  return ensureLangPath(lang, path);
 }
 
 /**
- * Extract language from pathname
+ * Optional helper for route protection usage.
  */
-export function getLanguageFromPath(pathname: string): Lang {
-  const detected = detectLangFromPath(pathname);
-  return (detected as Lang) || "en";
-}
-
-/**
- * REQUIRED EXPORT — used by SignIn.tsx
- * Overload for backward compatibility
- */
-export async function getAuthRedirectPath(lang: Lang): Promise<string>;
-export async function getAuthRedirectPath(authState: AuthState, lang: Lang): Promise<string>;
-export async function getAuthRedirectPath(authStateOrLang: AuthState | Lang, lang?: Lang): Promise<string> {
-  try {
-    // Handle backward compatibility: single param (lang)
-    if (typeof authStateOrLang === "string") {
-      const authState = await getAuthState();
-      const targetLang = authStateOrLang;
-      
-      if (!authState.isAuthed) {
-        return ensureLangPath(targetLang, "/login");
-      }
-
-      if (!authState.isEmailVerified) {
-        return ensureLangPath(targetLang, "/verify");
-      }
-
-      return ensureLangPath(targetLang, "/member/update-profit");
-    }
-    
-    // Handle new signature: (authState, lang)
-    const authState = authStateOrLang;
-    const targetLang = lang!;
-    
-    if (!authState.isAuthed) {
-      return ensureLangPath(targetLang, "/login");
-    }
-
-    if (!authState.isEmailVerified) {
-      return ensureLangPath(targetLang, "/verify");
-    }
-
-    return ensureLangPath(targetLang, "/member/update-profit");
-  } catch {
-    const fallbackLang = typeof authStateOrLang === "string" ? authStateOrLang : lang || "en";
-    return ensureLangPath(fallbackLang, "/login");
-  }
+export function isAuthed(user: any): boolean {
+  return Boolean(user);
 }
