@@ -80,6 +80,7 @@ import AdminIndex from "./pages/admin/AdminIndex";
 import AdminMembers from "./pages/admin/AdminMembers";
 import AdminVendors from "./pages/admin/AdminVendors";
 import AdminMarketplace from "./pages/admin/AdminMarketplace";
+import VerificationRequired from "./pages/member/VerificationRequired";
 
 import TransparencyPage from "./pages/public/TransparencyPage";
 
@@ -438,6 +439,15 @@ export default function App() {
           <MemberGate>
             <ProfileGate>
               <ApplyVendor lang={lang} />
+            </ProfileGate>
+          </MemberGate>
+        );
+
+      case "/member/verification":
+        return (
+          <MemberGate>
+            <ProfileGate>
+              <VerificationRequired lang={lang} />
             </ProfileGate>
           </MemberGate>
         );
