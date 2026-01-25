@@ -1,12 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
 import { devLog } from '@/utils/devLog';
+import type { Language } from '@/i18n';
 
 // Get environment variables ONLY from ENV
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Debug logs only in development with debug flag
-const DEBUG = import.meta.env.DEV && localStorage.getItem("tpc_debug") === "1";
+const getDebugFlag = () => {
+  try {
+    if (typeof window === "undefined") return false;
+    return window.localStorage?.getItem("tpc_debug") === "1";
+  } catch { return false; }
+};
+const DEBUG = import.meta.env.DEV && getDebugFlag();
 if (DEBUG) {
   devLog(' Supabase Config:', {
     url: supabaseUrl,
@@ -15,16 +22,23 @@ if (DEBUG) {
   });
 }
 
-// Validate environment variables - BLOCK DEPLOYMENT IF MISSING
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(' Missing Supabase environment variables. Please check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
-}
-
 // Create Supabase client from environment variables ONLY - SINGLETON
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-// Export configuration status
 export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
+
+const FALLBACK_URL = "https://invalid.supabase.co";
+const FALLBACK_KEY = "invalid";
+
+export const supabase = createClient(
+  (supabaseUrl as string) || FALLBACK_URL,
+  (supabaseAnonKey as string) || FALLBACK_KEY
+);
+
+export function requireSupabase() {
+  if (!isSupabaseConfigured) {
+    throw new Error("Supabase not configured: set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY");
+  }
+  return supabase;
+}
 
 function normalizeSupabaseError(err: any) {
   // jika sudah ternormalisasi, jangan dinormalisasi ulang
@@ -575,11 +589,11 @@ export interface VendorApplication {
   updated_at: string;
 }
 
-export const getPublicVendors = async (category?: string | undefined): Promise<PublicVendor[]> => {
+export const getPublicVendors = async (category?: string | undefined, lang: Language = "en"): Promise<PublicVendor[]> => {
   try {
     const { data, error } = await supabase.rpc('get_public_vendors', {
       p_category: category || null,
-      p_lang: 'en', // TODO: Get from i18n context
+      p_lang: lang,
     });
 
     if (error) {
@@ -1287,7 +1301,7 @@ export const createProfileIfMissing = async (userId: string, email: string, full
       username: username.toLowerCase(),
       referral_code: referralCode.toUpperCase(),
       role: 'member',
-      is_verified: false,
+      verified: false,
       can_invite: false,
     };
 

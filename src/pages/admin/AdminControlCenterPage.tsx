@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Users, Package, FileText, Search, X, Check, AlertTriangle, RefreshCw, Download } from 'lucide-react';
-import { PremiumShell } from '@/components/ui/PremiumShell';
+import { Shield, Users, Package, FileText, Search, X, Check, AlertTriangle, RefreshCw, Download, Loader2 } from 'lucide-react';
 import { PremiumCard } from '@/components/ui/PremiumCard';
 import { PremiumButton } from '@/components/ui/PremiumButton';
 import { useI18n } from '@/i18n';
+import { useAuth } from '@/contexts/AuthContext';
+import { Link } from '@/components/Router';
 import {
   adminListUsers,
   adminSetUserRole,
@@ -23,64 +24,125 @@ type TabType = 'users' | 'vendors' | 'audit';
 
 export default function AdminControlCenterPage() {
   const { t } = useI18n();
+  const { isAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('users');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Get current lang from URL
+  const getCurrentLang = () => {
+    const pathname = window.location.pathname;
+    const match = pathname.match(/^\/(en|id)(\/|$)/);
+    return match?.[1] || 'en';
+  };
+  const currentLang = getCurrentLang();
+
+  // Admin guard
+  if (!isAdmin) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        <div className="text-center py-12">
+          <Shield className="w-16 h-16 text-white/50 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-white mb-4">Access Denied</h1>
+          <p className="text-white/70 mb-6">Admin only</p>
+          <Link to={`/${currentLang}`}>
+            <PremiumButton>
+              Back to Home
+            </PremiumButton>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Initialize component
+  useEffect(() => {
+    try {
+      setLoading(false);
+    } catch (err) {
+      setError(String(err));
+      setLoading(false);
+    }
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-[#F0B90B]" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        <PremiumCard>
+          <div className="text-center py-12">
+            <AlertTriangle className="w-16 h-16 text-red-400 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-white mb-4">Something went wrong</h1>
+            <p className="text-white/70 mb-6">{error}</p>
+            <div className="flex gap-3 justify-center">
+              <PremiumButton onClick={() => window.location.reload()}>
+                Reload
+              </PremiumButton>
+              <Link to={`/${currentLang}/admin/vendors`}>
+                <PremiumButton variant="secondary">
+                  Go to Vendor Review
+                </PremiumButton>
+              </Link>
+            </div>
+          </div>
+        </PremiumCard>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-white">Admin Control Center</h1>
-      <p className="text-white/60 text-sm mt-1">If you see this, admin page is rendering ✅</p>
-      
-      {/* ...lanjutan konten admin... */}
-      <PremiumShell>
-        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-yellow-400/50 to-transparent" />
-
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-yellow-500/5 rounded-full blur-3xl" />
+      <div className="relative max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 rounded-lg bg-gradient-to-br from-yellow-400/10 to-yellow-600/10 backdrop-blur-sm border border-yellow-400/20">
+            <Shield className="w-6 h-6 text-yellow-400" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-100">
+              {t('admin.control.title')}
+            </h1>
+            <p className="text-sm text-gray-400 mt-1">
+              {t('admin.control.subtitle')}
+            </p>
+          </div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-yellow-400/10 to-yellow-600/10 backdrop-blur-sm border border-yellow-400/20">
-              <Shield className="w-6 h-6 text-yellow-400" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-100">
-                {t('admin.control.title')}
-              </h1>
-              <p className="text-sm text-gray-400 mt-1">
-                {t('admin.control.subtitle')}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-2 mb-6 border-b border-gray-800">
-            <TabButton
-              active={activeTab === 'users'}
-              onClick={() => setActiveTab('users')}
-              icon={Users}
-              label={t('admin.control.tabs.users')}
-            />
-            <TabButton
-              active={activeTab === 'vendors'}
-              onClick={() => setActiveTab('vendors')}
-              icon={Package}
-              label={t('admin.control.tabs.vendors')}
-            />
-            <TabButton
-              active={activeTab === 'audit'}
-              onClick={() => setActiveTab('audit')}
-              icon={FileText}
-              label={t('admin.control.tabs.audit')}
-            />
-          </div>
-
-          <AnimatePresence mode="wait">
-            {activeTab === 'users' && <UsersTab key="users" />}
-            {activeTab === 'vendors' && <VendorsTab key="vendors" />}
-            {activeTab === 'audit' && <AuditTab key="audit" />}
-          </AnimatePresence>
+        <div className="flex gap-2 mb-6 border-b border-gray-800">
+          <TabButton
+            active={activeTab === 'users'}
+            onClick={() => setActiveTab('users')}
+            icon={Users}
+            label={t('admin.control.tabs.users')}
+          />
+          <TabButton
+            active={activeTab === 'vendors'}
+            onClick={() => setActiveTab('vendors')}
+            icon={Package}
+            label={t('admin.control.tabs.vendors')}
+          />
+          <TabButton
+            active={activeTab === 'audit'}
+            onClick={() => setActiveTab('audit')}
+            icon={FileText}
+            label={t('admin.control.tabs.audit')}
+          />
         </div>
-      </PremiumShell>
+
+        <AnimatePresence mode="wait">
+          {activeTab === 'users' && <UsersTab key="users" />}
+          {activeTab === 'vendors' && <VendorsTab key="vendors" />}
+          {activeTab === 'audit' && <AuditTab key="audit" />}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

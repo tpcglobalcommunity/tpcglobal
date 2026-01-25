@@ -51,29 +51,35 @@ import ProfilePage from "./pages/member/ProfilePage";
 import AnnouncementsPage from "./pages/member/AnnouncementsPage";
 import ReferralsPage from "./pages/member/ReferralsPage";
 import DirectoryPage from "./pages/member/DirectoryPage";
-import VendorApplyPage from "./pages/member/VendorApplyPage";
+import ApplyVendor from "./pages/member/vendor/ApplyVendor";
 
 import MemberGate from "./components/guards/MemberGuard";
 import ProfileGate from "./components/guards/ProfileGate";
 import MemberStatusGuard from "./components/member/MemberGuard";
 import AdminGuard from "./components/guards/AdminGuard";
-import AdminLayout from "./pages/admin/AdminLayout";
+import AdminLayout from "./layouts/AdminLayout";
 
 import NewsEditorPage from "./pages/admin/NewsEditorPage";
 import NewsAdminListPage from "./pages/admin/NewsAdminListPage";
 import AnnouncementsAdminListPage from "./pages/admin/AnnouncementsAdminListPage";
 import AnnouncementEditorPage from "./pages/admin/AnnouncementEditorPage";
 import AuthLogsPage from "./pages/admin/AuthLogsPage";
-import VendorsAdminPage from "./pages/admin/VendorsAdminPage";
 import VerificationQueuePage from "./pages/admin/VerificationQueuePage";
 import MemberDetailPage from "./pages/admin/MemberDetailPage";
 import AuditLogPage from "./pages/admin/AuditLogPage";
-import AdminControlCenterPage from "./pages/admin/AdminControlCenterPage";
 import EmailQueuePage from "./pages/admin/EmailQueuePage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import AdminBroadcastCenter from "./pages/admin/AdminBroadcastCenter";
 import AdminTransparencyPage from "./pages/admin/AdminTransparencyPage";
 import WalletTiersPage from "./pages/admin/WalletTiersPage";
+import VendorReview from "./pages/admin/vendors/VendorReview";
+import RouteRedirect from "./components/RouteRedirect";
+
+// New admin pages
+import AdminIndex from "./pages/admin/AdminIndex";
+import AdminMembers from "./pages/admin/AdminMembers";
+import AdminVendors from "./pages/admin/AdminVendors";
+import AdminMarketplace from "./pages/admin/AdminMarketplace";
 
 import TransparencyPage from "./pages/public/TransparencyPage";
 
@@ -202,6 +208,34 @@ export default function App() {
   }
 
   const renderPage = () => {
+    // MARKETPLACE ADMIN REDIRECT ALIASES - Must be checked BEFORE marketplace detail
+    if (pathWithoutLang === "/marketplace/admin/vendor") {
+      return (
+        <RouteRedirect to={`/${lang}/admin/vendors`} />
+      );
+    }
+    if (pathWithoutLang === "/marketplace/admin/vendors") {
+      return (
+        <RouteRedirect to={`/${lang}/admin/vendors`} />
+      );
+    }
+    if (pathWithoutLang === "/marketplace/admin/control") {
+      return (
+        <RouteRedirect to={`/${lang}/admin/control`} />
+      );
+    }
+    if (pathWithoutLang === "/marketplace/admin") {
+      return (
+        <RouteRedirect to={`/${lang}/admin/vendors`} />
+      );
+    }
+
+    // MARKETPLACE DETAIL ROUTE - HIGHEST PRIORITY (must be checked first)
+    if (pathWithoutLang.startsWith("/marketplace/") && pathWithoutLang !== "/marketplace") {
+      const slug = pathWithoutLang.replace("/marketplace/", "");
+      return <MarketplaceDetail lang={lang} slug={slug} />;
+    }
+
     // HOME: /en or /id (index)
     if (pathWithoutLang === "/" || pathWithoutLang === "" || pathWithoutLang === "/home") {
       return <Home lang={lang} />;
@@ -260,18 +294,10 @@ export default function App() {
       case "/support":
         return <Support lang={lang} />;
 
-      // Marketplace routes - handle both list and detail with slug (must be before general fallback)
+      // Marketplace list route (detail handled above)
       case "/marketplace":
         return <MarketplaceList lang={lang} />;
 
-      // Marketplace item detail with slug - check before other routes
-      if (pathWithoutLang.startsWith("/marketplace/") && pathWithoutLang !== "/marketplace") {
-        const slug = pathWithoutLang.replace("/marketplace/", "");
-        return <MarketplaceDetail lang={lang} slug={slug} />;
-      }
-
-      case "/dao":
-        return <DAOLite lang={lang} />;
       case "/signup":
         return <SignUp />;
       case "/signin":
@@ -411,7 +437,7 @@ export default function App() {
         return (
           <MemberGate>
             <ProfileGate>
-              <VendorApplyPage lang={lang} />
+              <ApplyVendor lang={lang} />
             </ProfileGate>
           </MemberGate>
         );
@@ -425,25 +451,86 @@ export default function App() {
           </MemberGate>
         );
 
-      // ADMIN PAGES (guarded)
-      case "/admin/auth-logs":
+      // ADMIN PAGES (guarded with AdminLayout)
+      case "/admin":
         return (
           <AdminGuard lang={lang}>
-            <AuthLogsPage lang={lang} />
+            <AdminLayout lang={lang}>
+              <AdminIndex lang={lang} />
+            </AdminLayout>
+          </AdminGuard>
+        );
+
+      case "/admin/control":
+        return (
+          <AdminGuard lang={lang}>
+            <AdminLayout lang={lang}>
+              <RouteRedirect to={`/${lang}/admin`} />
+            </AdminLayout>
+          </AdminGuard>
+        );
+
+      case "/admin/members":
+        return (
+          <AdminGuard lang={lang}>
+            <AdminLayout lang={lang}>
+              <AdminMembers lang={lang} />
+            </AdminLayout>
           </AdminGuard>
         );
 
       case "/admin/vendors":
         return (
           <AdminGuard lang={lang}>
-            <VendorsAdminPage lang={lang} />
+            <AdminLayout lang={lang}>
+              <VendorReview lang={lang} />
+            </AdminLayout>
+          </AdminGuard>
+        );
+
+      case "/admin/vendors/review":
+        return (
+          <AdminGuard lang={lang}>
+            <AdminLayout lang={lang}>
+              <RouteRedirect to={`/${lang}/admin/vendors`} />
+            </AdminLayout>
+          </AdminGuard>
+        );
+
+      case "/admin/marketplace":
+        return (
+          <AdminGuard lang={lang}>
+            <AdminLayout lang={lang}>
+              <AdminMarketplace lang={lang} />
+            </AdminLayout>
+          </AdminGuard>
+        );
+
+      case "/admin/settings":
+        return (
+          <AdminGuard lang={lang}>
+            <AdminLayout lang={lang}>
+              <AdminSettingsPage lang={lang} />
+            </AdminLayout>
+          </AdminGuard>
+        );
+
+      // Legacy admin pages (keep existing ones for compatibility)
+      case "/admin/auth-logs":
+        return (
+          <AdminGuard lang={lang}>
+            <AdminLayout lang={lang}>
+              <AuthLogsPage lang={lang} />
+            </AdminLayout>
           </AdminGuard>
         );
 
       case "/admin/verification":
         return (
           <AdminGuard lang={lang}>
-            <VerificationQueuePage lang={lang} />
+            <AdminLayout lang={lang}>
+              <VerificationQueuePage lang={lang} />
+            </AdminLayout>
           </AdminGuard>
         );
 
@@ -465,28 +552,12 @@ export default function App() {
           </AdminGuard>
         );
 
-      case "/admin/settings":
-        return (
-          <AdminGuard lang={lang}>
-            <AdminLayout lang={lang}>
-              <AdminSettingsPage lang={lang} />
-            </AdminLayout>
-          </AdminGuard>
-        );
-
       case "/admin/email-queue":
         return (
           <AdminGuard lang={lang}>
             <AdminLayout lang={lang}>
               <EmailQueuePage lang={lang} />
             </AdminLayout>
-          </AdminGuard>
-        );
-
-      case "/admin/control":
-        return (
-          <AdminGuard lang={lang}>
-            <AdminControlCenterPage />
           </AdminGuard>
         );
 

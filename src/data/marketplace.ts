@@ -1,122 +1,227 @@
+export type MarketplaceCategory =
+  | "all" | "trading" | "education" | "services" | "technology" | "consulting" | "media" | "other";
+
 export interface MarketplaceItem {
   id: string;
   slug: string;
-  title: string;
-  description: string;
-  category: "trading" | "education" | "services" | "technology" | "consulting" | "media" | "other";
-  tags: string[];
-  featured: boolean;
+  category: MarketplaceCategory;
+  featured?: boolean;
   comingSoon?: boolean;
-}
 
-export interface MarketplaceCategory {
-  label: string;
-  value: MarketplaceItem['category'];
+  // i18n keys (NO HARD STRING)
+  titleKey: string;
+  descKey: string;
+  badgeKeys?: string[];
+  tagKeys?: string[];
+
+  vendorNameKey: string;
+  vendorSinceKey?: string; // contoh "marketplace.vendor.since2021"
+  rating: number;
+  reviews: number;
+
+  priceAmount: number;          // 299
+  priceUnitKey: string;         // "marketplace.price.perMonth" OR "marketplace.price.oneTime"
+  currencyKey: string;          // "marketplace.currency.usd" (default)
+
+  // Phase 2: Member Trust & Gating
+  access: "public" | "member";        // default: "public"
+  trustLevel?: "verified" | "partner"; // optional
+
+  // Phase 4: Vendor Integration
+  vendorBrand?: string; // Maps to vendor application brand_name for MVP
 }
 
 export const marketplaceCategories: MarketplaceCategory[] = [
-  { label: "Trading", value: "trading" },
-  { label: "Education", value: "education" },
-  { label: "Services", value: "services" },
-  { label: "Technology", value: "technology" },
-  { label: "Consulting", value: "consulting" },
-  { label: "Media", value: "media" },
-  { label: "Other", value: "other" },
+  "all", "trading", "education", "services", "technology", "consulting", "media", "other"
 ];
 
 export const marketplaceItems: MarketplaceItem[] = [
   {
     id: "1",
     slug: "tpc-trading-academy",
-    title: "TPC Trading Academy",
-    description: "Comprehensive trading education program covering technical analysis, risk management, and advanced trading strategies for TPC tokens.",
+    titleKey: "marketplace.items.tpcTradingAcademy.title",
+    descKey: "marketplace.items.tpcTradingAcademy.desc",
     category: "education",
-    tags: ["education", "trading", "technical analysis", "risk management"],
+    tagKeys: ["marketplace.tags.education", "marketplace.tags.trading", "marketplace.tags.technical", "marketplace.tags.risk"],
+    badgeKeys: ["marketplace.badges.featured", "marketplace.badges.beginnerFriendly"],
+    vendorNameKey: "marketplace.vendors.tpcAcademy.name",
+    vendorSinceKey: "marketplace.vendors.tpcAcademy.since",
+    rating: 4.8,
+    reviews: 234,
+    priceAmount: 299,
+    priceUnitKey: "marketplace.price.oneTime",
+    currencyKey: "marketplace.currency.usd",
     featured: true,
+    access: "public",
   },
   {
     id: "2",
-    slug: "premium-signals",
-    title: "Premium Trading Signals",
-    description: "Get real-time trading signals from expert analysts with high accuracy rates and detailed entry/exit points.",
+    slug: "sinyal-trading-premium",
+    titleKey: "marketplace.items.premiumSignals.title",
+    descKey: "marketplace.items.premiumSignals.desc",
     category: "trading",
-    tags: ["signals", "trading", "analysis", "real-time"],
+    tagKeys: ["marketplace.tags.signals", "marketplace.tags.trading", "marketplace.tags.analysis", "marketplace.tags.tools"],
+    badgeKeys: ["marketplace.badges.featured", "marketplace.badges.verified"],
+    vendorNameKey: "marketplace.vendors.tpcTradingLabs.name",
+    vendorSinceKey: "marketplace.vendors.tpcTradingLabs.since",
+    rating: 4.9,
+    reviews: 567,
+    priceAmount: 99,
+    priceUnitKey: "marketplace.price.perMonth",
+    currencyKey: "marketplace.currency.usd",
     featured: true,
+    access: "member",
+    trustLevel: "verified",
+    vendorBrand: "TPC Trading Labs",
   },
   {
     id: "3",
     slug: "blockchain-consulting",
-    title: "Blockchain Consulting Services",
-    description: "Professional blockchain consulting for businesses looking to integrate Web3 technologies and smart contracts.",
+    titleKey: "marketplace.items.blockchainConsulting.title",
+    descKey: "marketplace.items.blockchainConsulting.desc",
     category: "consulting",
-    tags: ["consulting", "blockchain", "web3", "smart contracts"],
+    tagKeys: ["marketplace.tags.blockchain", "marketplace.tags.consulting", "marketplace.tags.web3", "marketplace.tags.smartContracts"],
+    badgeKeys: ["marketplace.badges.professional"],
+    vendorNameKey: "marketplace.vendors.tpcTechSolutions.name",
+    vendorSinceKey: "marketplace.vendors.tpcTechSolutions.since",
+    rating: 4.7,
+    reviews: 89,
+    priceAmount: 2500,
+    priceUnitKey: "marketplace.price.oneTime",
+    currencyKey: "marketplace.currency.usd",
     featured: false,
+    access: "public",
   },
   {
     id: "4",
-    slug: "tpc-wallet-development",
-    title: "Custom TPC Wallet Development",
-    description: "Custom wallet development services for TPC ecosystem with advanced security features and user-friendly interfaces.",
+    slug: "custom-wallet-development",
+    titleKey: "marketplace.items.customWalletDevelopment.title",
+    descKey: "marketplace.items.customWalletDevelopment.desc",
     category: "technology",
-    tags: ["development", "wallet", "security", "custom"],
+    tagKeys: ["marketplace.tags.wallet", "marketplace.tags.development", "marketplace.tags.blockchain", "marketplace.tags.security"],
+    badgeKeys: ["marketplace.badges.technical", "marketplace.badges.comingSoon"],
+    vendorNameKey: "marketplace.vendors.tpcTechSolutions.name",
+    vendorSinceKey: "marketplace.vendors.tpcTechSolutions.since",
+    rating: 4.6,
+    reviews: 45,
+    priceAmount: 5000,
+    priceUnitKey: "marketplace.price.oneTime",
+    currencyKey: "marketplace.currency.usd",
     featured: false,
     comingSoon: true,
+    access: "public",
   },
   {
     id: "5",
-    slug: "market-analysis-tools",
-    title: "Market Analysis Tools",
-    description: "Advanced market analysis tools and dashboards for tracking TPC market trends and making informed decisions.",
+    slug: "alat-analisis-pasar",
+    titleKey: "marketplace.items.marketAnalysisTools.title",
+    descKey: "marketplace.items.marketAnalysisTools.desc",
     category: "technology",
-    tags: ["analysis", "tools", "dashboard", "market data"],
+    tagKeys: ["marketplace.tags.analysis", "marketplace.tags.dashboard", "marketplace.tags.tools", "marketplace.tags.trading"],
+    badgeKeys: ["marketplace.badges.featured", "marketplace.badges.aiPowered"],
+    vendorNameKey: "marketplace.vendors.tpcTradingLabs.name",
+    vendorSinceKey: "marketplace.vendors.tpcTradingLabs.since",
+    rating: 4.8,
+    reviews: 312,
+    priceAmount: 149,
+    priceUnitKey: "marketplace.price.perMonth",
+    currencyKey: "marketplace.currency.usd",
     featured: true,
+    access: "member",
+    trustLevel: "partner",
   },
   {
     id: "6",
     slug: "content-creation-services",
-    title: "Crypto Content Creation",
-    description: "Professional content creation services for crypto projects including articles, videos, and social media content.",
+    titleKey: "marketplace.items.contentCreationServices.title",
+    descKey: "marketplace.items.contentCreationServices.desc",
     category: "media",
-    tags: ["content", "media", "marketing", "social media"],
+    tagKeys: ["marketplace.tags.content", "marketplace.tags.media", "marketplace.tags.marketing", "marketplace.tags.socialMedia"],
+    badgeKeys: ["marketplace.badges.creative"],
+    vendorNameKey: "marketplace.vendors.tpcMedia.name",
+    vendorSinceKey: "marketplace.vendors.tpcMedia.since",
+    rating: 4.5,
+    reviews: 78,
+    priceAmount: 1200,
+    priceUnitKey: "marketplace.price.perMonth",
+    currencyKey: "marketplace.currency.usd",
     featured: false,
+    access: "public",
   },
   {
     id: "7",
     slug: "defi-yield-farming",
-    title: "DeFi Yield Farming Guide",
-    description: "Complete guide to yield farming strategies in the DeFi space with TPC tokens and other cryptocurrencies.",
+    titleKey: "marketplace.items.defiYieldFarming.title",
+    descKey: "marketplace.items.defiYieldFarming.desc",
     category: "education",
-    tags: ["education", "defi", "yield farming", "strategies"],
+    tagKeys: ["marketplace.tags.education", "marketplace.tags.defi", "marketplace.tags.yieldFarming", "marketplace.tags.strategies"],
+    badgeKeys: ["marketplace.badges.advanced"],
+    vendorNameKey: "marketplace.vendors.tpcAcademy.name",
+    vendorSinceKey: "marketplace.vendors.tpcAcademy.since",
+    rating: 4.4,
+    reviews: 156,
+    priceAmount: 199,
+    priceUnitKey: "marketplace.price.oneTime",
+    currencyKey: "marketplace.currency.usd",
     featured: false,
+    access: "public",
   },
   {
     id: "8",
     slug: "smart-contract-audit",
-    title: "Smart Contract Audit Services",
-    description: "Professional smart contract auditing services to ensure security and compliance with industry standards.",
+    titleKey: "marketplace.items.smartContractAudit.title",
+    descKey: "marketplace.items.smartContractAudit.desc",
     category: "services",
-    tags: ["audit", "security", "smart contracts", "compliance"],
+    tagKeys: ["marketplace.tags.audit", "marketplace.tags.security", "marketplace.tags.smartContracts", "marketplace.tags.compliance"],
+    badgeKeys: ["marketplace.badges.featured", "marketplace.badges.verified", "marketplace.badges.essential"],
+    vendorNameKey: "marketplace.vendors.tpcRiskSolutions.name",
+    vendorSinceKey: "marketplace.vendors.tpcRiskSolutions.since",
+    rating: 4.9,
+    reviews: 423,
+    priceAmount: 3500,
+    priceUnitKey: "marketplace.price.oneTime",
+    currencyKey: "marketplace.currency.usd",
     featured: true,
+    access: "member",
+    trustLevel: "verified",
   },
   {
     id: "9",
     slug: "tpc-community-management",
-    title: "Community Management Services",
-    description: "Professional community management for TPC projects including Discord, Telegram, and social media platforms.",
+    titleKey: "marketplace.items.tpcCommunityManagement.title",
+    descKey: "marketplace.items.tpcCommunityManagement.desc",
     category: "services",
-    tags: ["community", "management", "social media", "engagement"],
+    tagKeys: ["marketplace.tags.community", "marketplace.tags.management", "marketplace.tags.socialMedia", "marketplace.tags.engagement"],
+    badgeKeys: ["marketplace.badges.comingSoon"],
+    vendorNameKey: "marketplace.vendors.tpcCommunity.name",
+    vendorSinceKey: "marketplace.vendors.tpcCommunity.since",
+    rating: 4.6,
+    reviews: 92,
+    priceAmount: 800,
+    priceUnitKey: "marketplace.price.perMonth",
+    currencyKey: "marketplace.currency.usd",
     featured: false,
     comingSoon: true,
+    access: "public",
   },
   {
     id: "10",
     slug: "nft-marketplace-integration",
-    title: "NFT Marketplace Integration",
-    description: "Integration services for NFT marketplaces to support TPC tokens and enable seamless trading experiences.",
+    titleKey: "marketplace.items.nftMarketplaceIntegration.title",
+    descKey: "marketplace.items.nftMarketplaceIntegration.desc",
     category: "technology",
-    tags: ["nft", "marketplace", "integration", "trading"],
+    tagKeys: ["marketplace.tags.nft", "marketplace.tags.marketplace", "marketplace.tags.integration", "marketplace.tags.trading"],
+    badgeKeys: ["marketplace.badges.technical", "marketplace.badges.comingSoon"],
+    vendorNameKey: "marketplace.vendors.tpcTechSolutions.name",
+    vendorSinceKey: "marketplace.vendors.tpcTechSolutions.since",
+    rating: 4.5,
+    reviews: 34,
+    priceAmount: 4500,
+    priceUnitKey: "marketplace.price.oneTime",
+    currencyKey: "marketplace.currency.usd",
     featured: false,
     comingSoon: true,
+    access: "public",
   },
 ];
 

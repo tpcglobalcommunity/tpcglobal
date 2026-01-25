@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { type Language, getLangPath, useI18n } from "@/i18n";
-import { LayoutDashboard, Users, Link2, ScrollText, Settings, BadgeCheck, Megaphone } from "lucide-react";
+import { LayoutDashboard, Users, Link2, ScrollText, Settings, BadgeCheck, Megaphone, Store } from "lucide-react";
 import type { AdminRole } from "../../hooks/useMyRole";
 
 type NavItem = {
@@ -49,6 +49,13 @@ export default function AdminNav({
         label: t("admin.nav.referrals") || "Referrals",
         href: `${base}/referrals`,
         icon: Link2,
+        minRole: "admin",
+      },
+      {
+        key: "vendors",
+        label: t("admin.nav.vendors") || "Vendor Review",
+        href: `${base}/vendors/review`,
+        icon: Store,
         minRole: "admin",
       },
       {

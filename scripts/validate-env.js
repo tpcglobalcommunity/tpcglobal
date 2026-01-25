@@ -9,9 +9,26 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Load .env files in order of precedence (without overwriting existing env vars)
+const envFiles = [
+  '.env',
+  '.env.local',
+  '.env.production',
+  '.env.production.local'
+];
+
+for (const envFile of envFiles) {
+  const envPath = path.resolve(process.cwd(), envFile);
+  if (fs.existsSync(envPath)) {
+    console.log(`📁 Loading ${envFile}...`);
+    dotenv.config({ path: envPath, override: false });
+  }
+}
 
 // Check required environment variables
 const requiredEnvVars = [
