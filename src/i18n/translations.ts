@@ -18,7 +18,7 @@ type HomeObject = {
   };
 };
 
-type TranslationValue = string | HomeObject | TrustCard[];
+type TranslationValue = string | HomeObject | TrustCard[] | any;
 
 // Helper function for deep merge
 function deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>): T {
