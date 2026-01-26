@@ -472,6 +472,7 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "transparency.sections.reporting.description": "Regular reports provide visibility into treasury status, ecosystem growth, and platform sustainability.",
     "transparency.sections.updates.title": "Transparency Updates",
     "transparency.sections.updates.desc": "Latest activities including buybacks, burns, liquidity, and operations.",
+    "transparency.notice": "Wallet addresses and records are provided for transparency and audit purposes only.",
     // Whitepaper
     "whitepaper.header.pill": "Whitepaper",
     "whitepaper.header.title": "TPC Whitepaper",
@@ -1298,6 +1299,7 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "transparency.sections.reporting.description": "Laporan berkala memberikan visibilitas terhadap kondisi treasury, pertumbuhan ekosistem, dan keberlanjutan platform.",
     "transparency.sections.updates.title": "Update Transparansi",
     "transparency.sections.updates.desc": "Aktivitas terbaru terkait buyback, burn, liquidity, dan operasional.",
+    "transparency.notice": "Alamat wallet dan catatan disediakan hanya untuk tujuan transparansi dan audit.",
     // Whitepaper
     "whitepaper.header.pill": "Whitepaper",
     "whitepaper.header.title": "Whitepaper TPC",
