@@ -47,7 +47,7 @@ interface HeaderAuthActionsProps {
 }
 
 export function HeaderAuthActions({ lang, variant = "default", onAfterAction }: HeaderAuthActionsProps) {
-  const { language, t } = useI18n(lang || "en");
+  const { language, t } = useI18n();
   const { loading, isAuthed } = useSession();
 
   const handleAction = (action: () => void) => {

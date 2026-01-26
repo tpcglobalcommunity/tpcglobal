@@ -19,7 +19,7 @@ export default function AuthShell({
   children, 
   bottomSlot 
 }: AuthShellProps) {
-  const { t, language } = useI18n(lang || "en");
+  const { t, language } = useI18n();
   const L = language;
 
   return (

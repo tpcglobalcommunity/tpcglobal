@@ -34,7 +34,7 @@ function useSession() {
 }
 
 export function BottomAuthItems({ lang }: { lang?: Language }) {
-  const { language, t } = useI18n(lang || 'en');
+  const { language, t } = useI18n();
   const { loading, isAuthed } = useSession();
 
   if (loading) return null;

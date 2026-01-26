@@ -7,7 +7,7 @@ interface LegalFooterProps {
 }
 
 const LegalFooter = ({ lang }: LegalFooterProps) => {
-  const { t } = useI18n(lang);
+  const { t } = useI18n();
   const currentYear = new Date().getFullYear();
   const copyrightText = lang === 'en'
     ? `© ${currentYear} TPC. All rights reserved.`
