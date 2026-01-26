@@ -276,7 +276,7 @@ export default function App() {
       case "/transparency":
         return <Transparency lang={lang} />;
       case "/fund":
-        return <CommunityFund lang={lang} />;
+        return <CommunityFund />;
       case "/legal":
         return <Legal lang={lang} />;
       case "/whitepaper":
