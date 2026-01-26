@@ -1,66 +1,114 @@
-import { Wallet, ExternalLink, TrendingUp, CheckCircle2, FileText, Users } from 'lucide-react';
-import { Language, useI18n, getLangPath, tStr, tArr } from "@/i18n";
+import { Wallet, ExternalLink, CheckCircle2, FileText } from 'lucide-react';
+import { Language, useI18n, getLangPath } from "@/i18n";
 import { PremiumShell, PremiumCard, NoticeBox, PremiumButton } from "@/components/ui";
 import { Link } from "@/components/Router";
-
-// Safe string helpers
-const toStr = (v: unknown) => (v == null ? "" : String(v));
-const safeSplit = (v: unknown, delimiter: string) => toStr(v).split(delimiter);
-const safeTrim = (v: unknown) => toStr(v).trim();
+import { supabase } from "@/lib/supabase";
 
 interface TransparencyProps {
   lang: Language;
 }
 
+interface WalletData {
+  id: string;
+  name: string;
+  address: string;
+  purpose: string;
+  status: 'active' | 'inactive';
+}
+
+// Safe translation helper with fallback
+const T = (key: string, fallback: string = "") => {
+  try {
+    const { t } = useI18n();
+    const value = t(key);
+    return (value && value !== key) ? value : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
 const Transparency = ({ lang }: TransparencyProps) => {
-  const { t } = useI18n();
+  const [wallets, setWallets] = useState<WalletData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const title = tStr(t("transparency.hero.title"), "Transparency", lang);
-  const subtitle = tStr(t("transparency.hero.subtitle"), "Public logs and on-chain proof.", lang);
-  const noticeTitle = tStr(t("transparency.live.title"), "Live Transparency", lang);
-  const noticeBody = tStr(t("transparency.live.desc"), "All community funds and transactions are publicly verifiable on-chain.", lang);
+  // Fetch wallets from Supabase
+  useEffect(() => {
+    const fetchWallets = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('official_wallets')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-  const wallets = tArr("transparency.wallets.items", lang);
-  const safeWallets = Array.isArray(wallets) ? wallets : [];
+        if (error) {
+          console.error('Error fetching wallets:', error);
+          // Fallback to empty array
+          setWallets([]);
+        } else {
+          setWallets(data || []);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        setWallets([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const policyTitle = tStr(t("transparency.revenue.title"), "Revenue Policy", lang);
-  const youtubeTitle = tStr(t("transparency.revenue.youtube"), "YouTube Revenue Split", lang);
-  const youtubePolicy = tArr("transparency.policy.youtube", lang);
-  const safeYoutubePolicy = Array.isArray(youtubePolicy) ? youtubePolicy : [];
-  const revenueLabel = tStr(t("transparency.revenue.community"), "Revenue to Community", lang);
-  const revenueDesc = tStr(t("transparency.revenueDesc"), "All revenue goes back to community members and development.", lang);
+    fetchWallets();
+  }, []);
 
-  const updatesTitle = tStr(t("transparency.updates.title"), "Recent Updates", lang);
-  const updates = tArr("transparency.wallets.items", lang);
-  const safeUpdates = Array.isArray(updates) ? updates : [];
+  // Safe translations with fallbacks
+  const title = T("transparency.title", "Transparency");
+  const subtitle = T("transparency.subtitle", "Open, verifiable, and accountable ecosystem");
+  const desc = T("transparency.desc", "TPC operates with a transparency-first principle. All official wallets, allocations, and on-chain activities are visible and auditable by the public.");
+  
+  const officialWalletsTitle = T("transparency.sections.officialWallets", "Official Wallets");
+  const walletLabel = T("transparency.wallet.label", "Wallet");
+  const walletPurpose = T("transparency.wallet.purpose", "Wallet Purpose");
+  const statusActive = T("transparency.wallet.statusActive", "Active");
+  const statusInactive = T("transparency.wallet.statusInactive", "Inactive");
+  const walletAction = T("transparency.walletAction", "View on Explorer");
+  
+  const ctaTitle = T("transparency.cta.title", "Join Our Community");
+  const ctaSubtitle = T("transparency.cta.subtitle", "Be part of a transparent and education-first trading community.");
+  const ctaDocs = T("transparency.cta.docs", "Read Documentation");
+  const ctaJoin = T("transparency.cta.join", "Join Community");
 
-  const ctaTitle = tStr(t("transparency.cta.title"), "Join Our Community", lang);
-  const ctaSubtitle = tStr(t("transparency.cta.subtitle"), "Be part of a transparent and education-first trading community.", lang);
-  const ctaDocs = tStr(t("transparency.cta.docs"), "Read Documentation", lang);
-  const ctaCommunity = tStr(t("transparency.cta.join"), "Join Community", lang);
-  const walletAction = tStr(t("transparency.walletAction"), "View on Explorer", lang);
+  // Helper to shorten wallet address
+  const shortenAddress = (address: string) => {
+    if (!address || address.length < 10) return address;
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
 
   return (
     <PremiumShell>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
+        {/* Header */}
         <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-6 md:p-10 mb-12">
           <div className="text-center mb-8">
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#F0B90B]/10 to-[#F0B90B]/5 border border-[#F0B90B]/20 mb-6">
+              <FileText className="w-4 h-4 text-[#F0B90B]" />
+              <span className="text-sm font-medium text-[#F0B90B]">
+                {title}
+              </span>
+            </div>
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">
               {title}
             </h1>
-            <p className="text-lg md:text-xl text-white/70 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
               {subtitle}
             </p>
           </div>
 
-          <NoticeBox
-            variant="info"
-            title={noticeTitle}
-          >
-            {noticeBody}
+          <NoticeBox variant="info">
+            <div className="text-white/90 leading-relaxed">
+              {desc}
+            </div>
           </NoticeBox>
         </div>
 
+        {/* Official Wallets Section */}
         <div className="space-y-16">
           <section>
             <div className="flex items-center gap-3 mb-8">
@@ -68,168 +116,121 @@ const Transparency = ({ lang }: TransparencyProps) => {
                 <Wallet className="w-6 h-6 text-black" />
               </div>
               <h2 className="text-2xl md:text-3xl font-semibold text-white">
-                {t("transparency.sections.officialWallets") || "Community Wallets"}
+                {officialWalletsTitle}
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {safeWallets.map((wallet: any, index: number) => (
-                <PremiumCard key={index}>
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-white">
-                      {tStr(wallet?.label, "Wallet")}
-                    </h3>
-                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-500/10 text-green-400 text-xs font-medium">
-                      <CheckCircle2 className="w-3 h-3" />
-                      {tStr(wallet?.status, "Active")}
-                    </span>
-                  </div>
-
-                  <div className="bg-white/[0.04] rounded-lg p-3 mb-4 border border-white/10">
-                    <p className="text-white/60 text-xs font-mono break-all">
-                      {tStr(wallet?.address, "0x0000...0000")}
-                    </p>
-                  </div>
-
-                  <p className="text-white/70 text-sm leading-relaxed mb-4">
-                    {tStr(wallet?.purpose, "Wallet purpose")}
-                  </p>
-
-                  <button className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 hover:border-[#F0B90B]/30 text-white/70 hover:text-[#F0B90B] transition-all duration-200 text-sm font-medium">
-                    <ExternalLink className="w-4 h-4" />
-                    {walletAction}
-                  </button>
-                </PremiumCard>
-              ))}
-            </div>
-          </section>
-
-          <section>
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#F0B90B] to-[#C29409] rounded-lg flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-6 h-6 text-black" />
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F0B90B]"></div>
               </div>
-              <h2 className="text-2xl md:text-3xl font-semibold text-white">
-                {policyTitle}
-              </h2>
-            </div>
-
-            <PremiumCard>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-[#F0B90B]" />
-                    {youtubeTitle}
-                  </h3>
-                  <div className="space-y-3">
-                    {safeYoutubePolicy.map((item: any, index: number) => (
-                      <div
-                        key={index}
-                        className="flex items-start gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/10"
-                      >
-                        <div className="w-8 h-8 bg-[#F0B90B]/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <span className="text-[#F0B90B] font-bold text-sm">
-                            {toStr(safeSplit(tStr(item), '%')[0])}%
-                          </span>
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-white font-medium text-sm">
-                            {safeTrim(safeSplit(tStr(item), '—')[1])}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-center">
-                  <div className="text-center p-8 rounded-xl bg-gradient-to-br from-[#F0B90B]/10 to-transparent border border-[#F0B90B]/20">
-                    <div className="text-4xl md:text-5xl font-bold text-[#F0B90B] mb-2">
-                      100%
-                    </div>
-                    <p className="text-white/70 text-sm">
-                      {revenueLabel}
-                    </p>
-                    <p className="text-white/50 text-xs mt-2 max-w-[24ch] mx-auto leading-relaxed">
-                      {revenueDesc}
-                    </p>
-                  </div>
+            ) : wallets.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-8">
+                  <Wallet className="w-12 h-12 text-[#F0B90B] mx-auto mb-4" />
+                  <p className="text-white/60">No official wallets available at the moment.</p>
                 </div>
               </div>
-            </PremiumCard>
-          </section>
-
-          <section>
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#F0B90B] to-[#C29409] rounded-lg flex items-center justify-center flex-shrink-0">
-                <FileText className="w-6 h-6 text-black" />
-              </div>
-              <h2 className="text-2xl md:text-3xl font-semibold text-white">
-                {updatesTitle}
-              </h2>
-            </div>
-
-            <div className="space-y-4">
-              {safeUpdates.map((update: any, index: number) => (
-                <PremiumCard key={index}>
-                  <div className="flex flex-col md:flex-row md:items-start gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-[#F0B90B]/10 border border-[#F0B90B]/30">
-                        <span className="text-[#F0B90B] font-semibold text-sm">
-                          {tStr(update?.date, "2026-01-18")}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-white mb-2">
-                        {tStr(update?.title, "Update Title")}
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {wallets.map((wallet) => (
+                  <PremiumCard key={wallet.id}>
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="text-lg font-semibold text-white">
+                        {wallet.name || walletLabel}
                       </h3>
-                      <p className="text-white/70 text-sm leading-relaxed">
-                        {tStr(update?.desc, "Update description")}
-                      </p>
+                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                        wallet.status === 'active' 
+                          ? 'bg-green-500/10 text-green-400' 
+                          : 'bg-gray-500/10 text-gray-400'
+                      }`}>
+                        <CheckCircle2 className="w-3 h-3" />
+                        {wallet.status === 'active' ? statusActive : statusInactive}
+                      </span>
                     </div>
-                  </div>
-                </PremiumCard>
-              ))}
-            </div>
+                    
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-xs text-white/60 uppercase tracking-wider mb-1">
+                          {walletLabel}
+                        </p>
+                        <p className="text-white font-mono text-sm break-all">
+                          {shortenAddress(wallet.address)}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <p className="text-xs text-white/60 uppercase tracking-wider mb-1">
+                          {walletPurpose}
+                        </p>
+                        <p className="text-white/80 text-sm">
+                          {wallet.purpose || 'Official TPC wallet'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-white/10">
+                      <PremiumButton
+                        variant="secondary"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => {
+                          // Open in explorer (placeholder for actual explorer URL)
+                          const explorerUrl = `https://etherscan.io/address/${wallet.address}`;
+                          window.open(explorerUrl, '_blank');
+                        }}
+                      >
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        {walletAction}
+                      </PremiumButton>
+                    </div>
+                  </PremiumCard>
+                ))}
+              </div>
+            )}
           </section>
 
-          <section>
-            <PremiumCard hover={false}>
-              <div className="text-center py-8">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <Users className="w-8 h-8 text-[#F0B90B]" />
-                  <h2 className="text-2xl md:text-3xl font-semibold text-white">
-                    {ctaTitle}
-                  </h2>
-                </div>
-                <p className="text-white/70 text-base mb-8 max-w-2xl mx-auto">
-                  {ctaSubtitle}
-                </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Link to={getLangPath(lang, '/docs')}>
-                    <PremiumButton variant="primary">
-                      <FileText className="w-5 h-5" />
-                      {ctaDocs}
-                    </PremiumButton>
-                  </Link>
-                  <PremiumButton
-                    variant="secondary"
-                    href="https://t.me/tpcglobalcommunity"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Users className="w-5 h-5" />
-                    {ctaCommunity}
+          {/* CTA Section */}
+          <section className="text-center">
+            <div className="backdrop-blur-xl bg-white/[0.02] border border-white/10 rounded-2xl p-8 md:p-12">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+                {ctaTitle}
+              </h2>
+              <p className="text-lg text-white/70 max-w-2xl mx-auto mb-8 leading-relaxed">
+                {ctaSubtitle}
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link to={getLangPath(lang, '/docs')}>
+                  <PremiumButton variant="secondary" size="sm" className="w-full">
+                    <FileText className="w-5 h-5 mr-2" />
+                    {ctaDocs}
                   </PremiumButton>
-                </div>
+                </Link>
+                
+                <PremiumButton 
+                  variant="primary" 
+                  size="sm" 
+                  className="w-full sm:w-auto"
+                  onClick={() => {
+                    // Open Telegram community (placeholder for actual URL)
+                    const telegramUrl = 'https://t.me/tpcglobalcommunity';
+                    window.open(telegramUrl, '_blank');
+                  }}
+                >
+                  <ExternalLink className="w-5 h-5 mr-2" />
+                  {ctaJoin}
+                </PremiumButton>
               </div>
-            </PremiumCard>
+            </div>
           </section>
         </div>
       </div>
     </PremiumShell>
   );
 };
+
+// Import React hooks
+import { useState, useEffect } from 'react';
 
 export default Transparency;
