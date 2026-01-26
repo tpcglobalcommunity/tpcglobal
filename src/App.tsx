@@ -67,7 +67,6 @@ import AuthLogsPage from "./pages/admin/AuthLogsPage";
 import MemberDetailPage from "./pages/admin/MemberDetailPage";
 import AuditLogPage from "./pages/admin/AuditLogPage";
 import EmailQueuePage from "./pages/admin/EmailQueuePage";
-import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import AdminBroadcastCenter from "./pages/admin/AdminBroadcastCenter";
 import AdminTransparencyPage from "./pages/admin/AdminTransparencyPage";
 import VendorReview from "./pages/admin/vendors/VendorReview";
@@ -511,7 +510,12 @@ export default function App() {
         return (
           <AdminGuard lang={lang}>
             <AdminLayout lang={lang}>
-              <AdminSettingsPage lang={lang} />
+              <div className="p-6">
+                <h1 className="text-2xl font-bold text-white mb-4">Settings</h1>
+                <div className="bg-white/10 border border-white/20 rounded-lg p-4">
+                  <p className="text-white/60">Settings page is being rebuilt. Please check back later.</p>
+                </div>
+              </div>
             </AdminLayout>
           </AdminGuard>
         );
