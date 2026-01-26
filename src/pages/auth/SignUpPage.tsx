@@ -2,7 +2,10 @@ import { useState } from "react";
 import { Eye, EyeOff, User, Mail, Lock, ArrowRight } from "lucide-react";
 import { useI18n, getLangPath } from "@/i18n";
 import { PremiumShell, PremiumCard, PremiumButton } from "@/components/ui";
-import { Link } from "@/components/Router";
+import { Link, useNavigate } from "@/components/Router";
+import { supabase } from "@/lib/supabase";
+import { ensureProfile } from "@/lib/ensureProfile";
+import { validateReferralCodePublic } from "@/utils/referralValidationFixed";
 
 interface SignUpPageProps {
   lang: string;
@@ -29,6 +32,7 @@ interface FormErrors {
 
 const SignUpPage = ({ lang }: SignUpPageProps) => {
   const { t } = useI18n();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,31 +53,31 @@ const SignUpPage = ({ lang }: SignUpPageProps) => {
     const newErrors: FormErrors = {};
 
     if (!formData.fullName.trim()) {
-      newErrors.fullName = "This field is required";
+      newErrors.fullName = t("auth.signup.errors.required");
     } else if (formData.fullName.trim().length < 2) {
-      newErrors.fullName = "Name must be at least 2 characters";
+      newErrors.fullName = t("auth.signup.errors.required");
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "This field is required";
+      newErrors.email = t("auth.signup.errors.required");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
+      newErrors.email = t("auth.signup.errors.emailInvalid");
     }
 
     if (!formData.password) {
-      newErrors.password = "This field is required";
+      newErrors.password = t("auth.signup.errors.required");
     } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
+      newErrors.password = t("auth.signup.errors.passwordMin");
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "This field is required";
+      newErrors.confirmPassword = t("auth.signup.errors.required");
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = t("auth.signup.errors.passwordMatch");
     }
 
     if (!formData.acceptTerms) {
-      newErrors.terms = "You must accept the terms to continue";
+      newErrors.terms = t("auth.signup.errors.terms");
     }
 
     setErrors(newErrors);
@@ -100,17 +104,64 @@ const SignUpPage = ({ lang }: SignUpPageProps) => {
     setIsLoading(true);
 
     try {
-      // TODO: Implement Supabase signup later
-      console.log("Signup data:", formData);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Redirect to signin for now
-      window.location.href = getLangPath(lang as any, "/signin");
+      // Validate referral code if provided
+      let referralData = null;
+      if (formData.referralCode.trim()) {
+        try {
+          const isValid = await validateReferralCodePublic(formData.referralCode.trim());
+          if (isValid) {
+            // Store referral code in user metadata
+            referralData = formData.referralCode.trim().toUpperCase();
+          }
+        } catch (referralError) {
+          console.warn("Referral validation failed:", referralError);
+          // Continue without referral - don't fail signup
+        }
+      }
+
+      // Sign up with Supabase
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email.trim(),
+        password: formData.password,
+        options: {
+          data: {
+            full_name: formData.fullName.trim(),
+            referral_code: referralData,
+          },
+          emailRedirectTo: `${window.location.origin}/${lang}/check-email`
+        }
+      });
+
+      if (error) {
+        let errorMessage = t("auth.signup.errorGeneric");
+        if (error.message.includes("email")) {
+          errorMessage = t("auth.signup.errors.emailInvalid");
+        } else if (error.message.includes("password")) {
+          errorMessage = t("auth.signup.errors.passwordMin");
+        } else if (error.message.includes("already registered")) {
+          errorMessage = "Email already registered";
+        }
+        setSubmitError(errorMessage);
+        return;
+      }
+
+      if (data.user && data.user.email_confirmed_at) {
+        // Email already confirmed, create profile and redirect
+        try {
+          await ensureProfile(data.user);
+          navigate(getLangPath(lang as any, "/signin"));
+        } catch (profileError) {
+          console.error("Profile creation error:", profileError);
+          // Continue anyway - user can complete profile later
+          navigate(getLangPath(lang as any, "/signin"));
+        }
+      } else {
+        // Email confirmation required - redirect to check email page
+        navigate(getLangPath(lang as any, "/check-email"));
+      }
     } catch (error) {
       console.error("Signup error:", error);
-      setSubmitError("Registration failed. Please try again.");
+      setSubmitError(t("auth.signup.errorGeneric"));
     } finally {
       setIsLoading(false);
     }
@@ -318,7 +369,7 @@ const SignUpPage = ({ lang }: SignUpPageProps) => {
                 {isLoading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2"></div>
-                    {t("auth.signup.submit")}...
+                    {t("auth.signup.loading")}
                   </>
                 ) : (
                   <>
