@@ -26,31 +26,22 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "app.loading": "Loading...",
     "app.error": "Something went wrong",
 
-    // Home page
-    "home.hero.badge": "Professional Trading Community",
-    "home.hero.title": "Join the Global Trading Community",
-    "home.hero.subtitle": "Connect with disciplined traders, access premium education, and grow your skills in a transparent ecosystem.",
-    "home.hero.ctaPrimary": "Join Community",
-    "home.hero.ctaSecondary": "Learn More",
-    "home.disclaimer.text": "Trading involves significant risk and may result in loss. Past performance does not guarantee future results.",
-    "home.trust.title": "Why Choose TPC",
-    "home.trust.cards": [
-      {
-        "title": "Transparency",
-        "desc": "All operations and funds are publicly verifiable on the blockchain.",
-        "cta": "View Transparency"
-      },
-      {
-        "title": "Education", 
-        "desc": "Comprehensive trading education from basics to advanced strategies.",
-        "cta": "Learn More"
-      },
-      {
-        "title": "Community",
-        "desc": "Connect with professional traders and share valuable insights.",
-        "cta": "Join DAO"
-      }
-    ],
+    "home.badge": "TPC • Trader Professional Community",
+    "home.title": "Stop Guessing. Start Trading.",
+    "home.subtitle": "A premium global community for disciplined traders — education, tools, and transparent growth.",
+    "home.ctaPrimary": "Join Members",
+    "home.ctaSecondary": "View Docs",
+    "home.disclaimer": "Trading involves risk. TPC provides education and tools — not financial advice or profit guarantees.",
+    "home.trust.title": "Built on transparency & accountability",
+    "home.trust.cards.0.title": "Verified Transparency",
+    "home.trust.cards.0.desc": "Official wallets, allocations, and logs are visible and auditable.",
+    "home.trust.cards.0.cta": "Open Transparency",
+    "home.trust.cards.1.title": "Professional Education",
+    "home.trust.cards.1.desc": "Structured learning and risk-first mindset for serious traders.",
+    "home.trust.cards.1.cta": "Read Docs",
+    "home.trust.cards.2.title": "Community & Governance",
+    "home.trust.cards.2.desc": "A community ecosystem with clear rules and long-term vision.",
+    "home.trust.cards.2.cta": "Explore DAO",
 
     "auth.signin.title": "Sign In",
     "auth.signup.title": "Create Account",
@@ -153,38 +144,6 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "system.maintenance.title": "Maintenance Mode",
     "system.maintenance.subtitle": "We are upgrading the system to serve you better.",
 
-    "home": {
-      "hero": {
-        "badge": "TPC • Trader Professional Community",
-        "title": "Stop Guessing. Start Trading.",
-        "subtitle": "A premium global community built for disciplined traders — education, tools, and transparent growth.",
-        "ctaPrimary": "Join as Member",
-        "ctaSecondary": "Explore Docs"
-      },
-      "disclaimer": {
-        "text": "Trading involves risk. TPC provides education and tools — not financial advice or guaranteed profit."
-      },
-      "trust": {
-        "title": "Built with transparency & accountability",
-        "cards": [
-          {
-            title: "Proof of Transparency",
-            desc: "Track treasury movements, buyback & burn reports, and public disclosures in real time.",
-            cta: "View Transparency"
-          },
-          {
-            title: "Security by Design",
-            desc: "Role-based access, audit logs, and strict separation between member, admin, and system roles.",
-            cta: "Explore Security"
-          },
-          {
-            title: "Community-Governed Growth",
-            desc: "Programs, funds, and ecosystem decisions are designed with long-term community alignment.",
-            cta: "Learn About DAO"
-          }
-        ]
-      }
-    },
 
     "nav.home": "Home",
     "nav.docs": "Docs",
@@ -766,31 +725,22 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "app.loading": "Memuat...",
     "app.error": "Terjadi kesalahan",
 
-    // Home page
-    "home.hero.badge": "Komunitas Trading Profesional",
-    "home.hero.title": "Bergabung dengan Komunitas Trading Global",
-    "home.hero.subtitle": "Terhubung dengan trader disiplin, akses edukasi premium, dan kembangkan skill Anda dalam ekosistem transparan.",
-    "home.hero.ctaPrimary": "Gabung Komunitas",
-    "home.hero.ctaSecondary": "Pelajari Lebih Lanjut",
-    "home.disclaimer.text": "Trading melibatkan risiko signifikan dan dapat mengakibatkan kerugian. Performa masa lalu tidak menjamin hasil di masa depan.",
-    "home.trust.title": "Mengapa Memilih TPC",
-    "home.trust.cards": [
-      {
-        "title": "Transparansi",
-        "desc": "Semua operasi dan dana dapat diverifikasi secara publik di blockchain.",
-        "cta": "Lihat Transparansi"
-      },
-      {
-        "title": "Edukasi", 
-        "desc": "Edukasi trading komprehensif dari dasar hingga strategi lanjutan.",
-        "cta": "Pelajari Lebih Lanjut"
-      },
-      {
-        "title": "Komunitas",
-        "desc": "Terhubung dengan trader profesional dan bagikan wawasan berharga.",
-        "cta": "Gabung DAO"
-      }
-    ],
+    "home.badge": "TPC • Komunitas Trader Profesional",
+    "home.title": "Stop Tebak-tebakan. Mulai Trading Serius.",
+    "home.subtitle": "Komunitas premium global untuk trader disiplin — edukasi, tools, dan transparansi pertumbuhan.",
+    "home.ctaPrimary": "Gabung Member",
+    "home.ctaSecondary": "Lihat Docs",
+    "home.disclaimer": "Trading memiliki risiko. TPC menyediakan edukasi dan tools — bukan nasihat keuangan atau jaminan profit.",
+    "home.trust.title": "Dibangun dengan transparansi & akuntabilitas",
+    "home.trust.cards.0.title": "Transparansi Terverifikasi",
+    "home.trust.cards.0.desc": "Wallet resmi, alokasi, dan log dapat dilihat serta diaudit publik.",
+    "home.trust.cards.0.cta": "Buka Transparansi",
+    "home.trust.cards.1.title": "Edukasi Profesional",
+    "home.trust.cards.1.desc": "Pembelajaran terstruktur dan mindset risk-first untuk trader serius.",
+    "home.trust.cards.1.cta": "Baca Docs",
+    "home.trust.cards.2.title": "Komunitas & Tata Kelola",
+    "home.trust.cards.2.desc": "Ekosistem komunitas dengan aturan jelas dan visi jangka panjang.",
+    "home.trust.cards.2.cta": "Lihat DAO",
 
     "auth.signin.title": "Masuk",
     "auth.signup.title": "Daftar Akun",
@@ -893,38 +843,6 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "system.maintenance.title": "Mode Pemeliharaan",
     "system.maintenance.subtitle": "Kami sedang meningkatkan sistem untuk pelayanan yang lebih baik.",
 
-    "home": {
-      "hero": {
-        "badge": "TPC • Komunitas Trader Profesional",
-        "title": "Stop Tebak-tebakan. Mulai Trading Serius.",
-        "subtitle": "Komunitas premium global untuk trader disiplin — edukasi, tools, dan transparansi pertumbuhan.",
-        "ctaPrimary": "Gabung Member",
-        "ctaSecondary": "Lihat Docs"
-      },
-      "disclaimer": {
-        "text": "Trading memiliki risiko. TPC menyediakan edukasi dan tools — bukan saran keuangan atau jaminan profit."
-      },
-      "trust": {
-        "title": "Dibangun dengan transparansi & akuntabilitas",
-        "cards": [
-          {
-            title: "Bukti Transparansi",
-            desc: "Pantau pergerakan treasury, laporan buyback & burn, serta keterbukaan publik secara real-time.",
-            cta: "Lihat Transparansi"
-          },
-          {
-            title: "Keamanan Sejak Desain",
-            desc: "Akses berbasis peran, audit log, serta pemisahan tegas antara member, admin, dan sistem.",
-            cta: "Pelajari Keamanan"
-          },
-          {
-            title: "Pertumbuhan Berbasis Komunitas",
-            desc: "Program, dana, dan keputusan ekosistem dirancang untuk keberlanjutan jangka panjang komunitas.",
-            cta: "Pelajari DAO"
-          }
-        ]
-      }
-    },
 
     // CRITICAL: All nav keys explicitly defined to prevent undefined access crashes
     "nav.home": "Beranda",

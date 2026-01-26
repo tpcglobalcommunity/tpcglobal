@@ -8,7 +8,7 @@ import AuthLayout from "./components/auth/AuthLayout";
 import GlobalBanner from "./components/system/GlobalBanner";
 import ToastHost from "./components/ui/ToastHost";
 
-import Home from "./pages/Home";
+import Home from "./pages/home/Home";
 import Docs from "./pages/Docs";
 import DAOLite from "./pages/DAOLite";
 import Transparency from "./pages/transparency/Transparency";
@@ -82,7 +82,6 @@ import AdminMembers from "./pages/admin/AdminMembers";
 import AdminMarketplace from "./pages/admin/AdminMarketplace";
 import VerificationRequired from "./pages/member/VerificationRequired";
 
-import TransparencyPage from "./pages/public/TransparencyPage";
 
 import { getAppSettings, type AppSettings } from "./lib/settings";
 import { supabase } from "./lib/supabase";
@@ -276,8 +275,6 @@ export default function App() {
         return <DAOLite lang={lang} />;
       case "/transparency":
         return <Transparency lang={lang} />;
-      case "/public/transparency":
-        return <TransparencyPage />;
       case "/fund":
         return <CommunityFund lang={lang} />;
       case "/legal":
