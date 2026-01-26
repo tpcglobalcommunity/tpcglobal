@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Lock, Shield, AlertTriangle, CheckCircle2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useI18n, getLangPath } from "@/i18n";
 import { PremiumShell, PremiumCard, PremiumButton } from "@/components/ui";
-import { Link, useNavigate } from "@/components/Router";
+import { Link } from "@/components/Router";
 import { supabase } from "@/lib/supabase";
 
 interface ResetPasswordProps {
@@ -17,7 +17,6 @@ const tt = (t: (key: string) => string, key: string, fallback: string) => {
 
 const ResetPassword = ({ lang }: ResetPasswordProps) => {
   const { t } = useI18n();
-  const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
     newPassword: "",
@@ -32,15 +31,34 @@ const ResetPassword = ({ lang }: ResetPasswordProps) => {
   const [isValid, setIsValid] = useState(false);
   const [userEmail, setUserEmail] = useState("");
 
-  // Check if reset session is valid
+  // Handle code exchange and session validation
   useEffect(() => {
-    const checkSession = async () => {
+    const handleResetFlow = async () => {
       try {
+        // Check for code in URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        
+        if (code) {
+          // Exchange code for session
+          const { error } = await supabase.auth.exchangeCodeForSession(code);
+          
+          if (error) {
+            console.error('Code exchange error:', error);
+            setIsValid(false);
+            return;
+          }
+          
+          // Clean URL by removing the code parameter
+          const cleanUrl = window.location.pathname;
+          window.history.replaceState({}, '', cleanUrl);
+        }
+        
+        // Check if we have a valid session
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!session || !session.user) {
           setIsValid(false);
-          setUserEmail("");
         } else {
           setIsValid(true);
           setUserEmail(session.user.email || "");
@@ -48,11 +66,10 @@ const ResetPassword = ({ lang }: ResetPasswordProps) => {
       } catch (error) {
         console.error("Session check error:", error);
         setIsValid(false);
-        setUserEmail("");
       }
     };
     
-    checkSession();
+    handleResetFlow();
   }, []);
 
   const handleInputChange = (field: string, value: string) => {
@@ -98,7 +115,7 @@ const ResetPassword = ({ lang }: ResetPasswordProps) => {
         setError(tt(t, "auth.reset.errorTitle", "Update failed"));
       } else {
         setSuccess(true);
-        // Optional: Sign out user after password update
+        // Sign out user after password update
         await supabase.auth.signOut();
       }
     } catch (error) {
@@ -107,12 +124,6 @@ const ResetPassword = ({ lang }: ResetPasswordProps) => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleSuccessRedirect = () => {
-    setTimeout(() => {
-      navigate(getLangPath(lang as any, "/signin"));
-    }, 2000);
   };
 
   // Invalid state

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Mail, Shield, AlertTriangle, CheckCircle2, ArrowLeft } from "lucide-react";
 import { useI18n, getLangPath } from "@/i18n";
 import { PremiumShell, PremiumCard, PremiumButton } from "@/components/ui";
-import { Link, useNavigate } from "@/components/Router";
+import { Link } from "@/components/Router";
 import { supabase } from "@/lib/supabase";
 
 interface ForgotPasswordProps {
@@ -17,7 +17,6 @@ const tt = (t: (key: string) => string, key: string, fallback: string) => {
 
 const ForgotPassword = ({ lang }: ForgotPasswordProps) => {
   const { t } = useI18n();
-  const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
     email: ""
