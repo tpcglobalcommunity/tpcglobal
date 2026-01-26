@@ -79,7 +79,6 @@ import RouteRedirect from "./components/RouteRedirect";
 // New admin pages
 import AdminIndex from "./pages/admin/AdminIndex";
 import AdminMembers from "./pages/admin/AdminMembers";
-import AdminVendors from "./pages/admin/AdminVendors";
 import AdminMarketplace from "./pages/admin/AdminMarketplace";
 import VerificationRequired from "./pages/member/VerificationRequired";
 

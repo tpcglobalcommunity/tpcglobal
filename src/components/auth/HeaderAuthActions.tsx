@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { LogIn, UserPlus, LayoutDashboard, LogOut } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { useI18n, type Language, getLangPath } from "@/i18n";
+import { useI18n, getLangPath } from "@/i18n";
 import { Link } from "../Router";
 import { PremiumButton } from "../ui";
 
@@ -41,13 +41,12 @@ async function doLogout() {
 }
 
 interface HeaderAuthActionsProps {
-  lang?: Language;
   variant?: "default" | "mobileMenu";
   onAfterAction?: () => void;
 }
 
-export function HeaderAuthActions({ lang, variant = "default", onAfterAction }: HeaderAuthActionsProps) {
-  const { language, t } = useI18n();
+export function HeaderAuthActions({ variant = "default", onAfterAction }: HeaderAuthActionsProps) {
+  const { language } = useI18n();
   const { loading, isAuthed } = useSession();
 
   const handleAction = (action: () => void) => {

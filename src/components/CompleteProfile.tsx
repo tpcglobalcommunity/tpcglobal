@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '@/i18n';
 import { completeRequiredProfile, getProfileCompletionStatus } from '@/lib/supabase';
-import { langPath } from '@/utils/langPath';
-import { User, Phone, MessageSquare, MapPin, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { ensureLangPath } from '@/utils/langPath';
+import { User, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 interface ProfileData {
   full_name: string;
@@ -20,7 +20,7 @@ interface ValidationErrors {
 }
 
 export const CompleteProfile: React.FC<{ lang: 'en' | 'id' }> = ({ lang }) => {
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const navigate = useNavigate();
 
   const [profileData, setProfileData] = useState<ProfileData>({
@@ -40,7 +40,7 @@ export const CompleteProfile: React.FC<{ lang: 'en' | 'id' }> = ({ lang }) => {
       try {
         const status = await getProfileCompletionStatus();
         if (status?.profile_required_completed) {
-          navigate(langPath(lang, '/member/dashboard'));
+          navigate(ensureLangPath(language, '/member/dashboard'));
         }
       } catch (error) {
         console.error('[PROFILE_STATUS] Error:', error);
@@ -183,7 +183,7 @@ export const CompleteProfile: React.FC<{ lang: 'en' | 'id' }> = ({ lang }) => {
             </p>
             
             <button
-              onClick={() => navigate(langPath(lang, '/member/dashboard'))}
+              onClick={() => navigate(ensureLangPath(language, '/member/dashboard'))}
               className="w-full h-12 rounded-xl bg-[#f0b90b] text-[#0b0f17] font-semibold hover:bg-[#f0b90b]/90 transition-colors"
             >
               {t('profile.goToDashboard')}

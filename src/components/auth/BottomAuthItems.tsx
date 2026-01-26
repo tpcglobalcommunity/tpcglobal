@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { LayoutDashboard, UserPlus } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { useI18n, type Language, getLangPath } from '@/i18n';
+import { useI18n, getLangPath } from '@/i18n';
 import { Link } from '../Router';
 
 function useSession() {
@@ -33,7 +33,7 @@ function useSession() {
   return { loading, isAuthed };
 }
 
-export function BottomAuthItems({ lang }: { lang?: Language }) {
+export function BottomAuthItems() {
   const { language, t } = useI18n();
   const { loading, isAuthed } = useSession();
 

@@ -472,7 +472,106 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "transparency.sections.reporting.description": "Regular reports provide visibility into treasury status, ecosystem growth, and platform sustainability.",
     "transparency.sections.updates.title": "Transparency Updates",
     "transparency.sections.updates.desc": "Latest activities including buybacks, burns, liquidity, and operations.",
-    "transparency.notice": "Wallet addresses and records are provided for transparency and audit purposes only.",
+    // Whitepaper
+    "whitepaper.header.pill": "Whitepaper",
+    "whitepaper.header.title": "TPC Whitepaper",
+    "whitepaper.header.subtitle": "Comprehensive guide to the Trader Professional Community ecosystem",
+    "whitepaper.header.noticeTitle": "Important Notice",
+    "whitepaper.header.noticeBody": "This document is for informational purposes only and does not constitute financial advice.",
+    "whitepaper.vision.title": "Our Vision",
+    "whitepaper.vision.content": "To build the most trusted trader education community with transparent operations.",
+    "whitepaper.vision.pillars": [
+      "Education First",
+      "Transparent Operations", 
+      "Community Growth",
+      "Risk Management"
+    ],
+    "whitepaper.what.title": "What is TPC?",
+    "whitepaper.what.intro": "TPC is a professional trading community focused on education and transparency.",
+    "whitepaper.what.model": "Our Model",
+    "whitepaper.what.points": [
+      "Premium education content",
+      "Professional trading tools",
+      "Community support",
+      "Transparent operations"
+    ],
+    "whitepaper.what.notModel": "What We Are Not",
+    "whitepaper.what.antiPoints": [
+      "Not an investment scheme",
+      "Not a guaranteed profit system",
+      "Not a multi-level marketing",
+      "Not financial advice"
+    ],
+    "whitepaper.community.title": "Community Structure",
+    "whitepaper.community.intro": "Our community is built on education and professional growth.",
+    "whitepaper.community.layers": [
+      { "title": "Basic Members", "desc": "Access to free educational content" },
+      { "title": "Premium Members", "desc": "Full access to all features" },
+      { "title": "Verified Traders", "desc": "Professional recognition" },
+      { "title": "Mentors", "desc": "Educational contributors" }
+    ],
+    "whitepaper.token.title": "TPC Token",
+    "whitepaper.token.intro": "The TPC token is a utility token for ecosystem participation.",
+    "whitepaper.token.purpose": "Token Utilities",
+    "whitepaper.token.utilities": [
+      "Access to premium content",
+      "Governance participation",
+      "Platform features",
+      "Community rewards"
+    ],
+    "whitepaper.token.disclaimer": "TPC Token is a utility token, not an investment instrument.",
+    "whitepaper.revenue.title": "Revenue Model",
+    "whitepaper.revenue.intro": "Our revenue comes from transparent and sustainable sources.",
+    "whitepaper.revenue.streams": [
+      { "title": "Premium Memberships", "desc": "Subscription fees" },
+      { "title": "Educational Content", "desc": "Course sales" },
+      { "title": "Tools & Services", "desc": "Professional tools" },
+      { "title": "Partnerships", "desc": "Strategic collaborations" }
+    ],
+    "whitepaper.revenue.transparency": "All revenue is transparently reported and used for community development.",
+    "whitepaper.buyback.title": "Token Buyback Program",
+    "whitepaper.buyback.intro": "We implement regular token buybacks to support ecosystem value.",
+    "whitepaper.buyback.purpose": [
+      "Support token value",
+      "Reduce circulating supply",
+      "Reward community members",
+      "Maintain ecosystem balance"
+    ],
+    "whitepaper.buyback.process": "Buybacks are executed transparently with public records.",
+    "whitepaper.buyback.disclaimer": "Buyback programs are subject to market conditions and regulatory compliance.",
+    "whitepaper.governance.title": "Governance Structure",
+    "whitepaper.governance.intro": "Our governance ensures community participation and transparency.",
+    "whitepaper.governance.principles": [
+      "Community-driven decisions",
+      "Transparent voting process",
+      "Fair representation",
+      "Accountability measures"
+    ],
+    "whitepaper.roadmap.title": "Development Roadmap",
+    "whitepaper.roadmap.intro": "Our strategic plan for ecosystem growth and development.",
+    "whitepaper.roadmap.phases": [
+      { "phase": "Q1 2026", "title": "Platform Launch", "status": "Completed" },
+      { "phase": "Q2 2026", "title": "Mobile App", "status": "In Progress" },
+      { "phase": "Q3 2026", "title": "Advanced Tools", "status": "Planned" },
+      { "phase": "Q4 2026", "title": "Global Expansion", "status": "Planned" }
+    ],
+    "whitepaper.roadmap.note": "Timeline may change based on development priorities and community feedback.",
+    "whitepaper.risks.title": "Risk Factors",
+    "whitepaper.risks.intro": "Understanding the risks associated with participating in TPC.",
+    "whitepaper.risks.points": [
+      "Market volatility risks",
+      "Regulatory uncertainty",
+      "Technology risks",
+      "Competition risks",
+      "Execution risks"
+    ],
+    "whitepaper.risks.warning": "Trading involves significant risk of loss. Only participate with funds you can afford to lose.",
+    "whitepaper.lastUpdated": "Last Updated",
+    "whitepaper.cta.title": "Join the TPC Community",
+    "whitepaper.cta.subtitle": "Start your journey with professional trading education.",
+    "whitepaper.cta.transparency": "View Transparency",
+    "whitepaper.cta.docs": "Documentation",
+    "whitepaper.cta.community": "Join Community",
     "dao.title": "DAO Lite",
     "dao.subtitle": "A lightweight governance model for the TPC community",
     "dao.notice": "DAO Lite is currently in an early phase. Features will be released gradually to ensure security and governance quality.",
@@ -1199,7 +1298,106 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "transparency.sections.reporting.description": "Laporan berkala memberikan visibilitas terhadap kondisi treasury, pertumbuhan ekosistem, dan keberlanjutan platform.",
     "transparency.sections.updates.title": "Update Transparansi",
     "transparency.sections.updates.desc": "Aktivitas terbaru terkait buyback, burn, liquidity, dan operasional.",
-    "transparency.notice": "Alamat wallet dan catatan disediakan hanya untuk tujuan transparansi dan audit.",
+    // Whitepaper
+    "whitepaper.header.pill": "Whitepaper",
+    "whitepaper.header.title": "Whitepaper TPC",
+    "whitepaper.header.subtitle": "Panduan komprehensif untuk ekosistem Trader Professional Community",
+    "whitepaper.header.noticeTitle": "Penting",
+    "whitepaper.header.noticeBody": "Dokumen ini hanya untuk tujuan informasi dan tidak merupakan saran keuangan.",
+    "whitepaper.vision.title": "Visi Kami",
+    "whitepaper.vision.content": "Membangun komunitas trading edukasi paling terpercaya dengan operasi transparan.",
+    "whitepaper.vision.pillars": [
+      "Edukasi Prioritas",
+      "Operasi Transparan", 
+      "Pertumbuhan Komunitas",
+      "Manajemen Risiko"
+    ],
+    "whitepaper.what.title": "Apa itu TPC?",
+    "whitepaper.what.intro": "TPC adalah komunitas trading profesional yang fokus pada edukasi dan transparansi.",
+    "whitepaper.what.model": "Model Kami",
+    "whitepaper.what.points": [
+      "Konten edukasi premium",
+      "Alat trading profesional",
+      "Dukungan komunitas",
+      "Operasi transparan"
+    ],
+    "whitepaper.what.notModel": "Apa yang Bukan Kami",
+    "whitepaper.what.antiPoints": [
+      "Bukan skema investasi",
+      "Bukan sistem profit terjamin",
+      "Bukan multi-level marketing",
+      "Bukan saran keuangan"
+    ],
+    "whitepaper.community.title": "Struktur Komunitas",
+    "whitepaper.community.intro": "Komunitas kami dibangun berdasarkan edukasi dan pertumbuhan profesional.",
+    "whitepaper.community.layers": [
+      { "title": "Member Dasar", "desc": "Akses ke konten edukasi gratis" },
+      { "title": "Member Premium", "desc": "Akses penuh ke semua fitur" },
+      { "title": "Trader Terverifikasi", "desc": "Pengakuan profesional" },
+      { "title": "Mentor", "desc": "Kontributor edukasi" }
+    ],
+    "whitepaper.token.title": "Token TPC",
+    "whitepaper.token.intro": "Token TPC adalah utility token untuk partisipasi ekosistem.",
+    "whitepaper.token.purpose": "Utilitas Token",
+    "whitepaper.token.utilities": [
+      "Akses ke konten premium",
+      "Partisipasi governance",
+      "Fitur platform",
+      "Reward komunitas"
+    ],
+    "whitepaper.token.disclaimer": "Token TPC adalah utility token, bukan instrumen investasi.",
+    "whitepaper.revenue.title": "Model Pendapatan",
+    "whitepaper.revenue.intro": "Pendapatan kami berasal dari sumber yang transparan dan berkelanjutan.",
+    "whitepaper.revenue.streams": [
+      { "title": "Membership Premium", "desc": "Biaya berlangganan" },
+      { "title": "Konten Edukasi", "desc": "Penjualan kursus" },
+      { "title": "Alat & Layanan", "desc": "Alat profesional" },
+      { "title": "Kemitraan", "desc": "Kolaborasi strategis" }
+    ],
+    "whitepaper.revenue.transparency": "Semua pendapatan dilaporkan secara transparan dan digunakan untuk pengembangan komunitas.",
+    "whitepaper.buyback.title": "Program Buyback Token",
+    "whitepaper.buyback.intro": "Kami mengimplementasikan buyback token reguler untuk mendukung nilai ekosistem.",
+    "whitepaper.buyback.purpose": [
+      "Mendukung nilai token",
+      "Mengurangi suplai beredar",
+      "Memberi reward member komunitas",
+      "Mempertahankan keseimbangan ekosistem"
+    ],
+    "whitepaper.buyback.process": "Buyback dieksekusi secara transparan dengan catatan publik.",
+    "whitepaper.buyback.disclaimer": "Program buyback tunduk pada kondisi pasar dan kepatuhan regulasi.",
+    "whitepaper.governance.title": "Struktur Governance",
+    "whitepaper.governance.intro": "Governance kami memastikan partisipasi komunitas dan transparansi.",
+    "whitepaper.governance.principles": [
+      "Keputusan berbasis komunitas",
+      "Proses voting transparan",
+      "Representasi yang adil",
+      "Tindakan akuntabilitas"
+    ],
+    "whitepaper.roadmap.title": "Peta Jalan Pengembangan",
+    "whitepaper.roadmap.intro": "Rencana strategis kami untuk pertumbuhan dan pengembangan ekosistem.",
+    "whitepaper.roadmap.phases": [
+      { "phase": "Q1 2026", "title": "Peluncuran Platform", "status": "Selesai" },
+      { "phase": "Q2 2026", "title": "Aplikasi Mobile", "status": "Dalam Proses" },
+      { "phase": "Q3 2026", "title": "Alat Lanjutan", "status": "Direncanakan" },
+      { "phase": "Q4 2026", "title": "Ekspansi Global", "status": "Direncanakan" }
+    ],
+    "whitepaper.roadmap.note": "Timeline dapat berubah berdasarkan prioritas pengembangan dan feedback komunitas.",
+    "whitepaper.risks.title": "Faktor Risiko",
+    "whitepaper.risks.intro": "Memahami risiko yang terkait dengan partisipasi dalam TPC.",
+    "whitepaper.risks.points": [
+      "Risiko volatilitas pasar",
+      "Ketidakpastian regulasi",
+      "Risiko teknologi",
+      "Risiko kompetisi",
+      "Risiko eksekusi"
+    ],
+    "whitepaper.risks.warning": "Trading melibatkan risiko kerugian yang signifikan. Hanya berpartisipasi dengan dana yang mampu Anda rugikan.",
+    "whitepaper.lastUpdated": "Terakhir Diperbarui",
+    "whitepaper.cta.title": "Gabung Komunitas TPC",
+    "whitepaper.cta.subtitle": "Mulai perjalanan Anda dengan edukasi trading profesional.",
+    "whitepaper.cta.transparency": "Lihat Transparansi",
+    "whitepaper.cta.docs": "Dokumentasi",
+    "whitepaper.cta.community": "Gabung Komunitas",
     "footer.links.home": "Beranda",
     "footer.links.community": "Komunitas",
     "footer.links.docs": "Dokumentasi",
