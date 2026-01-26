@@ -1,4 +1,4 @@
-import { Home, BookOpen, Shield, BadgeCheck, Wallet, Scale, Store, Users } from 'lucide-react';
+import { Home, BookOpen, Shield, BadgeCheck, Scale, Store, Users } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
@@ -54,7 +54,6 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
     { label: getNavSafe(lang, 'nav.dao'), path: '/dao', icon: Users },
     { label: getNavSafe(lang, 'nav.marketplace'), path: '/marketplace', icon: Store },
     { label: getNavSafe(lang, 'nav.transparency'), path: '/transparency', icon: BadgeCheck },
-    { label: getNavSafe(lang, 'nav.fund'), path: '/fund', icon: Wallet },
     { label: getNavSafe(lang, 'nav.legal'), path: '/legal', icon: Scale },
     ...(isAdmin ? [{ label: getNavSafe(lang, 'nav.admin'), path: '/admin/control', icon: Shield }] : [])
   ];
@@ -128,7 +127,7 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
 
           <div className="flex items-center gap-3 ml-auto shrink-0">
             <div className="hidden xl:block">
-              <HeaderAuthActions lang={lang} />
+              <HeaderAuthActions />
             </div>
 
             <div className="relative z-50 flex items-center rounded-full bg-white/12 backdrop-blur-lg border border-white/15 p-[3px] shrink-0 transition-all duration-200 hover:border-[#F0B90B]/40 hover:-translate-y-[0.5px] pointer-events-auto">
@@ -194,7 +193,6 @@ const AppHeader = ({ lang, currentPath }: AppHeaderProps) => {
                       Member Access
                     </div>
                     <HeaderAuthActions
-                      lang={lang}
                       variant="mobileMenu"
                       onAfterAction={() => setMobileMenuOpen(false)}
                     />

@@ -12,7 +12,7 @@ import Home from "./pages/home/Home";
 import Docs from "./pages/Docs";
 import DAOLite from "./pages/DAOLite";
 import Transparency from "./pages/transparency/Transparency";
-import CommunityFund from "./pages/CommunityFund";
+import FundPlaceholder from "./pages/FundPlaceholder";
 import Legal from "./pages/legal/Legal";
 import LaunchChecklist from "./pages/LaunchChecklist";
 import Security from "./pages/Security";
@@ -276,7 +276,7 @@ export default function App() {
       case "/transparency":
         return <Transparency lang={lang} />;
       case "/fund":
-        return <CommunityFund />;
+        return <FundPlaceholder />;
       case "/legal":
         return <Legal lang={lang} />;
       case "/whitepaper":
