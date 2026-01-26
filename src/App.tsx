@@ -24,10 +24,6 @@ import MarketplaceList from "./pages/marketplace/MarketplaceList";
 import MarketplaceDetail from "./pages/marketplace/MarketplaceDetail";
 
 import SignUpPage from "./pages/auth/SignUpPage";
-import SignIn from "./pages/auth/SignIn";
-import ForgotPassword from "./pages/auth/ForgotPassword";
-import ResetPassword from "./pages/auth/ResetPassword";
-import CheckEmailPage from "./pages/auth/CheckEmailPage";
 
 import VerifyPage from "./pages/VerifyPage";
 import PublicProfilePage from "./pages/PublicProfilePage";
@@ -60,19 +56,15 @@ import MemberStatusGuard from "./components/member/MemberGuard";
 import AdminGuard from "./components/guards/AdminGuard";
 import AdminLayout from "./layouts/AdminLayout";
 
-import NewsEditorPage from "./pages/admin/NewsEditorPage";
 import NewsAdminListPage from "./pages/admin/NewsAdminListPage";
 import AnnouncementsAdminListPage from "./pages/admin/AnnouncementsAdminListPage";
-import AnnouncementEditorPage from "./pages/admin/AnnouncementEditorPage";
 import AuthLogsPage from "./pages/admin/AuthLogsPage";
-import VerificationQueuePage from "./pages/admin/VerificationQueuePage";
 import MemberDetailPage from "./pages/admin/MemberDetailPage";
 import AuditLogPage from "./pages/admin/AuditLogPage";
 import EmailQueuePage from "./pages/admin/EmailQueuePage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import AdminBroadcastCenter from "./pages/admin/AdminBroadcastCenter";
 import AdminTransparencyPage from "./pages/admin/AdminTransparencyPage";
-import WalletTiersPage from "./pages/admin/WalletTiersPage";
 import VendorReview from "./pages/admin/vendors/VendorReview";
 import RouteRedirect from "./components/RouteRedirect";
 
@@ -243,18 +235,8 @@ export default function App() {
 
     // Admin special routes first
     if (pathWithoutLang === "/admin/news") return <NewsAdminListPage />;
-    if (pathWithoutLang === "/admin/news/new") return <NewsEditorPage />;
-    if (pathWithoutLang.startsWith("/admin/news/") && pathWithoutLang.endsWith("/edit")) {
-      const postId = pathWithoutLang.replace("/admin/news/", "").replace("/edit", "");
-      return <NewsEditorPage postId={postId} />;
-    }
 
     if (pathWithoutLang === "/admin/announcements") return <AnnouncementsAdminListPage lang={lang} />;
-    if (pathWithoutLang === "/admin/announcements/new") return <AnnouncementEditorPage lang={lang} />;
-    if (pathWithoutLang.startsWith("/admin/announcements/") && pathWithoutLang.endsWith("/edit")) {
-      const announcementId = pathWithoutLang.replace("/admin/announcements/", "").replace("/edit", "");
-      return <AnnouncementEditorPage lang={lang} announcementId={announcementId} />;
-    }
 
     // Public profile
     if (pathWithoutLang.startsWith("/u/")) {
@@ -298,16 +280,6 @@ export default function App() {
 
       case "/signup":
         return <SignUpPage lang={lang} />;
-      case "/signin":
-        return <SignIn />;
-      case "/admin/login":
-        return <SignIn lang={lang} />;
-      case "/forgot":
-        return <ForgotPassword lang={lang} />;
-      case "/reset":
-        return <ResetPassword lang={lang} />;
-      case "/check-email":
-        return <CheckEmailPage lang={lang} />;
 
       // Verify
       case "/verify":
@@ -534,15 +506,6 @@ export default function App() {
           </AdminGuard>
         );
 
-      case "/admin/verification":
-        return (
-          <AdminGuard lang={lang}>
-            <AdminLayout lang={lang}>
-              <VerificationQueuePage lang={lang} />
-            </AdminLayout>
-          </AdminGuard>
-        );
-
       case "/admin/member":
         return (
           <AdminGuard lang={lang}>
@@ -577,13 +540,7 @@ export default function App() {
           </AdminGuard>
         );
 
-      case "/admin/wallet-tiers":
-        return (
-          <AdminGuard lang={lang}>
-            <WalletTiersPage lang={lang} />
-          </AdminGuard>
-        );
-
+      
       case "/admin/transparency-input":
         return (
           <AdminGuard lang={lang}>

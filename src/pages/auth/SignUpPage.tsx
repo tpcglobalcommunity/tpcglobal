@@ -1,239 +1,173 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Mail, User, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
-import { PremiumShell, PremiumCard, NoticeBox } from "@/components/ui";
+import { useState } from "react";
+import { Eye, EyeOff, User, Mail, Lock, ArrowRight, CheckCircle } from "lucide-react";
+import { useI18n, getLangPath } from "@/i18n";
+import { PremiumShell, PremiumCard, PremiumButton } from "@/components/ui";
+import { Link } from "@/components/Router";
 import { supabase } from "@/lib/supabase";
-import { ensureLangPath, type Language } from "@/i18n";
 
 interface SignUpPageProps {
-  lang?: Language;
+  lang: string;
 }
 
-interface FormState {
-  full_name: string;
+interface FormData {
+  fullName: string;
   email: string;
   password: string;
-  confirm_password: string;
-  referral_code: string;
+  confirmPassword: string;
+  referralCode: string;
+  acceptTerms: boolean;
 }
 
 interface FormErrors {
-  full_name?: string;
+  fullName?: string;
   email?: string;
   password?: string;
-  confirm_password?: string;
-  referral_code?: string;
-  general?: string;
+  confirmPassword?: string;
+  terms?: string;
 }
 
-export default function SignUpPage({ lang = "en" }: SignUpPageProps) {
-  const navigate = useNavigate();
-
-  // Form state
-  const [formState, setFormState] = useState<FormState>({
-    full_name: "",
-    email: "",
-    password: "",
-    confirm_password: "",
-    referral_code: "",
-  });
-
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const SignUpPage = ({ lang }: SignUpPageProps) => {
+  const { t } = useI18n();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [successEmail, setSuccessEmail] = useState<string | null>(null);
-
-  // Redirect authenticated users away
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          navigate(ensureLangPath(lang, "/member/dashboard"));
-        }
-      } catch (err) {
-        console.error("Auth check error:", err);
-      }
-    };
-
-    checkAuth();
-  }, [lang, navigate]);
-
-  // Simple translation fallback
-  const t = (key: string, fallback?: string) => {
-    const translations: Record<string, Record<string, string>> = {
-      en: {
-        "auth.signUp.title": "Create Account",
-        "auth.signUp.subtitle": "Join TPC Global - Professional Trading Community",
-        "auth.signUp.fullNameLabel": "Full Name",
-        "auth.signUp.emailLabel": "Email Address",
-        "auth.signUp.passwordLabel": "Password",
-        "auth.signUp.confirmPasswordLabel": "Confirm Password",
-        "auth.signUp.referralCodeLabel": "Referral Code (Optional)",
-        "auth.signUp.submit": "Create Account",
-        "auth.signUp.submitting": "Creating Account...",
-        "auth.signUp.haveAccount": "Already have an account?",
-        "auth.signUp.signInLink": "Sign In",
-        "auth.signUp.errorGeneric": "Registration failed. Please try again.",
-        "auth.signUp.errorPasswordMismatch": "Passwords do not match",
-        "auth.signUp.errorPasswordShort": "Password must be at least 8 characters",
-        "auth.signUp.errorNameShort": "Name must be at least 2 characters",
-        "auth.signUp.errorEmailInvalid": "Please enter a valid email address",
-        "auth.signUp.success": "Account created successfully!",
-        "auth.signUp.checkEmail": "Please check your email to verify your account.",
-      },
-      id: {
-        "auth.signUp.title": "Buat Akun",
-        "auth.signUp.subtitle": "Gabung TPC Global - Komunitas Trading Profesional",
-        "auth.signUp.fullNameLabel": "Nama Lengkap",
-        "auth.signUp.emailLabel": "Alamat Email",
-        "auth.signUp.passwordLabel": "Kata Sandi",
-        "auth.signUp.confirmPasswordLabel": "Konfirmasi Kata Sandi",
-        "auth.signUp.referralCodeLabel": "Kode Referral (Opsional)",
-        "auth.signUp.submit": "Buat Akun",
-        "auth.signUp.submitting": "Membuat Akun...",
-        "auth.signUp.haveAccount": "Sudah punya akun?",
-        "auth.signUp.signInLink": "Masuk",
-        "auth.signUp.errorGeneric": "Pendaftaran gagal. Silakan coba lagi.",
-        "auth.signUp.errorPasswordMismatch": "Kata sandi tidak cocok",
-        "auth.signUp.errorPasswordShort": "Kata sandi minimal 8 karakter",
-        "auth.signUp.errorNameShort": "Nama minimal 2 karakter",
-        "auth.signUp.errorEmailInvalid": "Masukkan alamat email yang valid",
-        "auth.signUp.success": "Akun berhasil dibuat!",
-        "auth.signUp.checkEmail": "Silakan periksa email Anda untuk verifikasi akun.",
-      },
-    };
-
-    return translations[lang]?.[key] || fallback || key;
-  };
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  
+  const [formData, setFormData] = useState<FormData>({
+    fullName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    referralCode: "",
+    acceptTerms: false
+  });
+  
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    // Full name validation
-    if (!formState.full_name.trim()) {
-      newErrors.full_name = t("auth.signUp.errorNameShort");
-    } else if (formState.full_name.trim().length < 2) {
-      newErrors.full_name = t("auth.signUp.errorNameShort");
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = t("auth.signup.errors.required");
+    } else if (formData.fullName.trim().length < 2) {
+      newErrors.fullName = t("auth.signup.errors.required");
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formState.email.trim()) {
-      newErrors.email = t("auth.signUp.errorEmailInvalid");
-    } else if (!emailRegex.test(formState.email)) {
-      newErrors.email = t("auth.signUp.errorEmailInvalid");
+    if (!formData.email.trim()) {
+      newErrors.email = t("auth.signup.errors.required");
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = t("auth.signup.errors.email");
     }
 
-    // Password validation
-    if (!formState.password) {
-      newErrors.password = t("auth.signUp.errorPasswordShort");
-    } else if (formState.password.length < 8) {
-      newErrors.password = t("auth.signUp.errorPasswordShort");
+    if (!formData.password) {
+      newErrors.password = t("auth.signup.errors.required");
+    } else if (formData.password.length < 8) {
+      newErrors.password = t("auth.signup.errors.passwordMin");
+    } else if (!/\d/.test(formData.password)) {
+      newErrors.password = t("auth.signup.errors.passwordNumber");
     }
 
-    // Confirm password validation
-    if (!formState.confirm_password) {
-      newErrors.confirm_password = t("auth.signUp.errorPasswordMismatch");
-    } else if (formState.password !== formState.confirm_password) {
-      newErrors.confirm_password = t("auth.signUp.errorPasswordMismatch");
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = t("auth.signup.errors.required");
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = t("auth.signup.errors.passwordMatch");
     }
 
-    // Referral code validation (optional)
-    if (formState.referral_code.trim()) {
-      const trimmedCode = formState.referral_code.trim().toUpperCase();
-      if (trimmedCode.length < 3) {
-        newErrors.referral_code = "Referral code too short";
-      }
-      formState.referral_code = trimmedCode;
+    if (!formData.acceptTerms) {
+      newErrors.terms = t("auth.signup.errors.terms");
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleInputChange = (field: keyof FormData, value: string | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    
+    if (touched[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const handleBlur = (field: keyof FormData) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    if (field === 'fullName' || field === 'email' || field === 'password' || field === 'confirmPassword') {
+      validateForm();
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError("");
     
     if (!validateForm()) {
       return;
     }
 
-    setIsSubmitting(true);
-    setErrors({});
+    setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: formState.email.trim(),
-        password: formState.password,
+      const { error } = await supabase.auth.signUp({
+        email: formData.email.trim(),
+        password: formData.password,
         options: {
           data: {
-            full_name: formState.full_name.trim(),
-            referral_code: formState.referral_code.trim() || null,
-          },
-          emailRedirectTo: `${window.location.origin}${ensureLangPath(lang, "/auth/callback")}`,
-        },
+            full_name: formData.fullName.trim(),
+            referral_code: formData.referralCode.trim().toUpperCase() || null
+          }
+        }
       });
 
       if (error) {
-        setErrors({ general: error.message });
-        return;
+        let errorMessage = t("auth.signup.errors.required");
+        if (error.message.includes("email")) {
+          errorMessage = t("auth.signup.errors.email");
+        } else if (error.message.includes("password")) {
+          errorMessage = t("auth.signup.errors.passwordMin");
+        } else if (error.message.includes("already registered")) {
+          errorMessage = "Email already registered";
+        }
+        setSubmitError(errorMessage);
+      } else {
+        setIsSuccess(true);
       }
-
-      if (data.user && !data.session) {
-        // Email confirmation required
-        setSuccessEmail(formState.email);
-        setTimeout(() => {
-          navigate(ensureLangPath(lang, "/check-email") + `?email=${encodeURIComponent(formState.email)}`);
-        }, 2000);
-      } else if (data.session) {
-        // Auto sign-in (email confirmation disabled)
-        navigate(ensureLangPath(lang, "/member/dashboard"));
-      }
-
-    } catch (err) {
-      console.error("Sign up error:", err);
-      setErrors({ general: t("auth.signUp.errorGeneric") });
+    } catch (error) {
+      console.error("Signup error:", error);
+      setSubmitError(t("auth.signup.errors.required"));
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   };
 
-  const handleInputChange = (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormState(prev => ({ ...prev, [field]: value }));
-    
-    // Clear error for this field when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
-    }
-  };
-
-  // Success state
-  if (successEmail) {
+  if (isSuccess) {
     return (
       <PremiumShell>
-        <div className="min-h-screen flex items-center justify-center px-4">
-          <PremiumCard className="w-full max-w-md">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Mail className="w-8 h-8 text-green-400" />
+        <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-md w-full">
+            <PremiumCard>
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-full mb-6">
+                  <CheckCircle className="w-8 h-8 text-green-400" />
+                </div>
+                
+                <h1 className="text-2xl font-bold text-white mb-4">
+                  {t("auth.signup.success.title")}
+                </h1>
+                
+                <p className="text-white/70 mb-8 leading-relaxed">
+                  {t("auth.signup.success.body")}
+                </p>
+                
+                <Link to={getLangPath(lang as any, "/signin")}>
+                  <PremiumButton variant="primary" size="sm" className="w-full">
+                    {t("auth.signup.success.cta")}
+                  </PremiumButton>
+                </Link>
               </div>
-              <h1 className="text-2xl font-bold text-white mb-4">
-                {t("auth.signUp.success")}
-              </h1>
-              <p className="text-white/70 mb-6">
-                {t("auth.signUp.checkEmail")}
-              </p>
-              <p className="text-sm text-white/50 mb-6">
-                {successEmail}
-              </p>
-              <NoticeBox variant="info" title="">
-                Check your spam folder if you don't see the email within a few minutes.
-              </NoticeBox>
-            </div>
-          </PremiumCard>
+            </PremiumCard>
+          </div>
         </div>
       </PremiumShell>
     );
@@ -241,192 +175,235 @@ export default function SignUpPage({ lang = "en" }: SignUpPageProps) {
 
   return (
     <PremiumShell>
-      <div className="min-h-screen flex items-center justify-center px-4 py-12">
-        <PremiumCard className="w-full max-w-md">
+      <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-md w-full">
+          {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">
-              {t("auth.signUp.title")}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#F0B90B]/10 to-[#C29409]/10 border border-[#F0B90B]/20 mb-6">
+              <User className="w-4 h-4 text-[#F0B90B]" />
+              <span className="text-sm font-medium text-[#F0B90B]">
+                {t("auth.signup.badge")}
+              </span>
+            </div>
+            
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              {t("auth.signup.title")}
             </h1>
-            <p className="text-white/70">
-              {t("auth.signUp.subtitle")}
+            
+            <p className="text-white/70 leading-relaxed">
+              {t("auth.signup.subtitle")}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* General Error */}
-            {errors.general && (
-              <NoticeBox variant="danger" title="">
-                {errors.general}
-              </NoticeBox>
-            )}
+          {/* Form */}
+          <PremiumCard>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Full Name */}
+              <div>
+                <label htmlFor="fullName" className="block text-sm font-medium text-white mb-2">
+                  {t("auth.signup.fullName.label")}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-white/40" />
+                  </div>
+                  <input
+                    id="fullName"
+                    type="text"
+                    value={formData.fullName}
+                    onChange={(e) => handleInputChange("fullName", e.target.value)}
+                    onBlur={() => handleBlur("fullName")}
+                    placeholder={t("auth.signup.fullName.placeholder")}
+                    className={`w-full pl-10 pr-3 py-3 bg-white/[0.05] border ${
+                      errors.fullName ? "border-red-500/50" : "border-white/10"
+                    } rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/20 focus:border-[#F0B90B]/50 transition-all`}
+                  />
+                </div>
+                {errors.fullName && (
+                  <p className="mt-1 text-xs text-red-400">{errors.fullName}</p>
+                )}
+              </div>
 
-            {/* Full Name */}
-            <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
-                {t("auth.signUp.fullNameLabel")}
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40" />
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
+                  {t("auth.signup.email.label")}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-white/40" />
+                  </div>
+                  <input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    onBlur={() => handleBlur("email")}
+                    placeholder={t("auth.signup.email.placeholder")}
+                    className={`w-full pl-10 pr-3 py-3 bg-white/[0.05] border ${
+                      errors.email ? "border-red-500/50" : "border-white/10"
+                    } rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/20 focus:border-[#F0B90B]/50 transition-all`}
+                  />
+                </div>
+                {errors.email && (
+                  <p className="mt-1 text-xs text-red-400">{errors.email}</p>
+                )}
+              </div>
+
+              {/* Password */}
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
+                  {t("auth.signup.password.label")}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-white/40" />
+                  </div>
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    onBlur={() => handleBlur("password")}
+                    placeholder={t("auth.signup.password.placeholder")}
+                    className={`w-full pl-10 pr-10 py-3 bg-white/[0.05] border ${
+                      errors.password ? "border-red-500/50" : "border-white/10"
+                    } rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/20 focus:border-[#F0B90B]/50 transition-all`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5 text-white/40 hover:text-white/60" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-white/40 hover:text-white/60" />
+                    )}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="mt-1 text-xs text-red-400">{errors.password}</p>
+                )}
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-white mb-2">
+                  {t("auth.signup.passwordConfirm.label")}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-white/40" />
+                  </div>
+                  <input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={formData.confirmPassword}
+                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                    onBlur={() => handleBlur("confirmPassword")}
+                    placeholder={t("auth.signup.passwordConfirm.placeholder")}
+                    className={`w-full pl-10 pr-10 py-3 bg-white/[0.05] border ${
+                      errors.confirmPassword ? "border-red-500/50" : "border-white/10"
+                    } rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/20 focus:border-[#F0B90B]/50 transition-all`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-5 w-5 text-white/40 hover:text-white/60" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-white/40 hover:text-white/60" />
+                    )}
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <p className="mt-1 text-xs text-red-400">{errors.confirmPassword}</p>
+                )}
+              </div>
+
+              {/* Referral Code */}
+              <div>
+                <label htmlFor="referralCode" className="block text-sm font-medium text-white mb-2">
+                  {t("auth.signup.referral.label")}
+                </label>
                 <input
+                  id="referralCode"
                   type="text"
-                  value={formState.full_name}
-                  onChange={handleInputChange("full_name")}
-                  className={`w-full pl-10 pr-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B] focus:border-transparent transition-all ${
-                    errors.full_name 
-                      ? "border-red-500/50 focus:ring-red-500/50" 
-                      : "border-white/10 focus:border-[#F0B90B]/50"
-                  }`}
-                  placeholder={t("auth.signUp.fullNameLabel")}
-                  disabled={isSubmitting}
+                  value={formData.referralCode}
+                  onChange={(e) => handleInputChange("referralCode", e.target.value)}
+                  placeholder={t("auth.signup.referral.placeholder")}
+                  maxLength={32}
+                  className="w-full px-3 py-3 bg-white/[0.05] border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B]/20 focus:border-[#F0B90B]/50 transition-all"
                 />
               </div>
-              {errors.full_name && (
-                <p className="mt-1 text-sm text-red-400">{errors.full_name}</p>
-              )}
-            </div>
 
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
-                {t("auth.signUp.emailLabel")}
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40" />
-                <input
-                  type="email"
-                  value={formState.email}
-                  onChange={handleInputChange("email")}
-                  className={`w-full pl-10 pr-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B] focus:border-transparent transition-all ${
-                    errors.email 
-                      ? "border-red-500/50 focus:ring-red-500/50" 
-                      : "border-white/10 focus:border-[#F0B90B]/50"
-                  }`}
-                  placeholder={t("auth.signUp.emailLabel")}
-                  disabled={isSubmitting}
-                />
+              {/* Terms */}
+              <div>
+                <label className="flex items-start space-x-3">
+                  <input
+                    type="checkbox"
+                    checked={formData.acceptTerms}
+                    onChange={(e) => handleInputChange("acceptTerms", e.target.checked)}
+                    className="mt-1 h-4 w-4 bg-white/[0.05] border border-white/20 rounded text-[#F0B90B] focus:ring-[#F0B90B]/20 focus:ring-offset-0 focus:ring-offset-transparent"
+                  />
+                  <span className="text-sm text-white/70 leading-relaxed">
+                    {t("auth.signup.terms.label")}{" "}
+                    <Link to={getLangPath(lang as any, "/legal")} className="text-[#F0B90B] hover:text-[#F0B90B]/80 underline">
+                      Terms of Service
+                    </Link>
+                  </span>
+                </label>
+                {errors.terms && (
+                  <p className="mt-1 text-xs text-red-400">{errors.terms}</p>
+                )}
               </div>
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-400">{errors.email}</p>
-              )}
-            </div>
 
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
-                {t("auth.signUp.passwordLabel")}
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={formState.password}
-                  onChange={handleInputChange("password")}
-                  className={`w-full pl-10 pr-12 py-3 bg-white/5 border rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B] focus:border-transparent transition-all ${
-                    errors.password 
-                      ? "border-red-500/50 focus:ring-red-500/50" 
-                      : "border-white/10 focus:border-[#F0B90B]/50"
-                  }`}
-                  placeholder={t("auth.signUp.passwordLabel")}
-                  disabled={isSubmitting}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-400">{errors.password}</p>
+              {/* Error Message */}
+              {submitError && (
+                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                  <p className="text-sm text-red-400">{submitError}</p>
+                </div>
               )}
-            </div>
 
-            {/* Confirm Password */}
-            <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
-                {t("auth.signUp.confirmPasswordLabel")}
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40" />
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={formState.confirm_password}
-                  onChange={handleInputChange("confirm_password")}
-                  className={`w-full pl-10 pr-12 py-3 bg-white/5 border rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B] focus:border-transparent transition-all ${
-                    errors.confirm_password 
-                      ? "border-red-500/50 focus:ring-red-500/50" 
-                      : "border-white/10 focus:border-[#F0B90B]/50"
-                  }`}
-                  placeholder={t("auth.signUp.confirmPasswordLabel")}
-                  disabled={isSubmitting}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors"
-                >
-                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-              {errors.confirm_password && (
-                <p className="mt-1 text-sm text-red-400">{errors.confirm_password}</p>
-              )}
-            </div>
-
-            {/* Referral Code */}
-            <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
-                {t("auth.signUp.referralCodeLabel")}
-              </label>
-              <input
-                type="text"
-                value={formState.referral_code}
-                onChange={handleInputChange("referral_code")}
-                className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#F0B90B] focus:border-transparent transition-all ${
-                  errors.referral_code 
-                    ? "border-red-500/50 focus:ring-red-500/50" 
-                    : "border-white/10 focus:border-[#F0B90B]/50"
-                }`}
-                placeholder={t("auth.signUp.referralCodeLabel")}
-                disabled={isSubmitting}
-              />
-              {errors.referral_code && (
-                <p className="mt-1 text-sm text-red-400">{errors.referral_code}</p>
-              )}
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-3 bg-gradient-to-r from-[#F0B90B] to-[#F0B90B]/80 text-black font-semibold rounded-lg hover:from-[#F0B90B]/90 hover:to-[#F0B90B]/70 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  {t("auth.signUp.submitting")}
-                </>
-              ) : (
-                t("auth.signUp.submit")
-              )}
-            </button>
-          </form>
+              {/* Submit Button */}
+              <PremiumButton
+                type="submit"
+                variant="primary"
+                size="sm"
+                disabled={isLoading}
+                className="w-full flex items-center justify-center"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2"></div>
+                    {t("auth.signup.loading")}
+                  </>
+                ) : (
+                  <>
+                    {t("auth.signup.submit")}
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
+              </PremiumButton>
+            </form>
+          </PremiumCard>
 
           {/* Sign In Link */}
-          <div className="mt-8 text-center">
-            <p className="text-white/70">
-              {t("auth.signUp.haveAccount")}{" "}
-              <a
-                href={ensureLangPath(lang, "/signin")}
-                className="text-[#F0B90B] hover:text-[#F0B90B]/80 font-medium transition-colors"
-              >
-                {t("auth.signUp.signInLink")}
-              </a>
+          <div className="text-center mt-6">
+            <p className="text-white/70 text-sm">
+              {t("auth.signup.haveAccount")}{" "}
+              <Link to={getLangPath(lang as any, "/signin")} className="text-[#F0B90B] hover:text-[#F0B90B]/80 font-medium">
+                {t("auth.signup.signIn")}
+              </Link>
             </p>
           </div>
-        </PremiumCard>
+        </div>
       </div>
     </PremiumShell>
   );
-}
+};
+
+export default SignUpPage;
