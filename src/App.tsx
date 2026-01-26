@@ -11,7 +11,7 @@ import ToastHost from "./components/ui/ToastHost";
 import Home from "./pages/Home";
 import Docs from "./pages/Docs";
 import DAOLite from "./pages/DAOLite";
-import Transparency from "./pages/Transparency";
+import Transparency from "./pages/transparency/Transparency";
 import CommunityFund from "./pages/CommunityFund";
 import Legal from "./pages/Legal";
 import LaunchChecklist from "./pages/LaunchChecklist";

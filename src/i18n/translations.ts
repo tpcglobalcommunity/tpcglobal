@@ -396,44 +396,14 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "docs.disclaimer": "All information on this website is for educational and community purposes only. TPC is not a financial advisor or investment platform.",
     "transparency.title": "Transparency",
     "transparency.subtitle": "Open, verifiable, and accountable ecosystem",
-    "transparency.desc": "TPC operates with a transparency-first principle. All official wallets, allocations, and on-chain activities are visible and auditable by the public.",
-    "transparency.intro": "Transparency is a core principle of TPC. We openly share how funds, wallets, and governance structures operate.",
-    "transparency.hero": {
-      "title": "Transparency & Public Accountability",
-      "subtitle": "All core wallets and ecosystem activities are published for public verification."
-    },
-    "transparency.live": {
-      "title": "Live Transparency",
-      "desc": "All community funds and transactions are publicly verifiable on-chain."
-    },
-    "transparency.sections.officialWallets": "Official Wallets",
-    "transparency.wallet": {
-      "label": "Wallet",
-      "purpose": "Wallet Purpose",
-      "statusActive": "Active",
-      "statusInactive": "Inactive"
-    },
-    "transparency.wallets": {
-      "items": "Sample wallet data will be displayed here"
-    },
-    "transparency.revenue": {
-      "title": "Revenue Policy",
-      "youtube": "YouTube Revenue Split",
-      "community": "Revenue to Community"
-    },
-    "transparency.policy": {
-      "youtube": "Sample policy data will be displayed here"
-    },
-    "transparency.revenueDesc": "All revenue goes back to community members and development.",
-    "transparency.updates": {
-      "title": "Recent Updates"
-    },
-    "transparency.cta": {
-      "title": "Join Our Community",
-      "subtitle": "Be part of a transparent and education-first trading community.",
-      "docs": "Read Documentation",
-      "join": "Join TPC Community"
-    },
+    "transparency.description": "All official wallets, allocations, and on-chain activities are publicly visible and auditable.",
+    "transparency.wallets.title": "Official Wallets",
+    "transparency.wallet.label": "Label",
+    "transparency.wallet.purpose": "Purpose",
+    "transparency.wallet.status.active": "Active",
+    "transparency.wallet.status.inactive": "Inactive",
+    "transparency.cta.docs": "Documentation",
+    "transparency.cta.join": "Join TPC Community",
     "transparency.walletAction": "View on Explorer",
     "transparency.sections.officialWallets.title": "Official Wallets",
     "transparency.sections.officialWallets.desc": "List of official TPC wallets used for treasury, operations, and on-chain activities.",
@@ -1223,44 +1193,14 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "docs.disclaimer": "Seluruh dokumentasi disediakan hanya untuk tujuan edukasi. Tidak ada bagian yang dapat dianggap sebagai saran keuangan atau jaminan hasil.",
     "transparency.title": "Transparansi",
     "transparency.subtitle": "Ekosistem terbuka, dapat diverifikasi, dan bertanggung jawab",
-    "transparency.desc": "TPC beroperasi dengan prinsip transparansi-utama. Semua wallet resmi, alokasi, dan aktivitas on-chain terlihat dan dapat diaudit oleh publik.",
-    "transparency.intro": "Transparansi adalah prinsip inti TPC. Kami membuka informasi tentang pengelolaan dana, wallet, dan struktur governance.",
-    "transparency.hero": {
-      "title": "Transparansi & Akuntabilitas Publik",
-      "subtitle": "Semua wallet inti dan aktivitas ekosistem dipublikasikan untuk verifikasi publik."
-    },
-    "transparency.live": {
-      "title": "Transparansi Langsung",
-      "desc": "Semua dana komunitas dan transaksi dapat diverifikasi secara publik di on-chain."
-    },
-    "transparency.sections.officialWallets": "Wallet Resmi",
-    "transparency.wallet": {
-      "label": "Wallet",
-      "purpose": "Tujuan Wallet",
-      "statusActive": "Aktif",
-      "statusInactive": "Tidak Aktif"
-    },
-    "transparency.wallets": {
-      "items": "Data wallet sampel akan ditampilkan di sini"
-    },
-    "transparency.revenue": {
-      "title": "Kebijakan Pendapatan",
-      "youtube": "Pembagian Pendapatan YouTube",
-      "community": "Pendapatan ke Komunitas"
-    },
-    "transparency.policy": {
-      "youtube": "Data kebijakan sampel akan ditampilkan di sini"
-    },
-    "transparency.revenueDesc": "Semua pendapatan kembali ke member komunitas dan pengembangan.",
-    "transparency.updates": {
-      "title": "Update Terbaru"
-    },
-    "transparency.cta": {
-      "title": "Gabung Komunitas Kami",
-      "subtitle": "Jadilah bagian dari komunitas trading yang transparan dan berbasis edukasi.",
-      "docs": "Baca Dokumentasi",
-      "join": "Gabung Komunitas TPC"
-    },
+    "transparency.description": "Semua wallet resmi, alokasi, dan aktivitas on-chain terlihat dan dapat diaudit oleh publik.",
+    "transparency.wallets.title": "Wallet Resmi",
+    "transparency.wallet.label": "Label",
+    "transparency.wallet.purpose": "Tujuan",
+    "transparency.wallet.status.active": "Aktif",
+    "transparency.wallet.status.inactive": "Tidak Aktif",
+    "transparency.cta.docs": "Dokumentasi",
+    "transparency.cta.join": "Gabung Komunitas TPC",
     "transparency.walletAction": "Lihat di Explorer",
     "transparency.sections.officialWallets.title": "Wallet Resmi",
     "transparency.sections.officialWallets.desc": "Daftar wallet resmi TPC yang digunakan untuk treasury, operasional, dan aktivitas on-chain.",
