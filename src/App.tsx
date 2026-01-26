@@ -24,6 +24,7 @@ import MarketplaceList from "./pages/marketplace/MarketplaceList";
 import MarketplaceDetail from "./pages/marketplace/MarketplaceDetail";
 
 import SignUpPage from "./pages/auth/SignUpPage";
+import SignInPage from "./pages/auth/SignInPage";
 import CheckEmailPage from "./pages/auth/CheckEmailPage";
 import MemberLogin from "./pages/member/MemberLogin";
 
@@ -282,6 +283,9 @@ export default function App() {
 
       case "/signup":
         return <SignUpPage lang={lang} />;
+
+      case "/signin":
+        return <SignInPage lang={lang} />;
 
       case "/check-email":
         return <CheckEmailPage lang={lang} />;
