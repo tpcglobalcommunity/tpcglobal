@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mail, User, Lock, AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
-import { PremiumShell, PremiumCard, PremiumButton, NoticeBox } from "@/components/ui";
+import { Mail, User, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import { PremiumShell, PremiumCard, NoticeBox } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 import { ensureLangPath, type Language } from "@/i18n";
 
