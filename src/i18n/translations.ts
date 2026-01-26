@@ -432,7 +432,7 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
       "title": "Join Our Community",
       "subtitle": "Be part of a transparent and education-first trading community.",
       "docs": "Read Documentation",
-      "join": "Join Community"
+      "join": "Join TPC Community"
     },
     "transparency.walletAction": "View on Explorer",
     "transparency.sections.officialWallets.title": "Official Wallets",
@@ -1259,7 +1259,7 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
       "title": "Gabung Komunitas Kami",
       "subtitle": "Jadilah bagian dari komunitas trading yang transparan dan berbasis edukasi.",
       "docs": "Baca Dokumentasi",
-      "join": "Gabung Komunitas"
+      "join": "Gabung Komunitas TPC"
     },
     "transparency.walletAction": "Lihat di Explorer",
     "transparency.sections.officialWallets.title": "Wallet Resmi",
