@@ -394,6 +394,7 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "docs.disclaimer": "All information on this website is for educational and community purposes only. TPC is not a financial advisor or investment platform.",
     "transparency.title": "Transparency",
     "transparency.subtitle": "Open, verifiable, and accountable ecosystem",
+    "transparency.desc": "TPC operates with a transparency-first principle. All official wallets, allocations, and on-chain activities are visible and auditable by the public.",
     "transparency.intro": "Transparency is a core principle of TPC. We openly share how funds, wallets, and governance structures operate.",
     "transparency.hero": {
       "title": "Transparency & Public Accountability",
@@ -404,6 +405,12 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
       "desc": "All community funds and transactions are publicly verifiable on-chain."
     },
     "transparency.sections.officialWallets": "Official Wallets",
+    "transparency.wallet": {
+      "label": "Wallet",
+      "purpose": "Wallet Purpose",
+      "statusActive": "Active",
+      "statusInactive": "Inactive"
+    },
     "transparency.wallets": {
       "items": "Sample wallet data will be displayed here"
     },
@@ -1088,6 +1095,7 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "docs.disclaimer": "Seluruh dokumentasi disediakan hanya untuk tujuan edukasi. Tidak ada bagian yang dapat dianggap sebagai saran keuangan atau jaminan hasil.",
     "transparency.title": "Transparansi",
     "transparency.subtitle": "Ekosistem terbuka, dapat diverifikasi, dan bertanggung jawab",
+    "transparency.desc": "TPC beroperasi dengan prinsip transparansi-utama. Semua wallet resmi, alokasi, dan aktivitas on-chain terlihat dan dapat diaudit oleh publik.",
     "transparency.intro": "Transparansi adalah prinsip inti TPC. Kami membuka informasi tentang pengelolaan dana, wallet, dan struktur governance.",
     "transparency.hero": {
       "title": "Transparansi & Akuntabilitas Publik",
@@ -1098,6 +1106,12 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
       "desc": "Semua dana komunitas dan transaksi dapat diverifikasi secara publik di on-chain."
     },
     "transparency.sections.officialWallets": "Wallet Resmi",
+    "transparency.wallet": {
+      "label": "Wallet",
+      "purpose": "Tujuan Wallet",
+      "statusActive": "Aktif",
+      "statusInactive": "Tidak Aktif"
+    },
     "transparency.wallets": {
       "items": "Data wallet sampel akan ditampilkan di sini"
     },
