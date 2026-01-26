@@ -20,30 +20,6 @@ type HomeObject = {
 
 type TranslationValue = string | HomeObject | TrustCard[] | any;
 
-// Helper function for deep merge
-function deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>): T {
-  const result = { ...target };
-  
-  for (const key in source) {
-    if (source[key] !== undefined) {
-      if (
-        typeof source[key] === 'object' && 
-        source[key] !== null && 
-        !Array.isArray(source[key]) &&
-        typeof result[key] === 'object' && 
-        result[key] !== null && 
-        !Array.isArray(result[key])
-      ) {
-        result[key] = deepMerge(result[key], source[key] as any);
-      } else {
-        result[key] = source[key] as any;
-      }
-    }
-  }
-  
-  return result;
-}
-
 export const translations: Record<Language, Record<string, TranslationValue>> = {
   en: {
     "app.name": "Trader Professional Community",
