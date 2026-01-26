@@ -48,16 +48,16 @@ const LegalPage = ({ lang }: LegalPageProps) => {
                 </div>
                 
                 <h3 className="text-lg font-semibold text-white mb-2">
-                  {tt(t, "legal.page.docs", "Documentation")}
+                  {tt(t, "legal.page.cardDocs.title", "Documentation")}
                 </h3>
                 
                 <p className="text-white/60 text-sm mb-6 leading-relaxed">
-                  Comprehensive documentation covering our principles, operations, and community guidelines.
+                  {tt(t, "legal.page.cardDocs.desc", "Comprehensive documentation covering our principles, operations, and community guidelines.")}
                 </p>
                 
                 <Link to={getLangPath(lang as any, "/docs")}>
                   <PremiumButton variant="secondary" size="sm" className="w-full">
-                    View Documentation
+                    {tt(t, "legal.page.cardDocs.cta", "View Documentation")}
                   </PremiumButton>
                 </Link>
               </div>
@@ -71,16 +71,16 @@ const LegalPage = ({ lang }: LegalPageProps) => {
                 </div>
                 
                 <h3 className="text-lg font-semibold text-white mb-2">
-                  {tt(t, "legal.page.transparency", "Transparency")}
+                  {tt(t, "legal.page.cardTransparency.title", "Transparency")}
                 </h3>
                 
                 <p className="text-white/60 text-sm mb-6 leading-relaxed">
-                  Real-time transparency reports, wallet allocations, and complete audit trails for community trust.
+                  {tt(t, "legal.page.cardTransparency.desc", "Real-time transparency reports, wallet allocations, and complete audit trails for community trust.")}
                 </p>
                 
                 <Link to={getLangPath(lang as any, "/transparency")}>
                   <PremiumButton variant="secondary" size="sm" className="w-full">
-                    View Transparency
+                    {tt(t, "legal.page.cardTransparency.cta", "View Transparency")}
                   </PremiumButton>
                 </Link>
               </div>
@@ -94,11 +94,11 @@ const LegalPage = ({ lang }: LegalPageProps) => {
                 </div>
                 
                 <h3 className="text-lg font-semibold text-white mb-2">
-                  {tt(t, "legal.page.telegram", "Join Telegram Community")}
+                  {tt(t, "legal.page.cardTelegram.title", "Join Telegram Community")}
                 </h3>
                 
                 <p className="text-white/60 text-sm mb-6 leading-relaxed">
-                  Join our active community on Telegram for updates, discussions, and direct support.
+                  {tt(t, "legal.page.cardTelegram.desc", "Join our active community on Telegram for updates, discussions, and direct support.")}
                 </p>
                 
                 <a
@@ -108,7 +108,7 @@ const LegalPage = ({ lang }: LegalPageProps) => {
                   className="block"
                 >
                   <PremiumButton variant="secondary" size="sm" className="w-full">
-                    Join Telegram
+                    {tt(t, "legal.page.cardTelegram.cta", "Join Telegram")}
                   </PremiumButton>
                 </a>
               </div>
