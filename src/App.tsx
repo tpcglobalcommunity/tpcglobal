@@ -9,31 +9,15 @@ import GlobalBanner from "./components/system/GlobalBanner";
 import ToastHost from "./components/ui/ToastHost";
 
 import Home from "./pages/home/Home";
-import Docs from "./pages/Docs";
-import DAOLite from "./pages/DAOLite";
 import Transparency from "./pages/transparency/Transparency";
 import FundPlaceholder from "./pages/FundPlaceholder";
-import Legal from "./pages/legal/Legal";
-import LaunchChecklist from "./pages/LaunchChecklist";
-import Security from "./pages/Security";
-import Support from "./pages/Support";
-import Whitepaper from "./pages/Whitepaper";
-import Roadmap from "./pages/Roadmap";
-import FaqPage from "./pages/FaqPage";
 import MarketplaceList from "./pages/marketplace/MarketplaceList";
 import MarketplaceDetail from "./pages/marketplace/MarketplaceDetail";
 
-import SignUpPage from "./pages/auth/SignUpPage";
 import SignInPage from "./pages/auth/SignInPage";
-import CheckEmailPage from "./pages/auth/CheckEmailPage";
 import MemberLogin from "./pages/member/MemberLogin";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
-
-import VerifyPage from "./pages/VerifyPage";
-import PublicProfilePage from "./pages/PublicProfilePage";
-import NewsPage from "./pages/NewsPage";
-import NewsDetailPage from "./pages/NewsDetailPage";
 
 import MaintenancePage from "./pages/system/MaintenancePage";
 
@@ -242,68 +226,24 @@ export default function App() {
 
     if (pathWithoutLang === "/admin/announcements") return <AnnouncementsAdminListPage lang={lang} />;
 
-    // Public profile
-    if (pathWithoutLang.startsWith("/u/")) {
-      const username = pathWithoutLang.replace("/u/", "");
-      return <PublicProfilePage lang={lang} username={username} />;
-    }
-
-    // News detail
-    if (pathWithoutLang.startsWith("/news/")) {
-      const slug = pathWithoutLang.replace("/news/", "");
-      return <NewsDetailPage slug={slug} />;
-    }
-
     switch (pathWithoutLang) {
-      case "/docs":
-        return <Docs lang={lang} />;
-      case "/dao":
-        return <DAOLite lang={lang} />;
       case "/transparency":
         return <Transparency lang={lang} />;
       case "/fund":
         return <FundPlaceholder />;
-      case "/legal":
-        return <Legal lang={lang} />;
-      case "/whitepaper":
-        return <Whitepaper lang={lang} />;
-      case "/roadmap":
-        return <Roadmap lang={lang} />;
-      case "/faq":
-        return <FaqPage lang={lang} />;
-      case "/launch":
-        return <LaunchChecklist lang={lang} />;
-      case "/security":
-        return <Security lang={lang} />;
-      case "/support":
-        return <Support lang={lang} />;
 
       // Marketplace list route (detail handled above)
       case "/marketplace":
         return <MarketplaceList lang={lang} />;
 
-      case "/signup":
-        return <SignUpPage lang={lang} />;
-
       case "/signin":
         return <SignInPage lang={lang} />;
-
-      case "/check-email":
-        return <CheckEmailPage lang={lang} />;
 
       case "/forgot-password":
         return <ForgotPassword lang={lang} />;
 
       case "/reset-password":
         return <ResetPassword lang={lang} />;
-
-      // Verify
-      case "/verify":
-        return <VerifyPage lang={lang} />;
-
-      // News list
-      case "/news":
-        return <NewsPage />;
 
       // Maintenance route
       case "/maintenance":
