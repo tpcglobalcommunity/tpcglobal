@@ -50,6 +50,32 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "app.loading": "Loading...",
     "app.error": "Something went wrong",
 
+    // Home page
+    "home.hero.badge": "Professional Trading Community",
+    "home.hero.title": "Join the Global Trading Community",
+    "home.hero.subtitle": "Connect with disciplined traders, access premium education, and grow your skills in a transparent ecosystem.",
+    "home.hero.ctaPrimary": "Join Community",
+    "home.hero.ctaSecondary": "Learn More",
+    "home.disclaimer.text": "Trading involves significant risk and may result in loss. Past performance does not guarantee future results.",
+    "home.trust.title": "Why Choose TPC",
+    "home.trust.cards": [
+      {
+        "title": "Transparency",
+        "desc": "All operations and funds are publicly verifiable on the blockchain.",
+        "cta": "View Transparency"
+      },
+      {
+        "title": "Education", 
+        "desc": "Comprehensive trading education from basics to advanced strategies.",
+        "cta": "Learn More"
+      },
+      {
+        "title": "Community",
+        "desc": "Connect with professional traders and share valuable insights.",
+        "cta": "Join DAO"
+      }
+    ],
+
     "auth.signin.title": "Sign In",
     "auth.signup.title": "Create Account",
     "auth.email": "Email address",
@@ -734,6 +760,32 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "app.name": "Trader Professional Community",
     "app.loading": "Memuat...",
     "app.error": "Terjadi kesalahan",
+
+    // Home page
+    "home.hero.badge": "Komunitas Trading Profesional",
+    "home.hero.title": "Bergabung dengan Komunitas Trading Global",
+    "home.hero.subtitle": "Terhubung dengan trader disiplin, akses edukasi premium, dan kembangkan skill Anda dalam ekosistem transparan.",
+    "home.hero.ctaPrimary": "Gabung Komunitas",
+    "home.hero.ctaSecondary": "Pelajari Lebih Lanjut",
+    "home.disclaimer.text": "Trading melibatkan risiko signifikan dan dapat mengakibatkan kerugian. Performa masa lalu tidak menjamin hasil di masa depan.",
+    "home.trust.title": "Mengapa Memilih TPC",
+    "home.trust.cards": [
+      {
+        "title": "Transparansi",
+        "desc": "Semua operasi dan dana dapat diverifikasi secara publik di blockchain.",
+        "cta": "Lihat Transparansi"
+      },
+      {
+        "title": "Edukasi", 
+        "desc": "Edukasi trading komprehensif dari dasar hingga strategi lanjutan.",
+        "cta": "Pelajari Lebih Lanjut"
+      },
+      {
+        "title": "Komunitas",
+        "desc": "Terhubung dengan trader profesional dan bagikan wawasan berharga.",
+        "cta": "Gabung DAO"
+      }
+    ],
 
     "auth.signin.title": "Masuk",
     "auth.signup.title": "Daftar Akun",

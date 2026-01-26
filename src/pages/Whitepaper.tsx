@@ -1,5 +1,5 @@
 import { FileText, Target, Users, Coins, TrendingUp, ShoppingCart, Vote, MapPin, AlertTriangle, BookOpen, Eye, ExternalLink } from 'lucide-react';
-import { Language, useTranslations, getLangPath } from "@/i18n";
+import { Language, useI18n, getLangPath } from "@/i18n";
 import { PremiumShell, PremiumCard, NoticeBox, PremiumButton } from "@/components/ui";
 import { Link } from "@/components/Router";
 
@@ -8,7 +8,7 @@ interface WhitepaperProps {
 }
 
 const Whitepaper = ({ lang }: WhitepaperProps) => {
-  const t = useTranslations(lang);
+  const { t } = useI18n();
   const lastUpdated = '2026-01-18';
 
   return (
