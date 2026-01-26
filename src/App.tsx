@@ -27,6 +27,8 @@ import SignUpPage from "./pages/auth/SignUpPage";
 import SignInPage from "./pages/auth/SignInPage";
 import CheckEmailPage from "./pages/auth/CheckEmailPage";
 import MemberLogin from "./pages/member/MemberLogin";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 import VerifyPage from "./pages/VerifyPage";
 import PublicProfilePage from "./pages/PublicProfilePage";
@@ -289,6 +291,12 @@ export default function App() {
 
       case "/check-email":
         return <CheckEmailPage lang={lang} />;
+
+      case "/forgot-password":
+        return <ForgotPassword lang={lang} />;
+
+      case "/reset-password":
+        return <ResetPassword lang={lang} />;
 
       // Verify
       case "/verify":

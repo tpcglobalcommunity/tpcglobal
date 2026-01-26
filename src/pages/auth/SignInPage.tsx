@@ -225,8 +225,8 @@ const SignInPage = ({ lang }: SignInPageProps) => {
           {/* Secondary Actions */}
           <div className="text-center mt-6 space-y-4">
             <div className="text-sm text-white/60">
-              <Link to={getLangPath(lang as any, "/forgot")} className="text-[#F0B90B] hover:text-[#F0B90B]/80 transition-colors">
-                {tt(t, "member.login.forgot", "Forgot password?")}
+              <Link to={getLangPath(lang as any, "/forgot-password")} className="text-[#F0B90B] hover:text-[#F0B90B]/80 transition-colors">
+                {tt(t, "auth.forgot.forgot", "Forgot password?")}
               </Link>
             </div>
             
