@@ -4,8 +4,13 @@ import { Mail, ArrowLeft, CheckCircle, ExternalLink, Users, RefreshCw } from 'lu
 import { PremiumShell } from '@/components/ui/PremiumShell';
 import { PremiumCard } from '@/components/ui/PremiumCard';
 import { supabase } from '@/lib/supabase';
+import { ensureLangPath, type Language } from '@/i18n';
 
-export default function CheckEmailPage() {
+interface CheckEmailPageProps {
+  lang?: Language;
+}
+
+export default function CheckEmailPage({ lang = "en" }: CheckEmailPageProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const email = searchParams.get('email') || '';
@@ -17,9 +22,9 @@ export default function CheckEmailPage() {
   useEffect(() => {
     // Auto-redirect jika tidak ada email
     if (!email) {
-      navigate('/signin');
+      navigate(ensureLangPath(lang, '/signin'));
     }
-  }, [email, navigate]);
+  }, [email, navigate, lang]);
 
   const resendConfirmationEmail = async () => {
     if (!email) return;

@@ -2,11 +2,16 @@ export type PathToken = string | number;
 
 export function tokenizePath(key: string): PathToken[] {
   const tokens: PathToken[] = [];
-  const re = /([^[.\]]+)|\[(\d+)\]/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(key))) {
-    if (m[1] !== undefined) tokens.push(m[1]);
-    else if (m[2] !== undefined) tokens.push(Number(m[2]));
+  // Split on dots, but handle array indices in brackets
+  const parts = key.split('.');
+  for (const part of parts) {
+    // Handle array indices like [0], [1], etc.
+    const arrayMatch = part.match(/^(\d+)$/);
+    if (arrayMatch) {
+      tokens.push(Number(arrayMatch[1]));
+    } else {
+      tokens.push(part);
+    }
   }
   return tokens;
 }

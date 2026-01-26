@@ -7,10 +7,14 @@ import ErrorBoundary from './components/system/ErrorBoundary.tsx';
 import { I18nProvider } from './i18n';
 import { setupChunkRecovery, clearChunkReloadFlag } from './utils/chunkRecovery';
 import { getBuildInfo } from './lib/buildInfo';
+import { installGlobalErrorHandlers } from './utils/globalErrorHandler';
 import './index.css';
 
 // Log build info (production proof)
 console.info("[BUILD]", getBuildInfo());
+
+// Install global error handlers to catch extension errors
+installGlobalErrorHandlers();
 
 // Setup chunk recovery for handling chunk load errors
 setupChunkRecovery();

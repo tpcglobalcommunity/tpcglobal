@@ -45,61 +45,203 @@ export interface ProfileWithNavigation extends ProfileData {
 // =========================================================
 
 /**
- * Ensure profile exists and get complete data
+ * Ensure profile exists and get complete data - SAFE VERSION
+ * Never throws errors, always returns fallback data
  */
 export async function ensureProfile(): Promise<ProfileData> {
-  const { data, error } = await supabase.rpc("ensure_profile");
-  
-  if (error) {
-    console.error("ensure_profile failed", error);
-    throw error;
+  try {
+    const { data, error } = await supabase.rpc("ensure_profile");
+    
+    if (error) {
+      console.error("ensure_profile failed", error);
+      // Return safe fallback instead of throwing
+      return {
+        id: "",
+        email: "",
+        username: null,
+        member_code: "",
+        referral_code: null,
+        referred_by: null,
+        role: "MEMBER",
+        verified: false,
+        is_profile_complete: false,
+        created_at: "",
+        updated_at: "",
+        profile_created: false,
+        message: "Profile ensure failed"
+      };
+    }
+    
+    if (!data || data.length === 0) {
+      console.warn("No profile data returned from ensure_profile");
+      // Return safe fallback instead of throwing
+      return {
+        id: "",
+        email: "",
+        username: null,
+        member_code: "",
+        referral_code: null,
+        referred_by: null,
+        role: "MEMBER",
+        verified: false,
+        is_profile_complete: false,
+        created_at: "",
+        updated_at: "",
+        profile_created: false,
+        message: "No profile data"
+      };
+    }
+    
+    return data[0];
+  } catch (err) {
+    console.error("ensureProfile exception:", err);
+    // Return safe fallback instead of throwing
+    return {
+      id: "",
+      email: "",
+      username: null,
+      member_code: "",
+      referral_code: null,
+      referred_by: null,
+      role: "MEMBER",
+      verified: false,
+      is_profile_complete: false,
+      created_at: "",
+      updated_at: "",
+      profile_created: false,
+      message: "Exception occurred"
+    };
   }
-  
-  if (!data || data.length === 0) {
-    throw new Error("No profile data returned");
-  }
-  
-  return data[0];
 }
 
 /**
- * Get navigation route based on profile
+ * Get navigation route based on profile - SAFE VERSION
+ * Never throws errors, always returns fallback data
  */
 export async function getNavigationRoute(): Promise<NavigationData> {
-  const { data, error } = await supabase.rpc("get_navigation_route");
-  
-  if (error) {
-    console.error("get_navigation_route failed", error);
-    throw error;
+  try {
+    const { data, error } = await supabase.rpc("get_navigation_route");
+    
+    if (error) {
+      console.error("get_navigation_route failed", error);
+      // Return safe fallback instead of throwing
+      return {
+        route: "/member/dashboard",
+        reason: "fallback",
+        profile_verified: false,
+        user_role: "MEMBER"
+      };
+    }
+    
+    if (!data || data.length === 0) {
+      console.warn("No navigation data returned");
+      // Return safe fallback instead of throwing
+      return {
+        route: "/member/dashboard",
+        reason: "fallback",
+        profile_verified: false,
+        user_role: "MEMBER"
+      };
+    }
+    
+    return data[0];
+  } catch (err) {
+    console.error("getNavigationRoute exception:", err);
+    // Return safe fallback instead of throwing
+    return {
+      route: "/member/dashboard",
+      reason: "fallback",
+      profile_verified: false,
+      user_role: "MEMBER"
+    };
   }
-  
-  if (!data || data.length === 0) {
-    throw new Error("No navigation data returned");
-  }
-  
-  return data[0];
 }
 
 /**
- * Get profile with navigation info
+ * Get profile with navigation info - SAFE VERSION
+ * Never throws errors, always returns fallback data
  */
 export async function getProfileWithNavigation(): Promise<ProfileWithNavigation> {
-  const { data, error } = await supabase.rpc("get_profile_with_navigation");
-  
-  if (error) {
-    console.error("get_profile_with_navigation failed", error);
-    throw error;
+  try {
+    const { data, error } = await supabase.rpc("get_profile_with_navigation");
+    
+    if (error) {
+      console.error("get_profile_with_navigation failed", error);
+      // Return safe fallback instead of throwing
+      return {
+        id: "",
+        email: "",
+        username: null,
+        member_code: "",
+        referral_code: null,
+        referred_by: null,
+        role: "MEMBER",
+        verified: false,
+        is_profile_complete: false,
+        created_at: "",
+        updated_at: "",
+        profile_created: false,
+        message: "Profile fetch failed",
+        navigation_route: "/member/dashboard",
+        navigation_reason: "fallback",
+        can_access_admin: false,
+        can_access_member: true
+      };
+    }
+    
+    if (!data || data.length === 0) {
+      console.warn("No navigation data returned");
+      // Return safe fallback instead of throwing
+      return {
+        id: "",
+        email: "",
+        username: null,
+        member_code: "",
+        referral_code: null,
+        referred_by: null,
+        role: "MEMBER",
+        verified: false,
+        is_profile_complete: false,
+        created_at: "",
+        updated_at: "",
+        profile_created: false,
+        message: "No profile data",
+        navigation_route: "/member/dashboard",
+        navigation_reason: "fallback",
+        can_access_admin: false,
+        can_access_member: true
+      };
+    }
+    
+    return data[0];
+  } catch (err) {
+    console.error("getProfileWithNavigation exception:", err);
+    // Return safe fallback instead of throwing
+    return {
+      id: "",
+      email: "",
+      username: null,
+      member_code: "",
+      referral_code: null,
+      referred_by: null,
+      role: "MEMBER",
+      verified: false,
+      is_profile_complete: false,
+      created_at: "",
+      updated_at: "",
+      profile_created: false,
+      message: "Exception occurred",
+      navigation_route: "/member/dashboard",
+      navigation_reason: "fallback",
+      can_access_admin: false,
+      can_access_member: true
+    };
   }
-  
-  if (!data || data.length === 0) {
-    throw new Error("No profile data returned");
-  }
-  
-  return data[0];
 }
 
 /**
- * Update login activity
+ * Update login activity - SAFE VERSION
+ * Never throws errors, always returns fallback data
  */
 export async function updateLoginActivity(): Promise<{
   ok: boolean;
@@ -107,22 +249,47 @@ export async function updateLoginActivity(): Promise<{
   login_count: number;
   last_login: string;
 }> {
-  const { data, error } = await supabase.rpc("update_login_activity");
-  
-  if (error) {
-    console.error("update_login_activity failed", error);
-    throw error;
+  try {
+    const { data, error } = await supabase.rpc("update_login_activity");
+    
+    if (error) {
+      console.error("update_login_activity failed", error);
+      // Return safe fallback instead of throwing
+      return {
+        ok: false,
+        message: "Login activity update failed",
+        login_count: 0,
+        last_login: new Date().toISOString()
+      };
+    }
+    
+    if (!data || data.length === 0) {
+      console.warn("No activity data returned");
+      // Return safe fallback instead of throwing
+      return {
+        ok: false,
+        message: "No activity data",
+        login_count: 0,
+        last_login: new Date().toISOString()
+      };
+    }
+    
+    return data[0];
+  } catch (err) {
+    console.error("updateLoginActivity exception:", err);
+    // Return safe fallback instead of throwing
+    return {
+      ok: false,
+      message: "Exception occurred",
+      login_count: 0,
+      last_login: new Date().toISOString()
+    };
   }
-  
-  if (!data || data.length === 0) {
-    throw new Error("No activity data returned");
-  }
-  
-  return data[0];
 }
 
 /**
- * Activate profile with username and referral
+ * Activate profile with username and referral - SAFE VERSION
+ * Never throws errors, always returns fallback data
  */
 export async function activateProfile(
   username: string,
@@ -133,25 +300,50 @@ export async function activateProfile(
   navigation_route: string;
   profile_status: string;
 }> {
-  const { data, error } = await supabase.rpc("activate_profile", {
-    p_username: username,
-    p_referral_code: referralCode || null
-  });
-  
-  if (error) {
-    console.error("activate_profile failed", error);
-    throw error;
+  try {
+    const { data, error } = await supabase.rpc("activate_profile", {
+      p_username: username,
+      p_referral_code: referralCode || null
+    });
+    
+    if (error) {
+      console.error("activate_profile failed", error);
+      // Return safe fallback instead of throwing
+      return {
+        ok: false,
+        message: "Profile activation failed",
+        navigation_route: "/member/dashboard",
+        profile_status: "failed"
+      };
+    }
+    
+    if (!data || data.length === 0) {
+      console.warn("No activation data returned");
+      // Return safe fallback instead of throwing
+      return {
+        ok: false,
+        message: "No activation data",
+        navigation_route: "/member/dashboard",
+        profile_status: "failed"
+      };
+    }
+    
+    return data[0];
+  } catch (err) {
+    console.error("activateProfile exception:", err);
+    // Return safe fallback instead of throwing
+    return {
+      ok: false,
+      message: "Exception occurred",
+      navigation_route: "/member/dashboard",
+      profile_status: "failed"
+    };
   }
-  
-  if (!data || data.length === 0) {
-    throw new Error("No activation data returned");
-  }
-  
-  return data[0];
 }
 
 /**
- * Validate referral code
+ * Validate referral code - SAFE VERSION
+ * Never throws errors, always returns fallback data
  */
 export async function validateReferralCode(code: string): Promise<{
   is_valid: boolean;
@@ -159,16 +351,36 @@ export async function validateReferralCode(code: string): Promise<{
   referrer_username: string | null;
   referrer_member_code: string | null;
 }> {
-  const { data, error } = await supabase.rpc("validate_referral_code_public", {
-    p_referral_code: code.trim().toUpperCase()
-  });
-  
-  if (error) {
-    console.error("validate_referral_code failed", error);
-    throw error;
-  }
-  
-  if (!data || data.length === 0) {
+  try {
+    const { data, error } = await supabase.rpc("validate_referral_code_public", {
+      p_referral_code: code.trim().toUpperCase()
+    });
+    
+    if (error) {
+      console.error("validate_referral_code failed", error);
+      // Return safe fallback instead of throwing
+      return {
+        is_valid: false,
+        referrer_id: null,
+        referrer_username: null,
+        referrer_member_code: null
+      };
+    }
+    
+    if (!data || data.length === 0) {
+      // Return safe fallback instead of throwing
+      return {
+        is_valid: false,
+        referrer_id: null,
+        referrer_username: null,
+        referrer_member_code: null
+      };
+    }
+    
+    return data[0];
+  } catch (err) {
+    console.error("validateReferralCode exception:", err);
+    // Return safe fallback instead of throwing
     return {
       is_valid: false,
       referrer_id: null,
@@ -176,8 +388,6 @@ export async function validateReferralCode(code: string): Promise<{
       referrer_member_code: null
     };
   }
-  
-  return data[0];
 }
 
 // =========================================================

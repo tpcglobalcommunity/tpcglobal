@@ -57,10 +57,96 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "auth.submit": "Continue",
     "auth.logout": "Logout",
 
+    "auth.signUp.title": "Create Account",
+    "auth.signUp.subtitle": "Join TPC Global - Professional Trading Community",
+    "auth.signUp.fullNameLabel": "Full Name",
+    "auth.signUp.emailLabel": "Email Address",
+    "auth.signUp.passwordLabel": "Password",
+    "auth.signUp.confirmPasswordLabel": "Confirm Password",
+    "auth.signUp.referralCodeLabel": "Referral Code (Optional)",
+    "auth.signUp.submit": "Create Account",
+    "auth.signUp.submitting": "Creating Account...",
+    "auth.signUp.haveAccount": "Already have an account?",
+    "auth.signUp.signInLink": "Sign In",
+    "auth.signUp.errorGeneric": "Registration failed. Please try again.",
+    "auth.signUp.errorPasswordMismatch": "Passwords do not match",
+    "auth.signUp.errorPasswordShort": "Password must be at least 8 characters",
+    "auth.signUp.errorNameShort": "Name must be at least 2 characters",
+    "auth.signUp.errorEmailInvalid": "Please enter a valid email address",
+    "auth.signUp.success": "Account created successfully!",
+    "auth.signUp.checkEmail": "Please check your email to verify your account.",
+
+    "auth.checkEmail.title": "Check Your Email",
+    "auth.checkEmail.subtitle": "We've sent a verification link to your email address",
+    "auth.checkEmail.body": "Click the link in the email to complete your registration. If you don't see the email, check your spam folder.",
+    "auth.checkEmail.backToSignIn": "Back to Sign In",
+    "auth.checkEmail.resend": "Resend Email",
+    "auth.checkEmail.resending": "Resending...",
+    "auth.checkEmail.resendSuccess": "Email sent successfully!",
+    "auth.checkEmail.resendError": "Failed to resend email. Please try again.",
+
     "signup.title": "Join TPC",
     "signup.subtitle": "Professional trading community",
     "signup.referral": "Referral Code",
     "signup.submit": "Create Account",
+
+    "faq.title": "Frequently Asked Questions",
+    "faq.subtitle": "Transparent answers about TPC Token and the Trader Professional Community ecosystem.",
+    "faq.disclaimer": "TPC Token is a utility token, not an investment instrument. Participation is done consciously and responsibly.",
+    "faq.backToHome": "Back to Home",
+    "faq.viewDocs": "View Docs",
+    "faq.joinCommunity": "Join Community",
+
+    "faq.items": {
+      "what-is-tpc": {
+        "question": "What is TPC?",
+        "answer": "TPC (Trader Professional Community) is a global community built for disciplined traders. We focus on education-first, risk-aware growth, and transparent operations without promising guaranteed profits."
+      },
+      "what-is-tpc-token": {
+        "question": "What is TPC Token?",
+        "answer": "TPC Token is a utility token that serves as access and participation rights within the TPC ecosystem. It is not designed as an investment instrument."
+      },
+      "why-tpc-sells-token": {
+        "question": "Why does TPC sell tokens?",
+        "answer": "Token sales fund community development, platform maintenance, educational content creation, and ecosystem growth initiatives. All fund usage is transparently reported."
+      },
+      "does-tpc-promise-profit": {
+        "question": "Does TPC promise profit?",
+        "answer": "No. TPC does not promise or guarantee any profits. We provide education, tools, and community support. Trading always involves risks, and members participate at their own risk."
+      },
+      "tpc-token-usage": {
+        "question": "What is TPC Token used for?",
+        "answer": "TPC Token provides access to premium educational content, community features, platform utilities, and participation rights in governance decisions within the ecosystem."
+      },
+      "token-value-source": {
+        "question": "Where does TPC Token value come from?",
+        "answer": "Token value derives from utility within the ecosystem, community adoption, and platform usage. Value is not guaranteed and fluctuates based on market dynamics and ecosystem growth."
+      },
+      "is-tpc-safe": {
+        "question": "Is TPC safe?",
+        "answer": "TPC implements security best practices including role-based access, audit trails, and transparent operations. However, like any trading-related activity, risks exist and members should participate responsibly."
+      },
+      "is-tpc-mlm": {
+        "question": "Is TPC an MLM scheme?",
+        "answer": "No. TPC is an educational community, not a multi-level marketing scheme. We focus on trading education and community growth, not recruitment-based compensation structures."
+      },
+      "token-circulation": {
+        "question": "Are all TPC tokens immediately in circulation?",
+        "answer": "No. Token distribution follows a structured schedule with vesting periods and gradual release to maintain ecosystem stability and prevent market manipulation."
+      },
+      "must-buy-token": {
+        "question": "Do I have to buy tokens to join TPC?",
+        "answer": "No. Basic community membership and educational content are accessible without token purchase. Tokens provide enhanced access and utilities within the ecosystem."
+      },
+      "who-should-join": {
+        "question": "Who should join TPC?",
+        "answer": "TPC is suitable for disciplined traders who value education, risk management, and transparent operations. Ideal for those seeking community support without unrealistic profit expectations."
+      },
+      "long-term-vision": {
+        "question": "What is TPC's long-term vision?",
+        "answer": "To build the most trusted trader education community with transparent operations, quality educational resources, and sustainable ecosystem growth based on real utility value."
+      }
+    },
 
     "system.maintenance.title": "Maintenance Mode",
     "system.maintenance.subtitle": "We are upgrading the system to serve you better.",
@@ -196,7 +282,7 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "admin.marketplace.editItem": "Edit Item",
     "admin.marketplace.itemDetails": "Item Details",
     "admin.marketplace.basicInfo": "Basic Information",
-    "admin.marketplace.title": "Title",
+    "admin.marketplace.itemTitle": "Title",
     "admin.marketplace.slug": "Slug",
     "admin.marketplace.category": "Category",
     "admin.marketplace.price": "Price",
@@ -273,50 +359,55 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "docs.subtitle": "Learn how TPC works, our principles, and how to get started.",
     "docs.menu.whatIsTPC": "What is TPC",
     "docs.whatIsTPC": "What is TPC?",
+    "docs.whatIsTPCContent": "TPC (Trader Professional Community) is an education-based community built to support traders through collaboration, knowledge sharing, and transparency.",
     "docs.menu.howItWorks": "How it Works",
     "docs.howItWorks": "How It Works",
+    "docs.howItWorksContent": "TPC operates as an open community that prioritizes education and member participation. Governance features will be implemented gradually based on technical readiness and community decisions.",
     "docs.menu.tokenUtility": "Token Utility",
+    "docs.tokenUtility": "Token Utility",
+    "docs.tokenUtilityContent": "The TPC Token is designed as a utility and community governance token. It is not an investment, not a financial instrument, and does not promise any profits or returns.",
     "docs.menu.faq": "FAQ",
     "docs.faq": "Frequently Asked Questions",
     "docs.faq.title": "Frequently Asked Questions",
     "docs.faq.content": "This section answers common questions about membership, tokens, risk, and platform usage.",
-    "docs.whatIsTPC.title": "What is TPC?",
-    "docs.whatIsTPC.content": "TPC (Trader Professional Community) is a premium global community built for disciplined traders. We focus on education, tools, transparency, and long-term growth rather than speculation or hype.",
-    "docs.whatIsTPCContent": "TPC (Trader Professional Community) is a global trading community focused on education, discipline, transparency, and long-term skill development for traders.",
-    "docs.howItWorks.title": "How TPC Works",
-    "docs.howItWorks.content": "Members join TPC to access structured education, professional tools, and a transparent ecosystem. Growth is driven by skills, discipline, and community collaboration.",
-    "docs.howItWorksContent": "Members learn through structured documentation, educational tools, and transparent systems designed to improve trading discipline and decision-making.",
-    "docs.tokenUtility.title": "Token Utility",
-    "docs.tokenUtility.content": "The TPC token is used for membership access, governance participation, ecosystem incentives, and long-term alignment between the platform and its members.",
-    "docs.tokenUtilityContent": "TPC tokens are used for ecosystem access, governance participation, educational utilities, and community-driven incentives within the TPC platform.",
-    "docs.tokenUtility": "Token Utility",
-    "docs.faqA1": "About This Documentation",
-    "docs.faqA1.title": "About This Documentation",
-    "docs.faqA1.content": "This documentation is designed to help you understand how TPC works, its core principles, and how to use the platform responsibly and effectively.",
-    "docs.faqQ1": "Is TPC Suitable for Beginners?",
-    "docs.faqQ1.title": "Is TPC Suitable for Beginners?",
-    "docs.faqQ1.content": "TPC is designed for disciplined traders at all levels. Beginners are encouraged to focus on education, risk awareness, and long-term skill development before engaging in active trading.",
+    "docs.faqQ1": "Is the TPC Token an investment?",
+    "docs.faqQ1.title": "Is the TPC Token an investment?",
+    "docs.faqQ1.content": "No. The TPC Token is a utility and governance token only. It is not an investment or financial product and offers no guarantee of profit.",
+    "docs.faqA1": "No. The TPC Token is a utility and governance token only. It is not an investment or financial product and offers no guarantee of profit.",
+    "docs.faqA1.title": "TPC Token is not an investment",
+    "docs.faqA1.content": "No. The TPC Token is a utility and governance token only. It is not an investment or financial product and offers no guarantee of profit.",
+    "docs.faqQ2": "How can I participate in governance?",
+    "docs.faqQ2.title": "Governance participation",
+    "docs.faqQ2.content": "Participation in governance will be possible once DAO Lite features are activated and made available to the community.",
+    "docs.faqA2": "Participation in governance will be possible once DAO Lite features are activated and made available to the community.",
+    "docs.faqA2.title": "DAO Lite features for governance",
+    "docs.faqA2.content": "Participation in governance will be possible once DAO Lite features are activated and made available to the community.",
     "docs.faq2": "More Questions?",
     "docs.faq2.title": "More Questions?",
     "docs.faq2.content": "If you have additional questions about TPC, membership, tokens, or risk, please reach out to our community or consult the documentation sections above.",
-    "docs.faqA2": "Getting Help",
-    "docs.faqA2.title": "Getting Help",
-    "docs.faqA2.content": "If you need support or clarification, join the official TPC community channels or review the documentation sections provided on this page.",
-    "docs.faqQ2": "Need More Information?",
-    "docs.faqQ2.title": "Need More Information?",
-    "docs.faqQ2.content": "For detailed explanations about TPC features, governance, and risk management, please explore the documentation sections or join the official community channels.",
-    "docs.disclaimer": "All documentation is provided for educational purposes only. Nothing here should be considered financial advice or a guarantee of results.",
+    "docs.whatIsTPC.title": "What is TPC?",
+    "docs.whatIsTPC.content": "TPC (Trader Professional Community) is a premium global community built for disciplined traders. We focus on education, tools, transparency, and long-term growth rather than speculation or hype.",
+    "docs.howItWorks.title": "How TPC Works",
+    "docs.howItWorks.content": "Members join TPC to access structured education, professional tools, and a transparent ecosystem. Growth is driven by skills, discipline, and community collaboration.",
+    "docs.tokenUtility.title": "Token Utility",
+    "docs.tokenUtility.content": "The TPC token is used for membership access, governance participation, ecosystem incentives, and long-term alignment between the platform and its members.",
+    "docs.disclaimer": "All information on this website is for educational and community purposes only. TPC is not a financial advisor or investment platform.",
     "transparency.title": "Transparency",
     "transparency.subtitle": "Open, verifiable, and accountable ecosystem",
     "transparency.intro": "Transparency is a core principle of TPC. We openly share how funds, wallets, and governance structures operate.",
     "transparency.sections.officialWallets.title": "Official Wallets",
+    "transparency.sections.officialWallets.desc": "List of official TPC wallets used for treasury, operations, and on-chain activities.",
     "transparency.sections.officialWallets.description": "These wallets are used for operational, treasury, and ecosystem purposes. Addresses are published for public verification.",
+    "transparency.sections.distribution.title": "Distributions & Batches",
+    "transparency.sections.distribution.desc": "Records of fund distributions and processed transaction batches.",
     "transparency.sections.fundFlow.title": "Fund Flow",
     "transparency.sections.fundFlow.description": "All major fund movements follow predefined rules and are recorded for accountability.",
     "transparency.sections.governance.title": "Governance",
     "transparency.sections.governance.description": "Key decisions are guided by transparent governance processes and long-term community alignment.",
     "transparency.sections.reporting.title": "Reporting",
     "transparency.sections.reporting.description": "Regular reports provide visibility into treasury status, ecosystem growth, and platform sustainability.",
+    "transparency.sections.updates.title": "Transparency Updates",
+    "transparency.sections.updates.desc": "Latest activities including buybacks, burns, liquidity, and operations.",
     "transparency.notice": "Wallet addresses and records are provided for transparency and audit purposes only.",
     "dao.title": "DAO Lite",
     "dao.subtitle": "A lightweight governance model for the TPC community",
@@ -324,10 +415,10 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "dao.whatIsDAOLite": "What is DAO Lite?",
     "dao.whatIsDAOLiteContent": "DAO Lite is a simplified governance system that allows community members to participate in proposals, voting, and oversight without complex on-chain mechanisms.",
     "dao.howToParticipate": "How to Participate",
-    "dao.step1": "Step 1",
-    "dao.step2": "Step 2",
-    "dao.step3": "Step 3",
-    "dao.step4": "Step 4",
+    "dao.step1": "Proposal Submission",
+    "dao.step2": "Community Discussion", 
+    "dao.step3": "Voting Period",
+    "dao.step4": "Implementation",
     "dao.rules": "Governance Rules",
     "dao.rule1": "Participation is based on community responsibility.",
     "dao.rule2": "All proposals must align with TPC's educational values.",
@@ -342,6 +433,24 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "footer.links.twitter": "X (Twitter)",
     "footer.links.youtube": "YouTube",
     "footer.links.support": "Support",
+
+    // Community Fund
+    "fund.title": "Community Development Support",
+    "fund.description": "Community members may voluntarily contribute to support the development of the TPC ecosystem.",
+    "fund.usage.title": "Use of Contributions",
+    "fund.usage.items": "Educational content development, Platform maintenance and improvements, Community events and initiatives, Research and development",
+    "fund.notice.title": "Important Notice",
+    "fund.notice.content": "This program is NOT an investment. Contributions are voluntary, non-refundable, and do not grant ownership, profit rights, or financial returns. There are no guarantees of any kind.",
+    "fund.progress.title": "Current Progress",
+    "fund.progress.note": "Progress data is sample only and will be updated after the official launch.",
+
+    // News
+    "news.detail.notFound": "Article not found",
+    "news.detail.notFoundDesc": "The article you're looking for doesn't exist or has been removed.",
+    "news.detail.back": "Back to News",
+    "news.detail.ctaTitle": "Stay Updated",
+    "news.detail.ctaDesc": "Get the latest updates and announcements from our team.",
+
     "footer.links.contact": "Contact",
 
     // Marketplace verified gating
@@ -595,10 +704,96 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "auth.submit": "Lanjutkan",
     "auth.logout": "Keluar",
 
+    "auth.signUp.title": "Buat Akun",
+    "auth.signUp.subtitle": "Gabung TPC Global - Komunitas Trading Profesional",
+    "auth.signUp.fullNameLabel": "Nama Lengkap",
+    "auth.signUp.emailLabel": "Alamat Email",
+    "auth.signUp.passwordLabel": "Kata Sandi",
+    "auth.signUp.confirmPasswordLabel": "Konfirmasi Kata Sandi",
+    "auth.signUp.referralCodeLabel": "Kode Referral (Opsional)",
+    "auth.signUp.submit": "Buat Akun",
+    "auth.signUp.submitting": "Membuat Akun...",
+    "auth.signUp.haveAccount": "Sudah punya akun?",
+    "auth.signUp.signInLink": "Masuk",
+    "auth.signUp.errorGeneric": "Pendaftaran gagal. Silakan coba lagi.",
+    "auth.signUp.errorPasswordMismatch": "Kata sandi tidak cocok",
+    "auth.signUp.errorPasswordShort": "Kata sandi minimal 8 karakter",
+    "auth.signUp.errorNameShort": "Nama minimal 2 karakter",
+    "auth.signUp.errorEmailInvalid": "Masukkan alamat email yang valid",
+    "auth.signUp.success": "Akun berhasil dibuat!",
+    "auth.signUp.checkEmail": "Silakan periksa email Anda untuk verifikasi akun.",
+
+    "auth.checkEmail.title": "Periksa Email Anda",
+    "auth.checkEmail.subtitle": "Kami telah mengirimkan tautan verifikasi ke alamat email Anda",
+    "auth.checkEmail.body": "Klik tautan dalam email untuk menyelesaikan pendaftaran. Jika Anda tidak melihat email, periksa folder spam.",
+    "auth.checkEmail.backToSignIn": "Kembali ke Masuk",
+    "auth.checkEmail.resend": "Kirim Ulang Email",
+    "auth.checkEmail.resending": "Mengirim Ulang...",
+    "auth.checkEmail.resendSuccess": "Email berhasil dikirim!",
+    "auth.checkEmail.resendError": "Gagal mengirim ulang email. Silakan coba lagi.",
+
     "signup.title": "Gabung TPC",
     "signup.subtitle": "Komunitas trading profesional",
     "signup.referral": "Kode Referral",
     "signup.submit": "Buat Akun",
+
+    "faq.title": "Pertanyaan yang Sering Diajukan",
+    "faq.subtitle": "Jawaban transparan tentang Token TPC dan ekosistem Trader Professional Community.",
+    "faq.disclaimer": "Token TPC adalah utility token, bukan instrumen investasi. Partisipasi dilakukan secara sadar dan bertanggung jawab.",
+    "faq.backToHome": "Kembali ke Beranda",
+    "faq.viewDocs": "Lihat Dokumentasi",
+    "faq.joinCommunity": "Gabung Komunitas",
+
+    "faq.items": {
+      "what-is-tpc": {
+        "question": "Apa itu TPC?",
+        "answer": "TPC (Trader Professional Community) adalah komunitas global untuk trader disiplin. Kami fokus pada edukasi, pertumbuhan berbasis risiko, dan operasi transparan tanpa menjanjikan profit yang dijamin."
+      },
+      "what-is-tpc-token": {
+        "question": "Apa itu Token TPC?",
+        "answer": "Token TPC adalah utility token yang berfungsi sebagai hak akses dan partisipasi dalam ekosistem TPC. Token ini tidak dirancang sebagai instrumen investasi."
+      },
+      "why-tpc-sells-token": {
+        "question": "Mengapa TPC menjual token?",
+        "answer": "Penjualan token mendanai pengembangan komunitas, pemeliharaan platform, pembuatan konten edukasi, dan inisiatif pertumbuhan ekosistem. Semua penggunaan dana dilaporkan secara transparan."
+      },
+      "does-tpc-promise-profit": {
+        "question": "Apakah TPC menjanjikan profit?",
+        "answer": "Tidak. TPC tidak menjanjikan atau menjamin profit apa pun. Kami menyediakan edukasi, tools, dan dukungan komunitas. Trading selalu memiliki risiko, dan anggota berpartisipasi dengan risiko sendiri."
+      },
+      "tpc-token-usage": {
+        "question": "Token TPC digunakan untuk apa saja?",
+        "answer": "Token TPC memberikan akses ke konten edukasi premium, fitur komunitas, utilitas platform, dan hak partisipasi dalam keputusan tata kelola dalam ekosistem."
+      },
+      "token-value-source": {
+        "question": "Dari mana nilai Token TPC berasal?",
+        "answer": "Nilai token berasal dari utilitas dalam ekosistem, adopsi komunitas, dan penggunaan platform. Nilai tidak dijamin dan berfluktuasi berdasarkan dinamika pasar dan pertumbuhan ekosistem."
+      },
+      "is-tpc-safe": {
+        "question": "Apakah TPC aman?",
+        "answer": "TPC menerapkan praktik keamanan terbaik termasuk akses berbasis peran, audit trail, dan operasi transparan. Namun, seperti aktivitas trading lainnya, risiko ada dan anggota harus berpartisipasi secara bertanggung jawab."
+      },
+      "is-tpc-mlm": {
+        "question": "Apakah TPC skema MLM?",
+        "answer": "Tidak. TPC adalah komunitas edukatif, bukan skema multi-level marketing. Kami fokus pada edukasi trading dan pertumbuhan komunitas, bukan struktur kompensasi berbasis rekrutmen."
+      },
+      "token-circulation": {
+        "question": "Apakah token TPC langsung beredar semua?",
+        "answer": "Tidak. Distribusi token mengikuti jadwal terstruktur dengan periode vesting dan pelepasan bertahap untuk menjaga stabilitas ekosistem dan mencegah manipulasi pasar."
+      },
+      "must-buy-token": {
+        "question": "Apakah saya harus membeli token untuk ikut TPC?",
+        "answer": "Tidak. Keanggotaan komunitas dasar dan konten edukatif dapat diakses tanpa pembelian token. Token menyediakan akses yang ditingkatkan dan utilitas dalam ekosistem."
+      },
+      "who-should-join": {
+        "question": "Siapa yang cocok bergabung dengan TPC?",
+        "answer": "TPC cocok untuk trader disiplin yang menghargai edukasi, manajemen risiko, dan operasi transparan. Ideal untuk mereka yang mencari dukungan komunitas tanpa ekspektasi profit yang tidak realistis."
+      },
+      "long-term-vision": {
+        "question": "Apa visi jangka panjang TPC?",
+        "answer": "Membangun komunitas edukasi trader terpercaya dengan operasi transparan, sumber daya edukasi berkualitas, dan pertumbuhan ekosistem berkelanjutan berdasarkan nilai utilitas nyata."
+      }
+    },
 
     "system.maintenance.title": "Mode Pemeliharaan",
     "system.maintenance.subtitle": "Kami sedang meningkatkan sistem untuk pelayanan yang lebih baik.",
@@ -735,6 +930,7 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "admin.marketplace.editItem": "Edit Item",
     "admin.marketplace.itemDetails": "Detail Item",
     "admin.marketplace.basicInfo": "Informasi Dasar",
+    "admin.marketplace.itemTitle": "Judul",
     "admin.marketplace.slug": "Slug",
     "admin.marketplace.category": "Kategori",
     "admin.marketplace.price": "Harga",
@@ -834,10 +1030,10 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "dao.whatIsDAOLite": "Apa itu DAO Lite?",
     "dao.whatIsDAOLiteContent": "DAO Lite adalah sistem tata kelola sederhana yang memungkinkan member berpartisipasi dalam proposal, voting, dan pengawasan tanpa mekanisme on-chain yang kompleks.",
     "dao.howToParticipate": "Cara Berpartisipasi",
-    "dao.step1": "Langkah 1",
-    "dao.step2": "Langkah 2",
-    "dao.step3": "Langkah 3",
-    "dao.step4": "Langkah 4",
+    "dao.step1": "Pengajuan Proposal",
+    "dao.step2": "Diskusi Komunitas",
+    "dao.step3": "Periode Voting", 
+    "dao.step4": "Implementasi",
     "dao.rules": "Aturan Tata Kelola",
     "dao.rule1": "Partisipasi berbasis tanggung jawab komunitas.",
     "dao.rule2": "Semua proposal harus selaras dengan nilai edukasi TPC.",
@@ -863,13 +1059,18 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "transparency.subtitle": "Ekosistem terbuka, dapat diverifikasi, dan bertanggung jawab",
     "transparency.intro": "Transparansi adalah prinsip inti TPC. Kami membuka informasi tentang pengelolaan dana, wallet, dan struktur governance.",
     "transparency.sections.officialWallets.title": "Wallet Resmi",
+    "transparency.sections.officialWallets.desc": "Daftar wallet resmi TPC yang digunakan untuk treasury, operasional, dan aktivitas on-chain.",
     "transparency.sections.officialWallets.description": "Wallet ini digunakan untuk operasional, treasury, dan kebutuhan ekosistem. Alamat dipublikasikan untuk verifikasi publik.",
+    "transparency.sections.distribution.title": "Distribusi & Batch",
+    "transparency.sections.distribution.desc": "Catatan distribusi dana dan batch transaksi yang telah diproses.",
     "transparency.sections.fundFlow.title": "Alur Dana",
     "transparency.sections.fundFlow.description": "Pergerakan dana utama mengikuti aturan yang telah ditetapkan dan dicatat untuk akuntabilitas.",
     "transparency.sections.governance.title": "Governance",
     "transparency.sections.governance.description": "Keputusan penting diarahkan oleh proses governance yang transparan dan selaras dengan komunitas jangka panjang.",
     "transparency.sections.reporting.title": "Pelaporan",
     "transparency.sections.reporting.description": "Laporan berkala memberikan visibilitas terhadap kondisi treasury, pertumbuhan ekosistem, dan keberlanjutan platform.",
+    "transparency.sections.updates.title": "Update Transparansi",
+    "transparency.sections.updates.desc": "Aktivitas terbaru terkait buyback, burn, liquidity, dan operasional.",
     "transparency.notice": "Alamat wallet dan catatan disediakan hanya untuk tujuan transparansi dan audit.",
     "footer.links.home": "Beranda",
     "footer.links.community": "Komunitas",
@@ -880,6 +1081,24 @@ export const translations: Record<Language, Record<string, TranslationValue>> = 
     "footer.links.twitter": "X (Twitter)",
     "footer.links.youtube": "YouTube",
     "footer.links.support": "Bantuan",
+
+    // Community Fund
+    "fund.title": "Dukungan Pengembangan Komunitas",
+    "fund.description": "Member komunitas dapat secara sukarela berkontribusi untuk mendukung pengembangan ekosistem TPC.",
+    "fund.usage.title": "Penggunaan Kontribusi",
+    "fund.usage.items": "Pengembangan konten edukasi, Pemeliharaan dan peningkatan platform, Acara dan inisiatif komunitas, Penelitian dan pengembangan",
+    "fund.notice.title": "Pemberitahuan Penting",
+    "fund.notice.content": "Program ini BUKAN investasi. Kontribusi bersifat sukarela, tidak dapat dikembalikan, dan tidak memberikan hak kepemilikan, hak keuntungan, atau pengembalian finansial. Tidak ada jaminan apa pun.",
+    "fund.progress.title": "Progress Saat Ini",
+    "fund.progress.note": "Data progress hanya sampel dan akan diperbarui setelah peluncuran resmi.",
+
+    // News
+    "news.detail.notFound": "Artikel tidak ditemukan",
+    "news.detail.notFoundDesc": "Artikel yang kamu cari tidak ada atau telah dihapus.",
+    "news.detail.back": "Kembali ke Berita",
+    "news.detail.ctaTitle": "Tetap Update",
+    "news.detail.ctaDesc": "Dapatkan update dan pengumuman terbaru dari tim kami.",
+
     "footer.links.contact": "Kontak",
 
     // Marketplace verified gating

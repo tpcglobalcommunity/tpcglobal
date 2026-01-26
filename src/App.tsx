@@ -19,14 +19,15 @@ import Security from "./pages/Security";
 import Support from "./pages/Support";
 import Whitepaper from "./pages/Whitepaper";
 import Roadmap from "./pages/Roadmap";
-import Faq from "./pages/Faq";
+import FaqPage from "./pages/FaqPage";
 import MarketplaceList from "./pages/marketplace/MarketplaceList";
 import MarketplaceDetail from "./pages/marketplace/MarketplaceDetail";
 
-import SignUp from "./pages/auth/SignUp";
+import SignUpPage from "./pages/auth/SignUpPage";
 import SignIn from "./pages/auth/SignIn";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
+import CheckEmailPage from "./pages/auth/CheckEmailPage";
 
 import VerifyPage from "./pages/VerifyPage";
 import PublicProfilePage from "./pages/PublicProfilePage";
@@ -287,7 +288,7 @@ export default function App() {
       case "/roadmap":
         return <Roadmap lang={lang} />;
       case "/faq":
-        return <Faq lang={lang} />;
+        return <FaqPage lang={lang} />;
       case "/launch":
         return <LaunchChecklist lang={lang} />;
       case "/security":
@@ -300,7 +301,7 @@ export default function App() {
         return <MarketplaceList lang={lang} />;
 
       case "/signup":
-        return <SignUp />;
+        return <SignUpPage lang={lang} />;
       case "/signin":
         return <SignIn />;
       case "/admin/login":
@@ -309,6 +310,8 @@ export default function App() {
         return <ForgotPassword lang={lang} />;
       case "/reset":
         return <ResetPassword lang={lang} />;
+      case "/check-email":
+        return <CheckEmailPage lang={lang} />;
 
       // Verify
       case "/verify":
