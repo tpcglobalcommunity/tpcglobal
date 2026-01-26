@@ -25,6 +25,7 @@ import MarketplaceDetail from "./pages/marketplace/MarketplaceDetail";
 
 import SignUpPage from "./pages/auth/SignUpPage";
 import CheckEmailPage from "./pages/auth/CheckEmailPage";
+import MemberLogin from "./pages/member/MemberLogin";
 
 import VerifyPage from "./pages/VerifyPage";
 import PublicProfilePage from "./pages/PublicProfilePage";
@@ -314,6 +315,9 @@ export default function App() {
 
       case "/member/welcome":
         return <WelcomePage lang={lang} />;
+
+      case "/member/login":
+        return <MemberLogin lang={lang} />;
 
       case "/member/dashboard":
         return (
