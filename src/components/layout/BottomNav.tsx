@@ -1,64 +1,45 @@
-import { NavLink, useLocation } from 'react-router-dom'
-import { Home, Info, CreditCard, ShieldCheck, LogIn } from 'lucide-react'
+import { Link, useLocation } from "react-router-dom";
+import { useI18n } from "@/i18n/i18n";
+import { Home, Shield, BarChart3, User } from "lucide-react";
 
-export default function BottomNav() {
-  const location = useLocation()
-  const currentLang = location.pathname.startsWith('/en') ? '/en' : '/id'
+const navItems = [
+  { key: "nav.home", path: "/", icon: Home },
+  { key: "nav.verified", path: "/verified", icon: Shield },
+  { key: "nav.presaleStats", path: "/presale-stats", icon: BarChart3 },
+  { key: "nav.login", path: "/login", icon: User },
+];
 
-  const navItems = [
-    {
-      label: 'Home',
-      icon: Home,
-      path: currentLang
-    },
-    {
-      label: 'About',
-      icon: Info,
-      path: '/about'
-    },
-    {
-      label: 'BuyTPC',
-      icon: CreditCard,
-      path: '/buy'
-    },
-    {
-      label: 'Transparency',
-      icon: ShieldCheck,
-      path: '/transparency'
-    },
-    {
-      label: 'Login',
-      icon: LogIn,
-      path: '/login'
-    }
-  ]
+export const BottomNav = () => {
+  const { t, lang, withLang } = useI18n();
+  const location = useLocation();
+
+  const isActive = (path: string) => {
+    const currentPath = location.pathname.replace(`/${lang}`, "") || "/";
+    return currentPath === path;
+  };
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-50 bg-black/80 border-t border-white/10 backdrop-blur">
-      <div className="flex justify-around items-center h-20">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-lg border-t border-border lg:hidden pb-safe">
+      <div className="grid grid-cols-4 h-16">
         {navItems.map((item) => {
-          const Icon = item.icon
+          const Icon = item.icon;
+          const active = isActive(item.path);
           return (
-            <NavLink
-              key={item.label}
-              to={item.path}
-              className={({ isActive }) => `
-                flex flex-col items-center justify-center flex-1 py-2 px-1 transition-colors
-                ${isActive 
-                  ? 'text-yellow-400' 
-                  : 'text-gray-400 hover:text-white'
-                }
-              `}
+            <Link
+              key={item.path}
+              to={withLang(item.path)}
+              className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+                active ? "text-primary" : "text-muted-foreground"
+              }`}
             >
-              <Icon size={20} className="mb-1" />
-              <span className="text-xs font-medium">{item.label}</span>
-              {location.pathname === item.path && (
-                <div className="w-1 h-1 bg-yellow-400 rounded-full mt-1" />
-              )}
-            </NavLink>
-          )
+              <Icon className={`h-5 w-5 ${active ? "text-primary" : ""}`} />
+              <span className="text-[10px] font-medium truncate max-w-[60px]">
+                {t(item.key)}
+              </span>
+            </Link>
+          );
         })}
       </div>
     </nav>
-  )
-}
+  );
+};

@@ -1,5 +1,213 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-body {
-  @apply bg-black text-white min-h-screen;
+/* TPC Global Premium Dark + Gold Design System */
+
+@layer base {
+  :root {
+    /* Dark Background System */
+    --background: 220 20% 6%;
+    --foreground: 45 10% 95%;
+    
+    /* Surface Layers */
+    --card: 220 18% 10%;
+    --card-foreground: 45 10% 95%;
+    
+    --popover: 220 18% 12%;
+    --popover-foreground: 45 10% 95%;
+    
+    /* Gold Accent System */
+    --primary: 45 80% 55%;
+    --primary-foreground: 220 20% 8%;
+    
+    /* Secondary - Muted Gold */
+    --secondary: 220 15% 16%;
+    --secondary-foreground: 45 50% 70%;
+    
+    /* Muted Surface */
+    --muted: 220 15% 14%;
+    --muted-foreground: 220 10% 55%;
+    
+    /* Accent - Bright Gold */
+    --accent: 45 90% 50%;
+    --accent-foreground: 220 20% 8%;
+    
+    /* Status Colors */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 38 92% 50%;
+    --warning-foreground: 220 20% 8%;
+    
+    /* Border & Input */
+    --border: 220 15% 20%;
+    --input: 220 15% 18%;
+    --ring: 45 80% 55%;
+    
+    --radius: 0.625rem;
+    
+    /* Sidebar - Admin */
+    --sidebar-background: 220 18% 8%;
+    --sidebar-foreground: 45 10% 90%;
+    --sidebar-primary: 45 80% 55%;
+    --sidebar-primary-foreground: 220 20% 8%;
+    --sidebar-accent: 220 15% 14%;
+    --sidebar-accent-foreground: 45 50% 70%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 45 80% 55%;
+    
+    /* Custom Gold Gradients */
+    --gradient-gold: linear-gradient(135deg, hsl(45, 80%, 55%) 0%, hsl(38, 90%, 45%) 100%);
+    --gradient-gold-subtle: linear-gradient(135deg, hsl(45, 60%, 50%) 0%, hsl(35, 70%, 40%) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(220, 20%, 8%) 0%, hsl(220, 20%, 4%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(220, 18%, 12%) 0%, hsl(220, 18%, 8%) 100%);
+    
+    /* Shadows */
+    --shadow-gold: 0 4px 20px -4px hsla(45, 80%, 55%, 0.25);
+    --shadow-gold-lg: 0 8px 40px -8px hsla(45, 80%, 55%, 0.35);
+    --shadow-dark: 0 4px 20px -4px hsla(0, 0%, 0%, 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    background: linear-gradient(180deg, hsl(220, 20%, 6%) 0%, hsl(220, 20%, 4%) 100%);
+    min-height: 100vh;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(220, 18%, 10%);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(220, 15%, 25%);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(45, 60%, 45%);
+  }
+}
+
+@layer components {
+  /* Gold gradient text */
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(45, 80%, 60%) 0%, hsl(38, 90%, 50%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Glass card effect */
+  .glass-card {
+    background: hsla(220, 18%, 12%, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsla(220, 15%, 25%, 0.5);
+  }
+  
+  /* Gold border glow */
+  .border-glow-gold {
+    box-shadow: 0 0 0 1px hsla(45, 80%, 55%, 0.3), 0 0 20px -5px hsla(45, 80%, 55%, 0.2);
+  }
+  
+  /* Premium card hover */
+  .card-premium {
+    @apply bg-card border border-border rounded-lg transition-all duration-300;
+  }
+  
+  .card-premium:hover {
+    border-color: hsla(45, 80%, 55%, 0.4);
+    box-shadow: 0 0 30px -10px hsla(45, 80%, 55%, 0.2);
+  }
+  
+  /* Gold button hover effect */
+  .btn-gold-glow:hover {
+    box-shadow: 0 0 30px -5px hsla(45, 80%, 55%, 0.5);
+  }
+  
+  /* Status badges */
+  .badge-success {
+    @apply bg-success/20 text-success border border-success/30;
+  }
+  
+  .badge-warning {
+    @apply bg-warning/20 text-warning border border-warning/30;
+  }
+  
+  .badge-danger {
+    @apply bg-destructive/20 text-destructive border border-destructive/30;
+  }
+  
+  .badge-pending {
+    @apply bg-muted text-muted-foreground border border-border;
+  }
+  
+  /* Mobile bottom nav safe area */
+  .pb-safe {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  
+  /* Shimmer animation */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      hsla(45, 80%, 55%, 0) 0%,
+      hsla(45, 80%, 55%, 0.1) 50%,
+      hsla(45, 80%, 55%, 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+  
+  /* Fade in animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  /* Pulse gold */
+  @keyframes pulseGold {
+    0%, 100% { box-shadow: 0 0 0 0 hsla(45, 80%, 55%, 0.4); }
+    50% { box-shadow: 0 0 0 8px hsla(45, 80%, 55%, 0); }
+  }
+  
+  .animate-pulse-gold {
+    animation: pulseGold 2s infinite;
+  }
+}
+
+/* Mobile-first responsive utilities */
+@layer utilities {
+  .container-app {
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .section-spacing {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
 }
