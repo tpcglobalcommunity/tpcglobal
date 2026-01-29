@@ -32,7 +32,7 @@ export function OfficialWalletsCard() {
     }
 
     return (
-      <div className={`p-4 rounded-lg border ${isPayment ? 'border-gold bg-gold/5' : 'border-border bg-surface/50'}`}>
+      <div className={`p-4 rounded-lg border ${isPayment ? 'border-gold bg-gold/5' : 'border-white/20 bg-white/5'}`}>
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
@@ -43,17 +43,17 @@ export function OfficialWalletsCard() {
                 </Badge>
               )}
             </div>
-            <p className="text-sm text-text-secondary mb-2">{wallet.purpose || 'No purpose specified'}</p>
+            <p className="text-sm text-white/60 mb-2">{wallet.purpose || 'No purpose specified'}</p>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-text-secondary">Full:</span>
-                <code className="text-xs bg-surface px-2 py-1 rounded text-text-secondary break-all">
+                <span className="text-xs text-white/60">Full:</span>
+                <code className="text-xs bg-black/30 px-2 py-1 rounded text-white/80 break-all">
                   {wallet.address}
                 </code>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-text-secondary">Short:</span>
-                <code className="text-xs bg-surface px-2 py-1 rounded text-mono">
+                <span className="text-xs text-white/60">Short:</span>
+                <code className="text-xs bg-black/30 px-2 py-1 rounded text-mono text-white">
                   {formatWalletAddress(wallet.address)}
                 </code>
               </div>
