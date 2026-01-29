@@ -4,7 +4,7 @@ import { paymentWallets, transparencyWallets, getExplorerUrl } from '../../confi
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../components/ui/Accordion';
-import { Copy, ExternalLink, AlertTriangle } from 'lucide-react';
+import { Copy, ExternalLink, AlertTriangle, Shield, Check } from 'lucide-react';
 import { WalletVerifyModal } from '../../components/security/WalletVerifyModal';
 
 interface WalletCardProps {
@@ -117,9 +117,21 @@ export function VerifiedPage() {
           <h1 className="text-3xl font-bold text-gold mb-4">
             {t('verified.title')}
           </h1>
-          <p className="text-white/60 max-w-2xl mx-auto">
+          <p className="text-white/60 max-w-2xl mx-auto mb-6">
             Gunakan hanya dompet resmi di bawah ini untuk menghindari penipuan.
           </p>
+          
+          {/* Trust Chips */}
+          <div className="flex items-center justify-center gap-4 flex-wrap">
+            <div className="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
+              <Shield className="h-4 w-4 text-success" />
+              <span className="text-xs text-white/80">Domain resmi: tpcglobal.io</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
+              <Check className="h-4 w-4 text-success" />
+              <span className="text-xs text-white/80">Verifikasi: cocokkan 6 awal & 6 akhir</span>
+            </div>
+          </div>
         </div>
 
         {/* Payment Wallet Section */}
@@ -160,8 +172,8 @@ export function VerifiedPage() {
           </div>
         )}
 
-        {/* Anti-Scam Warning */}
-        <div className="rounded-2xl border border-warning/40 bg-warning/10 p-6">
+        {/* Single Important Warning */}
+        <div className="rounded-2xl border border-warning/40 bg-warning/10 p-5">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-full bg-warning/20 flex items-center justify-center flex-shrink-0">
               <AlertTriangle className="w-6 h-6 text-warning" />
@@ -198,7 +210,7 @@ export function VerifiedPage() {
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="rounded-xl bg-white/5 border border-white/10 overflow-hidden"
+                className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden"
               >
                 <AccordionTrigger className="flex justify-between items-center p-4 hover:bg-white/8 transition-colors">
                   <span className="text-white font-medium">{item.q}</span>
