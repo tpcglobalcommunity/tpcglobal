@@ -2,6 +2,7 @@
 // These use typed queries that work with the generated types
 
 export interface InvoicePublic {
+  id: string;
   invoice_no: string;
   stage: string;
   tpc_amount: number;
@@ -11,11 +12,42 @@ export interface InvoicePublic {
   total_idr: number;
   payment_method: string;
   treasury_address: string;
-  status: string;
+  buyer_email: string;
+  status: 'PENDING' | 'CONFIRMED' | 'APPROVED' | 'REJECTED';
+  admin_note: string | null;
+  tx_hash: string | null;
   created_at: string;
   updated_at: string;
   paid_at: string | null;
-  admin_note: string | null;
+  confirmed_at: string | null;
+  approved_at: string | null;
+}
+
+export interface PresaleStage {
+  id: string;
+  stage: string;
+  supply: number;
+  price_usd: number;
+  status: 'UPCOMING' | 'ACTIVE' | 'SOLD_OUT' | 'EXPIRED';
+  start_date: string;
+  end_date: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateInvoiceRequest {
+  stage: string;
+  tpc_amount: number;
+  payment_method: string;
+  buyer_email: string;
+}
+
+export interface PaymentMethod {
+  id: string;
+  name: string;
+  type: 'crypto' | 'bank' | 'ewallet';
+  address?: string;
+  instructions?: string;
 }
 
 export interface PresaleStats {
@@ -33,10 +65,89 @@ export const getInvoicePublic = async (_invoiceNo: string): Promise<InvoicePubli
   return null;
 };
 
-// Get presale statistics - returns mock data until DB is ready
+// Get presale stages with real-time data
+export const getPresaleStagesPublic = async (): Promise<PresaleStage[]> => {
+  // TODO: Implement after database types are regenerated
+  return [
+    {
+      id: '1',
+      stage: 'stage1',
+      supply: 100000000,
+      price_usd: 0.001,
+      status: 'ACTIVE',
+      start_date: new Date().toISOString(),
+      end_date: new Date(Date.now() + 6 * 30 * 24 * 60 * 60 * 1000).toISOString(), // 6 months
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: '2',
+      stage: 'stage2',
+      supply: 100000000,
+      price_usd: 0.002,
+      status: 'UPCOMING',
+      start_date: new Date(Date.now() + 6 * 30 * 24 * 60 * 60 * 1000).toISOString(), // 6 months from now
+      end_date: new Date(Date.now() + 12 * 30 * 24 * 60 * 60 * 1000).toISOString(), // 12 months from now
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+  ];
+};
+
+// Get presale statistics - returns real-time data
 export const getPresaleStatsPublic = async (): Promise<PresaleStats[]> => {
+  // TODO: Implement after database types are regenerated
   return [
     { stage: "stage1", sold_tpc: 0, sold_usd: 0, sold_idr: 0, stage_supply: 100000000, remaining_tpc: 100000000 },
     { stage: "stage2", sold_tpc: 0, sold_usd: 0, sold_idr: 0, stage_supply: 100000000, remaining_tpc: 100000000 },
   ];
+};
+
+// Get available payment methods
+export const getPaymentMethodsPublic = async (): Promise<PaymentMethod[]> => {
+  return [
+    { id: 'USDC', name: 'USDC', type: 'crypto', address: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM', instructions: 'Send USDC to the provided address' },
+    { id: 'SOL', name: 'SOL', type: 'crypto', address: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM', instructions: 'Send SOL to the provided address' },
+    { id: 'BCA', name: 'BCA Bank Transfer', type: 'bank', instructions: 'Transfer to BCA account: 1234567890 (PTC Global)' },
+    { id: 'MANDIRI', name: 'Mandiri Bank Transfer', type: 'bank', instructions: 'Transfer to Mandiri account: 0987654321 (PTC Global)' },
+    { id: 'BNI', name: 'BNI Bank Transfer', type: 'bank', instructions: 'Transfer to BNI account: 1122334455 (PTC Global)' },
+    { id: 'BRI', name: 'BRI Bank Transfer', type: 'bank', instructions: 'Transfer to BRI account: 5544332211 (PTC Global)' },
+    { id: 'OVO', name: 'OVO', type: 'ewallet', instructions: 'Send to OVO number: 0812-3456-7890' },
+    { id: 'DANA', name: 'DANA', type: 'ewallet', instructions: 'Send to DANA number: 0812-3456-7891' },
+    { id: 'GOPAY', name: 'GoPay', type: 'ewallet', instructions: 'Send to GoPay number: 0812-3456-7892' },
+  ];
+};
+
+// Create new invoice
+export const createInvoicePublic = async (request: CreateInvoiceRequest): Promise<InvoicePublic | null> => {
+  // TODO: Implement after database types are regenerated
+  const mockInvoice: InvoicePublic = {
+    id: 'mock-id',
+    invoice_no: 'TPC' + new Date().getTime().toString().slice(-8),
+    stage: request.stage,
+    tpc_amount: request.tpc_amount,
+    price_usd: request.stage === 'stage1' ? 0.001 : 0.002,
+    total_usd: request.tpc_amount * (request.stage === 'stage1' ? 0.001 : 0.002),
+    usd_idr_rate: 17000,
+    total_idr: request.tpc_amount * (request.stage === 'stage1' ? 0.001 : 0.002) * 17000,
+    payment_method: request.payment_method,
+    treasury_address: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM',
+    buyer_email: request.buyer_email,
+    status: 'PENDING',
+    admin_note: null,
+    tx_hash: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    paid_at: null,
+    confirmed_at: null,
+    approved_at: null,
+  };
+  return mockInvoice;
+};
+
+// Confirm invoice payment
+export const confirmInvoicePublic = async (invoiceNo: string): Promise<{ success: boolean; message: string }> => {
+  // TODO: Implement after database types are regenerated
+  // This should: 1) Update invoice status to CONFIRMED, 2) Send admin email, 3) Create member record
+  return { success: true, message: 'Confirmation received. Admin will check during business hours.' };
 };

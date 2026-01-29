@@ -11,10 +11,13 @@ import HomePage from "@/pages/public/HomePage";
 import VerifiedPage from "@/pages/public/VerifiedPage";
 import TransparencyPage from "@/pages/public/TransparencyPage";
 import PresaleStatsPage from "@/pages/public/PresaleStatsPage";
+import BuyTpcPage from "@/pages/public/BuyTpcPage";
+import InvoiceDetailPage from "@/pages/public/InvoiceDetailPage";
 import ComingSoonPage from "@/pages/public/ComingSoonPage";
 
 // Auth Pages
 import LoginPage from "@/pages/auth/LoginPage";
+import AdminInvoicesPage from "@/pages/admin/AdminInvoicesPage";
 
 import NotFound from "@/pages/NotFound";
 
@@ -30,6 +33,8 @@ const LangRoutes = () => (
         <Route path="/verified" element={<VerifiedPage />} />
         <Route path="/transparency" element={<TransparencyPage />} />
         <Route path="/presale-stats" element={<PresaleStatsPage />} />
+        <Route path="/buytpc" element={<BuyTpcPage />} />
+        <Route path="/invoice/:invoice_no" element={<InvoiceDetailPage />} />
         <Route path="/whitepaper" element={<ComingSoonPage titleKey="whitepaper.title" />} />
         <Route path="/roadmap" element={<ComingSoonPage titleKey="roadmap.title" />} />
         <Route path="/terms" element={<ComingSoonPage titleKey="terms.title" />} />
@@ -54,8 +59,8 @@ const LangRoutes = () => (
         <Route path="/dashboard" element={<ComingSoonPage titleKey="dashboard.title" />} />
         
         {/* Admin Routes */}
-        <Route path="/admin" element={<ComingSoonPage titleKey="admin.title" />} />
-        <Route path="/admin/invoices" element={<ComingSoonPage titleKey="admin.invoicesTitle" />} />
+        <Route path="/admin" element={<AdminInvoicesPage />} />
+        <Route path="/admin/invoices" element={<AdminInvoicesPage />} />
         <Route path="/admin/settings" element={<ComingSoonPage titleKey="admin.settingsTitle" />} />
         
         <Route path="*" element={<NotFound />} />

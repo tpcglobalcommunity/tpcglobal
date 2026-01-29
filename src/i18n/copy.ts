@@ -29,6 +29,7 @@ export const copy = {
       verified: "Terverifikasi",
       transparency: "Transparansi",
       presaleStats: "Statistik Presale",
+      buyTpc: "Beli TPC",
       whitepaper: "Whitepaper",
       roadmap: "Roadmap",
       dao: "DAO",
@@ -151,6 +152,99 @@ export const copy = {
       progressTitle: "Progress Penjualan",
       pricingTitle: "Harga per Stage",
       dexReference: "Referensi DEX",
+    },
+    
+    // Buy TPC
+    buyTpc: {
+      title: "Beli TPC",
+      subtitle: "Bergabung dengan presale TPC Global",
+      stage1: {
+        title: "Stage 1",
+        supply: "Supply",
+        price: "Harga",
+        sold: "Terjual",
+        remaining: "Tersisa",
+        countdown: "Hitung Mundur",
+        status: {
+          active: "AKTIF",
+          soldOut: "HABIS",
+          expired: "KADALUARSA",
+          upcoming: "AKAN DATANG"
+        }
+      },
+      stage2: {
+        title: "Stage 2",
+        supply: "Supply",
+        price: "Harga",
+        sold: "Terjual",
+        remaining: "Tersisa",
+        countdown: "Hitung Mundur",
+        status: {
+          active: "AKTIF",
+          soldOut: "HABIS",
+          expired: "KADALUARSA",
+          upcoming: "AKAN DATANG"
+        }
+      },
+      dexPlan: {
+        title: "Rencana DEX",
+        subtitle: "Perencanaan listing harga",
+        plannedPrice: "Harga direncanakan",
+        disclaimer: "Bukan jaminan harga"
+      },
+      purchase: {
+        title: "Form Pembelian",
+        tpcAmount: "Jumlah TPC",
+        totalUsdc: "Total USDC",
+        totalIdr: "Total IDR",
+        paymentMethod: "Metode Pembayaran",
+        selectPayment: "Pilih metode pembayaran",
+        terms: "Saya menyetujui Syarat & Ketentuan",
+        readTerms: "Baca Syarat & Ketentuan",
+        buyButton: "Beli TPC",
+        termsRequired: "Anda harus menyetujui syarat & ketentuan"
+      },
+      paymentMethods: {
+        USDC: "USDC",
+        SOL: "SOL",
+        BCA: "BCA Bank Transfer",
+        MANDIRI: "Mandiri Bank Transfer",
+        BNI: "BNI Bank Transfer",
+        BRI: "BRI Bank Transfer",
+        OVO: "OVO",
+        DANA: "DANA",
+        GOPAY: "GoPay"
+      }
+    },
+    
+    // Invoice
+    invoice: {
+      title: "Detail Invoice",
+      invoiceNo: "No. Invoice",
+      stage: "Stage",
+      tpcAmount: "Jumlah TPC",
+      priceUsd: "Harga USD",
+      totalUsd: "Total USD",
+      totalIdr: "Total IDR",
+      paymentMethod: "Metode Pembayaran",
+      treasuryAddress: "Alamat Treasury",
+      status: "Status",
+      buyerEmail: "Email Pembeli",
+      createdAt: "Dibuat",
+      paidAt: "Dibayar",
+      confirmedAt: "Dikonfirmasi",
+      approvedAt: "Disetujui",
+      adminNote: "Catatan Admin",
+      txHash: "Transaction Hash",
+      confirmPayment: "Konfirmasi Pembayaran",
+      confirmSuccess: "Konfirmasi diterima. Admin akan memeriksa saat jam kerja.",
+      confirmError: "Gagal mengkonfirmasi pembayaran. Silakan coba lagi.",
+      statuses: {
+        PENDING: "MENUNGGU",
+        CONFIRMED: "DIKONFIRMASI",
+        APPROVED: "DISETUJUI",
+        REJECTED: "DITOLAK"
+      }
     },
     
     // Whitepaper
@@ -487,6 +581,99 @@ export const copy = {
       progressTitle: "Sales Progress",
       pricingTitle: "Price per Stage",
       dexReference: "DEX Reference",
+    },
+    
+    // Buy TPC
+    buyTpc: {
+      title: "Buy TPC",
+      subtitle: "Join the TPC Global presale",
+      stage1: {
+        title: "Stage 1",
+        supply: "Supply",
+        price: "Price",
+        sold: "Sold",
+        remaining: "Remaining",
+        countdown: "Countdown",
+        status: {
+          active: "ACTIVE",
+          soldOut: "SOLD OUT",
+          expired: "EXPIRED",
+          upcoming: "UPCOMING"
+        }
+      },
+      stage2: {
+        title: "Stage 2",
+        supply: "Supply",
+        price: "Price",
+        sold: "Sold",
+        remaining: "Remaining",
+        countdown: "Countdown",
+        status: {
+          active: "ACTIVE",
+          soldOut: "SOLD OUT",
+          expired: "EXPIRED",
+          upcoming: "UPCOMING"
+        }
+      },
+      dexPlan: {
+        title: "DEX Plan",
+        subtitle: "Planned listing price",
+        plannedPrice: "Planned price",
+        disclaimer: "Not a price guarantee"
+      },
+      purchase: {
+        title: "Purchase Form",
+        tpcAmount: "TPC Amount",
+        totalUsdc: "Total USDC",
+        totalIdr: "Total IDR",
+        paymentMethod: "Payment Method",
+        selectPayment: "Select payment method",
+        terms: "I agree to the Terms & Conditions",
+        readTerms: "Read Terms & Conditions",
+        buyButton: "Buy TPC",
+        termsRequired: "You must agree to the terms and conditions"
+      },
+      paymentMethods: {
+        USDC: "USDC",
+        SOL: "SOL",
+        BCA: "BCA Bank Transfer",
+        MANDIRI: "Mandiri Bank Transfer",
+        BNI: "BNI Bank Transfer",
+        BRI: "BRI Bank Transfer",
+        OVO: "OVO",
+        DANA: "DANA",
+        GOPAY: "GoPay"
+      }
+    },
+    
+    // Invoice
+    invoice: {
+      title: "Invoice Details",
+      invoiceNo: "Invoice No.",
+      stage: "Stage",
+      tpcAmount: "TPC Amount",
+      priceUsd: "Price USD",
+      totalUsd: "Total USD",
+      totalIdr: "Total IDR",
+      paymentMethod: "Payment Method",
+      treasuryAddress: "Treasury Address",
+      status: "Status",
+      buyerEmail: "Buyer Email",
+      createdAt: "Created",
+      paidAt: "Paid",
+      confirmedAt: "Confirmed",
+      approvedAt: "Approved",
+      adminNote: "Admin Note",
+      txHash: "Transaction Hash",
+      confirmPayment: "Confirm Payment",
+      confirmSuccess: "Confirmation received. Admin will check during business hours.",
+      confirmError: "Failed to confirm payment. Please try again.",
+      statuses: {
+        PENDING: "PENDING",
+        CONFIRMED: "CONFIRMED",
+        APPROVED: "APPROVED",
+        REJECTED: "REJECTED"
+      }
     },
     
     // Whitepaper

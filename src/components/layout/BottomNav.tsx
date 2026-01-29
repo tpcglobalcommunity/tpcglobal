@@ -1,11 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
-import { Home, Shield, BarChart3, User } from "lucide-react";
+import { Home, Shield, BarChart3, ShoppingCart, User } from "lucide-react";
 
 const navItems = [
   { key: "nav.home", path: "/", icon: Home },
   { key: "nav.verified", path: "/verified", icon: Shield },
   { key: "nav.presaleStats", path: "/presale-stats", icon: BarChart3 },
+  { key: "nav.buyTpc", path: "/buytpc", icon: ShoppingCart },
   { key: "nav.login", path: "/login", icon: User },
 ];
 
@@ -20,7 +21,7 @@ export const BottomNav = () => {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-lg border-t border-border lg:hidden pb-safe">
-      <div className="grid grid-cols-4 h-16">
+      <div className="grid grid-cols-5 h-16">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);

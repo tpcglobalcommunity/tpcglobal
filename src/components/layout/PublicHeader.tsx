@@ -9,6 +9,7 @@ const navItems = [
   { key: "nav.verified", path: "/verified" },
   { key: "nav.transparency", path: "/transparency" },
   { key: "nav.presaleStats", path: "/presale-stats" },
+  { key: "nav.buyTpc", path: "/buytpc" },
   { key: "nav.whitepaper", path: "/whitepaper" },
   { key: "nav.dao", path: "/dao" },
   { key: "nav.faq", path: "/faq" },
