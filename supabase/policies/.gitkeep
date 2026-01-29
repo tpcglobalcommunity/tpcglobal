@@ -1,2 +1,0 @@
-# This file ensures the policies directory structure is tracked in git
-# Policy files are versioned and applied through migrations

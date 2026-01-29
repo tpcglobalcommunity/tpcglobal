@@ -1,2 +1,0 @@
-# This file ensures the migrations directory structure is tracked in git
-# Migration files are versioned and applied in order
