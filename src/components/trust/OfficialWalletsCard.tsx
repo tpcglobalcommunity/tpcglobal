@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { Copy, ExternalLink } from 'lucide-react';
-import { paymentWallets, transparencyWallets, formatWalletAddress, getExplorerUrl } from '../../config/tpcWallets';
+import { paymentWallets, transparencyWallets, getExplorerUrl } from '../../config/tpcWallets';
 import { useI18n } from '../../hooks/useI18n';
 import { WalletVerifyModal } from '../security/WalletVerifyModal';
 
@@ -39,42 +39,46 @@ export function OfficialWalletsCard() {
     }
 
     return (
-      <div className={`p-4 rounded-lg border ${isPayment ? 'border-gold bg-gold/5' : 'border-white/20 bg-white/5'}`}>
+      <div className={`p-4 rounded-lg border ${isPayment ? 'border-gold bg-gold/5' : 'border-white/10 bg-white/5'}`}>
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
               <h4 className="font-semibold text-white">{wallet.label || 'Unknown Wallet'}</h4>
               {isPayment && (
-                <Badge variant="gold" className="text-xs">
-                  {t('verified.paymentWallet')}
-                </Badge>
+                <>
+                  <Badge variant="gold" className="text-xs">
+                    {t('verified.paymentWallet')}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs border-gold text-gold">
+                    {t('verified.official')}
+                  </Badge>
+                </>
               )}
             </div>
-            <p className="text-sm text-white/60 mb-2">{wallet.purpose || 'No purpose specified'}</p>
+            <p className="text-sm text-white/60 mb-3">{wallet.purpose || 'No purpose specified'}</p>
             
-            {/* Checksum-style display */}
+            {/* Address Fingerprint - Fast Human Verification */}
             <div className="p-3 bg-black/30 border border-white/10 rounded-lg mb-3">
               <p className="text-xs text-white/60 mb-1">{t('antiScam.walletGuard.verifyByMatching')}</p>
-              <code className="text-lg font-mono text-white text-center break-all">
-                {formatWalletAddress(wallet.address)}
+              <code className="text-xl font-mono text-white text-center block break-all">
+                {wallet.address.slice(0, 6)}…{wallet.address.slice(-4)}
               </code>
             </div>
             
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-white/60">Full:</span>
-                <code className="text-xs bg-black/30 px-2 py-1 rounded text-white/80 break-all">
-                  {wallet.address}
-                </code>
-              </div>
+            {/* Full Address */}
+            <div className="p-3 bg-black/20 border border-white/5 rounded-lg">
+              <p className="text-xs text-white/60 mb-1">Full Address:</p>
+              <code className="text-xs text-white/80 break-all font-mono">
+                {wallet.address}
+              </code>
             </div>
           </div>
-          <div className="flex flex-col gap-2 flex-shrink-0">
+          <div className="flex flex-col gap-2 flex-shrink-0 min-w-[110px]">
             <Button
               size="sm"
               variant="outline"
               onClick={() => handleVerifyModal(wallet, isPayment)}
-              className="min-w-[100px]"
+              className="w-full"
             >
               <Copy className="h-3 w-3 mr-1" />
               {t('common.copy')}
@@ -83,7 +87,7 @@ export function OfficialWalletsCard() {
               size="sm"
               variant="ghost"
               onClick={() => window.open(getExplorerUrl(wallet.address), '_blank')}
-              className="min-w-[100px]"
+              className="w-full"
             >
               <ExternalLink className="h-3 w-3 mr-1" />
               {t('common.openExplorer')}
@@ -153,15 +157,6 @@ export function OfficialWalletsCard() {
             </p>
           </div>
         </div>
-
-        {/* Debug Info for Development */}
-        {typeof window !== 'undefined' && window.location.hostname === 'localhost' && (
-          <div className="mt-4 p-3 bg-surface/50 border border-border rounded-lg">
-            <p className="text-xs text-text-secondary">
-              Debug: {paymentWallets?.length || 0} payment wallets, {transparencyWallets?.length || 0} transparency wallets
-            </p>
-          </div>
-        )}
         
         <div className="mt-6 p-4 bg-warning/10 border border-warning rounded-lg">
           <p className="text-sm text-warning font-medium">

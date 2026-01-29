@@ -88,6 +88,7 @@ export const copy = {
       subtitle: 'HANYA gunakan dompet resmi ini untuk menghindari penipuan',
       paymentWallet: 'Dompet Pembayaran',
       transparencyWallets: 'Dompet Transparansi',
+      official: 'TERVERIFIKASI',
       warning: 'PERINGATAN PENTING',
       warningText: 'JANGAN PERNAH mengirim ke dompet lain. Semua transaksi hanya melalui dompet resmi yang tercantum di halaman ini.',
       antiScamFaq: {
@@ -266,6 +267,7 @@ export const copy = {
       subtitle: 'ONLY use these official wallets to avoid scams',
       paymentWallet: 'Payment Wallet',
       transparencyWallets: 'Transparency Wallets',
+      official: 'VERIFIED',
       warning: 'IMPORTANT WARNING',
       warningText: 'NEVER send to other wallets. All transactions only through official wallets listed on this page.',
       antiScamFaq: {
