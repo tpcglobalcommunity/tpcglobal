@@ -56,7 +56,7 @@ export function WalletCard({ address, label, purpose, isPayment = false }: Walle
               size="sm"
               variant="outline"
               onClick={handleVerifyModal}
-              className="border-white/15 bg-transparent hover:bg-white/10 text-white hover:text-white"
+              className="bg-transparent border border-white/15 text-white hover:bg-white/10"
             >
               <Copy className="h-4 w-4" />
               <span className="hidden sm:inline ml-1">{t('common.copy')}</span>
@@ -65,7 +65,7 @@ export function WalletCard({ address, label, purpose, isPayment = false }: Walle
               size="sm"
               variant="ghost"
               onClick={() => window.open(getExplorerUrl(address), '_blank')}
-              className="hover:bg-white/10 text-white"
+              className="text-white hover:bg-white/10"
             >
               <ExternalLink className="h-4 w-4" />
               <span className="hidden sm:inline ml-1">{t('common.openExplorer')}</span>
@@ -78,18 +78,21 @@ export function WalletCard({ address, label, purpose, isPayment = false }: Walle
           {/* Purpose */}
           <p className="text-sm text-white/60">{purpose}</p>
           
-          {/* Address Fingerprint */}
-          <div className="text-center">
-            <code className="font-mono text-base sm:text-lg text-white tracking-wide block break-all">
-              {address.slice(0, 6)}…{address.slice(-4)}
-            </code>
-          </div>
-          
-          {/* Full Address */}
-          <div className="flex justify-center">
-            <code className="font-mono text-xs text-white/80 break-all bg-black/30 border border-white/10 rounded-lg px-3 py-2">
-              {address}
-            </code>
+          {/* Address */}
+          <div className="space-y-3">
+            {/* Fingerprint */}
+            <div className="text-center">
+              <code className="font-mono text-base sm:text-lg text-white tracking-wide block break-all">
+                {address.slice(0, 6)}…{address.slice(-4)}
+              </code>
+            </div>
+            
+            {/* Full Address Premium Pill */}
+            <div className="flex justify-center">
+              <code className="mt-2 font-mono text-xs text-white/80 break-all bg-black/30 border border-white/10 rounded-lg px-3 py-2">
+                {address}
+              </code>
+            </div>
           </div>
         </div>
       </div>

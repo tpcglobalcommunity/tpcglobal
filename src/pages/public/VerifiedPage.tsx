@@ -2,6 +2,7 @@ import { useI18n } from '../../hooks/useI18n';
 import { OfficialWalletsCard } from '../../components/trust/OfficialWalletsCard';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../components/ui/Accordion';
 import { AlertTriangle } from 'lucide-react';
+import { Button } from '../../components/ui/Button';
 
 export function VerifiedPage() {
   const { t } = useI18n();
@@ -19,12 +20,14 @@ export function VerifiedPage() {
               </span>
             </div>
             <div className="flex gap-2">
-              <a
-                href="#wallets"
-                className="text-sm border border-warning text-warning hover:bg-warning hover:text-black px-3 py-1 rounded transition-colors"
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => document.getElementById('wallets')?.scrollIntoView({ behavior: 'smooth' })}
+                className="text-white border-white/15 hover:bg-white/10"
               >
                 Lihat Wallet
-              </a>
+              </Button>
             </div>
           </div>
         </div>
