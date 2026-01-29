@@ -5,19 +5,26 @@ import { Badge } from '../ui/Badge';
 import { Copy, ExternalLink } from 'lucide-react';
 import { paymentWallets, transparencyWallets, formatWalletAddress, getExplorerUrl } from '../../config/tpcWallets';
 import { useI18n } from '../../hooks/useI18n';
+import { WalletVerifyModal } from '../security/WalletVerifyModal';
 
 export function OfficialWalletsCard() {
   const { t } = useI18n();
-  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+  const [verifyModal, setVerifyModal] = useState<{
+    isOpen: boolean;
+    address: string;
+    label: string;
+    purpose: string;
+    isPayment: boolean;
+  } | null>(null);
 
-  const handleCopyAddress = async (address: string) => {
-    try {
-      await navigator.clipboard.writeText(address);
-      setCopiedAddress(address);
-      setTimeout(() => setCopiedAddress(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy address:', err);
-    }
+  const handleVerifyModal = (wallet: any, isPayment: boolean = false) => {
+    setVerifyModal({
+      isOpen: true,
+      address: wallet.address,
+      label: wallet.label,
+      purpose: wallet.purpose,
+      isPayment,
+    });
   };
 
   const WalletRow = ({ wallet, isPayment = false }: { wallet: any; isPayment?: boolean }) => {
@@ -44,6 +51,15 @@ export function OfficialWalletsCard() {
               )}
             </div>
             <p className="text-sm text-white/60 mb-2">{wallet.purpose || 'No purpose specified'}</p>
+            
+            {/* Checksum-style display */}
+            <div className="p-3 bg-black/30 border border-white/10 rounded-lg mb-3">
+              <p className="text-xs text-white/60 mb-1">{t('antiScam.walletGuard.verifyByMatching')}</p>
+              <code className="text-lg font-mono text-white text-center break-all">
+                {formatWalletAddress(wallet.address)}
+              </code>
+            </div>
+            
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-xs text-white/60">Full:</span>
@@ -51,23 +67,17 @@ export function OfficialWalletsCard() {
                   {wallet.address}
                 </code>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-white/60">Short:</span>
-                <code className="text-xs bg-black/30 px-2 py-1 rounded text-mono text-white">
-                  {formatWalletAddress(wallet.address)}
-                </code>
-              </div>
             </div>
           </div>
           <div className="flex flex-col gap-2 flex-shrink-0">
             <Button
               size="sm"
-              variant={copiedAddress === wallet.address ? "gold" : "outline"}
-              onClick={() => handleCopyAddress(wallet.address)}
+              variant="outline"
+              onClick={() => handleVerifyModal(wallet, isPayment)}
               className="min-w-[100px]"
             >
               <Copy className="h-3 w-3 mr-1" />
-              {copiedAddress === wallet.address ? t('common.copied') : t('common.copy')}
+              {t('common.copy')}
             </Button>
             <Button
               size="sm"
@@ -130,6 +140,20 @@ export function OfficialWalletsCard() {
           </div>
         )}
 
+        {/* Anti-Scam Warnings */}
+        <div className="space-y-3">
+          <div className="p-4 bg-warning/10 border border-warning rounded-lg">
+            <p className="text-sm text-warning font-medium">
+              {t('antiScam.walletGuard.neverDm')}
+            </p>
+          </div>
+          <div className="p-4 bg-danger/10 border border-danger rounded-lg">
+            <p className="text-sm text-danger font-medium">
+              {t('antiScam.walletGuard.neverSeed')}
+            </p>
+          </div>
+        </div>
+
         {/* Debug Info for Development */}
         {typeof window !== 'undefined' && window.location.hostname === 'localhost' && (
           <div className="mt-4 p-3 bg-surface/50 border border-border rounded-lg">
@@ -148,6 +172,19 @@ export function OfficialWalletsCard() {
           </p>
         </div>
       </CardContent>
+
+      {/* Wallet Verify Modal */}
+      {verifyModal && (
+        <WalletVerifyModal
+          isOpen={verifyModal.isOpen}
+          onClose={() => setVerifyModal(null)}
+          address={verifyModal.address}
+          label={verifyModal.label}
+          purpose={verifyModal.purpose}
+          explorerUrl={getExplorerUrl(verifyModal.address)}
+          isPayment={verifyModal.isPayment}
+        />
+      )}
     </Card>
   );
 }

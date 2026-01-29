@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../../hooks/useI18n';
 import { Button } from '../../components/ui/Button';
 import { Card, CardContent } from '../../components/ui/Card';
-import { Alert } from '../../components/ui/Alert';
-import { Shield, Eye, TrendingUp, BookOpen, AlertTriangle, ChevronRight } from 'lucide-react';
+import { Shield, Eye, TrendingUp, BookOpen, ChevronRight } from 'lucide-react';
 import { OfficialWalletsCard } from '../../components/trust/OfficialWalletsCard';
 import { BuyAntiScamModal } from '../../components/security/BuyAntiScamModal';
 import { AddressPreviewCard } from '../../components/security/AddressPreviewCard';
+import { AntiScamBanner } from '../../components/security/AntiScamBanner';
 
 export function HomePage() {
   const { t, withLang } = useI18n();
@@ -43,27 +43,8 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Anti-Scam Banner */}
-      <div className="bg-warning/10 border-b border-warning">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-warning" />
-              <span className="text-sm text-warning font-medium">
-                {t('home.hero.antiScam')}
-              </span>
-            </div>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => navigate(withLang('/verified'))}
-              className="border-warning text-warning hover:bg-warning hover:text-black"
-            >
-              {t('nav.verified')}
-            </Button>
-          </div>
-        </div>
-      </div>
+      {/* Global Anti-Scam Banner */}
+      <AntiScamBanner showReportScam={true} />
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-16">
@@ -151,41 +132,42 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Security Notice */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto">
-          <Alert variant="warning" title="Security First">
-            <div className="space-y-4">
-              <p className="text-white">
-                Always verify wallet addresses before sending funds. TPC Global will never ask for your private keys or seed phrases.
-              </p>
-              <div className="flex gap-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowAntiScamModal(true)}
-                >
-                  <AlertTriangle className="h-4 w-4 mr-2" />
-                  Security Checklist
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => navigate(withLang('/verified'))}
-                >
-                  <Eye className="h-4 w-4 mr-2" />
-                  Verify Wallets
-                </Button>
-              </div>
-            </div>
-          </Alert>
-        </div>
-      </section>
-
       {/* Anti-Scam Modal */}
       <BuyAntiScamModal
         isOpen={showAntiScamModal}
         onClose={() => setShowAntiScamModal(false)}
         onContinue={() => setShowAntiScamModal(false)}
       />
+
+      {/* Security Notice */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto">
+          <div className="p-6 bg-white/5 border border-white/20 rounded-xl">
+            <h3 className="text-xl font-semibold text-white mb-4 text-center">
+              Security First
+            </h3>
+            <div className="space-y-4">
+              <p className="text-white">
+                Always verify wallet addresses before sending funds. TPC Global will never ask for your private keys or seed phrases.
+              </p>
+              <div className="flex gap-4 justify-center">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAntiScamModal(true)}
+                >
+                  Security Checklist
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate(withLang('/verified'))}
+                >
+                  Verify Wallets
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

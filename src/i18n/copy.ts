@@ -54,6 +54,35 @@ export const copy = {
         },
       },
     },
+    antiScam: {
+      banner: {
+        title: '⚠️ HANYA gunakan dompet resmi yang terverifikasi',
+        verifiedWallets: 'Dompet Terverifikasi',
+        howToBuySafely: 'Cara Beli Aman',
+        reportScam: 'Laporkan Penipuan',
+      },
+      domainLock: {
+        official: 'Domain Resmi: tpcglobal.io',
+        warning: 'Anda tidak berada di domain resmi!',
+        suspicious: 'Domain Mencurigakan',
+        leaveImmediately: 'Segera tinggalkan halaman ini!',
+      },
+      walletGuard: {
+        confirmTitle: 'Konfirmasi Salin Alamat',
+        confirmMessage: 'Pastikan alamat sama persis dengan halaman Verified. Lanjut salin?',
+        cancel: 'Batal',
+        confirm: 'Salin',
+        verifyByMatching: 'Verifikasi dengan mencocokkan karakter pertama & terakhir',
+        neverDm: 'Admin tidak pernah DM duluan. TPC tidak pernah minta seed phrase.',
+        neverSeed: 'JANGAN PERNAH bagikan seed phrase atau private key!',
+      },
+      checklist: {
+        officialDomain: 'Domain resmi (tpcglobal.io)',
+        addressMatch: 'Alamat sama persis (pertama/terakhir)',
+        noDm: 'Tidak ada DM dari admin',
+        noSeed: 'Tidak ada permintaan seed phrase',
+      },
+    },
     verified: {
       title: 'Dompet Resmi Terverifikasi',
       subtitle: 'HANYA gunakan dompet resmi ini untuk menghindari penipuan',
@@ -201,6 +230,35 @@ export const copy = {
           title: 'How to Buy Safely',
           subtitle: 'Anti-scam safety guide',
         },
+      },
+    },
+    antiScam: {
+      banner: {
+        title: '⚠️ ONLY use verified official wallets',
+        verifiedWallets: 'Verified Wallets',
+        howToBuySafely: 'How to Buy Safely',
+        reportScam: 'Report Scam',
+      },
+      domainLock: {
+        official: 'Official Domain: tpcglobal.io',
+        warning: 'You are not on the official domain!',
+        suspicious: 'Suspicious Domain',
+        leaveImmediately: 'Leave this page immediately!',
+      },
+      walletGuard: {
+        confirmTitle: 'Confirm Copy Address',
+        confirmMessage: 'Ensure address matches the Verified page exactly. Continue copying?',
+        cancel: 'Cancel',
+        confirm: 'Copy',
+        verifyByMatching: 'Verify by matching first & last characters',
+        neverDm: 'Admin never DMs first. TPC never asks for seed phrases.',
+        neverSeed: 'NEVER share your seed phrase or private key!',
+      },
+      checklist: {
+        officialDomain: 'Official domain (tpcglobal.io)',
+        addressMatch: 'Address matches exactly (first/last)',
+        noDm: 'No DM from admin',
+        noSeed: 'No seed phrase request',
       },
     },
     verified: {
