@@ -1,6 +1,7 @@
 import { paymentWallets, transparencyWallets } from '../../config/tpcWallets';
 import { useI18n } from '../../hooks/useI18n';
 import { WalletCard } from './WalletCard';
+import { AlertTriangle } from 'lucide-react';
 
 export function OfficialWalletsCard() {
   const { t } = useI18n();
@@ -67,9 +68,7 @@ export function OfficialWalletsCard() {
       <div className="rounded-2xl border border-warning/30 bg-warning/5 p-6">
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 rounded-full bg-warning/20 flex items-center justify-center flex-shrink-0">
-            <svg className="w-6 h-6 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 3.161-3.111l.826-1.666c.27-.55.44-1.19.44-1.889 0-1.66-.54-3.112-1.621-3.112-3.111V7.917c0-1.669.54-3.112 1.621-3.112 3.111z" />
-            </svg>
+            <AlertTriangle className="w-6 h-6 text-warning" />
           </div>
           <div className="flex-1">
             <h4 className="text-lg font-semibold text-warning mb-3">

@@ -1,6 +1,7 @@
 import { useI18n } from '../../hooks/useI18n';
 import { OfficialWalletsCard } from '../../components/trust/OfficialWalletsCard';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../components/ui/Accordion';
+import { AlertTriangle } from 'lucide-react';
 
 export function VerifiedPage() {
   const { t } = useI18n();
@@ -9,12 +10,10 @@ export function VerifiedPage() {
     <div className="min-h-screen bg-background">
       {/* Global Anti-Scam Banner */}
       <div className="border-b border-warning/30 bg-warning/5">
-        <div className="container mx-auto px-4 py-3">
+        <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 3.161-3.111l.826-1.666c.27-.55.44-1.19.44-1.889 0-1.66-.54-3.112-1.621-3.112-3.111V7.917c0-1.669.54-3.112 1.621-3.112 3.111z" />
-              </svg>
+              <AlertTriangle className="h-4 w-4 text-warning" />
               <span className="text-sm font-medium text-warning">
                 ⚠️ HANYA gunakan dompet resmi yang terverifikasi
               </span>
