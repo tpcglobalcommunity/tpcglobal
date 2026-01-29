@@ -39,11 +39,13 @@ export function OfficialWalletsCard() {
     }
 
     return (
-      <div className={`p-4 rounded-lg border ${isPayment ? 'border-gold bg-gold/5' : 'border-white/10 bg-white/5'}`}>
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2">
-              <h4 className="font-semibold text-white">{wallet.label || 'Unknown Wallet'}</h4>
+      <div className={`p-4 rounded-lg border ${isPayment ? 'border-gold/60 bg-gold/5' : 'border-white/10 bg-white/5'}`}>
+        {/* ROW 1: Header + Actions */}
+        <div className="flex items-center justify-between gap-4 mb-3">
+          {/* Left: Label + Badges */}
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <h4 className="font-semibold text-white truncate">{wallet.label || 'Unknown Wallet'}</h4>
+            <div className="flex items-center gap-1 flex-shrink-0">
               {isPayment && (
                 <>
                   <Badge variant="gold" className="text-xs">
@@ -55,30 +57,15 @@ export function OfficialWalletsCard() {
                 </>
               )}
             </div>
-            <p className="text-sm text-white/60 mb-3">{wallet.purpose || 'No purpose specified'}</p>
-            
-            {/* Address Fingerprint - Fast Human Verification */}
-            <div className="p-3 bg-black/30 border border-white/10 rounded-lg mb-3">
-              <p className="text-xs text-white/60 mb-1">{t('antiScam.walletGuard.verifyByMatching')}</p>
-              <code className="text-xl font-mono text-white text-center block break-all">
-                {wallet.address.slice(0, 6)}…{wallet.address.slice(-4)}
-              </code>
-            </div>
-            
-            {/* Full Address */}
-            <div className="p-3 bg-black/20 border border-white/5 rounded-lg">
-              <p className="text-xs text-white/60 mb-1">Full Address:</p>
-              <code className="text-xs text-white/80 break-all font-mono">
-                {wallet.address}
-              </code>
-            </div>
           </div>
-          <div className="flex flex-col gap-2 flex-shrink-0 min-w-[110px]">
+          
+          {/* Right: Action Buttons */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             <Button
               size="sm"
               variant="outline"
               onClick={() => handleVerifyModal(wallet, isPayment)}
-              className="w-full"
+              className="border-white/20 bg-transparent hover:bg-white/10 text-white hover:text-white"
             >
               <Copy className="h-3 w-3 mr-1" />
               {t('common.copy')}
@@ -87,11 +74,31 @@ export function OfficialWalletsCard() {
               size="sm"
               variant="ghost"
               onClick={() => window.open(getExplorerUrl(wallet.address), '_blank')}
-              className="w-full"
+              className="hover:bg-white/10 text-white"
             >
               <ExternalLink className="h-3 w-3 mr-1" />
               {t('common.openExplorer')}
             </Button>
+          </div>
+        </div>
+
+        {/* ROW 2: Subtitle */}
+        <p className="text-sm text-white/60 mb-3">{wallet.purpose || 'No purpose specified'}</p>
+        
+        {/* ROW 3: Address */}
+        <div className="space-y-2">
+          {/* Large Fingerprint */}
+          <div className="text-center">
+            <code className="font-mono text-base text-white block break-all">
+              {wallet.address.slice(0, 6)}…{wallet.address.slice(-4)}
+            </code>
+          </div>
+          
+          {/* Full Address */}
+          <div className="flex justify-center">
+            <code className="font-mono text-xs bg-black/30 border border-white/10 rounded px-2 py-1 break-all max-w-full">
+              {wallet.address}
+            </code>
           </div>
         </div>
       </div>
@@ -103,13 +110,16 @@ export function OfficialWalletsCard() {
       <CardHeader>
         <CardTitle className="text-gold">{t('verified.transparencyWallets')}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         {/* Payment Wallet Section */}
         {paymentWallets && paymentWallets.length > 0 ? (
           <div>
-            <h3 className="text-lg font-semibold text-gold mb-3">
-              {t('verified.paymentWallet')}
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gold">
+                {t('verified.paymentWallet')}
+              </h3>
+              <div className="h-px flex-1 bg-white/10 ml-4"></div>
+            </div>
             <div className="space-y-3">
               {paymentWallets.map((wallet) => (
                 <WalletRow key={wallet.address} wallet={wallet} isPayment={true} />
@@ -127,9 +137,12 @@ export function OfficialWalletsCard() {
         {/* Transparency Wallets Section */}
         {transparencyWallets && transparencyWallets.length > 0 ? (
           <div>
-            <h3 className="text-lg font-semibold text-white mb-3">
-              {t('verified.transparencyWallets')}
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">
+                {t('verified.transparencyWallets')}
+              </h3>
+              <div className="h-px flex-1 bg-white/10 ml-4"></div>
+            </div>
             <div className="space-y-3">
               {transparencyWallets.map((wallet) => (
                 <WalletRow key={wallet.address} wallet={wallet} />
