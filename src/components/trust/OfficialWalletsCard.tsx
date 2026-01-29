@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { Copy, ExternalLink } from 'lucide-react';
-import { paymentWallet, transparencyWallets, formatWalletAddress, getExplorerUrl } from '../../config/tpcWallets';
+import { paymentWallets, transparencyWallets, formatWalletAddress, getExplorerUrl } from '../../config/tpcWallets';
 import { useI18n } from '../../hooks/useI18n';
 
 export function OfficialWalletsCard() {
@@ -91,12 +91,16 @@ export function OfficialWalletsCard() {
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Payment Wallet Section */}
-        {paymentWallet ? (
+        {paymentWallets && paymentWallets.length > 0 ? (
           <div>
             <h3 className="text-lg font-semibold text-gold mb-3">
               {t('verified.paymentWallet')}
             </h3>
-            <WalletRow wallet={paymentWallet} isPayment={true} />
+            <div className="space-y-3">
+              {paymentWallets.map((wallet) => (
+                <WalletRow key={wallet.address} wallet={wallet} isPayment={true} />
+              ))}
+            </div>
           </div>
         ) : (
           <div className="p-4 border border-warning rounded-lg bg-warning/5">
@@ -122,6 +126,15 @@ export function OfficialWalletsCard() {
           <div className="p-4 border border-warning rounded-lg bg-warning/5">
             <p className="text-sm text-warning">
               Data wallet transparansi sedang dimuat...
+            </p>
+          </div>
+        )}
+
+        {/* Debug Info for Development */}
+        {typeof window !== 'undefined' && window.location.hostname === 'localhost' && (
+          <div className="mt-4 p-3 bg-surface/50 border border-border rounded-lg">
+            <p className="text-xs text-text-secondary">
+              Debug: {paymentWallets?.length || 0} payment wallets, {transparencyWallets?.length || 0} transparency wallets
             </p>
           </div>
         )}

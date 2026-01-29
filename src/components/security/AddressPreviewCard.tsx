@@ -3,12 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { Copy, ExternalLink } from 'lucide-react';
-import { paymentWallet, formatWalletAddress, getExplorerUrl } from '../../config/tpcWallets';
+import { paymentWallets, formatWalletAddress, getExplorerUrl } from '../../config/tpcWallets';
 import { useI18n } from '../../hooks/useI18n';
 
 export function AddressPreviewCard() {
   const { t } = useI18n();
   const [copied, setCopied] = useState(false);
+
+  const paymentWallet = paymentWallets && paymentWallets.length > 0 ? paymentWallets[0] : null;
 
   const handleCopy = async () => {
     if (!paymentWallet) return;
