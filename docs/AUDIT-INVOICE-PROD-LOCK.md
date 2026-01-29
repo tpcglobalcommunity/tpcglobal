@@ -199,5 +199,12 @@ Sistem TPC Presale telah memenuhi semua persyaratan PROD-LOCK:
 - ✅ Security measures properly implemented
 - ✅ No sensitive data leakage in public APIs
 
+## Notes
+
+- SQLite version archived as: `supabase/sql/locks/invoice-prod-lock-validate.sqlite.sql`
+- PostgreSQL version for Supabase: `supabase/sql/locks/invoice-prod-lock-validate.sql`
+- PROD GATE aktif di guardrails untuk mencegah eksekusi production
+- Localhost validation: `docs/AUDIT-INVOICE-LOCALHOST.md`
+
 *Generated: 2026-01-29*
 *Auditor: TPC Presale System*

@@ -1,8 +1,7 @@
--- =====================================================
--- POSTGRES VALIDATION FOR SUPABASE LOCALHOST
--- =====================================================
+-- TPC Invoice PROD-LOCK Validation SQL
+-- Run this script in order and paste results to audit report
 
--- 1) Snapshot kolom tpc_invoices
+-- 1) Columns snapshot (pastikan stage & tpc_amount ada)
 SELECT column_name, data_type, is_nullable, column_default
 FROM information_schema.columns
 WHERE table_schema='public' AND table_name='tpc_invoices'
@@ -15,7 +14,7 @@ WHERE table_schema='public' AND table_name='tpc_invoices'
 AND column_name IN ('stage','stage_key')
 ORDER BY column_name;
 
--- 3) Confirm canonical qty field
+-- 3) Confirm tpc_amount field canonical
 SELECT column_name
 FROM information_schema.columns
 WHERE table_schema='public' AND table_name='tpc_invoices'
@@ -67,3 +66,16 @@ CASE
 END AS verdict
 FROM public.get_invoice_public('<REAL_INVOICE_NO>');
 */
+
+-- 9) Check app_settings for default kurs
+SELECT key, value, updated_at
+FROM app_settings
+WHERE key IN ('usd_to_idr_rate', 'ADMIN_USER_IDS')
+ORDER BY key;
+
+-- 10) Check for any potential sensitive data exposure in public functions
+SELECT routine_name, routine_type, data_type, external_language
+FROM information_schema.routines
+WHERE routine_schema='public' 
+AND routine_name LIKE '%invoice%'
+ORDER BY routine_name;
