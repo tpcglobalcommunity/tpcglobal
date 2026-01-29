@@ -93,35 +93,35 @@ export function HomePage() {
           </div>
 
           {/* Premium Action List */}
-          <div className="space-y-3 mb-12">
+          <div className="space-y-2 mb-12">
             {actions.map((action, index) => {
               const Icon = action.icon;
               return (
                 <Card
                   key={index}
-                  className="group cursor-pointer border border-gray-800 hover:border-gray-700 transition-all duration-200 bg-gray-900/50 hover:bg-gray-900/80"
+                  className="group cursor-pointer border border-white/10 hover:border-white/15 transition-all duration-200 bg-white/3 hover:bg-white/6 backdrop-blur-sm rounded-xl active:scale-[0.99] focus:outline-none focus:ring-1 focus:ring-white/20"
                   onClick={action.onClick}
                 >
-                  <CardContent className="p-4">
+                  <CardContent className="px-4 py-3">
                     <div className="flex items-center gap-4">
                       {/* Icon Container */}
-                      <div className="w-12 h-12 rounded-lg bg-gray-800/50 group-hover:bg-gray-700/50 flex items-center justify-center transition-colors duration-200">
-                        <Icon className="h-6 w-6 text-gold" />
+                      <div className="w-12 h-12 rounded-lg bg-white/6 border border-white/10 flex items-center justify-center transition-colors duration-200">
+                        <Icon className="h-5 w-5 text-gold" />
                       </div>
 
                       {/* Text Block */}
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-white mb-1">
+                        <div className="font-medium text-white mb-1">
                           {action.title}
                         </div>
-                        <div className="text-sm text-text-secondary">
+                        <div className="text-sm text-white/60">
                           {action.subtitle}
                         </div>
                       </div>
 
                       {/* Chevron */}
-                      <div className="text-gray-500 group-hover:text-gray-400 transition-colors duration-200">
-                        <ChevronRight className="h-5 w-5" />
+                      <div className="text-white/40 transition-colors duration-200">
+                        <ChevronRight className="h-4 w-4" />
                       </div>
                     </div>
                   </CardContent>
