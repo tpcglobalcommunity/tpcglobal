@@ -1,57 +1,73 @@
 import { useI18n } from '../../hooks/useI18n';
 import { OfficialWalletsCard } from '../../components/trust/OfficialWalletsCard';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../components/ui/Accordion';
-import { AlertTriangle } from 'lucide-react';
 
 export function VerifiedPage() {
   const { t } = useI18n();
 
   return (
-    <div className="min-h-screen bg-background py-16">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gold">
-              {t('verified.title')}
-            </h1>
-            <p className="text-xl text-text-secondary">
-              {t('verified.subtitle')}
-            </p>
+    <div className="min-h-screen bg-background">
+      {/* Global Anti-Scam Banner */}
+      <div className="border-b border-warning/30 bg-warning/5">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 3.161-3.111l.826-1.666c.27-.55.44-1.19.44-1.889 0-1.66-.54-3.112-1.621-3.112-3.111V7.917c0-1.669.54-3.112 1.621-3.112 3.111z" />
+              </svg>
+              <span className="text-sm font-medium text-warning">
+                ⚠️ HANYA gunakan dompet resmi yang terverifikasi
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <a
+                href="#wallets"
+                className="text-sm border border-warning text-warning hover:bg-warning hover:text-black px-3 py-1 rounded transition-colors"
+              >
+                Lihat Wallet
+              </a>
+            </div>
           </div>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            <OfficialWalletsCard />
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-warning">
-                  <AlertTriangle className="h-5 w-5" />
-                  {t('verified.warning')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-white mb-4">
-                  {t('verified.warningText')}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gold">
+            {t('verified.title')}
+          </h1>
+          <p className="text-xl text-white/60 max-w-2xl mx-auto">
+            {t('verified.subtitle')}
+          </p>
+        </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('verified.antiScamFaq.title')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Accordion collapsible className="w-full">
-                {t('verified.antiScamFaq.items').map((item: any, index: number) => (
-                  <AccordionItem key={index} value={`item-${index}`}>
-                    <AccordionTrigger>{item.q}</AccordionTrigger>
-                    <AccordionContent>{item.a}</AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </CardContent>
-          </Card>
+        {/* Wallet Cards */}
+        <div id="wallets">
+          <OfficialWalletsCard />
+        </div>
+
+        {/* FAQ Section */}
+        <div className="mt-16 max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-white mb-6 text-center">
+            {t('verified.antiScamFaq.title')}
+          </h2>
+          <Accordion collapsible className="space-y-3">
+            {t('verified.antiScamFaq.items').map((item: any, index: number) => (
+              <AccordionItem
+                key={index}
+                value={`item-${index}`}
+                className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
+              >
+                <AccordionTrigger className="flex justify-between items-center p-4 sm:p-5 hover:bg-white/8 transition-colors">
+                  <span className="text-white font-medium">{item.q}</span>
+                </AccordionTrigger>
+                <AccordionContent className="px-4 sm:px-5 pb-4 sm:pb-5">
+                  <p className="text-white/70 leading-relaxed">{item.a}</p>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </div>
     </div>
