@@ -240,24 +240,11 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
-      get_invoice_public: {
-        Args: { p_invoice_no: string }
-        Returns: {
-          invoice_no: string
-          status: string
-          stage: string
-          tpc_amount: number
-          total_usd: number
-          total_idr: number
-          created_at: string
-          paid_at: string | null
-          treasury_address: string
-        }[]
-      }
       admin_whitelist_list: {
         Args: Record<PropertyKey, never>
         Returns: {
           user_id: string
+          email: string
           note: string | null
           created_at: string
         }[]
@@ -273,6 +260,87 @@ export type Database = {
       get_presale_settings_public: {
         Args: {}
         Returns: PresaleSettings[]
+      }
+      get_invoice_public: {
+        Args: { p_invoice_no: string }
+        Returns: {
+          invoice_no: string;
+          stage: string;
+          tpc_amount: number;
+          price_usd: number;
+          total_usd: number;
+          total_idr: number;
+          usd_idr_rate: number;
+          treasury_address: string;
+          status: string;
+          payment_method: string | null;
+          payer_name: string | null;
+          payer_ref: string | null;
+          tx_signature: string | null;
+          proof_url: string | null;
+          created_at: string;
+          expires_at: string;
+          reviewed_at: string | null;
+          review_note: string | null;
+        }[]
+      }
+      submit_invoice_confirmation: {
+        Args: { 
+          p_invoice_no: string; 
+          p_payment_method: string; 
+          p_payer_name?: string; 
+          p_payer_ref?: string; 
+          p_tx_signature?: string; 
+          p_proof_url?: string; 
+          p_email?: string 
+        }
+        Returns: {
+          invoice_no: string;
+          status: string;
+          payment_method: string | null;
+          payer_name: string | null;
+          payer_ref: string | null;
+          tx_signature: string | null;
+          proof_url: string | null;
+          updated_at: string;
+        }[]
+      }
+      admin_review_invoice: {
+        Args: { p_invoice_no: string; p_action: string; p_note?: string }
+        Returns: {
+          invoice_no: string;
+          old_status: string;
+          new_status: string;
+          reviewed_by: string;
+          reviewed_at: string;
+          review_note: string | null;
+        }[]
+      }
+      admin_list_invoices: {
+        Args: { p_status?: string; p_limit?: number; p_offset?: number }
+        Returns: {
+          invoice_no: string;
+          stage: string;
+          tpc_amount: number;
+          total_usd: number;
+          total_idr: number;
+          status: string;
+          payment_method: string | null;
+          payer_name: string | null;
+          payer_ref: string | null;
+          proof_url: string | null;
+          created_at: string;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          review_note: string | null;
+        }[]
+      }
+      generate_proof_upload_url: {
+        Args: { p_invoice_no: string; p_file_name: string; p_content_type: string }
+        Returns: {
+          upload_url: string;
+          file_path: string;
+        }[]
       }
       create_invoice: {
         Args: { p_tpc_amount: number; p_referral_code?: string }
@@ -295,14 +363,6 @@ export type Database = {
       }
       cancel_invoice: {
         Args: { p_invoice_no: string }
-        Returns: void
-      }
-      submit_invoice_confirmation: {
-        Args: { p_invoice_no: string; p_payment_method: string; p_payer_name?: string; p_payer_ref?: string; p_tx_signature?: string; p_proof_url?: string }
-        Returns: void
-      }
-      admin_review_invoice: {
-        Args: { p_invoice_no: string; p_action: string; p_note?: string }
         Returns: void
       }
     }
