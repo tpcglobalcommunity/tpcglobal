@@ -140,5 +140,5 @@ VITE_USD_IDR_RATE=17000
 
 ---
 
-**© 2024 TPC Global - Education-First Blockchain Platform**  
+**© 2026 TPC Global - Education-First Blockchain Platform**  
 *No financial advice. Educational purposes only.*

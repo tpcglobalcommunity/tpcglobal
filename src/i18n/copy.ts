@@ -425,13 +425,13 @@ export const copy = {
       title: "Roadmap TPC Global",
       subtitle: "Rencana pengembangan proyek",
       disclaimer: "Timeline dapat berubah sesuai kondisi pasar dan pengembangan",
-      q1Title: "Q1 2025",
+      q1Title: "Q1 2026",
       q1Items: ["Peluncuran Presale Stage 1", "Website & Dashboard", "Komunitas Building"],
-      q2Title: "Q2 2025",
+      q2Title: "Q2 2026",
       q2Items: ["Presale Stage 2", "Audit Smart Contract", "Partnership Strategis"],
-      q3Title: "Q3 2025",
+      q3Title: "Q3 2026",
       q3Items: ["DEX Listing", "Staking Platform", "DAO Governance"],
-      q4Title: "Q4 2025",
+      q4Title: "Q4 2026",
       q4Items: ["Marketplace", "Cross-chain Integration", "Expansion"],
     },
     
@@ -685,7 +685,7 @@ export const copy = {
     
     // Footer
     footer: {
-      copyright: "© 2025 TPC Global. Hak cipta dilindungi.",
+      copyright: "© 2026 TPC Global. Hak cipta dilindungi.",
       disclaimer: "Investasi kripto memiliki risiko tinggi. Bukan saran investasi.",
       officialDomain: "Domain Resmi: tpcglobal.io",
     },
@@ -1275,13 +1275,13 @@ export const copy = {
       title: "TPC Global Roadmap",
       subtitle: "Project development plan",
       disclaimer: "Timeline may change based on market conditions and development",
-      q1Title: "Q1 2025",
+      q1Title: "Q1 2026",
       q1Items: ["Presale Stage 1 Launch", "Website & Dashboard", "Community Building"],
-      q2Title: "Q2 2025",
+      q2Title: "Q2 2026",
       q2Items: ["Presale Stage 2", "Smart Contract Audit", "Strategic Partnerships"],
-      q3Title: "Q3 2025",
+      q3Title: "Q3 2026",
       q3Items: ["DEX Listing", "Staking Platform", "DAO Governance"],
-      q4Title: "Q4 2025",
+      q4Title: "Q4 2026",
       q4Items: ["Marketplace", "Cross-chain Integration", "Expansion"],
     },
     
@@ -1670,7 +1670,7 @@ export const copy = {
     
     // Footer
     footer: {
-      copyright: "© 2025 TPC Global. All rights reserved.",
+      copyright: "© 2026 TPC Global. All rights reserved.",
       disclaimer: "Crypto investment carries high risk. Not investment advice.",
       officialDomain: "Official Domain: tpcglobal.io",
     },
