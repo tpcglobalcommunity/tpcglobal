@@ -1098,6 +1098,131 @@ export const copy = {
       faq3A: "Report immediately and never send funds to unverified addresses.",
     },
     
+    // Buy TPC
+    buyTpc: {
+      title: "Buy TPC",
+      subtitle: "Join the TPC Global presale",
+      // Trust Header
+      trustHeader: {
+        headline: "TPC Token Purchase through Official Invoice System",
+        subheadline: "Funds go directly to public treasury and are verifiable. No DMs, no intermediaries.",
+        bullets: {
+          treasury: "Single public treasury address",
+          invoice: "Invoice system (read-only after creation)",
+          education: "Education-only, no profit guarantee"
+        }
+      },
+      // Anti-Scam Box
+      antiScam: {
+        title: "⚠️ IMPORTANT SECURITY NOTICE",
+        points: [
+          "Admin will NEVER DM first",
+          "Purchase ONLY through this page", 
+          "SINGLE & OFFICIAL treasury address",
+          "Ignore others outside the website"
+        ]
+      },
+      stage1: {
+        title: "Stage 1",
+        supply: "Supply",
+        price: "Price",
+        sold: "Sold",
+        remaining: "Remaining",
+        countdown: "Countdown",
+        status: {
+          active: "Active",
+          soldOut: "Sold Out",
+          expired: "Expired",
+          upcoming: "Upcoming"
+        }
+      },
+      stage2: {
+        title: "Stage 2",
+        supply: "Supply",
+        price: "Price",
+        sold: "Sold",
+        remaining: "Remaining",
+        countdown: "Countdown",
+        status: {
+          active: "Active",
+          soldOut: "Sold Out",
+          expired: "Expired",
+          upcoming: "Upcoming"
+        }
+      },
+      dexPlan: {
+        title: "DEX Plan",
+        subtitle: "Planned listing price",
+        plannedPrice: "Planned price",
+        disclaimer: "Not a price guarantee"
+      },
+      purchase: {
+        title: "Purchase Form",
+        tpcAmount: "TPC Amount",
+        totalUsdc: "Total USDC",
+        totalIdr: "Total IDR",
+        paymentMethod: "Payment Method",
+        selectPayment: "Select payment method",
+        terms: "I agree to the Terms & Conditions",
+        readTerms: "Read Terms & Conditions",
+        buyButton: "Buy TPC",
+        termsRequired: "You must agree to the terms and conditions",
+        // Additional keys for hardening
+        agreeTerms: "By continuing, I confirm I have read and agree to: ",
+        invalidAmount: "Please enter a valid TPC amount.",
+        creatingInvoice: "Creating invoice...",
+        createInvoice: "Create Invoice"
+      },
+      // Toast messages
+      invoiceCreated: "Invoice created successfully!",
+      invoiceCreationFailed: "Failed to create invoice",
+      addressCopied: "Address copied to clipboard!",
+      numberCopied: "Number copied to clipboard!",
+      // CTA Button
+      createInvoiceButton: "Create TPC Purchase Invoice",
+      // Invoice Summary
+      invoiceSummary: {
+        title: "Invoice Summary",
+        lockedLabel: "This data is locked and cannot be changed",
+        tpcAmount: "TPC Amount",
+        totalUsd: "Total USD",
+        totalIdr: "Total IDR",
+        invoiceNumber: "Invoice Number"
+      },
+      // What Happens After Payment
+      afterPayment: {
+        title: "What happens after payment?",
+        steps: [
+          "Payment is received at the official treasury address",
+          "The team verifies the payment",
+          "Invoice status is updated",
+          "TPC allocation is recorded internally",
+          "Official updates are shared through public channels"
+        ]
+      },
+      // Legal Tabs
+      legal: {
+        termsTab: "Terms",
+        riskTab: "Risk",
+        educationTab: "Disclaimer"
+      },
+      // Legal links
+      terms: "Terms",
+      risk: "Risk Disclosure", 
+      disclaimer: "Disclaimer",
+      paymentMethods: {
+        USDC: "USDC",
+        SOL: "SOL",
+        BCA: "BCA Bank Transfer",
+        MANDIRI: "Mandiri Bank Transfer",
+        BNI: "BNI Bank Transfer",
+        BRI: "BRI Bank Transfer",
+        OVO: "OVO",
+        DANA: "DANA",
+        GOPAY: "GoPay"
+      }
+    },
+    
     // Verified Page
     verified: {
       // 1. Verified Page Hero (Trust Statement)
@@ -1350,107 +1475,6 @@ export const copy = {
       progress: "Progress",
       loading: "Loading statistics...",
       empty: "No presale data available"
-    },
-    
-    // Buy TPC
-    buyTpc: {
-      title: "Buy TPC",
-      subtitle: "Join the TPC Global presale",
-      // Trust Header
-      trustHeader: {
-        headline: "TPC Token Purchase through Official Invoice System",
-        subheadline: "Funds go directly to public treasury and are verifiable. No DMs, no intermediaries.",
-        bullets: {
-          treasury: "Single public treasury address",
-          invoice: "Invoice system (read-only after creation)",
-          education: "Education-only, no profit guarantee"
-        }
-      },
-      stage1: {
-        title: "Stage 1",
-        supply: "Supply",
-        price: "Price",
-        sold: "Sold",
-        remaining: "Remaining",
-        countdown: "Countdown",
-        status: {
-          active: "Active",
-          soldOut: "Sold Out",
-          expired: "Expired",
-          upcoming: "Upcoming"
-        }
-      },
-      dexPlan: {
-        title: "DEX Plan",
-        subtitle: "Planned listing price",
-        plannedPrice: "Planned price",
-        disclaimer: "Not a price guarantee"
-      },
-      purchase: {
-        title: "Purchase Form",
-        tpcAmount: "TPC Amount",
-        totalUsdc: "Total USDC",
-        totalIdr: "Total IDR",
-        paymentMethod: "Payment Method",
-        selectPayment: "Select payment method",
-        terms: "I agree to the Terms & Conditions",
-        readTerms: "Read Terms & Conditions",
-        buyButton: "Buy TPC",
-        termsRequired: "You must agree to the terms and conditions",
-        // Additional keys for hardening
-        agreeTerms: "I have read and agree to the Terms, Risk Disclosure, and Disclaimer.",
-        invalidAmount: "Please enter a valid TPC amount.",
-        creatingInvoice: "Creating invoice...",
-        createInvoice: "Create Invoice"
-      },
-      // Toast messages
-      invoiceCreated: "Invoice created successfully!",
-      invoiceCreationFailed: "Failed to create invoice",
-      addressCopied: "Address copied to clipboard!",
-      numberCopied: "Number copied to clipboard!",
-      // CTA Button
-      createInvoiceButton: "Buat Invoice Pembelian TPC",
-      // Invoice Summary
-      invoiceSummary: {
-        title: "Invoice Summary",
-        lockedLabel: "Data ini terkunci dan tidak dapat diubah",
-        tpcAmount: "Jumlah TPC",
-        totalUsd: "Total USD",
-        totalIdr: "Total IDR",
-        invoiceNumber: "Nomor Invoice"
-      },
-      // What Happens After Payment
-      afterPayment: {
-        title: "Apa yang terjadi setelah pembayaran?",
-        steps: [
-          "Pembayaran diterima ke treasury resmi",
-          "Tim memverifikasi pembayaran",
-          "Status invoice diperbarui",
-          "Alokasi TPC dicatat secara internal",
-          "Informasi resmi diumumkan melalui kanal publik"
-        ]
-      },
-      // Legal Tabs
-      legal: {
-        termsTab: "Terms of Purchase",
-        riskTab: "Risk Disclosure", 
-        educationTab: "Education Disclaimer"
-      },
-      // Legal links
-      terms: "Terms",
-      risk: "Risk Disclosure", 
-      disclaimer: "Disclaimer",
-      paymentMethods: {
-        USDC: "USDC",
-        SOL: "SOL",
-        BCA: "BCA Bank Transfer",
-        MANDIRI: "Mandiri Bank Transfer",
-        BNI: "BNI Bank Transfer",
-        BRI: "BRI Bank Transfer",
-        OVO: "OVO",
-        DANA: "DANA",
-        GOPAY: "GoPay"
-      }
     },
     
     // Invoice
