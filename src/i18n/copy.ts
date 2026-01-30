@@ -495,6 +495,7 @@ export const copy = {
       risk: "Risiko", 
       disclaimer: "Disklaimer",
       paymentMethods: {
+        crypto: "Kripto (USDC / SOL)",
         USDC: "USDC",
         SOL: "SOL", 
         BCA: "Transfer Bank BCA",
@@ -1239,6 +1240,7 @@ export const copy = {
       risk: "Risk Disclosure", 
       disclaimer: "Disclaimer",
       paymentMethods: {
+        crypto: "Crypto (USDC / SOL)",
         USDC: "USDC",
         SOL: "SOL",
         BCA: "BCA Bank Transfer",
