@@ -29,12 +29,28 @@ import {
   type PaymentMethod,
   type CreateInvoiceRequest
 } from "@/lib/rpc/public";
-import { formatIdr } from "@/lib/tokenSale";
 import { supabase } from "@/integrations/supabase/client";
+import { PremiumShell } from "@/components/layout/PremiumShell";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const BuyTpcPage = () => {
   const { t, lang, withLang } = useI18n();
   const navigate = useNavigate();
+  
+  // SAFE numeric helpers
+  const toNum = (v: unknown, fallback = 0) => {
+    const n = typeof v === 'number' ? v : Number(v);
+    return Number.isFinite(n) ? n : fallback;
+  };
+  
+  const safeFixed = (v: unknown, digits = 2) => toNum(v, 0).toFixed(digits);
+  
+  const formatUsd = (v: unknown) =>
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(toNum(v, 0));
+  
+  const formatIdr = (v: unknown) =>
+    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(toNum(v, 0));
   
   const [stages, setStages] = useState<PresaleStage[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
@@ -46,6 +62,9 @@ const BuyTpcPage = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | null>(null);
   const [activeTab, setActiveTab] = useState<'terms' | 'risk' | 'disclaimer'>('terms');
+  
+  // Default USD/IDR rate with fallback
+  const DEFAULT_USD_IDR_RATE = 17000;
 
   useEffect(() => {
     const loadData = async () => {
@@ -67,10 +86,17 @@ const BuyTpcPage = () => {
   }, []);
 
   const currentStage = stages.find(s => s.stage === selectedStage);
-  const calculatedUsd = tpcAmount && currentStage ? 
-    (parseFloat(tpcAmount) * currentStage.price_usd).toFixed(2) : "0.00";
-  const calculatedIdr = tpcAmount && currentStage ? 
-    formatIdr(parseFloat(tpcAmount) * currentStage.price_usd * 17000) : formatIdr(0);
+  
+  // SAFE calculations with guards
+  const tpcAmountNum = toNum(tpcAmount, 0);
+  const priceUsd = toNum(currentStage?.price_usd, 0);
+  const usdIdrRate = DEFAULT_USD_IDR_RATE; // Fixed fallback rate
+  
+  const totalUsd = tpcAmountNum * priceUsd;
+  const totalIdr = totalUsd * usdIdrRate;
+  
+  const calculatedUsd = safeFixed(totalUsd, 2);
+  const calculatedIdr = formatIdr(totalIdr);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -119,7 +145,7 @@ const BuyTpcPage = () => {
     setIsSubmitting(true);
     try {
       const { data, error } = await supabase.rpc('create_invoice', {
-        p_tpc_amount: parseFloat(tpcAmount),
+        p_tpc_amount: toNum(tpcAmount, 0),
         p_referral_code: null
       });
 
@@ -172,7 +198,7 @@ const BuyTpcPage = () => {
                   </div>
                   <div>
                     <span className="text-muted-foreground">{t("buyTpc.stage1.price")}:</span>
-                    <div className="font-semibold">${stage.price_usd}</div>
+                    <div className="font-semibold">{formatUsd(priceUsd)}</div>
                   </div>
                 </div>
                 
@@ -464,7 +490,7 @@ const BuyTpcPage = () => {
                 </div>
 
                 <Button 
-                  onClick={handleBuyTpc}
+                  onClick={handleCreateInvoice}
                   disabled={!canBuy || isSubmitting}
                   className="w-full"
                   size="lg"

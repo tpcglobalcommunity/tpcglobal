@@ -23,6 +23,10 @@ export class AppErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // Enhanced logging for development
+    console.error('[AppErrorBoundary]', error);
+    console.error('[AppErrorBoundary] Component Stack:', errorInfo.componentStack);
+    
     logger.error('React Error Boundary caught an error', {
       error: error.message,
       stack: error.stack,
@@ -77,9 +81,20 @@ export class AppErrorBoundary extends Component<Props, State> {
                   <summary className="cursor-pointer font-medium text-gray-700">
                     Error Details (Development Only)
                   </summary>
-                  <pre className="mt-2 text-xs text-red-600 overflow-auto">
-                    {this.state.error.stack}
-                  </pre>
+                  <div className="mt-2 space-y-2">
+                    <div>
+                      <strong>Error Message:</strong>
+                      <pre className="mt-1 text-xs text-red-600 overflow-auto">
+                        {this.state.error.message}
+                      </pre>
+                    </div>
+                    <div>
+                      <strong>Stack Trace:</strong>
+                      <pre className="mt-1 text-xs text-red-600 overflow-auto">
+                        {this.state.error.stack}
+                      </pre>
+                    </div>
+                  </div>
                 </details>
               )}
             </CardContent>
