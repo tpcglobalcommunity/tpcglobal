@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { RequireAdmin } from "@/components/guards/RequireAdmin";
 import { AdminLayout } from "@/layouts/AdminLayout";
-import AdminInvoicesPage from "@/pages/admin/AdminInvoicesPage";
 import ComingSoonPage from "@/pages/public/ComingSoonPage";
 
 // Admin Pages
@@ -26,7 +25,7 @@ export const AdminRoutes = () => (
     </RequireAdmin>
   }>
     <Route index element={<AdminDashboard />} />
-    <Route path="invoices" element={<AdminInvoicesPage />} />
+    <Route path="invoices" element={<div>Admin Invoices (Coming Soon)</div>} />
     <Route path="settings" element={<AdminSettings />} />
     <Route path="*" element={<ComingSoonPage titleKey="admin.settingsTitle" />} />
   </Route>

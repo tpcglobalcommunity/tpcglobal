@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import MetaTags from "@/components/MetaTags";
 import { AppErrorBoundary } from "@/components/system/AppErrorBoundary";
-import { AppRoutes } from "./routes";
+import AppRoutes from "./routes";
 import "./index.css";
 
 const queryClient = new QueryClient();
