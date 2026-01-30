@@ -47,12 +47,16 @@ export interface PaymentMethod {
 }
 
 export interface PresaleStats {
-  stage: string;
-  sold_tpc: number;
-  sold_usd: number;
-  sold_idr: number;
-  stage_supply: number;
-  remaining_tpc: number;
+  total_tpc_sold: number;
+  total_usd_raised: number;
+  unique_buyers: number;
+  active_stage: {
+    name: string;
+    price_usd: number;
+    sold: number;
+    allocation: number;
+  };
+  last_updated: number;
 }
 
 // Get invoice by invoice number using safe RPC
@@ -105,12 +109,50 @@ export const getPresaleStagesPublic = async (): Promise<PresaleStage[]> => {
 };
 
 // Get presale statistics - returns real-time data
-export const getPresaleStatsPublic = async (): Promise<PresaleStats[]> => {
-  // TODO: Implement after database types are regenerated
-  return [
-    { stage: "stage1", sold_tpc: 0, sold_usd: 0, sold_idr: 0, stage_supply: 100000000, remaining_tpc: 100000000 },
-    { stage: "stage2", sold_tpc: 0, sold_usd: 0, sold_idr: 0, stage_supply: 100000000, remaining_tpc: 100000000 },
-  ];
+export const getPresaleStatsPublic = async (): Promise<PresaleStats> => {
+  try {
+    // Use any to bypass TypeScript limitation for now
+    // TODO: Update Supabase types to include the new function
+    const { data, error } = await (supabase.rpc as any)('get_presale_stats_public');
+    
+    if (error) {
+      logger.error('Failed to get presale stats', error);
+      // Return fallback data on error
+      return {
+        total_tpc_sold: 0,
+        total_usd_raised: 0,
+        unique_buyers: 0,
+        active_stage: {
+          name: 'stage1',
+          price_usd: 0.001,
+          sold: 0,
+          allocation: 100000000
+        },
+        last_updated: Date.now()
+      };
+    }
+
+    if (!data) {
+      throw new Error('No data returned from get_presale_stats_public');
+    }
+
+    return data as PresaleStats;
+  } catch (error) {
+    logger.error('Unexpected error getting presale stats', error);
+    // Return fallback data on error
+    return {
+      total_tpc_sold: 0,
+      total_usd_raised: 0,
+      unique_buyers: 0,
+      active_stage: {
+        name: 'stage1',
+        price_usd: 0.001,
+        sold: 0,
+        allocation: 100000000
+      },
+      last_updated: Date.now()
+    };
+  }
 };
 
 // Get available payment methods

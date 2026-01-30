@@ -9,6 +9,7 @@ import HomePage from "@/pages/public/HomePage";
 import VerifiedPage from "@/pages/public/VerifiedPage";
 import TransparencyPage from "@/pages/public/TransparencyPage";
 import BuyTpcPage from "@/pages/public/BuyTpcPage";
+import PresaleStatsPage from "@/pages/public/PresaleStatsPage";
 import TrustCenterPage from "@/pages/public/TrustCenterPage";
 import ComingSoonPage from "@/pages/public/ComingSoonPage";
 import MarketplaceComingSoon from "@/pages/public/MarketplaceComingSoon";
@@ -43,6 +44,7 @@ export default function AppRoutes() {
           <Route path="about" element={<ComingSoonPage titleKey="about.title" />} />
           <Route path="verified" element={<VerifiedPage />} />
           <Route path="transparency" element={<TransparencyPage />} />
+          <Route path="presale-stats" element={<PresaleStatsPage />} />
           <Route path="buytpc" element={<BuyTpcPage />} />
           <Route path="marketplace" element={<MarketplaceComingSoon />} />
           <Route path="trust" element={<TrustCenterPage />} />

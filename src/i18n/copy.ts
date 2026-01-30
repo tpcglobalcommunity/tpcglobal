@@ -368,20 +368,16 @@ export const copy = {
     },
     
     // Presale Stats
-    presale: {
+    presaleStats: {
       title: "Statistik Presale",
-      subtitle: "Data penjualan real-time",
-      stage1: "Stage 1",
-      stage2: "Stage 2",
-      sold: "Terjual",
-      remaining: "Tersisa",
-      supply: "Total Supply",
-      price: "Harga",
-      totalSold: "Total Terjual",
-      totalRemaining: "Total Tersisa",
-      progressTitle: "Progress Penjualan",
-      pricingTitle: "Harga per Stage",
-      dexReference: "Referensi DEX",
+      subtitle: "Data presale real-time dan progress",
+      totalSold: "Total TPC Terjual",
+      totalRaised: "Total USD Terkumpul",
+      uniqueBuyers: "Pembeli Unik",
+      activeStage: "Stage Aktif",
+      progress: "Progress",
+      loading: "Memuat statistik...",
+      empty: "Tidak ada data presale tersedia"
     },
     
     // Buy TPC
@@ -1313,20 +1309,16 @@ export const copy = {
     },
     
     // Presale Stats
-    presale: {
+    presaleStats: {
       title: "Presale Statistics",
-      subtitle: "Real-time sales data",
-      stage1: "Stage 1",
-      stage2: "Stage 2",
-      sold: "Sold",
-      remaining: "Remaining",
-      supply: "Total Supply",
-      price: "Price",
-      totalSold: "Total Sold",
-      totalRemaining: "Total Remaining",
-      progressTitle: "Sales Progress",
-      pricingTitle: "Price per Stage",
-      dexReference: "DEX Reference",
+      subtitle: "Real-time presale data and progress",
+      totalSold: "Total TPC Sold",
+      totalRaised: "Total USD Raised",
+      uniqueBuyers: "Unique Buyers",
+      activeStage: "Active Stage",
+      progress: "Progress",
+      loading: "Loading statistics...",
+      empty: "No presale data available"
     },
     
     // Buy TPC
