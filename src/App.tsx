@@ -12,16 +12,16 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <I18nProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <I18nProvider>
         <MetaTags />
         <AppErrorBoundary>
           <AppRoutes />
         </AppErrorBoundary>
-      </TooltipProvider>
-    </I18nProvider>
+      </I18nProvider>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 
