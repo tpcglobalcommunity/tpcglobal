@@ -35,9 +35,11 @@ export const PublicHeader = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to={withLang("/")} className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">TPC</span>
-            </div>
+            <img 
+              src="/tpc-logo.png" 
+              alt="TPC Global" 
+              className="w-8 h-8 rounded-lg"
+            />
             <span className="font-bold text-lg text-gradient-gold hidden sm:inline">TPC Global</span>
           </Link>
 
