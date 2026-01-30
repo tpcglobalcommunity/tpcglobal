@@ -291,6 +291,11 @@ const BuyTpcPage = () => {
               <p className="text-xs text-muted-foreground mt-1">
                 {t("buyTpc.referralHelpRequired")}
               </p>
+              <p className="text-xs text-primary mt-1">
+                <a href="#" className="underline hover:no-underline">
+                  {t("buyTpc.referralGetCode")}
+                </a>
+              </p>
             </div>
           </div>
 
