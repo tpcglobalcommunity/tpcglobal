@@ -1,73 +1,144 @@
-# Welcome to your Lovable project
+# TPC Global - Official Presale Platform
 
-## Project info
+> **Education-First Crypto Platform** - No profit guarantees. No financial advice. Learn blockchain technology safely.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🚀 Quick Start
 
-## How can I edit this code?
+### Local Development
+```bash
+# Install dependencies
+npm install
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
+
+# Build for production
+npm run build
 ```
 
-**Edit a file directly in GitHub**
+### Environment Setup
+Create `.env` file with:
+```bash
+VITE_SUPABASE_PROJECT_ID=your_project_id
+VITE_SUPABASE_PUBLISHABLE_KEY=your_publishable_key
+VITE_SUPABASE_URL=your_supabase_url
+VITE_USD_IDR_RATE=17000
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🌐 Deployment (Cloudflare Pages)
 
-**Use GitHub Codespaces**
+**Project**: `presale`  
+**Framework**: Vite  
+**Build Command**: `npm run build`  
+**Output Directory**: `dist`  
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Required Environment Variables
+- `VITE_SUPABASE_PROJECT_ID`
+- `VITE_SUPABASE_PUBLISHABLE_KEY` 
+- `VITE_SUPABASE_URL`
+- `VITE_USD_IDR_RATE=17000`
 
-## What technologies are used for this project?
+### SPA Configuration
+- `public/_redirects` ensures React Router works: `/* /index.html 200`
+- Automatic copy to `dist/_redirects` during build
 
-This project is built with:
+## 💰 Token Sale Information
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Presale Stages
+- **Stage 1**: 100,000,000 TPC @ $0.001
+- **Stage 2**: 100,000,000 TPC @ $0.002
+- **DEX/CEX Target**: $0.005
 
-## How can I deploy this project?
+### Exchange Rate
+- **USD → IDR**: 17,000 (default rate)
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## 🔒 Security & Anti-Scam
 
-## Can I connect a custom domain to my Lovable project?
+### ⚠️ IMPORTANT SECURITY REMINDERS
 
-Yes, you can!
+**TPC Global is an education-only platform. We do NOT:**
+- Guarantee profits or returns
+- Provide financial advice
+- Promise investment gains
+- Contact you first for investment opportunities
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+**🛡️ ANTI-SCAM PROTECTION:**
+- **ONLY trust**: `tpcglobal.io` official domain
+- **ONLY use**: Official wallets listed below
+- **NEVER share**: Private keys or seed phrases
+- **ALWAYS verify**: Through our official verification page
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+**📧 CONTACT:**
+- **Official Email**: `support@tpcglobal.io`
+- **No DMs**: We never initiate contact via DM/WhatsApp
+
+## 🔍 Transparency Wallets
+
+### Official Wallet Addresses (Solana Network)
+
+**Supply Wallets:**
+- **Stage 1 Supply**: `At5nA9pw2ukSoAQj5vxqBmNbfk6UYF89UBsXtoFrf8t7`
+- **Stage 2 Supply**: `FzUNpf4vVbTSzxcywAUba87FdZHvEBQZFNyKVMrchyAh`
+
+**Operational Wallets:**
+- **Liquidity**: `CbaYJrd23Ak9dEDjVTExyjrgjn1MVSN1h3Ga7cRCnrxm`
+- **Buyback**: `ALaCDQv5etXkrFqB91r7gNw5CpDe58nUyhWR8C5vKg7a`
+- **Burn**: `H75PvmbP55LYbK3hGyrnxus2kZCjfZ4TmCGvyWcKPfL`
+- **Mint**: `2YJi7b95778Wv5DNWMZD86TN3fkUHDFwcDesrFoGdEka`
+
+### Admin Access
+- Admin access controlled via UUID whitelist system
+- No centralized admin controls for user funds
+- All wallet addresses are publicly verifiable
+
+## 🛠️ Technology Stack
+
+- **Framework**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Authentication**: Supabase Auth
+- **Deployment**: Cloudflare Pages
+- **Language**: Bilingual (English/Indonesian)
+
+## 📋 Features
+
+### Core Functionality
+- ✅ **Bilingual Support**: English & Indonesian
+- ✅ **Secure Authentication**: Email-based login
+- ✅ **Invoice System**: Transparent payment tracking
+- ✅ **Anti-Scam Protection**: Built-in security features
+- ✅ **Mobile Responsive**: Works on all devices
+- ✅ **SEO Optimized**: Meta tags and sitemap
+
+### Security Features
+- ✅ **Wallet Verification**: Official wallet validation
+- ✅ **Rate Limiting**: Prevent abuse
+- ✅ **Input Validation**: Sanitized user inputs
+- ✅ **HTTPS Only**: Secure connections
+- ✅ **CORS Protection**: Secure API calls
+
+## 🌍 Language Support
+
+### English / Bahasa Indonesia
+- Complete UI translation
+- Localized content
+- Currency formatting
+- Date/time formatting
+
+## 📞 Support
+
+**Official Channels Only:**
+- 🌐 **Website**: [tpcglobal.io](https://tpcglobal.io)
+- 📧 **Email**: `support@tpcglobal.io`
+- 🔍 **Verification**: Check official wallets on our website
+
+**⚠️ WARNING:**
+- Ignore unofficial social media accounts
+- Never share private keys
+- Verify all wallet addresses on our official site
+- Report suspicious activities to support
+
+---
+
+**© 2024 TPC Global - Education-First Blockchain Platform**  
+*No financial advice. Educational purposes only.*
