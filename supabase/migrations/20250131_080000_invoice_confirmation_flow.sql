@@ -10,7 +10,15 @@ BEGIN
     END IF;
     
     -- Ensure status constraint includes all required states
-    DROP CONSTRAINT IF EXISTS tpc_invoices_status_check ON public.tpc_invoices;
+    DO $$
+    BEGIN
+        -- Drop existing constraint if it exists
+        ALTER TABLE public.tpc_invoices DROP CONSTRAINT IF EXISTS tpc_invoices_status_check;
+    EXCEPTION WHEN undefined_object THEN
+        -- Constraint doesn't exist, continue
+    END;
+    END $$;
+    
     ALTER TABLE public.tpc_invoices 
     ADD CONSTRAINT tpc_invoices_status_check 
     CHECK (status IN ('UNPAID','PENDING_REVIEW','PAID','REJECTED','EXPIRED','CANCELLED'));
