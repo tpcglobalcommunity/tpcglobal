@@ -10,10 +10,6 @@ export interface PresaleSettings {
   stage2_price_usd: number;
   usd_idr_rate: number;
   treasury_address: string;
-  stage1_sold_tpc: number;
-  stage1_remaining_tpc: number;
-  stage2_sold_tpc: number;
-  stage2_remaining_tpc: number;
 }
 
 export type Database = {

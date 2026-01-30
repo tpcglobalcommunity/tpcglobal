@@ -498,6 +498,7 @@ export const copy = {
       },
       // Form fields
       form: {
+        title: "Pembelian Token TPC",
         email: "Email",
         amount: "Jumlah TPC",
         referral: "Kode Referral (Opsional)",
@@ -1298,6 +1299,7 @@ export const copy = {
       },
       // Form fields
       form: {
+        title: "Buy TPC Token",
         email: "Email",
         amount: "TPC Amount",
         referral: "Referral Code (Optional)",

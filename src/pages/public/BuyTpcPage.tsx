@@ -214,7 +214,7 @@ const BuyTpcPage = () => {
         <Alert className="mb-6">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {lang === 'id' ? 'Gagal memuat informasi stage' : 'Failed to load stage information'}
+            {lang === 'id' ? 'Informasi stage sedang tidak tersedia' : 'Stage information is temporarily unavailable'}
           </AlertDescription>
         </Alert>
       ) : settings ? (
@@ -235,16 +235,12 @@ const BuyTpcPage = () => {
                 </p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">{lang === 'id' ? 'TPC Terjual' : 'TPC Sold'}</p>
-                <p className="font-semibold">
-                  {settings.active_stage === 'stage1' ? settings.stage1_sold_tpc.toLocaleString('id-ID') : settings.stage2_sold_tpc.toLocaleString('id-ID')}
-                </p>
+                <p className="text-sm text-muted-foreground">{lang === 'id' ? 'Kurs USD/IDR' : 'USD/IDR Rate'}</p>
+                <p className="font-semibold">{settings.usd_idr_rate.toLocaleString('id-ID')}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">{lang === 'id' ? 'TPC Tersedia' : 'TPC Available'}</p>
-                <p className="font-semibold text-green-400">
-                  {settings.active_stage === 'stage1' ? settings.stage1_remaining_tpc.toLocaleString('id-ID') : settings.stage2_remaining_tpc.toLocaleString('id-ID')}
-                </p>
+                <p className="text-sm text-muted-foreground">{lang === 'id' ? 'Status' : 'Status'}</p>
+                <p className="font-semibold text-green-400">{lang === 'id' ? 'Tersedia' : 'Available'}</p>
               </div>
             </div>
           </CardContent>
@@ -256,7 +252,7 @@ const BuyTpcPage = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5" />
-            {t("buyTpc.form.title") || (lang === 'id' ? 'Form Pembelian' : 'Purchase Form')}
+            {t("buyTpc.form.title")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">

@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
-import { PresaleSettings } from '@/integrations/supabase/types';
+
+export interface PresaleSettings {
+  active_stage: string;
+  stage1_price_usd: number;
+  stage2_price_usd: number;
+  usd_idr_rate: number;
+  treasury_address: string;
+}
 
 export interface PresaleSettingsHook {
   settings: PresaleSettings | null;
@@ -24,7 +31,7 @@ export function usePresaleSettings(): PresaleSettingsHook {
 
       if (rpcError) {
         logger.error('Failed to fetch presale settings', { error: rpcError });
-        setError('Failed to load presale settings');
+        setError('Settings unavailable');
         return;
       }
 
@@ -34,7 +41,7 @@ export function usePresaleSettings(): PresaleSettingsHook {
       }
     } catch (err) {
       logger.error('Unexpected error fetching presale settings', err);
-      setError('Failed to load presale settings');
+      setError('Settings unavailable');
     } finally {
       setLoading(false);
     }
