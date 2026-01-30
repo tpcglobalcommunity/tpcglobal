@@ -44,6 +44,7 @@ const AdminInvoicesPage = () => {
   // Approval/Rejection states
   const [approveDialog, setApproveDialog] = useState<{ open: boolean; invoice: AdminInvoiceResult | null }>({ open: false, invoice: null });
   const [rejectDialog, setRejectDialog] = useState<{ open: boolean; invoice: AdminInvoiceResult | null }>({ open: false, invoice: null });
+  const [confirmDialog, setConfirmDialog] = useState<{ open: boolean; action: 'approve' | 'reject' | null; invoice: AdminInvoiceResult | null }>({ open: false, invoice: null, action: null });
   const [txHash, setTxHash] = useState<string>("");
   const [adminNote, setAdminNote] = useState<string>("");
 
@@ -76,6 +77,16 @@ const AdminInvoicesPage = () => {
     }
   };
 
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'PENDING': return 'default';
+      case 'CONFIRMED': return 'secondary';
+      case 'APPROVED': return 'default';
+      case 'REJECTED': return 'destructive';
+      default: return 'outline';
+    }
+  };
+
   const getSolscanLink = (txHash: string) => {
     return `https://solscan.io/tx/${txHash}`;
   };
@@ -86,18 +97,33 @@ const AdminInvoicesPage = () => {
       return;
     }
 
-    setProcessingInvoice(approveDialog.invoice.invoice_no);
+    if (!adminNote.trim() || adminNote.trim().length < 5) {
+      toast.error("Admin note is required (minimum 5 characters)");
+      return;
+    }
+
+    setConfirmDialog({ open: true, action: 'approve', invoice: approveDialog.invoice });
+  };
+
+  const confirmApprove = async () => {
+    if (!confirmDialog.invoice || !txHash.trim()) {
+      toast.error("Transaction hash is required");
+      return;
+    }
+
+    setProcessingInvoice(confirmDialog.invoice.invoice_no);
     try {
       const request: ApproveInvoiceRequest = {
-        invoice_no: approveDialog.invoice.invoice_no,
+        invoice_no: confirmDialog.invoice.invoice_no,
         tx_hash: txHash.trim(),
-        admin_note: adminNote.trim() || undefined
+        admin_note: adminNote.trim()
       };
 
       const result = await adminApproveInvoice(request);
       if (result) {
         toast.success("Invoice approved successfully!");
         setApproveDialog({ open: false, invoice: null });
+        setConfirmDialog({ open: false, action: null, invoice: null });
         setTxHash("");
         setAdminNote("");
         loadInvoices();
@@ -113,15 +139,24 @@ const AdminInvoicesPage = () => {
   };
 
   const handleReject = async () => {
-    if (!rejectDialog.invoice || !adminNote.trim()) {
+    if (!rejectDialog.invoice || !adminNote.trim() || adminNote.trim().length < 5) {
+      toast.error("Rejection reason is required (minimum 5 characters)");
+      return;
+    }
+
+    setConfirmDialog({ open: true, action: 'reject', invoice: rejectDialog.invoice });
+  };
+
+  const confirmReject = async () => {
+    if (!confirmDialog.invoice || !adminNote.trim()) {
       toast.error("Rejection reason is required");
       return;
     }
 
-    setProcessingInvoice(rejectDialog.invoice.invoice_no);
+    setProcessingInvoice(confirmDialog.invoice.invoice_no);
     try {
       const request: RejectInvoiceRequest = {
-        invoice_no: rejectDialog.invoice.invoice_no,
+        invoice_no: confirmDialog.invoice.invoice_no,
         admin_note: adminNote.trim()
       };
 
@@ -129,6 +164,7 @@ const AdminInvoicesPage = () => {
       if (result) {
         toast.success("Invoice rejected successfully!");
         setRejectDialog({ open: false, invoice: null });
+        setConfirmDialog({ open: false, action: null, invoice: null });
         setAdminNote("");
         loadInvoices();
       } else {
@@ -145,7 +181,17 @@ const AdminInvoicesPage = () => {
   const filteredInvoices = invoices.filter(invoice => 
     invoice.invoice_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
     invoice.buyer_email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ).sort((a, b) => {
+    // Sort pending invoices to the top, newest first
+    if (a.status === 'CONFIRMED' && b.status !== 'CONFIRMED') return -1;
+    if (a.status !== 'CONFIRMED' && b.status === 'CONFIRMED') return 1;
+    if (a.status === 'CONFIRMED' && b.status === 'CONFIRMED') {
+      // For confirmed invoices, sort newest first
+      return new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime();
+    }
+    // For other statuses, sort by created date descending
+    return new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime();
+  });
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "-";
@@ -244,12 +290,15 @@ const AdminInvoicesPage = () => {
                         <div>
                           <div className="flex items-center gap-2 mb-2">
                             <h3 className="font-semibold text-lg">{invoice.invoice_no}</h3>
-                            <Badge className={getStatusColor(invoice.status)}>
+                            <Badge variant={getStatusBadgeVariant(invoice.status)}>
                               {invoice.status}
                             </Badge>
                             <Badge variant="outline">{invoice.stage.toUpperCase()}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground">{invoice.buyer_email}</p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Status ditentukan manual oleh admin.
+                          </p>
                         </div>
                         
                         <div className="text-right">
@@ -333,13 +382,17 @@ const AdminInvoicesPage = () => {
                                   />
                                 </div>
                                 <div>
-                                  <Label htmlFor="admin-note">Admin Note (Optional)</Label>
+                                  <Label htmlFor="admin-note">Admin Note *</Label>
                                   <Textarea
                                     id="admin-note"
-                                    placeholder="Add any notes about this approval"
+                                    placeholder="Dana diterima sesuai invoice / Bukti tidak valid"
                                     value={adminNote}
                                     onChange={(e) => setAdminNote(e.target.value)}
+                                    className="min-h-[80px]"
                                   />
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    Minimum 5 karakter. Wajib diisi.
+                                  </p>
                                 </div>
                                 <div className="flex gap-2">
                                   <Button onClick={handleApprove} disabled={processingInvoice === invoice.invoice_no}>
@@ -372,10 +425,14 @@ const AdminInvoicesPage = () => {
                                   <Label htmlFor="reject-reason">Rejection Reason *</Label>
                                   <Textarea
                                     id="reject-reason"
-                                    placeholder="Explain why this invoice is being rejected"
+                                    placeholder="Dana diterima sesuai invoice / Bukti tidak valid"
                                     value={adminNote}
                                     onChange={(e) => setAdminNote(e.target.value)}
+                                    className="min-h-[80px]"
                                   />
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    Minimum 5 karakter. Wajib diisi.
+                                  </p>
                                 </div>
                                 <div className="flex gap-2">
                                   <Button variant="destructive" onClick={handleReject} disabled={processingInvoice === invoice.invoice_no}>
@@ -397,6 +454,51 @@ const AdminInvoicesPage = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Confirmation Modal */}
+        <Dialog open={confirmDialog.open} onOpenChange={(open) => setConfirmDialog({ open, action: null, invoice: null })}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {confirmDialog.action === 'approve' ? 'Konfirmasi Approve' : 'Konfirmasi Reject'}
+              </DialogTitle>
+              <DialogDescription>
+                Anda akan mengubah status invoice ini.
+                Tindakan ini akan tercatat dan tidak dapat dibatalkan.
+                Pastikan data transfer sudah benar.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              {confirmDialog.invoice && (
+                <div className="bg-muted p-3 rounded">
+                  <p className="font-semibold">{confirmDialog.invoice.invoice_no}</p>
+                  <p className="text-sm text-muted-foreground">{confirmDialog.invoice.buyer_email}</p>
+                  <p className="text-sm">{confirmDialog.invoice.tpc_amount.toLocaleString()} TPC</p>
+                </div>
+              )}
+              <div className="flex gap-2">
+                <Button 
+                  onClick={confirmDialog.action === 'approve' ? confirmApprove : confirmReject}
+                  disabled={processingInvoice === confirmDialog.invoice?.invoice_no}
+                  variant={confirmDialog.action === 'approve' ? 'default' : 'destructive'}
+                >
+                  {processingInvoice === confirmDialog.invoice?.invoice_no 
+                    ? "Processing..." 
+                    : confirmDialog.action === 'approve' 
+                      ? "Ya, Approve" 
+                      : "Ya, Reject"
+                  }
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setConfirmDialog({ open: false, action: null, invoice: null })}
+                >
+                  Batal
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </PremiumShell>
   );

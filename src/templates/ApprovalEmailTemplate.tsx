@@ -282,6 +282,9 @@ const ApprovalEmailTemplate = ({ invoiceNo, buyerEmail, tpcAmount, txHash, lang 
             <!-- Success Message -->
             <div class="success-box">
                 <p>${t.message}</p>
+                <p style="margin-top: 10px; font-size: 14px; font-style: italic;">
+                    ${isIndonesian ? 'Status ditentukan berdasarkan pengecekan manual oleh admin.' : 'Status determined based on manual verification by admin.'}
+                </p>
             </div>
             
             <!-- Invoice Info -->
