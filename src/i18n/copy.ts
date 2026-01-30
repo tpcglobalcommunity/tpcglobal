@@ -1745,6 +1745,12 @@ export const copy = {
       body: "This page is under development. Please come back later.",
     },
     
+    // Marketplace
+    marketplace: {
+      title: "Marketplace",
+      comingSoonBody: "Marketplace is under development. Please come back later.",
+    },
+    
     // Footer
     footer: {
       copyright: "© 2026 TPC Global. All rights reserved.",
@@ -1778,6 +1784,12 @@ export const copy = {
     // Coming Soon
     comingSoon: {
       body: "Halaman ini sedang dalam pengembangan. Silakan kembali lagi nanti.",
+    },
+    
+    // Marketplace
+    marketplace: {
+      title: "Marketplace",
+      comingSoonBody: "Marketplace sedang dalam pengembangan. Silakan kembali lagi nanti.",
     },
   },
 } as const;
