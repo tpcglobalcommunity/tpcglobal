@@ -58,21 +58,21 @@ export const copy = {
     
     // Home Page
     home: {
-      heroTitle: "Belajar Trading Lebih Disiplin. Transparan. Berbasis Komunitas.",
-      heroSubtitle: "TPC adalah komunitas trader yang berfokus pada edukasi, tools, dan infrastruktur on-chain yang transparan.",
-      heroDescription: "TPC bukan penyedia nasihat keuangan dan tidak menjanjikan keuntungan.",
+      heroTitle: "Trader Professional Community",
+      heroSubtitle: "Education • Transparency • Community",
+      heroDescription: "Education-Only • No Financial Advice",
       
       // Trust Bar
       trustBadges: {
         educationOnly: "Education-Only",
-        transparent: "Transparent & Verifiable",
+        transparent: "On-Chain Transparency", 
+        noProfitGuarantee: "No Profit Guarantee",
         securityFirst: "Security-First",
-        globalCommunity: "Global Community",
       },
       
       // What is TPC
       whatIsTpcTitle: "Apa Itu TPC?",
-      whatIsTpcDesc: "TPC (Trader Professional Community) adalah ekosistem berbasis komunitas untuk trader yang ingin belajar, berkembang, dan berpartisipasi dalam sistem on-chain yang transparan.\n\nTPC bukan penyedia nasihat keuangan dan tidak menjanjikan keuntungan.",
+      whatIsTpcDesc: "TPC (Trader Professional Community) adalah komunitas trader yang berfokus pada edukasi, transparansi on-chain, dan pengembangan ekosistem utilitas.\n\nTPC bukan penyedia nasihat keuangan dan tidak menjanjikan keuntungan.",
       
       // TPC IS / IS NOT
       tpcIsTitle: "TPC ADALAH",
@@ -100,12 +100,12 @@ export const copy = {
       presaleNote: "Harga dapat berubah sesuai fase. Tidak ada jaminan nilai di masa depan.",
       
       // CTAs
-      ctaBuyTpc: "Beli TPC",
-      ctaVerified: "Verified",
+      ctaBuyTpc: "Buy TPC (Presale)",
+      ctaVerified: "Verify Transparency",
       ctaLearnMore: "Pelajari Lebih Lanjut",
       
       // Disclaimer
-      disclaimer: "Aset kripto memiliki risiko tinggi. Bukan nasihat investasi.",
+      disclaimer: "Education-Only • No Financial Advice • High Risk",
       
       // Legacy (keep for compatibility)
       ctaTransparency: "Transparansi",
@@ -891,21 +891,21 @@ export const copy = {
     
     // Home Page
     home: {
-      heroTitle: "Trade Smarter. Learn Together. Build On-Chain.",
-      heroSubtitle: "TPC is a trader community focused on education, tools, and transparent on-chain infrastructure.",
-      heroDescription: "TPC does not provide financial advice and does not guarantee profits.",
+      heroTitle: "Trader Professional Community",
+      heroSubtitle: "Education • Transparency • Community",
+      heroDescription: "Education-Only • No Financial Advice",
       
       // Trust Bar
       trustBadges: {
         educationOnly: "Education-Only",
-        transparent: "Transparent & Verifiable",
+        transparent: "On-Chain Transparency", 
+        noProfitGuarantee: "No Profit Guarantee",
         securityFirst: "Security-First",
-        globalCommunity: "Global Community",
       },
       
       // What is TPC
       whatIsTpcTitle: "What is TPC?",
-      whatIsTpcDesc: "TPC (Trader Professional Community) is a community-driven ecosystem designed for traders who want to learn, grow, and participate in a transparent on-chain system.\n\nTPC does not provide financial advice and does not guarantee profits.",
+      whatIsTpcDesc: "TPC (Trader Professional Community) is a trader community focused on education, on-chain transparency, and utility ecosystem development.\n\nTPC does not provide financial advice and does not guarantee profits.",
       
       // TPC IS / IS NOT
       tpcIsTitle: "TPC IS",
@@ -933,12 +933,12 @@ export const copy = {
       presaleNote: "Prices may change by phase. No future value is guaranteed.",
       
       // CTAs
-      ctaBuyTpc: "Buy TPC",
-      ctaVerified: "Verified",
+      ctaBuyTpc: "Buy TPC (Presale)",
+      ctaVerified: "Verify Transparency",
       ctaLearnMore: "Learn More",
       
       // Disclaimer
-      disclaimer: "Crypto investment carries high risk. Not investment advice.",
+      disclaimer: "Education-Only • No Financial Advice • High Risk",
       
       // Legacy (keep for compatibility)
       ctaTransparency: "Transparency",

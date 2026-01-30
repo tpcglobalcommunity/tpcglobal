@@ -1,25 +1,25 @@
 import { useI18n } from "@/i18n/i18n";
 import { PremiumShell } from "@/components/layout/PremiumShell";
 import { Badge } from "@/components/ui/badge";
-import { Store, Shield, TrendingUp } from "lucide-react";
+import { Coins, Shield, TrendingUp } from "lucide-react";
 
-const MarketplacePage = () => {
+const StakingPage = () => {
   const { t } = useI18n();
 
   return (
     <PremiumShell>
       <div className="container-app section-spacing">
         <div className="max-w-3xl mx-auto text-center">
-          <Store className="h-16 w-16 mx-auto mb-6 text-primary" />
+          <Coins className="h-16 w-16 mx-auto mb-6 text-primary" />
           <h1 className="text-3xl font-bold mb-6 text-gradient-gold">
-            TPC Marketplace
+            TPC Staking
           </h1>
           
           <div className="prose prose-lg dark:prose-invert max-w-none mb-8">
             <p className="text-foreground leading-relaxed">
-              TPC Marketplace adalah platform terdesentralisasi untuk trading tools, 
-              indicators, dan edukasi premium. Semua produk menggunakan TPC token sebagai 
-              utilitas payment dalam ekosistem.
+              TPC Staking memungkinkan Anda mendapatkan utilitas ekosistem dengan 
+              mengunci token TPC. Semua reward berupa utilitas akses dan bukan return 
+              investasi. Transparansi on-chain untuk semua staking activity.
             </p>
           </div>
 
@@ -32,23 +32,23 @@ const MarketplacePage = () => {
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             <div className="text-center">
               <TrendingUp className="h-8 w-8 mx-auto mb-3 text-primary" />
-              <h3 className="font-semibold mb-2">Trading Tools</h3>
+              <h3 className="font-semibold mb-2">Utility Rewards</h3>
               <p className="text-sm text-muted-foreground">
-                Indicators dan analisis tools berkualitas
+                Akses premium features dan education content
               </p>
             </div>
             <div className="text-center">
               <Shield className="h-8 w-8 mx-auto mb-3 text-primary" />
-              <h3 className="font-semibold mb-2">Verified Sellers</h3>
+              <h3 className="font-semibold mb-2">On-Chain Transparent</h3>
               <p className="text-sm text-muted-foreground">
-                Semua penjual terverifikasi dan trusted
+                Semua staking activity terverifikasi di blockchain
               </p>
             </div>
             <div className="text-center">
-              <Store className="h-8 w-8 mx-auto mb-3 text-primary" />
-              <h3 className="font-semibold mb-2">TPC Payments</h3>
+              <Coins className="h-8 w-8 mx-auto mb-3 text-primary" />
+              <h3 className="font-semibold mb-2">Flexible Terms</h3>
               <p className="text-sm text-muted-foreground">
-                Pembayaran mudah dengan TPC token
+                Multiple staking periods dengan utilitas berbeda
               </p>
             </div>
           </div>
@@ -64,4 +64,4 @@ const MarketplacePage = () => {
   );
 };
 
-export default MarketplacePage;
+export default StakingPage;

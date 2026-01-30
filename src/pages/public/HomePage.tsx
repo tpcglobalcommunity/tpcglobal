@@ -48,24 +48,23 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* Trust Bar */}
+        {/* Trust Pillars */}
         <div className="mb-12">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="flex items-center justify-center gap-2 p-3 rounded-lg bg-muted/50">
-              <BookOpen className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">{t("home.trustBadges.educationOnly")}</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div className="card-premium p-6 text-center">
+              <BookOpen className="h-8 w-8 mx-auto mb-3 text-primary" />
+              <h3 className="text-lg font-semibold mb-2">{t("home.trustBadges.educationOnly")}</h3>
+              <p className="text-sm text-muted-foreground">Fokus edukasi trading tanpa janji profit</p>
             </div>
-            <div className="flex items-center justify-center gap-2 p-3 rounded-lg bg-muted/50">
-              <Shield className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">{t("home.trustBadges.transparent")}</span>
+            <div className="card-premium p-6 text-center">
+              <Shield className="h-8 w-8 mx-auto mb-3 text-primary" />
+              <h3 className="text-lg font-semibold mb-2">{t("home.trustBadges.transparent")}</h3>
+              <p className="text-sm text-muted-foreground">Transparansi on-chain untuk semua transaksi</p>
             </div>
-            <div className="flex items-center justify-center gap-2 p-3 rounded-lg bg-muted/50">
-              <CheckCircle className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">{t("home.trustBadges.securityFirst")}</span>
-            </div>
-            <div className="flex items-center justify-center gap-2 p-3 rounded-lg bg-muted/50">
-              <Users className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">{t("home.trustBadges.globalCommunity")}</span>
+            <div className="card-premium p-6 text-center">
+              <CheckCircle className="h-8 w-8 mx-auto mb-3 text-primary" />
+              <h3 className="text-lg font-semibold mb-2">{t("home.trustBadges.noProfitGuarantee")}</h3>
+              <p className="text-sm text-muted-foreground">Tidak ada jaminan profit atau return</p>
             </div>
           </div>
         </div>

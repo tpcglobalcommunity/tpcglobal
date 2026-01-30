@@ -12,6 +12,9 @@ import InvoiceDetailPage from "@/pages/public/InvoiceDetailPage";
 import DaoPage from "@/pages/public/DaoPage";
 import TrustCenterPage from "@/pages/public/TrustCenterPage";
 import ComingSoonPage from "@/pages/public/ComingSoonPage";
+import EducationPage from "@/pages/public/EducationPage";
+import CopyTradingPage from "@/pages/public/CopyTradingPage";
+import StakingPage from "@/pages/public/StakingPage";
 
 // Auth Pages
 import LoginPage from "@/pages/auth/LoginPage";
@@ -41,9 +44,10 @@ const LangRoutes = () => (
       <Route path="/dao/how-it-works" element={<ComingSoonPage titleKey="daoHow.title" />} />
       <Route path="/dao/proposals" element={<ComingSoonPage titleKey="daoProposals.title" />} />
       <Route path="/trust" element={<TrustCenterPage />} />
-      <Route path="/education" element={<ComingSoonPage titleKey="comingSoonPages.education" />} />
+      <Route path="/education" element={<EducationPage />} />
       <Route path="/marketplace" element={<MarketplacePage />} />
-      <Route path="/staking" element={<ComingSoonPage titleKey="comingSoonPages.staking" />} />
+      <Route path="/copy-trading" element={<CopyTradingPage />} />
+      <Route path="/staking" element={<StakingPage />} />
       <Route path="/trade-together" element={<ComingSoonPage titleKey="comingSoonPages.tradeTogether" />} />
       <Route path="/wd-consistency" element={<ComingSoonPage titleKey="comingSoonPages.wdConsistency" />} />
       
