@@ -9,422 +9,483 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { 
   ShoppingCart, 
   AlertCircle, 
-  Calculator
+  Calculator,
+  Shield,
+  Building,
+  BookOpen,
+  Copy,
+  ExternalLink
 } from "lucide-react";
-import { 
-  getPresaleStagesPublic, 
-  getPaymentMethodsPublic, 
-  createInvoicePublic,
-  type PresaleStage,
-  type PaymentMethod,
-  type CreateInvoiceRequest
-} from "@/lib/rpc/public";
 import { supabase } from "@/integrations/supabase/client";
+import { usePresaleSettings } from "@/hooks/usePresaleSettings";
 
 const BuyTpcPage = () => {
   const { t, lang, withLang } = useI18n();
   const navigate = useNavigate();
+  const { settings, loading, error } = usePresaleSettings();
   
-  const [stages, setStages] = useState<PresaleStage[]>([]);
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [selectedStage, setSelectedStage] = useState<string>("stage1");
+  // Form state
+  const [email, setEmail] = useState<string>("");
   const [tpcAmount, setTpcAmount] = useState<string>("");
-  const [selectedPayment, setSelectedPayment] = useState<string>("");
-  const [buyerEmail, setBuyerEmail] = useState<string>("");
+  const [referralCode, setReferralCode] = useState<string>("");
+  const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | null>(null);
   
-  // Default USD/IDR rate with fallback
-  const DEFAULT_USD_IDR_RATE = 17000;
+  // Modal state
+  const [showInvoiceModal, setShowInvoiceModal] = useState<boolean>(false);
+  const [invoiceData, setInvoiceData] = useState<any>(null);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [stagesData, paymentMethodsData] = await Promise.all([
-          getPresaleStagesPublic(),
-          getPaymentMethodsPublic()
-        ]);
-        setStages(stagesData);
-        setPaymentMethods(paymentMethodsData);
-      } catch (error) {
-        logger.info('Failed to load presale data', { error });
-        setStages([]);
-        setPaymentMethods([]);
-      }
+  // Constants
+  const MAX_TPC_AMOUNT = 100000000; // 100M TPC max per invoice
+
+  // Calculate estimates based on server settings
+  const getEstimates = () => {
+    if (!settings || !tpcAmount) {
+      return { usd: "0.00", idr: "0" };
+    }
+
+    const amount = parseFloat(tpcAmount) || 0;
+    if (amount <= 0) {
+      return { usd: "0.00", idr: "0" };
+    }
+
+    const priceUsd = settings.active_stage === 'stage1' ? settings.stage1_price_usd : settings.stage2_price_usd;
+    const totalUsd = amount * priceUsd;
+    const totalIdr = totalUsd * settings.usd_idr_rate;
+
+    return {
+      usd: totalUsd.toFixed(2),
+      idr: Math.round(totalIdr).toLocaleString('id-ID')
     };
-    loadData();
-  }, []);
-
-  const currentStage = stages.find(s => s.stage === selectedStage);
-  
-  // SAFE numeric helpers
-  const toNum = (v: unknown, fallback = 0) => {
-    const n = typeof v === 'number' ? v : Number(v);
-    return Number.isFinite(n) ? n : fallback;
   };
-  
-  const safeFixed = (v: unknown, digits = 2) => toNum(v, 0).toFixed(digits);
-  
-  const formatUsd = (v: unknown) =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(toNum(v, 0));
-  
-  const formatIdr = (v: unknown) =>
-    new Intl.NumberFormat('id-ID', { 
-      style: 'currency', 
-      currency: 'IDR', 
-      maximumFractionDigits: 0,
-      minimumFractionDigits: 0
-    }).format(toNum(v, 0));
-  
-  // SAFE calculations with guards
-  const tpcAmountNum = toNum(tpcAmount, 0);
-  const priceUsd = toNum(currentStage?.price_usd, 0);
-  const usdIdrRate = DEFAULT_USD_IDR_RATE;
-  
-  const totalUsd = tpcAmountNum * priceUsd;
-  const totalIdr = totalUsd * usdIdrRate;
-  
-  const calculatedUsd = safeFixed(totalUsd, 2);
-  const calculatedIdr = formatIdr(totalIdr);
 
-  const handlePaymentMethodChange = (methodId: string) => {
-    setSelectedPayment(methodId);
-    const method = paymentMethods.find(m => m.id === methodId);
-    setSelectedPaymentMethod(method || null);
+  const estimates = getEstimates();
+
+  // Validation
+  const validateForm = (): string | null => {
+    if (!email || !email.includes('@')) {
+      const msg = t("buyTpc.validation.invalidEmail");
+      return typeof msg === 'string' ? msg : String(msg);
+    }
+    
+    const amount = parseFloat(tpcAmount);
+    if (!amount || amount <= 0) {
+      const msg = t("buyTpc.validation.invalidAmount");
+      return typeof msg === 'string' ? msg : String(msg);
+    }
+    
+    if (amount > MAX_TPC_AMOUNT) {
+      return lang === 'id' 
+        ? `Jumlah terlalu besar. Maksimum ${MAX_TPC_AMOUNT.toLocaleString('id-ID')} TPC per invoice`
+        : `Amount too large. Maximum ${MAX_TPC_AMOUNT.toLocaleString()} TPC per invoice`;
+    }
+    
+    if (!paymentMethod) {
+      return lang === 'id' 
+        ? 'Pilih metode pembayaran'
+        : 'Please select payment method';
+    }
+    
+    if (!termsAccepted) {
+      const msg = t("buyTpc.validation.mustAcceptTerms");
+      return typeof msg === 'string' ? msg : String(msg);
+    }
+    
+    return null;
   };
 
   const handleCreateInvoice = async () => {
-    if (!tpcAmount || !selectedPayment || !buyerEmail || !termsAccepted) {
-      toast.error("Please fill all required fields and accept terms");
-      return;
-    }
-
-    if (!currentStage || currentStage.status !== 'ACTIVE') {
-      toast.error("Selected stage is not active");
+    const validationError = validateForm();
+    if (validationError) {
+      toast.error(validationError);
       return;
     }
 
     setIsSubmitting(true);
+    
     try {
       const { data, error } = await supabase.rpc('create_invoice', {
-        p_tpc_amount: toNum(tpcAmount, 0),
-        p_referral_code: null
+        p_tpc_amount: parseFloat(tpcAmount),
+        p_referral_code: referralCode || null
       });
 
       if (error) {
         logger.error('Failed to create invoice', { error });
-        toast.error("Failed to create invoice");
+        toast.error(t("buyTpc.toast.invoiceFailed"));
         return;
       }
 
-      const invoiceNo = Array.isArray(data) ? data[0]?.invoice_no : data?.invoice_no || data;
+      const invoiceNo = Array.isArray(data) && data.length > 0 ? data[0]?.invoice_no : null;
       
-      // Update buyer email for the invoice
-      if (invoiceNo && buyerEmail) {
-        const { error: emailError } = await supabase.rpc('update_invoice_email', {
-          p_invoice_no: invoiceNo,
-          p_buyer_email: buyerEmail
-        });
-        
-        if (emailError) {
-          logger.error('Failed to update buyer email', { emailError });
-          // Continue anyway since invoice was created
-        }
+      if (!invoiceNo) {
+        toast.error(t("buyTpc.toast.invoiceFailed"));
+        return;
       }
+
+      // Update buyer email
+      if (email) {
+        await supabase.rpc('update_invoice_email', {
+          p_invoice_no: invoiceNo,
+          p_buyer_email: email
+        });
+      }
+
+      // Prepare invoice data for modal
+      setInvoiceData({
+        invoice_no: invoiceNo,
+        stage: settings?.active_stage || 'stage1',
+        tpc_amount: parseFloat(tpcAmount),
+        total_usd: estimates.usd,
+        total_idr: estimates.idr,
+        treasury_address: settings?.treasury_address || '',
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+      });
+
+      setShowInvoiceModal(true);
+      toast.success(t("buyTpc.toast.invoiceCreated"));
       
-      toast.success("Invoice created successfully!");
-      navigate(withLang(`/invoice/${invoiceNo}`));
     } catch (error) {
-      logger.error('Failed to create invoice', { error });
-      toast.error("Failed to create invoice");
+      logger.error('Unexpected error creating invoice', error);
+      toast.error(t("buyTpc.toast.invoiceFailed"));
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Validation checks
-  const isValidAmount = tpcAmountNum > 0 && priceUsd > 0 && totalUsd > 0;
-  const canBuy = currentStage?.status === 'ACTIVE' && 
-               isValidAmount && 
-               selectedPayment && 
-               buyerEmail && 
-               termsAccepted &&
-               !isSubmitting;
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(lang === 'id' ? 'Disalin!' : 'Copied!');
+    } catch (error) {
+      logger.error('Failed to copy to clipboard', error);
+    }
+  };
+
+  const openInvoiceDetail = () => {
+    if (invoiceData?.invoice_no) {
+      navigate(withLang(`/invoice/${invoiceData.invoice_no}`));
+      setShowInvoiceModal(false);
+    }
+  };
+
+  const isFormValid = email && tpcAmount && paymentMethod && termsAccepted && !isSubmitting && !loading;
 
   return (
     <div className="container-app section-spacing">
+      {/* Trust Header */}
       <div className="text-center mb-8">
         <ShoppingCart className="h-12 w-12 mx-auto mb-4 text-primary" />
         <h1 className="text-3xl font-bold mb-2">{t("buyTpc.title")}</h1>
         <p className="text-muted-foreground">{t("buyTpc.subtitle")}</p>
+        
+        <div className="grid md:grid-cols-3 gap-4 mt-8 max-w-3xl mx-auto">
+          <div className="flex items-center gap-3 text-sm">
+            <Shield className="h-5 w-5 text-primary flex-shrink-0" />
+            <span>{t("buyTpc.trust.b1")}</span>
+          </div>
+          <div className="flex items-center gap-3 text-sm">
+            <Building className="h-5 w-5 text-primary flex-shrink-0" />
+            <span>{t("buyTpc.trust.b2")}</span>
+          </div>
+          <div className="flex items-center gap-3 text-sm">
+            <BookOpen className="h-5 w-5 text-primary flex-shrink-0" />
+            <span>{t("buyTpc.trust.b3")}</span>
+          </div>
+        </div>
       </div>
 
-      {/* Trust Header */}
-      <Card className="card-premium mb-6 bg-gradient-to-br from-slate-900/95 to-slate-800/95 border-amber-500/20">
-        <CardContent className="p-6">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold text-amber-400 mb-3">
-              {t("buyTpc.trustHeader.headline")}
-            </h2>
-            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              {t("buyTpc.trustHeader.subheadline")}
-            </p>
-            <div className="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto">
-              <div className="flex items-center gap-3 text-sm">
-                <div className="w-8 h-8 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <span>{t("buyTpc.trustHeader.bullets.treasury")}</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
-                <div className="w-8 h-8 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                    <path fillRule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000 2H6a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2a1 1 0 100-2 2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <span>{t("buyTpc.trustHeader.bullets.invoice")}</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
-                <div className="w-8 h-8 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
-                  </svg>
-                </div>
-                <span>{t("buyTpc.trustHeader.bullets.education")}</span>
-              </div>
+      {/* Stage Info */}
+      {loading ? (
+        <Card className="card-premium mb-6">
+          <CardContent className="p-6">
+            <div className="animate-pulse">
+              <div className="h-4 bg-muted rounded w-1/4 mb-2"></div>
+              <div className="h-3 bg-muted rounded w-1/2"></div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Anti-Scam Box */}
-      <Card className="card-premium mb-6 border-amber-500 bg-amber-500/5">
-        <CardContent className="p-6">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-amber-400 mb-3">
-                {t("buyTpc.antiScam.title")}
-              </h3>
-              <div className="grid md:grid-cols-2 gap-2 text-sm">
-                {(() => {
-                  const points = t("buyTpc.antiScam.points");
-                  if (Array.isArray(points)) {
-                    return points.map((point, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 bg-amber-400 rounded-full flex-shrink-0"></div>
-                        <span>{point}</span>
-                      </div>
-                    ));
-                  }
-                  return null;
-                })()}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Purchase Form */}
-      <Card className="card-premium">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calculator className="h-5 w-5" />
-            {t("buyTpc.purchase.title")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {!currentStage || currentStage.status !== 'ACTIVE' ? (
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                Please select an active stage to continue with purchase.
-              </AlertDescription>
-            </Alert>
-          ) : (
-            <div className="space-y-4">
+          </CardContent>
+        </Card>
+      ) : error ? (
+        <Alert className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            {lang === 'id' ? 'Gagal memuat informasi stage' : 'Failed to load stage information'}
+          </AlertDescription>
+        </Alert>
+      ) : settings ? (
+        <Card className="card-premium mb-6">
+          <CardHeader>
+            <CardTitle>{lang === 'id' ? 'Informasi Stage' : 'Stage Information'}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="tpc-amount">{t("buyTpc.purchase.tpcAmount")}</Label>
-                <Input
-                  id="tpc-amount"
-                  type="number"
-                  placeholder="Enter TPC amount"
-                  value={tpcAmount}
-                  onChange={(e) => setTpcAmount(e.target.value)}
-                  min="1"
-                />
+                <p className="text-sm text-muted-foreground">{lang === 'id' ? 'Stage Aktif' : 'Active Stage'}</p>
+                <p className="font-semibold">{settings.active_stage.toUpperCase()}</p>
               </div>
-
-              <div className="bg-muted/50 p-4 rounded-lg">
-                <h3 className="font-semibold mb-3">Order Summary</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span>{t("buyTpc.purchase.tpcAmount")}:</span>
-                    <span>{tpcAmount || "0"} TPC</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Total USD:</span>
-                    <span>${calculatedUsd}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Total IDR:</span>
-                    <span>{calculatedIdr}</span>
-                  </div>
-                </div>
-              </div>
-
               <div>
-                <Label htmlFor="buyer-email">Email</Label>
-                <Input
-                  id="buyer-email"
-                  type="email"
-                  placeholder="your@email.com"
-                  value={buyerEmail}
-                  onChange={(e) => setBuyerEmail(e.target.value)}
-                />
+                <p className="text-sm text-muted-foreground">{lang === 'id' ? 'Harga' : 'Price'}</p>
+                <p className="font-semibold">
+                  ${settings.active_stage === 'stage1' ? settings.stage1_price_usd : settings.stage2_price_usd} / TPC
+                </p>
               </div>
-
               <div>
-                <Label>{t("buyTpc.purchase.paymentMethod")}</Label>
-                <Select value={selectedPayment} onValueChange={handlePaymentMethodChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t("buyTpc.purchase.selectPayment")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {paymentMethods.map((method) => (
-                      <SelectItem key={method.id} value={method.id}>
-                        {t(`buyTpc.paymentMethods.${method.type}`)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <p className="text-sm text-muted-foreground">{lang === 'id' ? 'TPC Terjual' : 'TPC Sold'}</p>
+                <p className="font-semibold">
+                  {settings.active_stage === 'stage1' ? settings.stage1_sold_tpc.toLocaleString('id-ID') : settings.stage2_sold_tpc.toLocaleString('id-ID')}
+                </p>
               </div>
-
-              {selectedPaymentMethod && (
-                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-gray-300 text-sm font-medium">Destination Address</span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        navigator.clipboard.writeText(selectedPaymentMethod.address || "");
-                        toast.success("Address copied to clipboard!");
-                      }}
-                      className="bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 hover:border-gray-500 hover:text-white transition-all duration-200"
-                    >
-                      Copy
-                    </Button>
-                  </div>
-                  <div className="bg-black/30 rounded p-3 font-mono text-xs text-gray-300 break-all">
-                    {selectedPaymentMethod.address}
-                  </div>
-                </div>
-              )}
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="legal-consent"
-                  checked={termsAccepted}
-                  onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
-                />
-                <Label htmlFor="legal-consent" className="text-sm">
-                  {t("buyTpc.agreeTerms")}
-                </Label>
+              <div>
+                <p className="text-sm text-muted-foreground">{lang === 'id' ? 'TPC Tersedia' : 'TPC Available'}</p>
+                <p className="font-semibold text-green-400">
+                  {settings.active_stage === 'stage1' ? settings.stage1_remaining_tpc.toLocaleString('id-ID') : settings.stage2_remaining_tpc.toLocaleString('id-ID')}
+                </p>
               </div>
-
-              <Button 
-                onClick={handleCreateInvoice}
-                disabled={!canBuy}
-                className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 transition-all duration-200"
-              >
-                {isSubmitting ? (
-                  <div className="flex items-center">
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
-                    Creating invoice...
-                  </div>
-                ) : (
-                  t("buyTpc.createInvoiceButton")
-                )}
-              </Button>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      ) : null}
 
-      {/* What Happens After Payment */}
+      {/* Buy Form */}
       <Card className="card-premium mb-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            {t("buyTpc.afterPayment.title")}
+            <Calculator className="h-5 w-5" />
+            {t("buyTpc.form.title") || (lang === 'id' ? 'Form Pembelian' : 'Purchase Form')}
           </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="email">{t("buyTpc.form.email")}</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isSubmitting}
+              />
+            </div>
+            <div>
+              <Label htmlFor="amount">{t("buyTpc.form.amount")}</Label>
+              <Input
+                id="amount"
+                type="number"
+                placeholder="1000"
+                value={tpcAmount}
+                onChange={(e) => setTpcAmount(e.target.value)}
+                min="1"
+                max={MAX_TPC_AMOUNT}
+                disabled={isSubmitting}
+              />
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="referral">{t("buyTpc.form.referral")}</Label>
+              <Input
+                id="referral"
+                placeholder="REF123 (optional)"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value)}
+                disabled={isSubmitting}
+              />
+            </div>
+            <div>
+              <Label>{t("buyTpc.form.paymentMethod")}</Label>
+              <Select value={paymentMethod} onValueChange={setPaymentMethod} disabled={isSubmitting}>
+                <SelectTrigger>
+                  <SelectValue placeholder={t("buyTpc.form.paymentMethod")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="crypto">{t("buyTpc.paymentMethods.crypto")}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="terms"
+              checked={termsAccepted}
+              onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+              disabled={isSubmitting}
+            />
+            <Label htmlFor="terms" className="text-sm">
+              {t("buyTpc.form.termsLabel")}
+            </Label>
+          </div>
+
+          <Button 
+            onClick={handleCreateInvoice}
+            disabled={!isFormValid}
+            className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 transition-all duration-200"
+          >
+            {isSubmitting ? (
+              <div className="flex items-center">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                {lang === 'id' ? 'Membuat Invoice...' : 'Creating Invoice...'}
+              </div>
+            ) : (
+              t("buyTpc.cta.createInvoice")
+            )}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Order Summary */}
+      <Card className="card-premium mb-6">
+        <CardHeader>
+          <CardTitle>{t("buyTpc.summary.title")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {(() => {
-              const steps = t("buyTpc.afterPayment.steps");
-              if (Array.isArray(steps)) {
-                return steps.map((step, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-xs font-semibold text-primary">{index + 1}</span>
-                    </div>
-                    <span className="text-sm">{step}</span>
-                  </div>
-                ));
-              }
-              return null;
-            })()}
+            <div className="flex justify-between">
+              <span>{t("buyTpc.summary.totalUsd")}:</span>
+              <span className="font-semibold">${estimates.usd}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>{t("buyTpc.summary.totalIdr")}:</span>
+              <span className="font-semibold">Rp {estimates.idr}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>{t("buyTpc.summary.rate")}:</span>
+              <span className="font-semibold">{settings?.usd_idr_rate.toLocaleString('id-ID') || '17,000'}</span>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Legal Information */}
-      <Card className="card-premium">
-        <CardHeader>
-          <CardTitle className="text-lg">
-            {lang === 'en' ? 'Legal Information' : 'Informasi Legal'}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="border-b border-border">
-              <div className="flex space-x-8">
-                <button className="pb-2 text-sm font-medium text-primary border-b-2 border-primary">
-                  {t("buyTpc.legal.termsTab")}
-                </button>
-                <button className="pb-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-                  {t("buyTpc.legal.riskTab")}
-                </button>
-                <button className="pb-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-                  {t("buyTpc.legal.educationTab")}
-                </button>
+      {/* Destination Address */}
+      {settings?.treasury_address && (
+        <Card className="card-premium mb-6">
+          <CardHeader>
+            <CardTitle>{t("buyTpc.destination.title")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-muted/50 p-4 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-muted-foreground font-mono">{settings.treasury_address}</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => copyToClipboard(settings.treasury_address)}
+                  className="ml-2"
+                >
+                  <Copy className="h-4 w-4 mr-1" />
+                  {t("buyTpc.destination.copy")}
+                </Button>
               </div>
             </div>
-            <div className="text-sm text-muted-foreground">
-              {lang === 'en' 
-                ? 'By proceeding with this purchase, you acknowledge that you have read, understood, and agree to the Terms of Purchase, Risk Disclosure, and Education Disclaimer.'
-                : 'Dengan melanjutkan pembelian ini, Anda mengakui bahwa telah membaca, memahami, dan menyetujui Terms of Purchase, Risk Disclosure, dan Education Disclaimer.'
-              }
-            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* What Happens Next */}
+      <Card className="card-premium mb-6">
+        <CardHeader>
+          <CardTitle>{t("buyTpc.next.title")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {[1, 2, 3, 4].map((step) => (
+              <div key={step} className="flex items-start gap-3">
+                <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-xs font-semibold text-primary">{step}</span>
+                </div>
+                <span className="text-sm">{t(`buyTpc.next.s${step}`)}</span>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
+
+      {/* Legal Links */}
+      <Card className="card-premium">
+        <CardContent className="p-6">
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Button variant="ghost" size="sm" asChild>
+              <a href={withLang("/terms")} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="h-4 w-4 mr-1" />
+                {t("buyTpc.terms")}
+              </a>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <a href={withLang("/risk")} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="h-4 w-4 mr-1" />
+                {t("buyTpc.risk")}
+              </a>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <a href={withLang("/disclaimer")} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="h-4 w-4 mr-1" />
+                {t("buyTpc.disclaimer")}
+              </a>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Invoice Modal */}
+      <Dialog open={showInvoiceModal} onOpenChange={setShowInvoiceModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("buyTpc.modal.title")}</DialogTitle>
+          </DialogHeader>
+          {invoiceData && (
+            <div className="space-y-4">
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>{lang === 'id' ? 'No. Invoice' : 'Invoice No'}:</span>
+                    <span className="font-mono font-semibold">{invoiceData.invoice_no}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>{lang === 'id' ? 'Stage' : 'Stage'}:</span>
+                    <span>{invoiceData.stage.toUpperCase()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>{t("buyTpc.form.amount")}:</span>
+                    <span>{invoiceData.tpc_amount.toLocaleString('id-ID')} TPC</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>{t("buyTpc.summary.totalUsd")}:</span>
+                    <span>${invoiceData.total_usd}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>{t("buyTpc.summary.totalIdr")}:</span>
+                    <span>Rp {invoiceData.total_idr}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Button 
+                  onClick={openInvoiceDetail}
+                  className="w-full"
+                >
+                  {t("buyTpc.modal.openInvoice")}
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => copyToClipboard(invoiceData.treasury_address)}
+                  className="w-full"
+                >
+                  <Copy className="h-4 w-4 mr-2" />
+                  {t("buyTpc.modal.copyAddress")}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

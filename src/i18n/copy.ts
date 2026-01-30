@@ -490,6 +490,61 @@ export const copy = {
         riskTab: "Risiko",
         educationTab: "Disklaimer"
       },
+      // Trust bullets
+      trust: {
+        b1: "Sistem invoice resmi dan terverifikasi",
+        b2: "Dana masuk ke treasury publik yang transparan", 
+        b3: "Edukasi-only, tidak ada jaminan profit"
+      },
+      // Form fields
+      form: {
+        email: "Email",
+        amount: "Jumlah TPC",
+        referral: "Kode Referral (Opsional)",
+        paymentMethod: "Metode Pembayaran",
+        termsLabel: "Saya menyetujui Syarat & Ketentuan, Risiko, dan Disclaimer"
+      },
+      // CTA button
+      cta: {
+        createInvoice: "Buat Invoice"
+      },
+      // Order summary
+      summary: {
+        title: "Ringkasan Pesanan",
+        totalUsd: "Total USD",
+        totalIdr: "Total IDR",
+        rate: "Kurs USD/IDR"
+      },
+      // Destination address
+      destination: {
+        title: "Alamat Tujuan",
+        copy: "Salin Alamat"
+      },
+      // What happens next
+      next: {
+        title: "Apa Yang Terjadi Selanjutnya?",
+        s1: "Buat invoice dengan data yang benar",
+        s2: "Transfer sesuai jumlah yang tertera di invoice",
+        s3: "Upload bukti pembayaran melalui halaman invoice",
+        s4: "Admin verifikasi dan kirim TPC ke wallet Anda"
+      },
+      // Invoice modal
+      modal: {
+        title: "Invoice Berhasil Dibuat!",
+        openInvoice: "Buka Detail Invoice",
+        copyAddress: "Salin Alamat Treasury"
+      },
+      // Toast messages
+      toast: {
+        invoiceCreated: "Invoice berhasil dibuat!",
+        invoiceFailed: "Gagal membuat invoice. Coba lagi."
+      },
+      // Validation messages
+      validation: {
+        invalidEmail: "Email tidak valid",
+        invalidAmount: "Jumlah TPC harus lebih dari 0",
+        mustAcceptTerms: "Anda harus menyetujui syarat dan ketentuan"
+      },
       // Legal links
       terms: "Syarat & Ketentuan",
       risk: "Risiko", 
@@ -1234,6 +1289,61 @@ export const copy = {
         termsTab: "Terms",
         riskTab: "Risk",
         educationTab: "Disclaimer"
+      },
+      // Trust bullets
+      trust: {
+        b1: "Official and verified invoice system",
+        b2: "Funds go to transparent public treasury",
+        b3: "Education-only, no profit guarantee"
+      },
+      // Form fields
+      form: {
+        email: "Email",
+        amount: "TPC Amount",
+        referral: "Referral Code (Optional)",
+        paymentMethod: "Payment Method",
+        termsLabel: "I agree to Terms, Risk Disclosure, and Disclaimer"
+      },
+      // CTA button
+      cta: {
+        createInvoice: "Create Invoice"
+      },
+      // Order summary
+      summary: {
+        title: "Order Summary",
+        totalUsd: "Total USD",
+        totalIdr: "Total IDR",
+        rate: "USD/IDR Rate"
+      },
+      // Destination address
+      destination: {
+        title: "Destination Address",
+        copy: "Copy Address"
+      },
+      // What happens next
+      next: {
+        title: "What Happens Next?",
+        s1: "Create invoice with correct data",
+        s2: "Transfer exactly as shown in invoice",
+        s3: "Upload payment proof via invoice page",
+        s4: "Admin verifies and sends TPC to your wallet"
+      },
+      // Invoice modal
+      modal: {
+        title: "Invoice Created Successfully!",
+        openInvoice: "Open Invoice Detail",
+        copyAddress: "Copy Treasury Address"
+      },
+      // Toast messages
+      toast: {
+        invoiceCreated: "Invoice created successfully!",
+        invoiceFailed: "Failed to create invoice. Please try again."
+      },
+      // Validation messages
+      validation: {
+        invalidEmail: "Invalid email address",
+        invalidAmount: "TPC amount must be greater than 0",
+        mustAcceptTerms: "You must accept the terms and conditions"
       },
       // Legal links
       terms: "Terms",

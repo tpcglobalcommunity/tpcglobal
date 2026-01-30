@@ -1,10 +1,20 @@
 export type Json =
   | string
   | number
-  | boolean
-  | null
   | { [key: string]: Json | undefined }
   | Json[]
+
+export interface PresaleSettings {
+  active_stage: string;
+  stage1_price_usd: number;
+  stage2_price_usd: number;
+  usd_idr_rate: number;
+  treasury_address: string;
+  stage1_sold_tpc: number;
+  stage1_remaining_tpc: number;
+  stage2_sold_tpc: number;
+  stage2_remaining_tpc: number;
+}
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
@@ -263,6 +273,10 @@ export type Database = {
       admin_whitelist_remove: {
         Args: { p_user_id: string }
         Returns: void
+      }
+      get_presale_settings_public: {
+        Args: {}
+        Returns: PresaleSettings[]
       }
       create_invoice: {
         Args: { p_tpc_amount: number; p_referral_code?: string }
