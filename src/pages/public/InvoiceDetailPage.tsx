@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
-import { logger } from "@/lib/logger";
 import { PremiumShell } from "@/components/layout/PremiumShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +27,6 @@ const InvoiceDetailPage = () => {
   const { t, lang, withLang } = useI18n();
   const { invoice_no } = useParams<{ invoice_no: string }>();
   const navigate = useNavigate();
-  const location = useLocation();
   
   const [invoice, setInvoice] = useState<InvoicePublic | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -42,43 +40,22 @@ const InvoiceDetailPage = () => {
 
   useEffect(() => {
     const loadInvoice = async () => {
-      // Debug: Log when this effect runs
-      if (process.env.NODE_ENV === 'development') {
-        console.info('[Invoice] Effect triggered for invoice_no:', invoice_no);
-        console.info('[Invoice] Current pathname:', location.pathname);
-      }
-
-      // Strong guard: Only fetch if we're actually on an invoice route
-      const isInvoiceRoute = location.pathname.includes('/invoice/');
-      if (!isInvoiceRoute || !invoice_no) {
-        if (process.env.NODE_ENV === 'development') {
-          console.info('[Invoice] Not on invoice route or no invoice_no, skipping fetch');
-          console.info('[Invoice] isInvoiceRoute:', isInvoiceRoute, 'invoice_no:', invoice_no);
-        }
+      // Only fetch if we have an invoice number
+      if (!invoice_no) {
         return;
       }
 
       // Prevent double fetch in StrictMode
       if (hasFetchedRef.current === invoice_no) {
-        if (process.env.NODE_ENV === 'development') {
-          console.info('[Invoice] Already fetched, skipping:', invoice_no);
-        }
         return;
       }
       hasFetchedRef.current = invoice_no;
-
-      if (process.env.NODE_ENV === 'development') {
-        console.info('[Invoice] Starting fetch for:', invoice_no);
-      }
 
       setLoading(true);
       try {
         const data = await getInvoicePublic(invoice_no);
         if (data) {
           setInvoice(data);
-          if (process.env.NODE_ENV === 'development') {
-            console.info('[Invoice] Successfully loaded:', invoice_no);
-          }
         } else {
           // Use console.info instead of error for "not found" case
           if (process.env.NODE_ENV === 'development') {
@@ -98,7 +75,7 @@ const InvoiceDetailPage = () => {
     };
 
     loadInvoice();
-  }, [invoice_no, navigate, withLang, location.pathname]);
+  }, [invoice_no, navigate, withLang]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
