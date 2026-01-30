@@ -19,6 +19,7 @@ import AntiScamFaqPage from "@/pages/public/AntiScamFaqPage";
 import OnePagerPage from "@/pages/public/OnePagerPage";
 import InvoiceDetailPage from "@/pages/public/InvoiceDetailPage";
 import LoginPage from "@/pages/auth/LoginPage";
+import AdminSettingsPage from "@/pages/admin/AdminSettingsPage";
 import NotFound from "@/pages/NotFound";
 import { MemberRoutes } from "./MemberRoutes";
 import { AdminRoutes } from "./AdminRoutes";
@@ -88,7 +89,7 @@ export default function AppRoutes() {
         }>
           <Route index element={<div>Admin Dashboard (Coming Soon)</div>} />
           <Route path="invoices" element={<div>Admin Invoices (Coming Soon)</div>} />
-          <Route path="settings" element={<div>Admin Settings (Coming Soon)</div>} />
+          <Route path="settings" element={<AdminSettingsPage />} />
         </Route>
 
         {/* Catch-all */}

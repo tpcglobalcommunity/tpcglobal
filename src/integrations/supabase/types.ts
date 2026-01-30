@@ -158,6 +158,33 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_whitelist_audit: {
+        Row: {
+          id: number
+          action: 'ADD' | 'REMOVE'
+          target_user_id: string
+          note: string | null
+          actor_user_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          action: 'ADD' | 'REMOVE'
+          target_user_id: string
+          note?: string | null
+          actor_user_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          action?: 'ADD' | 'REMOVE'
+          target_user_id?: string
+          note?: string | null
+          actor_user_id?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -184,6 +211,22 @@ export type Database = {
           paid_at: string | null
           treasury_address: string
         }[]
+      }
+      admin_whitelist_list: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_id: string
+          note: string | null
+          created_at: string
+        }[]
+      }
+      admin_whitelist_add: {
+        Args: { p_user_id: string; p_note?: string }
+        Returns: void
+      }
+      admin_whitelist_remove: {
+        Args: { p_user_id: string }
+        Returns: void
       }
     }
     Enums: {
