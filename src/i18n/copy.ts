@@ -1716,6 +1716,69 @@ export const copy = {
       disclaimer: "Crypto investment carries high risk. Not investment advice.",
       officialDomain: "Official Domain: tpcglobal.io",
     },
+    
+    // About Page
+    about: {
+      title: "About TPC",
+      subtitle: "A professional community focused on education, transparency, and collaboration.",
+      comingSoonTitle: "Coming Soon",
+      comingSoonBody: "This section is being prepared. Please check back later.",
+    },
+    
+    // Transparency Page
+    transparency: {
+      title: "Transparency",
+      subtitle: "We believe in complete transparency in all our operations.",
+      whatTitle: "What is Transparency?",
+      whatBullet1: "All official wallets are public and verifiable",
+      "whatBullet2": "Transactions are recorded on blockchain for everyone to see",
+      "whatBullet3": "Financial reports are updated regularly",
+      "whatBullet4": "No information is hidden from the community",
+      howTitle: "How We Implement It?",
+      howBullet1: "Official wallets are displayed on the Verification page",
+      "howBullet2": "All transactions can be tracked on blockchain explorer",
+      "howBullet3": "Community can verify all our claims",
+    },
+    
+    // Coming Soon
+    comingSoon: {
+      body: "This page is under development. Please come back later.",
+    },
+    
+    // Footer
+    footer: {
+      copyright: "© 2026 TPC Global. All rights reserved.",
+      disclaimer: "Crypto investment carries high risk. Not investment advice.",
+      officialDomain: "Official Domain: tpcglobal.io",
+    },
+    
+    // About Page
+    about: {
+      title: "Tentang TPC",
+      subtitle: "Komunitas profesional yang berfokus pada edukasi, transparansi, dan kolaborasi.",
+      comingSoonTitle: "Segera Hadir",
+      comingSoonBody: "Bagian ini sedang disiapkan. Silakan cek kembali nanti.",
+    },
+    
+    // Transparency Page
+    transparency: {
+      title: "Transparansi",
+      subtitle: "Kami percaya pada transparansi penuh dalam semua operasi kami.",
+      whatTitle: "Apa Itu Transparansi?",
+      whatBullet1: "Semua dompet resmi bersifat publik dan dapat diverifikasi",
+      "whatBullet2": "Transaksi tercatat di blockchain untuk semua orang lihat",
+      "whatBullet3": "Laporan keuangan diperbarui secara berkala",
+      "whatBullet4": "Tidak ada informasi yang disembunyikan dari komunitas",
+      howTitle: "Bagaimana Kami Menerapkannya?",
+      howBullet1: "Dompet resmi ditampilkan di halaman Verifikasi",
+      "howBullet2": "Semua transaksi dapat dilacak di blockchain explorer",
+      "howBullet3": "Komunitas dapat memverifikasi semua klaim kami",
+    },
+    
+    // Coming Soon
+    comingSoon: {
+      body: "Halaman ini sedang dalam pengembangan. Silakan kembali lagi nanti.",
+    },
   },
 } as const;
 
