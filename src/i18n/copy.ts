@@ -384,6 +384,26 @@ export const copy = {
     buyTpc: {
       title: "Beli TPC",
       subtitle: "Bergabung dengan presale TPC Global",
+      // Trust Header
+      trustHeader: {
+        headline: "Pembelian Token TPC melalui Sistem Invoice Resmi",
+        subheadline: "Dana masuk langsung ke treasury publik dan dapat diverifikasi. Tidak ada DM, tidak ada perantara.",
+        bullets: {
+          treasury: "Treasury address tunggal & publik",
+          invoice: "Invoice system (read-only setelah dibuat)",
+          education: "Education-only, no profit guarantee"
+        }
+      },
+      // Anti-Scam Box
+      antiScam: {
+        title: "⚠️ PENTING: NOTIFIKASI KEAMANAN",
+        points: {
+          0: "Admin TIDAK PERNAH DM duluan",
+          1: "Pembelian HANYA melalui halaman ini", 
+          2: "Treasury address SATU & RESMI",
+          3: "Abaikan pihak lain di luar website"
+        }
+      },
       stage1: {
         title: "Stage 1",
         supply: "Supply",
@@ -1334,6 +1354,26 @@ export const copy = {
     buyTpc: {
       title: "Buy TPC",
       subtitle: "Join the TPC Global presale",
+      // Trust Header
+      trustHeader: {
+        headline: "TPC Token Purchase through Official Invoice System",
+        subheadline: "Funds go directly to public treasury and are verifiable. No DMs, no intermediaries.",
+        bullets: {
+          treasury: "Single public treasury address",
+          invoice: "Invoice system (read-only after creation)",
+          education: "Education-only, no profit guarantee"
+        }
+      },
+      // Anti-Scam Box
+      antiScam: {
+        title: "⚠️ IMPORTANT SECURITY NOTICE",
+        points: {
+          0: "Admin will NEVER DM first",
+          1: "Purchase ONLY through this page", 
+          2: "SINGLE & OFFICIAL treasury address",
+          3: "Ignore others outside the website"
+        }
+      },
       stage1: {
         title: "Stage 1",
         supply: "Supply",
@@ -1390,6 +1430,17 @@ export const copy = {
       invoiceCreationFailed: "Failed to create invoice",
       addressCopied: "Address copied to clipboard!",
       numberCopied: "Number copied to clipboard!",
+      // CTA Button
+      createInvoiceButton: "Create TPC Purchase Invoice",
+      // Invoice Summary
+      invoiceSummary: {
+        title: "Invoice Summary",
+        lockedLabel: "This data is locked and cannot be changed",
+        tpcAmount: "TPC Amount",
+        totalUsd: "Total USD",
+        riskTab: "Risk Disclosure", 
+        educationTab: "Education Disclaimer"
+      },
       // Legal links
       terms: "Terms",
       risk: "Risk Disclosure", 

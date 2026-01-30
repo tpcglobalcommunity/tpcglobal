@@ -60,7 +60,12 @@ const BuyTpcPage = () => {
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(toNum(v, 0));
   
   const formatIdr = (v: unknown) =>
-    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(toNum(v, 0));
+    new Intl.NumberFormat('id-ID', { 
+      style: 'currency', 
+      currency: 'IDR', 
+      maximumFractionDigits: 0,
+      minimumFractionDigits: 0
+    }).format(toNum(v, 0));
   
   const [stages, setStages] = useState<PresaleStage[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
@@ -196,6 +201,78 @@ const BuyTpcPage = () => {
           <h1 className="text-3xl font-bold text-gradient-gold mb-2">{t("buyTpc.title")}</h1>
           <p className="text-muted-foreground">{t("buyTpc.subtitle")}</p>
         </div>
+
+        {/* Trust Header */}
+        <Card className="card-premium mb-6 bg-gradient-to-br from-slate-900/95 to-slate-800/95 border-amber-500/20">
+          <CardContent className="p-6">
+            <div className="text-center">
+              <h2 className="text-xl font-semibold text-amber-400 mb-3">
+                {t("buyTpc.trustHeader.headline")}
+              </h2>
+              <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+                {t("buyTpc.trustHeader.subheadline")}
+              </p>
+              <div className="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+                <div className="flex items-center gap-3 text-sm">
+                  <div className="w-8 h-8 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span>{t("buyTpc.trustHeader.bullets.treasury")}</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <div className="w-8 h-8 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                      <path fillRule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000 2H6a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2a1 1 0 100-2 2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span>{t("buyTpc.trustHeader.bullets.invoice")}</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <div className="w-8 h-8 bg-amber-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                    </svg>
+                  </div>
+                  <span>{t("buyTpc.trustHeader.bullets.education")}</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Anti-Scam Box */}
+        <Card className="card-premium mb-6 border-amber-500 bg-amber-500/5">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-amber-400 mb-3">
+                  {t("buyTpc.antiScam.title")}
+                </h3>
+                <div className="grid md:grid-cols-2 gap-2 text-sm">
+                  {[
+                    t("buyTpc.antiScam.points.0"),
+                    t("buyTpc.antiScam.points.1"),
+                    t("buyTpc.antiScam.points.2"),
+                    t("buyTpc.antiScam.points.3")
+                  ].map((point, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-amber-400 rounded-full flex-shrink-0"></div>
+                      <span>{point}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Stage Cards */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -556,11 +633,73 @@ const BuyTpcPage = () => {
                       {t("buyTpc.creatingInvoice")}
                     </>
                   ) : (
-                    t("buyTpc.createInvoice")
+                    t("buyTpc.createInvoiceButton")
                   )}
                 </Button>
               </>
             )}
+          </CardContent>
+        </Card>
+
+        {/* What Happens After Payment */}
+        <Card className="card-premium mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              {t("buyTpc.afterPayment.title")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {[
+                t("buyTpc.afterPayment.steps.0"),
+                t("buyTpc.afterPayment.steps.1"),
+                t("buyTpc.afterPayment.steps.2"),
+                t("buyTpc.afterPayment.steps.3"),
+                t("buyTpc.afterPayment.steps.4")
+              ].map((step, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-xs font-semibold text-primary">{index + 1}</span>
+                  </div>
+                  <span className="text-sm">{step}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Legal Tabs */}
+        <Card className="card-premium">
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {lang === 'en' ? 'Legal Information' : 'Informasi Legal'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="border-b border-border">
+                <div className="flex space-x-8">
+                  <button className="pb-2 text-sm font-medium text-primary border-b-2 border-primary">
+                    {t("buyTpc.legal.termsTab")}
+                  </button>
+                  <button className="pb-2 text-sm font-medium text-muted-foreground hover:text-foreground">
+                    {t("buyTpc.legal.riskTab")}
+                  </button>
+                  <button className="pb-2 text-sm font-medium text-muted-foreground hover:text-foreground">
+                    {t("buyTpc.legal.educationTab")}
+                  </button>
+                </div>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                {lang === 'en' 
+                  ? 'By proceeding with this purchase, you acknowledge that you have read, understood, and agree to the Terms of Purchase, Risk Disclosure, and Education Disclaimer.'
+                  : 'Dengan melanjutkan pembelian ini, Anda mengakui bahwa telah membaca, memahami, dan menyetujui Terms of Purchase, Risk Disclosure, dan Education Disclaimer.'
+                }
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
