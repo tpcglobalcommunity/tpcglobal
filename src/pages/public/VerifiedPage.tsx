@@ -1,287 +1,336 @@
 import { useI18n } from "@/i18n/i18n";
-import { logger } from "@/lib/logger";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { 
   Shield, 
   CheckCircle, 
-  XCircle, 
-  AlertTriangle,
-  Eye,
   Wallet,
   FileText,
   Copy,
   ExternalLink,
   Globe,
-  Lock,
-  Clock,
   Users,
-  Info,
   TriangleAlert
 } from "lucide-react";
+import { OFFICIAL, WALLET_TYPES } from "@/lib/constants/official";
 
 const VerifiedPage = () => {
   const { t } = useI18n();
 
-  // Helper function to safely get array from translation
-  const getArray = (key: string): string[] => {
-    try {
-      const value = t(key);
-      if (Array.isArray(value)) {
-        return value;
-      }
-      return [];
-    } catch (error) {
-      logger.error(`Failed to get array for key: ${key}`, error);
-      return [];
+  // Get current language from pathname
+  const getCurrentLang = (): string => {
+    if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname;
+      if (pathname.startsWith('/en')) return 'en';
     }
+    return 'id'; // default
   };
 
-  // Official wallets data
-  const wallets = [
+  const lang = getCurrentLang();
+
+  // Helper to create language-aware paths
+  const withLang = (path: string): string => {
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return `/${lang}${cleanPath}`;
+  };
+
+  // Official wallets data - only show real addresses, mark others as coming soon
+  const officialWallets = [
     {
-      title: "TPC Global Treasury",
-      address: "5AeayrU2pdy6yNBeiUpTXkfMxw3VpDQGUHC6kXrBt5vw",
-      purpose: "Official TPC Treasury wallet for presale funds",
-      status: "Active",
+      title: t("verified.wallets.treasury"),
+      address: OFFICIAL.TREASURY_ADDRESS,
+      purpose: t("verified.wallets.treasuryPurpose"),
+      status: t("verified.wallets.treasuryStatus"),
       statusColor: "text-green-500",
-      icon: Wallet
+      icon: Wallet,
+      type: WALLET_TYPES.TREASURY,
+      isComingSoon: false
     },
     {
-      title: "Distribution Wallet",
-      address: "9WzDXwBbmkg8ZTbNMUxvYR4bS6bT1hTcPj5c9vX8QK",
-      purpose: "Distribution wallet for TPC tokens",
-      status: "Active",
-      statusColor: "text-blue-500",
-      icon: Globe
+      title: t("verified.wallets.distribution"),
+      address: "-", // No real address yet
+      purpose: t("verified.wallets.distributionPurpose"),
+      status: t("verified.wallets.distributionStatus"),
+      statusColor: "text-yellow-500",
+      icon: Globe,
+      type: WALLET_TYPES.DISTRIBUTION,
+      isComingSoon: true
     },
     {
-      title: "Marketing Wallet",
-      address: "7xXKf9W2sY8ZTbNMUxvYR4bS6bT1hTcPj5c9vX8QK",
-      purpose: "Marketing and community wallet",
-      status: "Active",
-      statusColor: "text-purple-500",
-      icon: Users
+      title: t("verified.wallets.marketing"),
+      address: "-", // No real address yet
+      purpose: t("verified.wallets.marketingPurpose"),
+      status: t("verified.wallets.marketingStatus"),
+      statusColor: "text-yellow-500",
+      icon: Users,
+      type: WALLET_TYPES.MARKETING,
+      isComingSoon: true
     }
   ];
 
-  // Mint information
-  const mintInfo = [
-    {
-      purpose: t("verified.mintPurpose"),
-      address: t("verified.mintAddress"),
-      status: t("verified.mintStatus"),
-      note: t("verified.mintNote"),
-      icon: FileText,
-      statusColor: "text-green-500"
-    }
+  // Anti-scam rules
+  const antiScamRules = [
+    t("verified.antiScam.rule1"),
+    t("verified.antiScam.rule2"),
+    t("verified.antiScam.rule3"),
+    t("verified.antiScam.rule4"),
+    t("verified.antiScam.rule5"),
+    t("verified.antiScam.rule6"),
+    t("verified.antiScam.rule7")
   ];
 
   const copyToClipboard = (text: string) => {
+    if (text === "-") return; // Don't copy placeholder
     navigator.clipboard.writeText(text);
-    // You could add a toast notification here
+    toast.success(t("common.copied"));
+  };
+
+  const openLink = (url: string) => {
+    window.open(url, '_blank', 'noopener noreferrer');
   };
 
   return (
     <div className="container-app section-spacing">
-      {/* 1. Verified Page Hero (Trust Statement) */}
+      {/* 1. Hero Section */}
       <div className="text-center mb-12">
-        <div className="flex justify-center mb-6">
-          <Shield className="h-16 w-16 text-primary" />
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
+          <Shield className="h-12 w-12 mx-auto mb-4 text-primary" />
+          <span className="text-xs text-primary font-medium">{t("verified.badge")}</span>
         </div>
-        <h1 className="text-4xl font-bold text-gradient-gold mb-4">
-          {t("verified.heroTitle")}
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gradient-gold mb-2">
+          {t("verified.title")}
         </h1>
-        <p className="text-xl text-muted-foreground mb-6 max-w-3xl mx-auto">
-          {t("verified.heroSubtitle")}
+        <p className="text-xl text-foreground max-w-2xl mx-auto">
+          {t("verified.subtitle")}
         </p>
         <p className="text-lg text-muted-foreground mb-4">
-          {t("verified.heroDescription")}
+          {t("verified.description")}
         </p>
         <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 max-w-2xl mx-auto">
-          <p className="text-primary font-medium">{t("verified.heroNote")}</p>
+          <p className="text-primary font-medium">{t("verified.note")}</p>
         </div>
       </div>
 
-      {/* 2. How to Verify TPC (Step-by-Step) */}
+      {/* 2. Official Links Section */}
       <Card className="card-premium mb-8">
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-2xl">
-            <Eye className="h-6 w-6 text-primary" />
-            {t("verified.howToVerifyTitle")}
+            <Globe className="h-6 w-6 text-primary" />
+            {t("verified.official.title")}
           </CardTitle>
-          <p className="text-muted-foreground">{t("verified.howToVerifySubtitle")}</p>
+          <p className="text-muted-foreground">{t("verified.official.subtitle")}</p>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-semibold mb-2">{t("verified.official.website")}</h4>
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground">{OFFICIAL.WEBSITE}</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => openLink(OFFICIAL.WEBSITE)}
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2">{t("verified.official.telegram")}</h4>
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground">{OFFICIAL.TELEGRAM}</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => openLink(OFFICIAL.TELEGRAM)}
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2">{t("verified.official.twitter")}</h4>
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground">{OFFICIAL.TWITTER}</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => openLink(OFFICIAL.TWITTER)}
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 3. Official Treasury Section */}
+      <Card className="card-premium mb-8 border-2 border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3 text-2xl">
+            <Wallet className="h-6 w-6 text-primary" />
+            {t("verified.treasury.title")}
+          </CardTitle>
+          <p className="text-muted-foreground">{t("verified.treasury.subtitle")}</p>
+          <Badge variant="secondary" className="w-fit">
+            {t("verified.treasury.network")}
+          </Badge>
         </CardHeader>
         <CardContent>
-          <div className="space-y-6">
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-semibold">
-                1
-              </div>
-              <div>
-                <h3 className="font-semibold mb-2">{t("verified.step1Title")}</h3>
-                <p className="text-muted-foreground">{t("verified.step1Desc")}</p>
-              </div>
-            </div>
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-semibold">
-                2
-              </div>
-              <div>
-                <h3 className="font-semibold mb-2">{t("verified.step2Title")}</h3>
-                <p className="text-muted-foreground">{t("verified.step2Desc")}</p>
+          <div className="space-y-4">
+            <div className="bg-muted/50 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-mono text-foreground break-all">
+                  {OFFICIAL.TREASURY_ADDRESS}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => copyToClipboard(OFFICIAL.TREASURY_ADDRESS)}
+                  className="flex-shrink-0 ml-2"
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
               </div>
             </div>
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-semibold">
-                3
-              </div>
-              <div>
-                <h3 className="font-semibold mb-2">{t("verified.step3Title")}</h3>
-                <p className="text-muted-foreground">{t("verified.step3Desc")}</p>
-              </div>
-            </div>
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-semibold">
-                4
-              </div>
-              <div>
-                <h3 className="font-semibold mb-2">{t("verified.step4Title")}</h3>
-                <p className="text-muted-foreground">{t("verified.step4Desc")}</p>
-              </div>
-            </div>
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-semibold">
-                5
-              </div>
-              <div>
-                <h3 className="font-semibold mb-2">{t("verified.step5Title")}</h3>
-                <p className="text-muted-foreground">{t("verified.step5Desc")}</p>
-              </div>
-            </div>
-            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-              <p className="text-red-200 font-medium flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4" />
-                {t("verified.urgencyWarning")}
+            <div className="text-sm text-muted-foreground">
+              <p className="font-medium mb-2">{t("verified.treasury.note")}</p>
+              <p className="text-xs text-muted-foreground">
+                {t("verified.treasury.warning")}
               </p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* 3. Official Wallets (CORE SECTION) */}
-      <Card className="card-premium mb-8 border-2 border-primary/20">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3 text-2xl">
-            <Wallet className="h-6 w-6 text-primary" />
-            {t("verified.walletsTitle")}
-          </CardTitle>
-          <p className="text-muted-foreground">{t("verified.walletsSubtitle")}</p>
-          <Badge variant="secondary" className="w-fit">
-            {t("verified.networkInfo")}
-          </Badge>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {wallets.map((wallet, index) => {
-              const Icon = wallet.icon;
-              return (
-                <div key={index} className="border border-muted rounded-lg p-4">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0">
-                      <Icon className="h-5 w-5 text-primary mt-1" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-semibold text-lg">{wallet.title}</h3>
-                        <Badge variant="outline" className={wallet.statusColor}>
-                          {wallet.status}
-                        </Badge>
-                      </div>
-                      <p className="text-muted-foreground mb-3">{wallet.purpose}</p>
-                      <div className="bg-muted/50 rounded-lg p-3">
-                        <div className="flex items-center justify-between">
-                          <code className="text-sm font-mono text-foreground break-all">
-                            {wallet.address}
-                          </code>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => copyToClipboard(wallet.address)}
-                            className="flex-shrink-0 ml-2"
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* 4. Mint Information */}
+      {/* 4. Official Mint Section */}
       <Card className="card-premium mb-8">
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-2xl">
             <FileText className="h-6 w-6 text-primary" />
-            {t("verified.mintTitle")}
+            {t("verified.mint.title")}
           </CardTitle>
-          <p className="text-muted-foreground">{t("verified.mintSubtitle")}</p>
+          <p className="text-muted-foreground">{t("verified.mint.subtitle")}</p>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {mintInfo.map((info, index) => {
-              const Icon = info.icon;
-              return (
-                <div key={index} className="flex items-center gap-4 p-4 border border-muted rounded-lg">
-                  <div className="flex-shrink-0">
-                    <Icon className={`h-5 w-5 ${info.statusColor} mt-1`} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="font-semibold">{info.purpose}</h3>
-                      <Badge variant="outline" className={info.statusColor}>
-                        {info.status}
-                      </Badge>
-                    </div>
-                    <p className="text-muted-foreground">{info.note}</p>
-                    <div className="bg-muted/50 rounded-lg p-3">
-                      <div className="flex items-center justify-between">
-                        <code className="text-sm font-mono text-foreground break-all">
-                          {info.address}
-                        </code>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => copyToClipboard(info.address)}
-                          className="flex-shrink-0 ml-2"
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            <div className="bg-muted/50 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-mono text-foreground break-all">
+                  {OFFICIAL.MINT_ADDRESS}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => copyToClipboard(OFFICIAL.MINT_ADDRESS)}
+                  className="flex-shrink-0 ml-2"
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              <p className="font-medium mb-2">{t("verified.mint.note")}</p>
+              <p className="text-xs text-muted-foreground">
+                {t("verified.mint.warning")}
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* 5. Verification Status */}
+      {/* 5. Official Wallets Section */}
+      <Card className="card-premium mb-8">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3 text-2xl">
+            <Wallet className="h-6 w-6 text-primary" />
+            {t("verified.wallets.title")}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {officialWallets.map((wallet, index) => (
+              <Card key={index} className="border border-border">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-2">
+                    <wallet.icon className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-lg">{wallet.title}</CardTitle>
+                  </div>
+                  <Badge 
+                    variant={wallet.isComingSoon ? "outline" : "secondary"}
+                    className={`w-fit ${wallet.statusColor}`}
+                  >
+                    {wallet.status}
+                  </Badge>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Address:</p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-mono text-foreground break-all">
+                        {wallet.address}
+                      </span>
+                      {!wallet.isComingSoon && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => copyToClipboard(wallet.address)}
+                          className="flex-shrink-0"
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Purpose:</p>
+                    <p className="text-sm text-foreground">{wallet.purpose}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 6. Anti-Scam Rules Section */}
+      <Card className="card-premium mb-8">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3 text-2xl">
+            <TriangleAlert className="h-6 w-6 text-orange-500" />
+            {t("verified.antiScam.title")}
+          </CardTitle>
+          <Badge variant="destructive" className="w-fit">
+            {t("verified.antiScam.badge")}
+          </Badge>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {antiScamRules.map((rule, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-xs font-medium text-orange-600 dark:text-orange-400">
+                    {index + 1}
+                  </span>
+                </div>
+                <p className="text-sm text-foreground leading-relaxed">{rule}</p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 7. Verification Status */}
       <Card className="card-premium mb-8">
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-2xl">
             <CheckCircle className="h-6 w-6 text-success" />
-            {t("verified.verificationTitle")}
+            {t("verified.verification.title")}
           </CardTitle>
-          <p className="text-muted-foreground">{t("verified.verificationSubtitle")}</p>
+          <p className="text-muted-foreground">{t("verified.verification.subtitle")}</p>
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-2 gap-6">
@@ -289,45 +338,26 @@ const VerifiedPage = () => {
               <div className="flex items-center gap-3">
                 <CheckCircle className="h-5 w-5 text-success" />
                 <div>
-                  <h4 className="font-semibold">{t("verified.verifiedContract")}</h4>
-                  <p className="text-sm text-muted-foreground">{t("verified.verifiedContractDesc")}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle className="h-5 w-5 text-success" />
-                <div>
-                  <h4 className="font-semibold">{t("verified.verifiedSupply")}</h4>
-                  <p className="text-sm text-muted-foreground">{t("verified.verifiedSupplyDesc")}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle className="h-5 w-5 text-success" />
-                <div>
-                  <h4 className="font-semibold">{t("verified.verifiedLiquidity")}</h4>
-                  <p className="text-sm text-muted-foreground">{t("verified.verifiedLiquidityDesc")}</p>
+                  <h4 className="font-semibold">{t("verified.verification.supply")}</h4>
+                  <p className="text-sm text-muted-foreground">{t("verified.verification.supplyDesc")}</p>
                 </div>
               </div>
             </div>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <Shield className="h-5 w-5 text-primary" />
+                <CheckCircle className="h-5 w-5 text-success" />
                 <div>
-                  <h4 className="font-semibold">{t("verified.securityAudit")}</h4>
-                  <p className="text-sm text-muted-foreground">{t("verified.securityAuditDesc")}</p>
+                  <h4 className="font-semibold">{t("verified.verification.liquidity")}</h4>
+                  <p className="text-sm text-muted-foreground">{t("verified.verification.liquidityDesc")}</p>
                 </div>
               </div>
+            </div>
+            <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <Shield className="h-5 w-5 text-primary" />
+                <CheckCircle className="h-5 w-5 text-success" />
                 <div>
-                  <h4 className="font-semibold">{t("verified.teamVerified")}</h4>
-                  <p className="text-sm text-muted-foreground">{t("verified.teamVerifiedDesc")}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-primary" />
-                <div>
-                  <h4 className="font-semibold">{t("verified.roadmapCompliance")}</h4>
-                  <p className="text-sm text-muted-foreground">{t("verified.roadmapComplianceDesc")}</p>
+                  <h4 className="font-semibold">{t("verified.verification.audit")}</h4>
+                  <p className="text-sm text-muted-foreground">{t("verified.verification.auditDesc")}</p>
                 </div>
               </div>
             </div>
@@ -335,99 +365,39 @@ const VerifiedPage = () => {
         </CardContent>
       </Card>
 
-      {/* 6. Call to Action */}
+      {/* 8. Call to Action */}
       <Card className="card-premium">
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-2xl">
             <Wallet className="h-6 w-6 text-primary" />
-            {t("verified.ctaTitle")}
+            {t("verified.cta.title")}
           </CardTitle>
-          <p className="text-muted-foreground">{t("verified.ctaSubtitle")}</p>
+          <p className="text-muted-foreground">{t("verified.cta.subtitle")}</p>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <Button 
               size="lg" 
               className="flex-1"
-              onClick={() => window.open('/id/buytpc', '_blank')}
+              onClick={() => window.open(withLang('/buytpc'), '_blank', 'noopener,noreferrer')}
             >
               <Wallet className="h-4 w-4 mr-2" />
-              {t("verified.ctaBuyTpc")}
+              {t("verified.cta.buyTpc")}
             </Button>
             <Button 
               variant="outline" 
               size="lg" 
               className="flex-1"
-              onClick={() => window.open('/id/transparency', '_blank')}
+              onClick={() => window.open(withLang('/transparency'), '_blank', 'noopener,noreferrer')}
             >
               <FileText className="h-4 w-4 mr-2" />
-              {t("verified.ctaTransparency")}
+              {t("verified.cta.transparency")}
             </Button>
           </div>
           <div className="text-center">
             <p className="text-sm text-muted-foreground mb-4">
-              {t("verified.ctaNote")}
+              {t("verified.cta.note")}
             </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* 7. Contact Information */}
-      <Card className="card-premium">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3 text-2xl">
-            <Info className="h-6 w-6 text-primary" />
-            {t("verified.contactTitle")}
-          </CardTitle>
-          <p className="text-muted-foreground">{t("verified.contactSubtitle")}</p>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-semibold mb-2">{t("verified.contactEmail")}</h4>
-              <p className="text-muted-foreground">support@tpcglobal.io</p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-2">{t("verified.contactWebsite")}</h4>
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground">tpcglobal.io</span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => window.open('https://tpcglobal.io', '_blank')}
-                >
-                  <ExternalLink className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-semibold mb-2">{t("verified.contactTelegram")}</h4>
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground">@tpcglobal</span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => window.open('https://t.me/tpcglobal', '_blank')}
-                >
-                  <ExternalLink className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-2">{t("verified.contactTwitter")}</h4>
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground">@tpcglobal</span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => window.open('https://twitter.com/tpcglobal', '_blank')}
-                >
-                  <ExternalLink className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
           </div>
         </CardContent>
       </Card>

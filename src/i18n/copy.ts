@@ -276,6 +276,75 @@ export const copy = {
       finalWarningText: "Jika seseorang menekan Anda untuk bertindak cepat, berhenti.",
       finalWarningSubtitle: "TPC tidak pernah menggunakan urgensi. Penipu selalu melakukannya.",
       finalAction: "Jika ragu, jangan lakukan apa-apa. Verifikasi dulu.",
+      
+      // 10. Additional keys for VerifiedPage
+      wallets: {
+        title: "Wallet Resmi",
+        treasury: "Wallet Treasury",
+        treasuryPurpose: "Dana utama proyek untuk pengembangan dan operasi",
+        treasuryStatus: "Aktif",
+        distribution: "Wallet Distribusi",
+        distributionPurpose: "Distribusi token dan reward",
+        distributionStatus: "Segera Hadir",
+        marketing: "Wallet Marketing",
+        marketingPurpose: "Pemasaran dan pengembangan komunitas",
+        marketingStatus: "Segera Hadir"
+      },
+      antiScam: {
+        title: "Aturan Anti-Scam",
+        badge: "⚠️ Aturan Keselamatan Kritis",
+        rule1: "TPC tidak akan pernah DM Anda terlebih dahulu untuk alasan apa pun",
+        rule2: "TPC tidak akan pernah meminta private keys atau seed phrase Anda",
+        rule3: "TPC tidak akan pernah menjamin keuntungan atau return",
+        rule4: "TPC tidak akan pernah membagikan 'wallet baru' di luar halaman ini",
+        rule5: "TPC tidak akan pernah menekan Anda untuk mengirim dana secara mendesak",
+        rule6: "TPC tidak akan pernah menggunakan tekanan atau menciptakan urgensi",
+        rule7: "TPC tidak akan pernah meminta informasi pribadi melalui DM"
+      },
+      // Basic keys needed
+      title: "Halaman Terverifikasi",
+      subtitle: "Satu-satunya referensi verifikasi resmi untuk TPC",
+      description: "Halaman ini adalah sumber kebenaran tunggal untuk semua wallet dan alamat resmi",
+      note: "TPC tidak pernah mengumumkan wallet melalui DM. Selalu verifikasi di sini terlebih dahulu.",
+      comingSoon: "Segera Hadir",
+      badge: "Resmi & Dapat Diverifikasi",
+      official: {
+        title: "Tautan Resmi",
+        subtitle: "Hanya ini yang merupakan channel TPC yang sah",
+        website: "Website Resmi",
+        telegram: "Telegram Resmi",
+        twitter: "Twitter Resmi"
+      },
+      treasury: {
+        title: "Treasury Resmi",
+        subtitle: "Wallet treasury utama proyek",
+        network: "Solana Mainnet",
+        note: "Semua transaksi utama proyek mengalir melalui wallet ini",
+        warning: "Hanya kirim ke alamat ini. Selalu verifikasi sebelum mengirim."
+      },
+      mint: {
+        title: "Mint Token Resmi",
+        subtitle: "Alamat kontrak token TPC",
+        note: "Ini adalah alamat token TPC resmi di Solana",
+        warning: "Hanya gunakan alamat ini untuk token TPC. Verifikasi sebelum berinteraksi."
+      },
+      verification: {
+        title: "Status Verifikasi",
+        subtitle: "Informasi verifikasi proyek TPC",
+        supply: "Supply Tetap",
+        supplyDesc: "Total supply tetap dan dapat diverifikasi di on-chain",
+        liquidity: "Likuiditas Dikunci",
+        liquidityDesc: "Likuiditas awal akan dikunci setelah listing DEX",
+        audit: "Smart Contract Diaudit",
+        auditDesc: "Kontrak diaudit oleh perusahaan keamanan terpercaya"
+      },
+      cta: {
+        title: "Mulai",
+        subtitle: "Bergabung dengan ekosistem TPC secara aman",
+        buyTpc: "Beli TPC",
+        transparency: "Lihat Transparansi",
+        note: "Selalu verifikasi melalui channel resmi saja"
+      }
     },
     
     // Wallets
@@ -1130,6 +1199,75 @@ export const copy = {
       finalWarningText: "If someone pressures you to act fast, stop.",
       finalWarningSubtitle: "TPC never uses urgency. Scammers always do.",
       finalAction: "When in doubt, do nothing. Verify first.",
+      
+      // 10. Additional keys for VerifiedPage
+      wallets: {
+        title: "Official Wallets",
+        treasury: "Treasury Wallet",
+        treasuryPurpose: "Main project funds for development and operations",
+        treasuryStatus: "Active",
+        distribution: "Distribution Wallet",
+        distributionPurpose: "Token distribution and rewards",
+        distributionStatus: "Coming Soon",
+        marketing: "Marketing Wallet",
+        marketingPurpose: "Marketing and community development",
+        marketingStatus: "Coming Soon"
+      },
+      antiScam: {
+        title: "Anti-Scam Rules",
+        badge: "⚠️ Critical Safety Rules",
+        rule1: "TPC will NEVER DM you first for any reason",
+        rule2: "TPC will NEVER ask for your private keys or seed phrase",
+        rule3: "TPC will NEVER guarantee profits or returns",
+        rule4: "TPC will NEVER share 'new wallet' addresses outside this page",
+        rule5: "TPC will NEVER pressure you to send funds urgently",
+        rule6: "TPC will NEVER use pressure tactics or create urgency",
+        rule7: "TPC will NEVER request personal information via DM"
+      },
+      // Basic keys needed
+      title: "Verified Page",
+      subtitle: "The only official verification reference for TPC",
+      description: "This page is the single source of truth for all official wallets and addresses",
+      note: "TPC never announces wallets via DM. Always verify here first.",
+      comingSoon: "Coming Soon",
+      badge: "Official & Verifiable",
+      official: {
+        title: "Official Links",
+        subtitle: "Only these are legitimate TPC channels",
+        website: "Official Website",
+        telegram: "Official Telegram",
+        twitter: "Official Twitter"
+      },
+      treasury: {
+        title: "Official Treasury",
+        subtitle: "Main project treasury wallet",
+        network: "Solana Mainnet",
+        note: "All major project transactions flow through this wallet",
+        warning: "Only send to this address. Always verify before sending."
+      },
+      mint: {
+        title: "Official Token Mint",
+        subtitle: "TPC token contract address",
+        note: "This is the official TPC token address on Solana",
+        warning: "Only use this address for TPC token. Verify before interacting."
+      },
+      verification: {
+        title: "Verification Status",
+        subtitle: "TPC project verification information",
+        supply: "Fixed Supply",
+        supplyDesc: "Total supply is fixed and verifiable on-chain",
+        liquidity: "Liquidity Locked",
+        liquidityDesc: "Initial liquidity will be locked after DEX listing",
+        audit: "Smart Contract Audited",
+        auditDesc: "Contracts audited by reputable security firms"
+      },
+      cta: {
+        title: "Get Started",
+        subtitle: "Join the TPC ecosystem safely",
+        buyTpc: "Buy TPC",
+        transparency: "View Transparency",
+        note: "Always verify through official channels only"
+      }
     },
     
     // Transparency Page
@@ -1714,229 +1852,6 @@ export const copy = {
     footer: {
       copyright: "© 2026 TPC Global. All rights reserved.",
       disclaimer: "Crypto investment carries high risk. Not investment advice.",
-      officialDomain: "Official Domain: tpcglobal.io",
-    },
-    
-    // About Page
-    about: {
-      title: "About TPC",
-      subtitle: "A professional community focused on education, transparency, and collaboration.",
-      comingSoonTitle: "Coming Soon",
-      comingSoonBody: "This section is being prepared. Please check back later.",
-    },
-    
-    // Transparency Page
-    transparency: {
-      title: "Transparency",
-      subtitle: "We believe in complete transparency in all our operations.",
-      whatTitle: "What is Transparency?",
-      whatBullet1: "All official wallets are public and verifiable",
-      "whatBullet2": "Transactions are recorded on blockchain for everyone to see",
-      "whatBullet3": "Financial reports are updated regularly",
-      "whatBullet4": "No information is hidden from the community",
-      howTitle: "How We Implement It?",
-      howBullet1: "Official wallets are displayed on the Verification page",
-      "howBullet2": "All transactions can be tracked on blockchain explorer",
-      "howBullet3": "Community can verify all our claims",
-    },
-    
-    // Coming Soon
-    comingSoon: {
-      body: "This page is under development. Please come back later.",
-    },
-    
-    // Marketplace
-    marketplace: {
-      title: "Marketplace",
-      comingSoonBody: "Marketplace is under development. Please come back later.",
-    },
-    
-    // DAO Lite
-    daoLite: {
-      title: "DAO Lite",
-      subtitle: "Decentralized Community Governance for TPC Global",
-      comingSoon: "Coming Soon",
-      sectionWhat: {
-        title: "What is DAO Lite?",
-        body: "DAO Lite is a community governance system that enables TPC members to participate in decision-making regarding ecosystem development. It's a lightweight version of traditional DAOs focused on education and transparency."
-      },
-      sectionHow: {
-        title: "How Do Proposals Work?",
-        body: "Proposals are ideas or suggestions submitted by community members for consideration. Each proposal goes through a structured discussion and voting process to ensure collective and transparent decision-making."
-      },
-      sectionSnapshot: {
-        title: "Snapshot Integration",
-        body: "We will use Snapshot for voting and proposal management. Snapshot is a decentralized and proven platform for community decisions, ensuring integrity and transparency in every vote."
-      },
-      snapshotCta: "Snapshot (Coming Soon)",
-      features: {
-        governance: "Community Governance",
-        education: "Education Platform",
-        transparency: "Full Transparency"
-      },
-      proposalSteps: {
-        submit: "Submit Proposal",
-        submitDesc: "Members can submit ideas or suggestions for the community",
-        discuss: "Community Discussion",
-        discussDesc: "All members can discuss and provide input",
-        vote: "Structured Voting",
-        voteDesc: "Decisions are made through transparent and recorded voting"
-      },
-      disclaimer: {
-        title: "Important: Educational Information",
-        body: "DAO Lite is an educational and community governance platform. It is not an investment platform or guarantee of financial returns. Community decisions are informational and for TPC Global ecosystem development."
-      },
-      backToHome: "Back to Home"
-    },
-    
-    // DAO Snapshot
-    daoSnapshot: {
-      title: "DAO Snapshot",
-      subtitle: "Decentralized Voting and Proposal Platform",
-      comingSoon: "Coming Soon",
-      mainTitle: "Snapshot Integration for DAO Lite",
-      body: "Snapshot is a decentralized voting platform that we will use for DAO Lite. This platform enables secure, transparent, and blockchain-verified voting for all community decision proposals.",
-      features: {
-        voting: "Decentralized Voting",
-        votingDesc: "Every vote is securely recorded on the blockchain",
-        proposals: "Proposal Management",
-        proposalsDesc: "Structured system for submitting and managing proposals",
-        transparency: "Full Transparency",
-        transparencyDesc: "All votes and results can be publicly verified",
-        access: "Open Access",
-        accessDesc: "All TPC members can participate in voting"
-      },
-      timeline: {
-        title: "Implementation Timeline",
-        phase1: "Phase 1: Snapshot Integration",
-        phase1Desc: "Preparing Snapshot integration with TPC system",
-        phase2: "Phase 2: Beta Testing",
-        phase2Desc: "Testing with dummy proposals and voting",
-        phase3: "Phase 3: Official Launch",
-        phase3Desc: "DAO Lite active with full decentralized voting"
-      },
-      cta: {
-        title: "Ready for Decentralized DAO",
-        description: "We're preparing Snapshot integration to launch a secure and transparent DAO Lite.",
-        button: "Open Snapshot"
-      },
-      backToDao: "Back to DAO Lite"
-    },
-    
-    // Footer
-    footer: {
-      copyright: "© 2026 TPC Global. All rights reserved.",
-      disclaimer: "Crypto investment carries high risk. Not investment advice.",
-      officialDomain: "Official Domain: tpcglobal.io",
-    },
-    
-    // About Page
-    about: {
-      title: "Tentang TPC",
-      subtitle: "Komunitas profesional yang berfokus pada edukasi, transparansi, dan kolaborasi.",
-      comingSoonTitle: "Segera Hadir",
-      comingSoonBody: "Bagian ini sedang disiapkan. Silakan cek kembali nanti.",
-    },
-    
-    // Transparency Page
-    transparency: {
-      title: "Transparansi",
-      subtitle: "Kami percaya pada transparansi penuh dalam semua operasi kami.",
-      whatTitle: "Apa Itu Transparansi?",
-      whatBullet1: "Semua dompet resmi bersifat publik dan dapat diverifikasi",
-      "whatBullet2": "Transaksi tercatat di blockchain untuk semua orang lihat",
-      "whatBullet3": "Laporan keuangan diperbarui secara berkala",
-      "whatBullet4": "Tidak ada informasi yang disembunyikan dari komunitas",
-      howTitle: "Bagaimana Kami Menerapkannya?",
-      howBullet1: "Dompet resmi ditampilkan di halaman Verifikasi",
-      "howBullet2": "Semua transaksi dapat dilacak di blockchain explorer",
-      "howBullet3": "Komunitas dapat memverifikasi semua klaim kami",
-    },
-    
-    // Coming Soon
-    comingSoon: {
-      body: "Halaman ini sedang dalam pengembangan. Silakan kembali lagi nanti.",
-    },
-    
-    // Marketplace
-    marketplace: {
-      title: "Marketplace",
-      comingSoonBody: "Marketplace sedang dalam pengembangan. Silakan kembali lagi nanti.",
-    },
-    
-    // DAO Lite
-    daoLite: {
-      title: "DAO Lite",
-      subtitle: "Tata Kelola Komunitas Terdesentralisasi untuk TPC Global",
-      comingSoon: "Segera Hadir",
-      sectionWhat: {
-        title: "Apa itu DAO Lite?",
-        body: "DAO Lite adalah sistem tata kelola komunitas yang memungkinkan anggota TPC untuk berpartisipasi dalam pengambilan keputusan terkait pengembangan ekosistem. Ini adalah versi ringan dari DAO tradisional yang berfokus pada edukasi dan transparansi."
-      },
-      sectionHow: {
-        title: "Bagaimana Proposal Bekerja?",
-        body: "Proposal adalah ide atau saran yang diajukan oleh anggota komunitas untuk dipertimbangkan. Setiap proposal melalui proses diskusi dan voting terstruktur untuk memastikan keputusan yang dibuat secara kolektif dan transparan."
-      },
-      sectionSnapshot: {
-        title: "Integrasi Snapshot",
-        body: "Kami akan menggunakan Snapshot untuk voting dan proposal management. Snapshot adalah platform terdesentralisasi yang aman dan terbukti untuk keputusan komunitas, memastikan integritas dan transparansi dalam setiap voting."
-      },
-      snapshotCta: "Snapshot (Segera Hadir)",
-      features: {
-        governance: "Tata Kelola Komunitas",
-        education: "Platform Edukasi",
-        transparency: "Transparansi Penuh"
-      },
-      proposalSteps: {
-        submit: "Ajukan Proposal",
-        submitDesc: "Anggota dapat mengajukan ide atau saran untuk komunitas",
-        discuss: "Diskusi Komunitas",
-        discussDesc: "Semua anggota dapat berdiskusi dan memberikan masukan",
-        vote: "Voting Terstruktur",
-        voteDesc: "Keputusan dibuat melalui voting yang transparan dan tercatat"
-      },
-      disclaimer: {
-        title: "Penting: Informasi Edukasi",
-        body: "DAO Lite adalah platform edukasi dan tata kelola komunitas. Ini bukan platform investasi atau jaminan keuntungan finansial. Keputusan komunitas bersifat informatif dan untuk pengembangan ekosistem TPC Global."
-      },
-      backToHome: "Kembali ke Beranda"
-    },
-    
-    // DAO Snapshot
-    daoSnapshot: {
-      title: "DAO Snapshot",
-      subtitle: "Platform Voting dan Proposal Terdesentralisasi",
-      comingSoon: "Segera Hadir",
-      mainTitle: "Integrasi Snapshot untuk DAO Lite",
-      body: "Snapshot adalah platform voting terdesentralisasi yang akan kami gunakan untuk DAO Lite. Platform ini memungkinkan voting yang aman, transparan, dan terverifikasi di blockchain untuk semua proposal keputusan komunitas.",
-      features: {
-        voting: "Voting Terdesentralisasi",
-        votingDesc: "Setiap suara tercatat di blockchain dengan aman",
-        proposals: "Management Proposal",
-        proposalsDesc: "Sistem terstruktur untuk mengajukan dan mengelola proposal",
-        transparency: "Transparansi Penuh",
-        transparencyDesc: "Semua voting dan hasil dapat diverifikasi secara publik",
-        access: "Akses Terbuka",
-        accessDesc: "Semua anggota TPC dapat berpartisipasi dalam voting"
-      },
-      timeline: {
-        title: "Timeline Implementasi",
-        phase1: "Fase 1: Integrasi Snapshot",
-        phase1Desc: "Menyiapkan integrasi Snapshot dengan sistem TPC",
-        phase2: "Fase 2: Beta Testing",
-        phase2Desc: "Uji coba dengan proposal dan voting dummy",
-        phase3: "Fase 3: Peluncuran Resmi",
-        phase3Desc: "DAO Lite aktif dengan voting terdesentralisasi penuh"
-      },
-      cta: {
-        title: "Siap untuk DAO Terdesentralisasi",
-        description: "Kami sedang menyiapkan integrasi Snapshot untuk meluncurkan DAO Lite yang aman dan transparan.",
-        button: "Buka Snapshot"
-      },
-      backToDao: "Kembali ke DAO Lite"
-    },
   },
-} as const;
-
-export type Lang = keyof typeof copy;
-export type CopyType = typeof copy.id;
+},
+};
