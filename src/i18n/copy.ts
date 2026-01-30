@@ -1,6 +1,8 @@
 // TPC Global i18n Copy - Indonesian (default) + English
 // STRICT: All UI text must use these keys
 
+export type Lang = "id" | "en";
+
 export const copy = {
   id: {
     // Common
@@ -397,12 +399,12 @@ export const copy = {
       // Anti-Scam Box
       antiScam: {
         title: "⚠️ PENTING: NOTIFIKASI KEAMANAN",
-        points: {
-          0: "Admin TIDAK PERNAH DM duluan",
-          1: "Pembelian HANYA melalui halaman ini", 
-          2: "Treasury address SATU & RESMI",
-          3: "Abaikan pihak lain di luar website"
-        }
+        points: [
+          "Admin TIDAK PERNAH DM duluan",
+          "Pembelian HANYA melalui halaman ini", 
+          "Treasury address SATU & RESMI",
+          "Abaikan pihak lain di luar website"
+        ]
       },
       stage1: {
         title: "Stage 1",
@@ -1364,32 +1366,8 @@ export const copy = {
           education: "Education-only, no profit guarantee"
         }
       },
-      // Anti-Scam Box
-      antiScam: {
-        title: "⚠️ IMPORTANT SECURITY NOTICE",
-        points: {
-          0: "Admin will NEVER DM first",
-          1: "Purchase ONLY through this page", 
-          2: "SINGLE & OFFICIAL treasury address",
-          3: "Ignore others outside the website"
-        }
-      },
       stage1: {
         title: "Stage 1",
-        supply: "Supply",
-        price: "Price",
-        sold: "Sold",
-        remaining: "Remaining",
-        countdown: "Countdown",
-        status: {
-          active: "Active",
-          soldOut: "Sold Out",
-          expired: "Expired",
-          upcoming: "Upcoming"
-        }
-      },
-      stage2: {
-        title: "Stage 2",
         supply: "Supply",
         price: "Price",
         sold: "Sold",
@@ -1431,13 +1409,30 @@ export const copy = {
       addressCopied: "Address copied to clipboard!",
       numberCopied: "Number copied to clipboard!",
       // CTA Button
-      createInvoiceButton: "Create TPC Purchase Invoice",
+      createInvoiceButton: "Buat Invoice Pembelian TPC",
       // Invoice Summary
       invoiceSummary: {
         title: "Invoice Summary",
-        lockedLabel: "This data is locked and cannot be changed",
-        tpcAmount: "TPC Amount",
+        lockedLabel: "Data ini terkunci dan tidak dapat diubah",
+        tpcAmount: "Jumlah TPC",
         totalUsd: "Total USD",
+        totalIdr: "Total IDR",
+        invoiceNumber: "Nomor Invoice"
+      },
+      // What Happens After Payment
+      afterPayment: {
+        title: "Apa yang terjadi setelah pembayaran?",
+        steps: [
+          "Pembayaran diterima ke treasury resmi",
+          "Tim memverifikasi pembayaran",
+          "Status invoice diperbarui",
+          "Alokasi TPC dicatat secara internal",
+          "Informasi resmi diumumkan melalui kanal publik"
+        ]
+      },
+      // Legal Tabs
+      legal: {
+        termsTab: "Terms of Purchase",
         riskTab: "Risk Disclosure", 
         educationTab: "Education Disclaimer"
       },
@@ -1923,6 +1918,6 @@ export const copy = {
     footer: {
       copyright: "© 2026 TPC Global. All rights reserved.",
       disclaimer: "Crypto investment carries high risk. Not investment advice.",
-  },
-},
+    }
+  }
 };

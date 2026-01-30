@@ -257,17 +257,19 @@ const BuyTpcPage = () => {
                   {t("buyTpc.antiScam.title")}
                 </h3>
                 <div className="grid md:grid-cols-2 gap-2 text-sm">
-                  {[
-                    t("buyTpc.antiScam.points.0"),
-                    t("buyTpc.antiScam.points.1"),
-                    t("buyTpc.antiScam.points.2"),
-                    t("buyTpc.antiScam.points.3")
-                  ].map((point, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-amber-400 rounded-full flex-shrink-0"></div>
-                      <span>{point}</span>
-                    </div>
-                  ))}
+                  {(() => {
+                    const points = t("buyTpc.antiScam.points");
+                    if (Array.isArray(points)) {
+                      return points.map((point, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 bg-amber-400 rounded-full flex-shrink-0"></div>
+                          <span>{point}</span>
+                        </div>
+                      ));
+                    }
+                    // Fallback if not array
+                    return null;
+                  })()}
                 </div>
               </div>
             </div>
@@ -653,20 +655,21 @@ const BuyTpcPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {[
-                t("buyTpc.afterPayment.steps.0"),
-                t("buyTpc.afterPayment.steps.1"),
-                t("buyTpc.afterPayment.steps.2"),
-                t("buyTpc.afterPayment.steps.3"),
-                t("buyTpc.afterPayment.steps.4")
-              ].map((step, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-xs font-semibold text-primary">{index + 1}</span>
-                  </div>
-                  <span className="text-sm">{step}</span>
-                </div>
-              ))}
+              {(() => {
+                const steps = t("buyTpc.afterPayment.steps");
+                if (Array.isArray(steps)) {
+                  return steps.map((step, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-xs font-semibold text-primary">{index + 1}</span>
+                      </div>
+                      <span className="text-sm">{step}</span>
+                    </div>
+                  ));
+                }
+                // Fallback if not array
+                return null;
+              })()}
             </div>
           </CardContent>
         </Card>

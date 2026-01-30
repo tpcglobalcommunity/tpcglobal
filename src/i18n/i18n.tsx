@@ -34,7 +34,7 @@ export const extractLang = (pathname: string): { lang: Lang; path: string } => {
 };
 
 // Get nested value from object by dot notation
-const getNestedValue = (obj: Record<string, unknown>, path: string): string => {
+const getNestedValue = (obj: Record<string, unknown>, path: string): string | string[] => {
   const keys = path.split(".");
   let current: unknown = obj;
   
@@ -42,16 +42,25 @@ const getNestedValue = (obj: Record<string, unknown>, path: string): string => {
     if (current && typeof current === "object" && key in current) {
       current = (current as Record<string, unknown>)[key];
     } else {
+      // Dev-only warning for missing keys
+      if (process.env.NODE_ENV === 'development') {
+        console.info(`[i18n] Missing key: ${path}`);
+      }
       return path; // Return key if not found
     }
   }
   
-  return typeof current === "string" ? current : path;
+  // Return the value as-is (could be string, array, etc.)
+  if (typeof current === "string" || Array.isArray(current)) {
+    return current;
+  }
+  
+  return path; // Return key if value is not string or array
 };
 
 interface I18nContextValue {
   lang: Lang;
-  t: (key: string) => string;
+  t: (key: string) => string | string[];
   setLang: (lang: Lang) => void;
   withLang: (path: string) => string;
 }
