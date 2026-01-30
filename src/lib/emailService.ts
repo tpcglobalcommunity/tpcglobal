@@ -1,6 +1,8 @@
 // Email service for sending transactional emails
 // This would typically integrate with services like SendGrid, Resend, or AWS SES
 
+import { logger } from './logger';
+
 interface EmailService {
   sendInvoiceEmail: (to: string, invoiceNo: string, lang: 'id' | 'en') => Promise<boolean>;
   sendConfirmationEmail: (to: string, invoiceNo: string, lang: 'id' | 'en') => Promise<boolean>;
@@ -32,9 +34,7 @@ class MockEmailService implements EmailService {
     try {
       const invoice = await getInvoicePublic(invoiceNo);
       if (!invoice) {
-        if (process.env.NODE_ENV === 'development') {
-          console.info('[Invoice] Not found:', invoiceNo);
-        }
+        logger.info('Invoice not found:', invoiceNo);
         return false;
       }
 
@@ -257,7 +257,7 @@ export const getEmailService = (): EmailService => {
   const isDevelopment = process.env.NODE_ENV === 'development';
   
   if (isDevelopment) {
-    console.log('📧 Using Mock Email Service (Development)');
+    logger.debug('Using Mock Email Service (Development)');
     return new MockEmailService();
   }
   

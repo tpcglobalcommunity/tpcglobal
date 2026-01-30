@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
 import { PremiumShell } from "@/components/layout/PremiumShell";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -44,16 +45,12 @@ const InvoiceDetailPage = () => {
         if (data) {
           setInvoice(data);
         } else {
-          if (process.env.NODE_ENV === 'development') {
-            console.info('[Invoice] Not found:', invoice_no);
-          }
+          logger.info('Invoice not found:', invoice_no);
           toast.info("Invoice tidak ditemukan atau sudah tidak aktif.");
           navigate(withLang("/"));
         }
       } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.info('[Invoice] Failed to load invoice:', error);
-        }
+        logger.info('Failed to load invoice:', error);
         toast.info("Gagal memuat invoice. Silakan coba lagi.");
       } finally {
         setLoading(false);
