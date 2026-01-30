@@ -32,6 +32,7 @@ export default function AppRoutes() {
         {/* Language-prefixed routes */}
         <Route path="/:lang" element={<PublicLayout />}>
           <Route index element={<HomePage />} />
+          <Route path="about" element={<ComingSoonPage titleKey="about.title" />} />
           <Route path="verified" element={<VerifiedPage />} />
           <Route path="transparency" element={<TransparencyPage />} />
           <Route path="buytpc" element={<BuyTpcPage />} />

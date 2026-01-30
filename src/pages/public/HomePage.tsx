@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
-import { PremiumShell } from "@/components/layout/PremiumShell";
 import { AntiScamBanner } from "@/components/security/AntiScamBanner";
 import { Shield, BookOpen, Users, CheckCircle, XCircle, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,7 +15,7 @@ const HomePage = () => {
   ];
 
   return (
-    <PremiumShell>
+    <div className="container-app section-spacing">
       <div className="container-app section-spacing">
         {/* Hero Section */}
         <div className="text-center space-y-6 mb-12">
@@ -180,7 +179,7 @@ const HomePage = () => {
           <p className="text-sm text-muted-foreground">{t("home.disclaimer")}</p>
         </div>
       </div>
-    </PremiumShell>
+    </div>
   );
 };
 
