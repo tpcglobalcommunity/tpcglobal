@@ -1,19 +1,20 @@
 -- ============================================================
--- INVOICE CONFIRMATION FLOW (PRODUCTION-SAFE + GUARDS)
--- Adds: receiver_wallet on tpc_invoices + append-only log table
--- RPC: submit_invoice_confirmation (SECURITY DEFINER)
+-- INVOICE CONFIRMATION FLOW (PRODUCTION-SAFE) for public.tpc_invoices
+-- Adds: receiver_wallet + updated_at + status constraint fix
+-- Creates: public.invoice_confirmations (append-only log)
+-- RPC: public.submit_invoice_confirmation (SECURITY DEFINER)
 -- Workflow: UNPAID/REJECTED -> PENDING_REVIEW
 -- ============================================================
 
--- Phase 0: Hard guard - ensure base table exists (clean error)
+-- Phase 0: Guard (table must exist)
 DO $$
 BEGIN
   IF to_regclass('public.tpc_invoices') IS NULL THEN
-    RAISE EXCEPTION 'Missing table: public.tpc_invoices. Create it first or rename references to your actual invoice table.';
+    RAISE EXCEPTION 'Missing table: public.tpc_invoices';
   END IF;
 END $$;
 
--- Phase 1: Add missing columns safely + fix status constraint
+-- Phase 1: Add missing columns + fix status constraint
 DO $$
 BEGIN
   -- receiver_wallet
@@ -62,7 +63,7 @@ CREATE TABLE IF NOT EXISTS public.invoice_confirmations (
 
 ALTER TABLE public.invoice_confirmations ENABLE ROW LEVEL SECURITY;
 
--- We do NOT allow direct table access except admin SELECT.
+-- Lock down direct access (only admin SELECT via policy)
 REVOKE ALL ON public.invoice_confirmations FROM PUBLIC;
 REVOKE ALL ON public.invoice_confirmations FROM anon;
 REVOKE ALL ON public.invoice_confirmations FROM authenticated;
@@ -89,13 +90,13 @@ REVOKE ALL ON FUNCTION public.is_admin_uuid(uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.is_admin_uuid(uuid) TO anon;
 GRANT EXECUTE ON FUNCTION public.is_admin_uuid(uuid) TO authenticated;
 
--- Admin can read all confirmations
+-- Admin can read confirmations
 DROP POLICY IF EXISTS "Admins can view all confirmations" ON public.invoice_confirmations;
 CREATE POLICY "Admins can view all confirmations" ON public.invoice_confirmations
   FOR SELECT
   USING (public.is_admin_uuid(auth.uid()));
 
--- Phase 4: RPC submit confirmation
+-- Phase 4: RPC submit confirmation (robust email column detection)
 CREATE OR REPLACE FUNCTION public.submit_invoice_confirmation(
   p_invoice_no text,
   p_email text DEFAULT NULL,
@@ -124,13 +125,31 @@ AS $$
 DECLARE
   v_status text;
   v_invoice_email text;
+  v_email_col text;
 BEGIN
-  -- Lookup invoice
-  SELECT i.status, i.email
-    INTO v_status, v_invoice_email
-  FROM public.tpc_invoices i
-  WHERE i.invoice_no = p_invoice_no
+  -- Detect email column name (supports email or buyer_email)
+  SELECT c.column_name
+    INTO v_email_col
+  FROM information_schema.columns c
+  WHERE c.table_schema='public'
+    AND c.table_name='tpc_invoices'
+    AND c.column_name IN ('email','buyer_email')
+  ORDER BY CASE c.column_name WHEN 'email' THEN 1 ELSE 2 END
   LIMIT 1;
+
+  -- Fetch invoice status (+ email if column exists)
+  IF v_email_col IS NULL THEN
+    SELECT i.status
+      INTO v_status
+    FROM public.tpc_invoices i
+    WHERE i.invoice_no = p_invoice_no
+    LIMIT 1;
+    v_invoice_email := NULL;
+  ELSE
+    EXECUTE format('SELECT i.status, i.%I FROM public.tpc_invoices i WHERE i.invoice_no = $1 LIMIT 1', v_email_col)
+      INTO v_status, v_invoice_email
+      USING p_invoice_no;
+  END IF;
 
   IF v_status IS NULL THEN
     RAISE EXCEPTION 'Invoice not found';
@@ -148,9 +167,12 @@ BEGIN
     RAISE EXCEPTION 'Receiver wallet required';
   END IF;
 
-  -- Anti-takeover: if email provided, must match invoice email
-  IF p_email IS NOT NULL AND length(trim(p_email)) > 0 THEN
-    IF lower(trim(p_email)) <> lower(trim(coalesce(v_invoice_email,''))) THEN
+  -- Anti-takeover: enforce email match only if invoice has email column AND caller provides email
+  IF v_email_col IS NOT NULL
+     AND p_email IS NOT NULL AND length(trim(p_email)) > 0
+     AND v_invoice_email IS NOT NULL AND length(trim(v_invoice_email)) > 0
+  THEN
+    IF lower(trim(p_email)) <> lower(trim(v_invoice_email)) THEN
       RAISE EXCEPTION 'Email does not match invoice';
     END IF;
   END IF;
@@ -162,7 +184,7 @@ BEGIN
     p_invoice_no, p_email, p_payment_method, p_payer_name, p_payer_ref, p_tx_signature, p_proof_url, p_receiver_wallet
   );
 
-  -- Update invoice
+  -- Update invoice -> pending review
   UPDATE public.tpc_invoices
   SET
     status = 'PENDING_REVIEW',
@@ -203,8 +225,8 @@ GRANT EXECUTE ON FUNCTION public.submit_invoice_confirmation(
 
 DO $$
 BEGIN
-  RAISE NOTICE '=== Invoice Confirmation Flow Ready ===';
-  RAISE NOTICE 'tpc_invoices guarded + receiver_wallet ensured';
-  RAISE NOTICE 'invoice_confirmations admin-only read';
-  RAISE NOTICE 'RPC submit_invoice_confirmation ready';
+  RAISE NOTICE '=== Invoice Confirmation Flow READY (tpc_invoices) ===';
+  RAISE NOTICE 'Added/Ensured: receiver_wallet, updated_at, status constraint';
+  RAISE NOTICE 'Created: invoice_confirmations (admin-only read)';
+  RAISE NOTICE 'RPC: submit_invoice_confirmation ready';
 END $$;
