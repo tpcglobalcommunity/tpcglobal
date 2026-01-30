@@ -449,6 +449,10 @@ export const copy = {
         totalIdr: "Total IDR",
         paymentMethod: "Metode Pembayaran",
         selectPayment: "Pilih metode pembayaran",
+        referralLabel: "Kode Referral",
+        referralHelpRequired: "Wajib diisi untuk presale. Jika belum punya, gunakan kode resmi: TPC000001.",
+        referralRequiredError: "Kode referral wajib diisi.",
+        referralInvalidError: "Kode referral tidak valid atau sudah tidak aktif.",
         terms: "Saya menyetujui Syarat & Ketentuan",
         readTerms: "Baca Syarat & Ketentuan",
         buyButton: "Beli TPC",
@@ -492,22 +496,6 @@ export const copy = {
       },
       // Trust bullets
       trust: {
-        b1: "Sistem invoice resmi dan terverifikasi",
-        b2: "Dana masuk ke treasury publik yang transparan", 
-        b3: "Edukasi-only, tidak ada jaminan profit"
-      },
-      // Form fields
-      form: {
-        title: "Pembelian Token TPC",
-        email: "Email",
-        amount: "Jumlah TPC",
-        referral: "Kode Referral (Opsional)",
-        termsLabel: "Saya menyetujui Syarat & Ketentuan, Risiko, dan Disclaimer"
-      },
-      // CTA button
-      cta: {
-        createInvoice: "Buat Invoice"
-      },
       // Order summary
       summary: {
         title: "Ringkasan Pesanan",
@@ -2117,13 +2105,19 @@ export const copy = {
       safetyTitle: "Safety Checklist",
       safetyDescription: "Access TPC only via the official website\n\nIgnore private messages claiming to represent TPC\n\nTrack invoices and status directly on the website\n\nVerify wallets only on official pages",
       
-      footerDisclaimer: "Education-Only • No Financial Advice • High Risk\nTPC is intended for education and community development, not speculation or profit guarantees."
+      footerDisclaimer: "Education-Only • No Financial Advice • High Risk\nTPC is intended for education and community development, not speculation or profit guarantees.",
+      
+      // Referral Information
+      referralTitle: "Referral Code",
+      referralDescription: "Use official referral code to join TPC presale. Super Admin code: TPC000001",
+      referralCode: "TPC000001",
+      referralNote: "Referral code is required for all presale purchases. Use Super Admin official code if you don't have one from a member."
     },
     
     // Footer
     footer: {
       copyright: "© 2026 TPC Global. All rights reserved.",
-      disclaimer: "Crypto investment carries high risk. Not investment advice.",
+      disclaimer: "Crypto investment carries high risk. Not investment advice."
     }
   }
 };

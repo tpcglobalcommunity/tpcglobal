@@ -42,6 +42,17 @@ const BuyTpcPage = () => {
   // Constants
   const MAX_TPC_AMOUNT = 100000000; // 100M TPC max per invoice
 
+  // Auto-fill referral code from URL or default to TPC000001
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlRef = urlParams.get('ref');
+    if (urlRef && urlRef.trim()) {
+      setReferralCode(urlRef.trim());
+    } else {
+      setReferralCode('TPC000001'); // Default to Super Admin code
+    }
+  }, []);
+
   // Calculate estimates based on server settings
   const getEstimates = () => {
     if (!settings || !tpcAmount) {
@@ -104,7 +115,7 @@ const BuyTpcPage = () => {
     try {
       const { data, error } = await supabase.rpc('create_invoice', {
         p_tpc_amount: parseFloat(tpcAmount),
-        p_referral_code: referralCode.trim() ? referralCode.trim() : null
+        p_referral_code: referralCode.trim()
       });
 
       if (error) {
@@ -158,7 +169,7 @@ const BuyTpcPage = () => {
     }
   };
 
-  const isFormValid = email && tpcAmount && termsAccepted && !isSubmitting && !loading;
+  const isFormValid = email && tpcAmount && referralCode && termsAccepted && !isSubmitting && !loading;
 
   return (
     <div className="container-app section-spacing">
@@ -269,14 +280,17 @@ const BuyTpcPage = () => {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="referral">{t("buyTpc.form.referral")}</Label>
+              <Label htmlFor="referral">{t("buyTpc.referralLabel")}</Label>
               <Input
                 id="referral"
-                placeholder="REF123 (optional)"
+                placeholder="TPC000001"
                 value={referralCode}
                 onChange={(e) => setReferralCode(e.target.value)}
                 disabled={isSubmitting}
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                {t("buyTpc.referralHelpRequired")}
+              </p>
             </div>
           </div>
 

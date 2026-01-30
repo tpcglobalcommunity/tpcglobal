@@ -5,7 +5,7 @@
 DROP FUNCTION IF EXISTS public.create_invoice(numeric, text);
 
 -- Create the create_invoice function for the invoices table
-CREATE OR REPLACE FUNCTION public.create_invoice(p_tpc_amount numeric, p_referral_code text DEFAULT NULL)
+CREATE OR REPLACE FUNCTION public.create_invoice(p_tpc_amount numeric, p_referral_code text)
 RETURNS TABLE (invoice_no text)
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -24,6 +24,7 @@ DECLARE
     v_sold_amount numeric;
     v_remaining_amount numeric;
     v_max_amount numeric := 100000000; -- Maximum 100M TPC
+    v_normalized_referral_code text;
 BEGIN
     -- For public access, we'll allow anonymous users but require email validation
     -- v_user_id := auth.uid(); -- Commented out for public access
@@ -35,6 +36,22 @@ BEGIN
     
     IF p_tpc_amount > v_max_amount THEN
         RAISE EXCEPTION 'Amount too large: Maximum amount is % TPC', v_max_amount;
+    END IF;
+    
+    -- Validate and normalize referral code (REQUIRED)
+    IF p_referral_code IS NULL OR TRIM(p_referral_code) = '' THEN
+        RAISE EXCEPTION 'REFERRAL_REQUIRED: Referral code is required';
+    END IF;
+    
+    -- Normalize referral code
+    v_normalized_referral_code := UPPER(TRIM(p_referral_code));
+    
+    -- Validate referral code exists and is active
+    IF NOT EXISTS (
+        SELECT 1 FROM referral_codes 
+        WHERE code = v_normalized_referral_code AND is_active = true
+    ) THEN
+        RAISE EXCEPTION 'REFERRAL_INVALID: Referral code is invalid or inactive';
     END IF;
     
     -- Get active stage info
@@ -80,6 +97,7 @@ BEGIN
         total_usd,
         usd_idr_rate,
         treasury_address,
+        referral_code,
         status,
         buyer_email -- Will be updated by frontend
     ) VALUES (
@@ -90,6 +108,7 @@ BEGIN
         v_total_usd,
         v_usd_idr_rate,
         v_treasury_address,
+        v_normalized_referral_code,
         'PENDING',
         'pending@tpc.global' -- Placeholder, will be updated by frontend
     );
