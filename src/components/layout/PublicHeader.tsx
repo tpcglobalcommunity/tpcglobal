@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Menu, Globe, X } from "lucide-react";
 import { useState } from "react";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 const navItems = [
   { key: "nav.verified", path: "/verified" },
@@ -34,14 +35,7 @@ export const PublicHeader = () => {
       <div className="container-app">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to={withLang("/")} className="flex items-center gap-2">
-            <img 
-              src="/tpc-logo.png" 
-              alt="TPC Global" 
-              className="w-8 h-8 rounded-lg"
-            />
-            <span className="font-bold text-lg text-gradient-gold hidden sm:inline">TPC Global</span>
-          </Link>
+          <BrandLogo size="md" withText={true} />
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-1">
