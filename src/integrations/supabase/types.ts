@@ -288,13 +288,13 @@ export type Database = {
       submit_invoice_confirmation: {
         Args: { 
           p_invoice_no: string; 
-          p_email?: string; 
           p_payment_method: string; 
+          p_receiver_wallet: string;
+          p_email?: string; 
           p_payer_name?: string; 
           p_payer_ref?: string; 
           p_tx_signature?: string; 
-          p_proof_url?: string; 
-          p_receiver_wallet?: string 
+          p_proof_url?: string 
         }
         Returns: {
           invoice_no: string;
