@@ -25,13 +25,16 @@ BEGIN
   END IF;
 
   -- Ensure status check constraint (drop + recreate)
-  IF EXISTS (
-    SELECT 1 FROM pg_constraint
-    WHERE conname = 'tpc_invoices_status_check'
-      AND conrelid = 'public.tpc_invoices::regclass'
-  ) THEN
-    ALTER TABLE public.tpc_invoices DROP CONSTRAINT tpc_invoices_status_check;
-  END IF;
+  DO $$
+  BEGIN
+    IF EXISTS (
+      SELECT 1 FROM pg_constraint
+      WHERE conname = 'tpc_invoices_status_check'
+        AND conrelid = 'public.tpc_invoices::regclass'
+    ) THEN
+      ALTER TABLE public.tpc_invoices DROP CONSTRAINT tpc_invoices_status_check;
+    END IF;
+  END $$;
 
   ALTER TABLE public.tpc_invoices
     ADD CONSTRAINT tpc_invoices_status_check
