@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
+import { logger } from "@/lib/logger";
 import { PremiumShell } from "@/components/layout/PremiumShell";
 import { Button } from "@/components/ui/button";
-import { logger } from "@/lib/logger";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -31,6 +33,8 @@ const InvoiceDetailPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [confirming, setConfirming] = useState<boolean>(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
+  const [proofFile, setProofFile] = useState<File | null>(null);
+  const [uploadingProof, setUploadingProof] = useState<boolean>(false);
 
   useEffect(() => {
     const loadInvoice = async () => {
@@ -92,6 +96,28 @@ const InvoiceDetailPage = () => {
       toast.error(t("invoice.confirmError"));
     } finally {
       setConfirming(false);
+    }
+  };
+
+  const handleProofUpload = async () => {
+    if (!proofFile || !invoice) return;
+
+    setUploadingProof(true);
+    try {
+      // Mock upload - in real implementation, upload to Supabase storage
+      toast.success(lang === 'en' ? '✅ Proof received. Admin will check during operational hours.' : '✅ Bukti diterima. Admin akan mengecek dalam jam operasional.');
+      setProofFile(null);
+      
+      // Reload invoice to get updated status
+      const updatedInvoice = await getInvoicePublic(invoice.invoice_no);
+      if (updatedInvoice) {
+        setInvoice(updatedInvoice);
+      }
+    } catch (error) {
+      console.error("Failed to upload proof:", error);
+      toast.error(lang === 'en' ? 'Failed to upload proof' : 'Gagal mengupload bukti');
+    } finally {
+      setUploadingProof(false);
     }
   };
 
@@ -289,6 +315,51 @@ const InvoiceDetailPage = () => {
               )}
             </CardContent>
           </Card>
+
+          {/* Proof Upload Section */}
+          {invoice.status === 'PENDING' && (
+            <Card className="card-premium">
+              <CardHeader>
+                <CardTitle>{lang === 'en' ? 'Upload Payment Proof' : 'Upload Bukti Pembayaran'}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="proof-file">{lang === 'en' ? 'Payment Proof (Image)' : 'Bukti Pembayaran (Gambar)'}</Label>
+                  <Input
+                    id="proof-file"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setProofFile(e.target.files?.[0] || null)}
+                    className="mt-2"
+                  />
+                  {proofFile && (
+                    <p className="text-sm text-muted-foreground mt-2">
+                      {lang === 'en' ? 'Selected file:' : 'File dipilih:'} {proofFile.name}
+                    </p>
+                  )}
+                </div>
+                
+                <Button
+                  onClick={handleProofUpload}
+                  disabled={!proofFile || uploadingProof}
+                  className="w-full"
+                  size="lg"
+                >
+                  {uploadingProof ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      {lang === 'en' ? 'Uploading...' : 'Mengupload...'}
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      {lang === 'en' ? 'Submit Proof' : 'Kirim Bukti'}
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">

@@ -236,52 +236,70 @@ const BuyTpcPage = () => {
               </Alert>
             ) : (
               <>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="tpc-amount">{t("buyTpc.purchase.tpcAmount")}</Label>
-                      <Input
-                        id="tpc-amount"
-                        type="number"
-                        placeholder="Enter TPC amount"
-                        value={tpcAmount}
-                        onChange={(e) => setTpcAmount(e.target.value)}
-                        min="1"
-                      />
-                    </div>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="tpc-amount">{t("buyTpc.purchase.tpcAmount")}</Label>
+                    <Input
+                      id="tpc-amount"
+                      type="number"
+                      placeholder="Enter TPC amount"
+                      value={tpcAmount}
+                      onChange={(e) => setTpcAmount(e.target.value)}
+                      min="1"
+                    />
+                  </div>
 
-                    <div>
-                      <Label htmlFor="buyer-email">Email</Label>
-                      <Input
-                        id="buyer-email"
-                        type="email"
-                        placeholder="your@email.com"
-                        value={buyerEmail}
-                        onChange={(e) => setBuyerEmail(e.target.value)}
-                      />
+                  {/* Order Summary - MOVED HERE */}
+                  <div className="bg-muted/50 p-4 rounded-lg">
+                    <h3 className="font-semibold mb-3">Order Summary</h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span>{t("buyTpc.purchase.tpcAmount")}:</span>
+                        <span>{tpcAmount || "0"} TPC</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Total USD:</span>
+                        <span>${calculatedUsd}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Total IDR:</span>
+                        <span>{calculatedIdr}</span>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <div>
-                      <Label>{t("buyTpc.purchase.paymentMethod")}</Label>
-                      <Select value={selectedPayment} onValueChange={handlePaymentMethodChange}>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t("buyTpc.purchase.selectPayment")} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {paymentMethods.map((method) => (
-                            <SelectItem key={method.id} value={method.id}>
-                              {t(`buyTpc.paymentMethods.${method.id}`)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                  <div>
+                    <Label htmlFor="buyer-email">Email</Label>
+                    <Input
+                      id="buyer-email"
+                      type="email"
+                      placeholder="your@email.com"
+                      value={buyerEmail}
+                      onChange={(e) => setBuyerEmail(e.target.value)}
+                    />
+                  </div>
+                </div>
 
-                    {selectedPaymentMethod && (
-                      <div className="mt-6">
-                        {/* Crypto Address Display */}
+                <div className="space-y-4">
+                  <div>
+                    <Label>{t("buyTpc.purchase.paymentMethod")}</Label>
+                    <Select value={selectedPayment} onValueChange={handlePaymentMethodChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={t("buyTpc.purchase.selectPayment")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {paymentMethods.map((method) => (
+                          <SelectItem key={method.id} value={method.id}>
+                            {t(`buyTpc.paymentMethods.${method.id}`)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {selectedPaymentMethod && (
+                    <div className="mt-6">
+                      {/* Crypto Address Display */}
                         {selectedPaymentMethod.type === 'crypto' && selectedPaymentMethod.address && (
                           <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
                             <div className="flex items-center justify-between mb-3">
@@ -355,67 +373,9 @@ const BuyTpcPage = () => {
                           </div>
                         )}
 
-                        {/* Bank Transfer Display */}
-                        {selectedPaymentMethod.type === 'bank' && selectedPaymentMethod.accountNumber && (
-                          <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
-                            <div className="space-y-3">
-                              {/* Bank Name */}
-                              <div className="text-white font-semibold">
-                                {selectedPaymentMethod.bankName}
-                              </div>
-                              
-                              {/* Account Name */}
-                              <div className="text-white font-semibold">
-                                {selectedPaymentMethod.accountName}
-                              </div>
-                              
-                              {/* Account Number */}
-                              <div className="flex items-center justify-between gap-3">
-                                <span className="text-white font-mono tabular-nums">{selectedPaymentMethod.accountNumber}</span>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => {
-                                    navigator.clipboard.writeText(selectedPaymentMethod.accountNumber!);
-                                    toast.success("Copied!");
-                                  }}
-                                  className="bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 hover:border-gray-500 hover:text-white transition-all duration-200"
-                                >
-                                  <span className="flex items-center gap-1">
-                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                    </svg>
-                                    <span>Copy</span>
-                                  </span>
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Price Calculation */}
-                <div className="bg-muted/50 p-4 rounded-lg">
-                  <h3 className="font-semibold mb-3">Price Calculation</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>{t("buyTpc.purchase.tpcAmount")}:</span>
-                      <span>{tpcAmount || "0"} TPC</span>
+                        {/* Bank Transfer Display - REMOVED */}
                     </div>
-                    <div className="flex justify-between">
-                      <span>{t("buyTpc.purchase.totalUsdc")}:</span>
-                      <span>${calculatedUsd} USDC</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>{t("buyTpc.purchase.totalIdr")}:</span>
-                      <span>{calculatedIdr}</span>
-                    </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Terms and Conditions */}
@@ -512,7 +472,7 @@ const BuyTpcPage = () => {
                   className="w-full"
                   size="lg"
                 >
-                  {isSubmitting ? "Processing..." : t("buyTpc.purchase.buyButton")}
+                  {isSubmitting ? "Processing..." : (lang === 'en' ? 'Create Invoice' : 'Buat Invoice')}
                 </Button>
               </>
             )}

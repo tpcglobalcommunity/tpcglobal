@@ -109,64 +109,19 @@ export const getPresaleStatsPublic = async (): Promise<PresaleStats[]> => {
 // Get available payment methods
 export const getPaymentMethodsPublic = async (): Promise<PaymentMethod[]> => {
   return [
-    { id: 'USDC', name: 'USDC', type: 'crypto', address: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM', instructions: 'Send USDC to the provided address' },
-    { id: 'SOL', name: 'SOL', type: 'crypto', address: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM', instructions: 'Send SOL to the provided address' },
     { 
-      id: 'BCA', 
-      name: 'BCA Bank Transfer', 
-      type: 'bank', 
-      bankName: 'BCA',
-      accountName: 'PTC Global Indonesia',
-      accountNumber: '1234567890',
-      instructions: 'Transfer to BCA account' 
+      id: 'USDC', 
+      name: 'USDC', 
+      type: 'crypto', 
+      address: '5AeayrU2pdy6yNBeiUpTXkfMxw3VpDQGUHC6kXrBt5vw', 
+      instructions: 'Send USDC to the treasury address' 
     },
     { 
-      id: 'MANDIRI', 
-      name: 'Mandiri Bank Transfer', 
-      type: 'bank', 
-      bankName: 'Bank Mandiri',
-      accountName: 'PTC Global Indonesia',
-      accountNumber: '0987654321',
-      instructions: 'Transfer to Mandiri account' 
-    },
-    { 
-      id: 'BNI', 
-      name: 'BNI Bank Transfer', 
-      type: 'bank', 
-      bankName: 'Bank BNI',
-      accountName: 'PTC Global Indonesia',
-      accountNumber: '1122334455',
-      instructions: 'Transfer to BNI account' 
-    },
-    { 
-      id: 'BRI', 
-      name: 'BRI Bank Transfer', 
-      type: 'bank', 
-      bankName: 'Bank BRI',
-      accountName: 'PTC Global Indonesia',
-      accountNumber: '5544332211',
-      instructions: 'Transfer to BRI account' 
-    },
-    { 
-      id: 'OVO', 
-      name: 'OVO', 
-      type: 'ewallet', 
-      address: '0812-3456-7890',
-      instructions: 'Send to OVO number' 
-    },
-    { 
-      id: 'DANA', 
-      name: 'DANA', 
-      type: 'ewallet', 
-      address: '0812-3456-7891',
-      instructions: 'Send to DANA number' 
-    },
-    { 
-      id: 'GOPAY', 
-      name: 'GoPay', 
-      type: 'ewallet', 
-      address: '0812-3456-7892',
-      instructions: 'Send to GoPay number' 
+      id: 'SOL', 
+      name: 'SOL', 
+      type: 'crypto', 
+      address: '5AeayrU2pdy6yNBeiUpTXkfMxw3VpDQGUHC6kXrBt5vw', 
+      instructions: 'Send SOL to the treasury address' 
     },
   ];
 };
@@ -184,7 +139,7 @@ export const createInvoicePublic = async (request: CreateInvoiceRequest): Promis
     usd_idr_rate: 17000,
     total_idr: request.tpc_amount * (request.stage === 'stage1' ? 0.001 : 0.002) * 17000,
     payment_method: request.payment_method,
-    treasury_address: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM',
+    treasury_address: '5AeayrU2pdy6yNBeiUpTXkfMxw3VpDQGUHC6kXrBt5vw',
     buyer_email: request.buyer_email,
     status: 'PENDING',
     admin_note: null,
