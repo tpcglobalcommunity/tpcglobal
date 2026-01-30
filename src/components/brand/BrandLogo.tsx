@@ -19,7 +19,7 @@ export const BrandLogo = ({ size = "md", withText = false, className = "" }: Bra
   return (
     <Link to={withLang("/")} className={`flex items-center gap-2 ${className}`}>
       <img 
-        src="/favicons/android-chrome-512x512.png" 
+        src="/favicons/android-chrome-192x192.png" 
         alt="TPC Global" 
         className={`${sizeClasses[size]} rounded-lg object-contain`}
       />
