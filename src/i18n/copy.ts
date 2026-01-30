@@ -435,6 +435,11 @@ export const copy = {
         creatingInvoice: "Membuat invoice...",
         createInvoice: "Buat Invoice"
       },
+      // Toast messages
+      invoiceCreated: "Invoice berhasil dibuat!",
+      invoiceCreationFailed: "Gagal membuat invoice",
+      addressCopied: "Alamat disalin ke clipboard!",
+      numberCopied: "Nomor disalin ke clipboard!",
       // Legal links
       terms: "Syarat & Ketentuan",
       risk: "Risiko", 
@@ -1380,6 +1385,11 @@ export const copy = {
         creatingInvoice: "Creating invoice...",
         createInvoice: "Create Invoice"
       },
+      // Toast messages
+      invoiceCreated: "Invoice created successfully!",
+      invoiceCreationFailed: "Failed to create invoice",
+      addressCopied: "Address copied to clipboard!",
+      numberCopied: "Number copied to clipboard!",
       // Legal links
       terms: "Terms",
       risk: "Risk Disclosure", 

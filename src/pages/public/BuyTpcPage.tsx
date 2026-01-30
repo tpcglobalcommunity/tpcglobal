@@ -162,17 +162,17 @@ const BuyTpcPage = () => {
 
       if (error) {
         logger.error('Failed to create invoice', { error });
-        toast.error("Failed to create invoice");
+        toast.error(t("buyTpc.invoiceCreationFailed"));
         return;
       }
 
       const invoiceNo = data?.[0]?.invoice_no || data?.invoice_no || data;
       
-      toast.success("Invoice created successfully!");
+      toast.success(t("buyTpc.invoiceCreated"));
       navigate(withLang(`/invoice/${invoiceNo}`));
     } catch (error) {
       logger.error('Failed to create invoice', { error });
-      toast.error("Failed to create invoice");
+      toast.error(t("buyTpc.invoiceCreationFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -355,7 +355,7 @@ const BuyTpcPage = () => {
                                 size="sm"
                                 onClick={() => {
                                   navigator.clipboard.writeText(selectedPaymentMethod.address!);
-                                  toast.success("Address copied to clipboard!");
+                                  toast.success(t("buyTpc.addressCopied"));
                                 }}
                                 className="bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 hover:border-gray-500 hover:text-white transition-all duration-200"
                               >
@@ -392,7 +392,7 @@ const BuyTpcPage = () => {
                                 size="sm"
                                 onClick={() => {
                                   navigator.clipboard.writeText(selectedPaymentMethod.address!);
-                                  toast.success("Number copied to clipboard!");
+                                  toast.success(t("buyTpc.numberCopied"));
                                 }}
                                 className="bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 hover:border-gray-500 hover:text-white transition-all duration-200"
                               >
