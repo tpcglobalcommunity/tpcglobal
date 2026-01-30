@@ -3,19 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
 import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { legalContent } from "@/content/legal-simple";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { 
   ShoppingCart, 
   AlertCircle, 
-  CheckCircle,
-  ExternalLink,
   Calculator
 } from "lucide-react";
 import { 
@@ -27,22 +24,43 @@ import {
   type CreateInvoiceRequest
 } from "@/lib/rpc/public";
 import { supabase } from "@/integrations/supabase/client";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const BuyTpcPage = () => {
   const { t, lang, withLang } = useI18n();
   const navigate = useNavigate();
   
-  // SAFE translation helper to prevent raw key leakage
-  const safeT = (key: string, defaultValue?: string) => {
-    const translation = t(key);
-    // If translation equals the key, it means the key wasn't found
-    if (translation === key && defaultValue) {
-      return defaultValue;
-    }
-    return translation;
-  };
+  const [stages, setStages] = useState<PresaleStage[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [selectedStage, setSelectedStage] = useState<string>("stage1");
+  const [tpcAmount, setTpcAmount] = useState<string>("");
+  const [selectedPayment, setSelectedPayment] = useState<string>("");
+  const [buyerEmail, setBuyerEmail] = useState<string>("");
+  const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | null>(null);
+  
+  // Default USD/IDR rate with fallback
+  const DEFAULT_USD_IDR_RATE = 17000;
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [stagesData, paymentMethodsData] = await Promise.all([
+          getPresaleStagesPublic(),
+          getPaymentMethodsPublic()
+        ]);
+        setStages(stagesData);
+        setPaymentMethods(paymentMethodsData);
+      } catch (error) {
+        logger.info('Failed to load presale data', { error });
+        setStages([]);
+        setPaymentMethods([]);
+      }
+    };
+    loadData();
+  }, []);
+
+  const currentStage = stages.find(s => s.stage === selectedStage);
   
   // SAFE numeric helpers
   const toNum = (v: unknown, fallback = 0) => {
@@ -63,79 +81,16 @@ const BuyTpcPage = () => {
       minimumFractionDigits: 0
     }).format(toNum(v, 0));
   
-  const [stages, setStages] = useState<PresaleStage[]>([]);
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [selectedStage, setSelectedStage] = useState<string>("stage1");
-  const [tpcAmount, setTpcAmount] = useState<string>("");
-  const [selectedPayment, setSelectedPayment] = useState<string>("");
-  const [buyerEmail, setBuyerEmail] = useState<string>("");
-  const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
-  const [legalConsent, setLegalConsent] = useState<boolean>(false);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | null>(null);
-  const [activeTab, setActiveTab] = useState<'terms' | 'risk' | 'disclaimer'>('terms');
-  
-  // Default USD/IDR rate with fallback
-  const DEFAULT_USD_IDR_RATE = 17000;
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [stagesData, paymentMethodsData] = await Promise.all([
-          getPresaleStagesPublic(),
-          getPaymentMethodsPublic()
-        ]);
-        setStages(stagesData);
-        setPaymentMethods(paymentMethodsData);
-      } catch (error) {
-        logger.info('Failed to load presale data', { error });
-        // Don't show error toast for public browsing - just use empty state
-        setStages([]);
-        setPaymentMethods([]);
-      }
-    };
-    loadData();
-  }, []);
-
-  const currentStage = stages.find(s => s.stage === selectedStage);
-  
   // SAFE calculations with guards
   const tpcAmountNum = toNum(tpcAmount, 0);
   const priceUsd = toNum(currentStage?.price_usd, 0);
-  const usdIdrRate = DEFAULT_USD_IDR_RATE; // Fixed fallback rate
+  const usdIdrRate = DEFAULT_USD_IDR_RATE;
   
   const totalUsd = tpcAmountNum * priceUsd;
   const totalIdr = totalUsd * usdIdrRate;
   
   const calculatedUsd = safeFixed(totalUsd, 2);
   const calculatedIdr = formatIdr(totalIdr);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ACTIVE': return 'bg-green-500';
-      case 'SOLD_OUT': return 'bg-red-500';
-      case 'EXPIRED': return 'bg-gray-500';
-      case 'UPCOMING': return 'bg-yellow-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const getTimeRemaining = (endDate: string) => {
-    const now = new Date();
-    const end = new Date(endDate);
-    const diff = end.getTime() - now.getTime();
-    
-    if (diff <= 0) return "Expired";
-    
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const months = Math.floor(days / 30);
-    const remainingDays = days % 30;
-    
-    if (months > 0) {
-      return `${months}m ${remainingDays}d`;
-    }
-    return `${days}d`;
-  };
 
   const handlePaymentMethodChange = (methodId: string) => {
     setSelectedPayment(methodId);
@@ -145,7 +100,7 @@ const BuyTpcPage = () => {
 
   const handleCreateInvoice = async () => {
     if (!tpcAmount || !selectedPayment || !buyerEmail || !termsAccepted) {
-      toast.error(t("buyTpc.purchase.termsRequired"));
+      toast.error("Please fill all required fields and accept terms");
       return;
     }
 
@@ -163,17 +118,17 @@ const BuyTpcPage = () => {
 
       if (error) {
         logger.error('Failed to create invoice', { error });
-        toast.error(t("buyTpc.invoiceCreationFailed"));
+        toast.error("Failed to create invoice");
         return;
       }
 
-      const invoiceNo = data?.[0]?.invoice_no || data?.invoice_no || data;
+      const invoiceNo = Array.isArray(data) ? data[0]?.invoice_no : data?.invoice_no || data;
       
-      toast.success(t("buyTpc.invoiceCreated"));
+      toast.success("Invoice created successfully!");
       navigate(withLang(`/invoice/${invoiceNo}`));
     } catch (error) {
       logger.error('Failed to create invoice', { error });
-      toast.error(t("buyTpc.invoiceCreationFailed"));
+      toast.error("Failed to create invoice");
     } finally {
       setIsSubmitting(false);
     }
@@ -186,7 +141,6 @@ const BuyTpcPage = () => {
                selectedPayment && 
                buyerEmail && 
                termsAccepted &&
-               legalConsent &&
                !isSubmitting;
 
   return (
@@ -287,177 +241,114 @@ const BuyTpcPage = () => {
               </AlertDescription>
             </Alert>
           ) : (
-            <>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="tpc-amount">{t("buyTpc.purchase.tpcAmount")}</Label>
-                  <Input
-                    id="tpc-amount"
-                    type="number"
-                    placeholder="Enter TPC amount"
-                    value={tpcAmount}
-                    onChange={(e) => setTpcAmount(e.target.value)}
-                    min="1"
-                  />
-                </div>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="tpc-amount">{t("buyTpc.purchase.tpcAmount")}</Label>
+                <Input
+                  id="tpc-amount"
+                  type="number"
+                  placeholder="Enter TPC amount"
+                  value={tpcAmount}
+                  onChange={(e) => setTpcAmount(e.target.value)}
+                  min="1"
+                />
+              </div>
 
-                <div className="bg-muted/50 p-4 rounded-lg">
-                  <h3 className="font-semibold mb-3">Order Summary</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>{t("buyTpc.purchase.tpcAmount")}:</span>
-                      <span>{tpcAmount || "0"} TPC</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Total USD:</span>
-                      <span>${calculatedUsd}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Total IDR:</span>
-                      <span>{calculatedIdr}</span>
-                    </div>
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <h3 className="font-semibold mb-3">Order Summary</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>{t("buyTpc.purchase.tpcAmount")}:</span>
+                    <span>{tpcAmount || "0"} TPC</span>
                   </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="buyer-email">Email</Label>
-                  <Input
-                    id="buyer-email"
-                    type="email"
-                    placeholder="your@email.com"
-                    value={buyerEmail}
-                    onChange={(e) => setBuyerEmail(e.target.value)}
-                  />
+                  <div className="flex justify-between">
+                    <span>Total USD:</span>
+                    <span>${calculatedUsd}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Total IDR:</span>
+                    <span>{calculatedIdr}</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <Label>{t("buyTpc.purchase.paymentMethod")}</Label>
-                  <Select value={selectedPayment} onValueChange={handlePaymentMethodChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t("buyTpc.purchase.selectPayment")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {paymentMethods.map((method) => (
-                        <SelectItem key={method.id} value={method.id}>
-                          {t(`buyTpc.paymentMethods.${method.type}`)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div>
+                <Label htmlFor="buyer-email">Email</Label>
+                <Input
+                  id="buyer-email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={buyerEmail}
+                  onChange={(e) => setBuyerEmail(e.target.value)}
+                />
+              </div>
 
-                {selectedPaymentMethod && (
-                  <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-gray-300 text-sm font-medium">Destination Address</span>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          navigator.clipboard.writeText(selectedPaymentMethod.address!);
-                          toast.success(t("buyTpc.addressCopied"));
-                        }}
-                        className="bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 hover:border-gray-500 hover:text-white transition-all duration-200"
-                      >
-                        Copy
-                      </Button>
-                    </div>
-                    <div className="bg-black/30 rounded p-3 font-mono text-xs text-gray-300 break-all">
-                      {selectedPaymentMethod.address}
-                    </div>
-                    {selectedPaymentMethod.network && (
-                      <div className="mt-2 text-xs text-gray-400">
-                        Network: {selectedPaymentMethod.network}
-                      </div>
-                    )}
+              <div>
+                <Label>{t("buyTpc.purchase.paymentMethod")}</Label>
+                <Select value={selectedPayment} onValueChange={handlePaymentMethodChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("buyTpc.purchase.selectPayment")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {paymentMethods.map((method) => (
+                      <SelectItem key={method.id} value={method.id}>
+                        {t(`buyTpc.paymentMethods.${method.type}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {selectedPaymentMethod && (
+                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-gray-300 text-sm font-medium">Destination Address</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText(selectedPaymentMethod.address || "");
+                        toast.success("Address copied to clipboard!");
+                      }}
+                      className="bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 hover:border-gray-500 hover:text-white transition-all duration-200"
+                    >
+                      Copy
+                    </Button>
                   </div>
+                  <div className="bg-black/30 rounded p-3 font-mono text-xs text-gray-300 break-all">
+                    {selectedPaymentMethod.address}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="legal-consent"
+                  checked={termsAccepted}
+                  onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                />
+                <Label htmlFor="legal-consent" className="text-sm">
+                  {t("buyTpc.agreeTerms")}
+                </Label>
+              </div>
+
+              <Button 
+                onClick={handleCreateInvoice}
+                disabled={!canBuy}
+                className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 transition-all duration-200"
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                    Creating invoice...
+                  </div>
+                ) : (
+                  t("buyTpc.createInvoiceButton")
                 )}
-
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="legal-consent"
-                      checked={legalConsent}
-                      onCheckedChange={(checked) => setLegalConsent(checked as boolean)}
-                    />
-                    <Label htmlFor="legal-consent" className="text-sm">
-                      {t("buyTpc.agreeTerms")}
-                      <div className="flex gap-2 mt-1">
-                        <Button 
-                          variant="link" 
-                          size="sm"
-                          onClick={() => setActiveTab('terms')}
-                          className="p-0 h-auto text-primary underline"
-                        >
-                          {t("buyTpc.legal.termsTab")}
-                        </Button>
-                        <span>•</span>
-                        <Button 
-                          variant="link" 
-                          size="sm"
-                          onClick={() => setActiveTab('risk')}
-                          className="p-0 h-auto text-primary underline"
-                        >
-                          {t("buyTpc.legal.riskTab")}
-                        </Button>
-                        <span>•</span>
-                        <Button 
-                          variant="link" 
-                          size="sm"
-                          onClick={() => setActiveTab('disclaimer')}
-                          className="p-0 h-auto text-primary underline"
-                        >
-                          {t("buyTpc.legal.educationTab")}
-                        </Button>
-                      </div>
-                    </Label>
-                  </div>
-                </div>
-
-                <Button 
-                  onClick={handleCreateInvoice}
-                  disabled={!canBuy}
-                  className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 transition-all duration-200"
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center">
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
-                      {t("buyTpc.creatingInvoice")}
-                    </div>
-                  ) : (
-                    t("buyTpc.createInvoiceButton")
-                  )}
-                </Button>
-
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    {lang === 'en' ? 'Read Terms, Risk, & Disclaimer' : 'Baca Syarat, Risiko, dan Disklaimer'}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl max-h-[80vh]">
-                  <DialogHeader>
-                    <DialogTitle className="text-xl text-white">
-                      {legalContent[lang][activeTab].title}
-                    </DialogTitle>
-                    <DialogDescription className="text-gray-300">
-                      {lang === 'en' 
-                        ? 'Please read and understand the following before proceeding.'
-                        : 'Baca Syarat, Risiko, dan Disklaimer sebelum melanjutkan.'
-                      }
-                    </DialogDescription>
-                  </DialogHeader>
-                  
-                  <div className="max-h-96 overflow-y-auto text-gray-300">
-                    {legalContent[lang][activeTab].content}
-                  </div>
-                </DialogContent>
-              </Dialog>
-            )}
-          </CardContent>
+              </Button>
+            </div>
+          )}
+        </CardContent>
       </Card>
 
       {/* What Happens After Payment */}
@@ -490,7 +381,7 @@ const BuyTpcPage = () => {
         </CardContent>
       </Card>
 
-      {/* Legal Tabs */}
+      {/* Legal Information */}
       <Card className="card-premium">
         <CardHeader>
           <CardTitle className="text-lg">
