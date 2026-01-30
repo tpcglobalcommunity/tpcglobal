@@ -2122,6 +2122,8 @@ export const copy = {
       referralNote: "Referral code is required for all presale purchases. Use Super Admin official code if you don't have one from a member."
     },
     
+    },
+    
     // Footer
     footer: {
       copyright: "© 2026 TPC Global. All rights reserved.",
