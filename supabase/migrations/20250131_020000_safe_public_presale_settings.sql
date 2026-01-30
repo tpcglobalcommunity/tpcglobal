@@ -1,6 +1,9 @@
 -- Create Public Presale Settings (Safe & Simple)
 -- Creates minimal app_settings table and public RPC
 
+-- Drop existing function if it exists with different signature
+DROP FUNCTION IF EXISTS public.get_presale_settings_public();
+
 -- Create app_settings table if not exists
 CREATE TABLE IF NOT EXISTS public.app_settings (
   key text PRIMARY KEY,
