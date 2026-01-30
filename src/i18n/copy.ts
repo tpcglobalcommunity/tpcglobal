@@ -1751,6 +1751,78 @@ export const copy = {
       comingSoonBody: "Marketplace is under development. Please come back later.",
     },
     
+    // DAO Lite
+    daoLite: {
+      title: "DAO Lite",
+      subtitle: "Decentralized Community Governance for TPC Global",
+      comingSoon: "Coming Soon",
+      sectionWhat: {
+        title: "What is DAO Lite?",
+        body: "DAO Lite is a community governance system that enables TPC members to participate in decision-making regarding ecosystem development. It's a lightweight version of traditional DAOs focused on education and transparency."
+      },
+      sectionHow: {
+        title: "How Do Proposals Work?",
+        body: "Proposals are ideas or suggestions submitted by community members for consideration. Each proposal goes through a structured discussion and voting process to ensure collective and transparent decision-making."
+      },
+      sectionSnapshot: {
+        title: "Snapshot Integration",
+        body: "We will use Snapshot for voting and proposal management. Snapshot is a decentralized and proven platform for community decisions, ensuring integrity and transparency in every vote."
+      },
+      snapshotCta: "Snapshot (Coming Soon)",
+      features: {
+        governance: "Community Governance",
+        education: "Education Platform",
+        transparency: "Full Transparency"
+      },
+      proposalSteps: {
+        submit: "Submit Proposal",
+        submitDesc: "Members can submit ideas or suggestions for the community",
+        discuss: "Community Discussion",
+        discussDesc: "All members can discuss and provide input",
+        vote: "Structured Voting",
+        voteDesc: "Decisions are made through transparent and recorded voting"
+      },
+      disclaimer: {
+        title: "Important: Educational Information",
+        body: "DAO Lite is an educational and community governance platform. It is not an investment platform or guarantee of financial returns. Community decisions are informational and for TPC Global ecosystem development."
+      },
+      backToHome: "Back to Home"
+    },
+    
+    // DAO Snapshot
+    daoSnapshot: {
+      title: "DAO Snapshot",
+      subtitle: "Decentralized Voting and Proposal Platform",
+      comingSoon: "Coming Soon",
+      mainTitle: "Snapshot Integration for DAO Lite",
+      body: "Snapshot is a decentralized voting platform that we will use for DAO Lite. This platform enables secure, transparent, and blockchain-verified voting for all community decision proposals.",
+      features: {
+        voting: "Decentralized Voting",
+        votingDesc: "Every vote is securely recorded on the blockchain",
+        proposals: "Proposal Management",
+        proposalsDesc: "Structured system for submitting and managing proposals",
+        transparency: "Full Transparency",
+        transparencyDesc: "All votes and results can be publicly verified",
+        access: "Open Access",
+        accessDesc: "All TPC members can participate in voting"
+      },
+      timeline: {
+        title: "Implementation Timeline",
+        phase1: "Phase 1: Snapshot Integration",
+        phase1Desc: "Preparing Snapshot integration with TPC system",
+        phase2: "Phase 2: Beta Testing",
+        phase2Desc: "Testing with dummy proposals and voting",
+        phase3: "Phase 3: Official Launch",
+        phase3Desc: "DAO Lite active with full decentralized voting"
+      },
+      cta: {
+        title: "Ready for Decentralized DAO",
+        description: "We're preparing Snapshot integration to launch a secure and transparent DAO Lite.",
+        button: "Open Snapshot"
+      },
+      backToDao: "Back to DAO Lite"
+    },
+    
     // Footer
     footer: {
       copyright: "© 2026 TPC Global. All rights reserved.",
@@ -1790,6 +1862,78 @@ export const copy = {
     marketplace: {
       title: "Marketplace",
       comingSoonBody: "Marketplace sedang dalam pengembangan. Silakan kembali lagi nanti.",
+    },
+    
+    // DAO Lite
+    daoLite: {
+      title: "DAO Lite",
+      subtitle: "Tata Kelola Komunitas Terdesentralisasi untuk TPC Global",
+      comingSoon: "Segera Hadir",
+      sectionWhat: {
+        title: "Apa itu DAO Lite?",
+        body: "DAO Lite adalah sistem tata kelola komunitas yang memungkinkan anggota TPC untuk berpartisipasi dalam pengambilan keputusan terkait pengembangan ekosistem. Ini adalah versi ringan dari DAO tradisional yang berfokus pada edukasi dan transparansi."
+      },
+      sectionHow: {
+        title: "Bagaimana Proposal Bekerja?",
+        body: "Proposal adalah ide atau saran yang diajukan oleh anggota komunitas untuk dipertimbangkan. Setiap proposal melalui proses diskusi dan voting terstruktur untuk memastikan keputusan yang dibuat secara kolektif dan transparan."
+      },
+      sectionSnapshot: {
+        title: "Integrasi Snapshot",
+        body: "Kami akan menggunakan Snapshot untuk voting dan proposal management. Snapshot adalah platform terdesentralisasi yang aman dan terbukti untuk keputusan komunitas, memastikan integritas dan transparansi dalam setiap voting."
+      },
+      snapshotCta: "Snapshot (Segera Hadir)",
+      features: {
+        governance: "Tata Kelola Komunitas",
+        education: "Platform Edukasi",
+        transparency: "Transparansi Penuh"
+      },
+      proposalSteps: {
+        submit: "Ajukan Proposal",
+        submitDesc: "Anggota dapat mengajukan ide atau saran untuk komunitas",
+        discuss: "Diskusi Komunitas",
+        discussDesc: "Semua anggota dapat berdiskusi dan memberikan masukan",
+        vote: "Voting Terstruktur",
+        voteDesc: "Keputusan dibuat melalui voting yang transparan dan tercatat"
+      },
+      disclaimer: {
+        title: "Penting: Informasi Edukasi",
+        body: "DAO Lite adalah platform edukasi dan tata kelola komunitas. Ini bukan platform investasi atau jaminan keuntungan finansial. Keputusan komunitas bersifat informatif dan untuk pengembangan ekosistem TPC Global."
+      },
+      backToHome: "Kembali ke Beranda"
+    },
+    
+    // DAO Snapshot
+    daoSnapshot: {
+      title: "DAO Snapshot",
+      subtitle: "Platform Voting dan Proposal Terdesentralisasi",
+      comingSoon: "Segera Hadir",
+      mainTitle: "Integrasi Snapshot untuk DAO Lite",
+      body: "Snapshot adalah platform voting terdesentralisasi yang akan kami gunakan untuk DAO Lite. Platform ini memungkinkan voting yang aman, transparan, dan terverifikasi di blockchain untuk semua proposal keputusan komunitas.",
+      features: {
+        voting: "Voting Terdesentralisasi",
+        votingDesc: "Setiap suara tercatat di blockchain dengan aman",
+        proposals: "Management Proposal",
+        proposalsDesc: "Sistem terstruktur untuk mengajukan dan mengelola proposal",
+        transparency: "Transparansi Penuh",
+        transparencyDesc: "Semua voting dan hasil dapat diverifikasi secara publik",
+        access: "Akses Terbuka",
+        accessDesc: "Semua anggota TPC dapat berpartisipasi dalam voting"
+      },
+      timeline: {
+        title: "Timeline Implementasi",
+        phase1: "Fase 1: Integrasi Snapshot",
+        phase1Desc: "Menyiapkan integrasi Snapshot dengan sistem TPC",
+        phase2: "Fase 2: Beta Testing",
+        phase2Desc: "Uji coba dengan proposal dan voting dummy",
+        phase3: "Fase 3: Peluncuran Resmi",
+        phase3Desc: "DAO Lite aktif dengan voting terdesentralisasi penuh"
+      },
+      cta: {
+        title: "Siap untuk DAO Terdesentralisasi",
+        description: "Kami sedang menyiapkan integrasi Snapshot untuk meluncurkan DAO Lite yang aman dan transparan.",
+        button: "Buka Snapshot"
+      },
+      backToDao: "Kembali ke DAO Lite"
     },
   },
 } as const;

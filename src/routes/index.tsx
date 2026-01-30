@@ -20,6 +20,8 @@ import OnePagerPage from "@/pages/public/OnePagerPage";
 import InvoiceDetailPage from "@/pages/public/InvoiceDetailPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import AdminSettingsPage from "@/pages/admin/AdminSettingsPage";
+import DaoLitePage from "@/pages/public/DaoLitePage";
+import DaoSnapshotPage from "@/pages/public/DaoSnapshotPage";
 import NotFound from "@/pages/NotFound";
 import { MemberRoutes } from "./MemberRoutes";
 import { AdminRoutes } from "./AdminRoutes";
@@ -30,6 +32,10 @@ export default function AppRoutes() {
       <Routes>
         {/* Root redirect to default language */}
         <Route path="/" element={<Navigate to="/id" replace />} />
+        
+        {/* Root DAO routes (redirect to default language) */}
+        <Route path="/dao" element={<Navigate to="/id/dao" replace />} />
+        <Route path="/dao/snapshot" element={<Navigate to="/id/dao/snapshot" replace />} />
         
         {/* Language-prefixed routes */}
         <Route path="/:lang" element={<PublicLayout />}>
@@ -45,6 +51,8 @@ export default function AppRoutes() {
           <Route path="copy-trading" element={<CopyTradingPage />} />
           <Route path="staking" element={<StakingPage />} />
           <Route path="one-pager" element={<OnePagerPage />} />
+          <Route path="dao" element={<DaoLitePage />} />
+          <Route path="dao/snapshot" element={<DaoSnapshotPage />} />
           
           {/* Invoice routes - NESTED and ISOLATED */}
           <Route path="invoice">
