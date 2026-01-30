@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
+import { createContext, useContext, useState, useCallback, ReactNode, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { copy, Lang } from "./copy";
 
@@ -42,20 +42,12 @@ const getNestedValue = (obj: Record<string, unknown>, path: string): string | st
     if (current && typeof current === "object" && key in current) {
       current = (current as Record<string, unknown>)[key];
     } else {
-      // Dev-only warning for missing keys
-      if (process.env.NODE_ENV === 'development') {
-        console.info(`[i18n] Missing key: ${path}`);
-      }
-      return path; // Return key if not found
+      // Return key if not found (no console.info during render)
+      return path;
     }
   }
   
-  // Return the value as-is (could be string, array, etc.)
-  if (typeof current === "string" || Array.isArray(current)) {
-    return current;
-  }
-  
-  return path; // Return key if value is not string or array
+  return current as string | string[];
 };
 
 interface I18nContextValue {

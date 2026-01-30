@@ -112,7 +112,7 @@ const BuyTpcPage = () => {
     try {
       const { data, error } = await supabase.rpc('create_invoice', {
         p_tpc_amount: parseFloat(tpcAmount),
-        p_referral_code: referralCode || null
+        p_referral_code: referralCode.trim() ? referralCode.trim() : null
       });
 
       if (error) {
@@ -121,30 +121,22 @@ const BuyTpcPage = () => {
         return;
       }
 
-      const invoiceNo = Array.isArray(data) && data.length > 0 ? data[0]?.invoice_no : null;
+      const invoiceResult = Array.isArray(data) && data.length > 0 ? data[0] : null;
       
-      if (!invoiceNo) {
+      if (!invoiceResult) {
         toast.error(t("buyTpc.toast.invoiceFailed"));
         return;
       }
 
-      // Update buyer email
-      if (email) {
-        await supabase.rpc('update_invoice_email', {
-          p_invoice_no: invoiceNo,
-          p_buyer_email: email
-        });
-      }
-
-      // Prepare invoice data for modal
+      // Prepare invoice data for modal using RPC response
       setInvoiceData({
-        invoice_no: invoiceNo,
-        stage: settings?.active_stage || 'stage1',
-        tpc_amount: parseFloat(tpcAmount),
-        total_usd: estimates.usd,
-        total_idr: estimates.idr,
-        treasury_address: settings?.treasury_address || '',
-        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+        invoice_no: invoiceResult.invoice_no,
+        stage: invoiceResult.stage,
+        tpc_amount: invoiceResult.tpc_amount,
+        total_usd: invoiceResult.total_usd,
+        total_idr: invoiceResult.total_idr,
+        treasury_address: invoiceResult.treasury_address,
+        expires_at: invoiceResult.expires_at
       });
 
       setShowInvoiceModal(true);

@@ -277,7 +277,16 @@ export type Database = {
       create_invoice: {
         Args: { p_tpc_amount: number; p_referral_code?: string }
         Returns: {
-          invoice_no: string
+          invoice_no: string;
+          stage: string;
+          tpc_amount: number;
+          price_usd: number;
+          total_usd: number;
+          total_idr: number;
+          usd_idr_rate: number;
+          treasury_address: string;
+          expires_at: string;
+          status: string;
         }[]
       }
       update_invoice_email: {
