@@ -16,6 +16,7 @@ import EducationPage from "@/pages/public/EducationPage";
 import CopyTradingPage from "@/pages/public/CopyTradingPage";
 import StakingPage from "@/pages/public/StakingPage";
 import AntiScamFaqPage from "@/pages/public/AntiScamFaqPage";
+import OnePagerPage from "@/pages/public/OnePagerPage";
 
 // Auth Pages
 import LoginPage from "@/pages/auth/LoginPage";
@@ -50,6 +51,7 @@ const LangRoutes = () => (
       <Route path="/marketplace" element={<MarketplacePage />} />
       <Route path="/copy-trading" element={<CopyTradingPage />} />
       <Route path="/staking" element={<StakingPage />} />
+      <Route path="/one-pager" element={<OnePagerPage />} />
       <Route path="/trade-together" element={<ComingSoonPage titleKey="comingSoonPages.tradeTogether" />} />
       <Route path="/wd-consistency" element={<ComingSoonPage titleKey="comingSoonPages.wdConsistency" />} />
       
