@@ -1,8 +1,7 @@
 import React from 'react';
-import { useI18n } from '@/i18n/i18n';
-import { PremiumShell } from '@/components/layout/PremiumShell';
-import { Button } from '@/components/ui/button';
-import { Download, FileText, Globe } from 'lucide-react';
+import { useI18n } from "@/i18n/i18n";
+import { PremiumShell } from "@/components/layout/PremiumShell";
+import { Download, FileText, Globe, ExternalLink } from "lucide-react";
 
 const OnePagerPage: React.FC = () => {
   const { t, lang } = useI18n();
@@ -25,28 +24,25 @@ const OnePagerPage: React.FC = () => {
           
           {/* Download Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <Button
-              asChild
-              size="lg"
-              className="flex items-center gap-2"
+            <a
+              href="https://tpcglobal.io/whitepaper"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-gold-500 text-black hover:bg-gold-400 rounded-md text-sm font-medium h-12 px-6 text-base transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:ring-offset-2"
             >
-              <a href="/one-pager-en.pdf" download target="_blank" rel="noopener noreferrer">
-                <Download className="w-5 h-5" />
-                {isIndonesian ? 'Download PDF (English)' : 'Download PDF (EN)'}
-              </a>
-            </Button>
+              <Download className="h-4 w-4 mr-1" />
+              {t("onePager.downloadWhitepaper")}
+            </a>
             
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="flex items-center gap-2"
+            <a
+              href="https://tpcglobal.io/one-pager"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 border border-neutral-700 text-white hover:bg-neutral-800 rounded-md text-sm font-medium h-12 px-6 text-base transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:ring-offset-2"
             >
-              <a href="/one-pager-id.pdf" download target="_blank" rel="noopener noreferrer">
-                <Download className="w-5 h-5" />
-                {isIndonesian ? 'Download PDF (Indonesia)' : 'Download PDF (ID)'}
-              </a>
-            </Button>
+              <ExternalLink className="h-4 w-4 mr-1" />
+              {t("onePager.downloadOnePager")}
+            </a>
           </div>
           
           <p className="text-sm text-gray-500">

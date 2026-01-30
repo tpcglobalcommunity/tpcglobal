@@ -18,7 +18,8 @@ import {
   Building,
   BookOpen,
   Copy,
-  ExternalLink
+  ExternalLink,
+  FileText
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { usePresaleSettings } from "@/hooks/usePresaleSettings";
@@ -398,26 +399,35 @@ const BuyTpcPage = () => {
       {/* Legal Links */}
       <Card className="card-premium">
         <CardContent className="p-6">
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Button variant="ghost" size="sm" asChild>
-              <a href={withLang("/terms")} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4 mr-1" />
+            <div className="flex flex-wrap gap-4 justify-center">
+              <a
+                href={withLang("/terms")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border border-neutral-700 text-white hover:bg-neutral-800 rounded-md text-sm font-medium h-8 px-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-500 focus-visible:ring-offset-2"
+              >
+                <FileText className="h-4 w-4 mr-1" />
                 {t("buyTpc.terms")}
               </a>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <a href={withLang("/risk")} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4 mr-1" />
+              <a
+                href={withLang("/risk")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border border-neutral-700 text-white hover:bg-neutral-800 rounded-md text-sm font-medium h-8 px-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus:ring-gold-500 focus-visible:ring-offset-2"
+              >
+                <FileText className="h-4 w-4 mr-1" />
                 {t("buyTpc.risk")}
               </a>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <a href={withLang("/disclaimer")} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4 mr-1" />
+              <a
+                href={withLang("/disclaimer")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border border-neutral-700 text-white hover:bg-neutral-800 rounded-md text-sm font-medium h-8 px-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus:ring-gold-500 focus-visible-ring-offset-2"
+              >
+                <FileText className="h-4 w-4 mr-1" />
                 {t("buyTpc.disclaimer")}
               </a>
-            </Button>
-          </div>
+            </div>
         </CardContent>
       </Card>
 
