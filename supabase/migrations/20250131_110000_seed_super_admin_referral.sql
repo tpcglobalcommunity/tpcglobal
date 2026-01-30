@@ -73,7 +73,16 @@ REVOKE ALL ON FUNCTION public.validate_referral_code(TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.validate_referral_code(TEXT) TO anon;
 GRANT EXECUTE ON FUNCTION public.validate_referral_code(TEXT) TO authenticated;
 
--- Phase 5: Update trigger for updated_at
+-- Phase 5: Create update_updated_at_column function (if not exists)
+CREATE OR REPLACE FUNCTION public.update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Phase 6: Update trigger for updated_at
 CREATE TRIGGER update_referral_codes_updated_at 
 BEFORE UPDATE ON public.referral_codes 
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
@@ -87,4 +96,5 @@ BEGIN
     RAISE NOTICE 'Created referral_codes tracking table';
     RAISE NOTICE 'Added referral_code column to invoices table (if exists)';
     RAISE NOTICE 'Created validate_referral_code function';
+    RAISE NOTICE 'Created update_updated_at_column function';
 END $$;
