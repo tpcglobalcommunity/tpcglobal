@@ -13,6 +13,7 @@ const navItems = [
   { key: "nav.buyTpc", path: "/buytpc" },
   { key: "nav.whitepaper", path: "/whitepaper" },
   { key: "nav.dao", path: "/dao" },
+  { key: "nav.antiScamFaq", path: "/anti-scam-faq" },
   { key: "nav.faq", path: "/faq" },
 ];
 

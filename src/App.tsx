@@ -15,6 +15,7 @@ import ComingSoonPage from "@/pages/public/ComingSoonPage";
 import EducationPage from "@/pages/public/EducationPage";
 import CopyTradingPage from "@/pages/public/CopyTradingPage";
 import StakingPage from "@/pages/public/StakingPage";
+import AntiScamFaqPage from "@/pages/public/AntiScamFaqPage";
 
 // Auth Pages
 import LoginPage from "@/pages/auth/LoginPage";
@@ -44,6 +45,7 @@ const LangRoutes = () => (
       <Route path="/dao/how-it-works" element={<ComingSoonPage titleKey="daoHow.title" />} />
       <Route path="/dao/proposals" element={<ComingSoonPage titleKey="daoProposals.title" />} />
       <Route path="/trust" element={<TrustCenterPage />} />
+      <Route path="/anti-scam-faq" element={<AntiScamFaqPage />} />
       <Route path="/education" element={<EducationPage />} />
       <Route path="/marketplace" element={<MarketplacePage />} />
       <Route path="/copy-trading" element={<CopyTradingPage />} />
