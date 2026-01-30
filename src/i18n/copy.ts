@@ -386,6 +386,8 @@ export const copy = {
     buyTpc: {
       title: "Beli TPC",
       subtitle: "Bergabung dengan presale TPC Global",
+      // Legal agreement
+      agreeTerms: "Dengan melanjutkan, kita menyatakan telah membaca dan menyetujui:",
       // Trust Header
       trustHeader: {
         headline: "Pembelian Token TPC melalui Sistem Invoice Resmi",
@@ -451,8 +453,6 @@ export const copy = {
         readTerms: "Baca Syarat & Ketentuan",
         buyButton: "Beli TPC",
         termsRequired: "Anda harus menyetujui syarat dan ketentuan untuk melanjutkan",
-        // Additional keys for hardening
-        agreeTerms: "Saya telah membaca dan menyetujui Syarat, Risiko, dan Disclaimer.",
         invalidAmount: "Silakan masukkan jumlah TPC yang valid.",
         creatingInvoice: "Membuat invoice...",
         createInvoice: "Buat Invoice"
@@ -1130,6 +1130,8 @@ export const copy = {
     buyTpc: {
       title: "Buy TPC",
       subtitle: "Join the TPC Global presale",
+      // Legal agreement
+      agreeTerms: "By continuing, we confirm we have read and agree to:",
       // Trust Header
       trustHeader: {
         headline: "TPC Token Purchase through Official Invoice System",
@@ -1195,8 +1197,6 @@ export const copy = {
         readTerms: "Read Terms & Conditions",
         buyButton: "Buy TPC",
         termsRequired: "You must agree to the terms and conditions",
-        // Additional keys for hardening
-        agreeTerms: "By continuing, I confirm I have read and agree to: ",
         invalidAmount: "Please enter a valid TPC amount.",
         creatingInvoice: "Creating invoice...",
         createInvoice: "Create Invoice"
