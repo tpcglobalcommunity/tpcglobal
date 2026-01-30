@@ -34,10 +34,12 @@ CREATE TABLE IF NOT EXISTS public.invoice_confirmations (
 ALTER TABLE public.invoice_confirmations ENABLE ROW LEVEL SECURITY;
 
 -- Policies for invoice_confirmations
-CREATE POLICY IF NOT EXISTS "Users can view own confirmations" ON public.invoice_confirmations
+DROP POLICY IF EXISTS "Users can view own confirmations" ON public.invoice_confirmations;
+CREATE POLICY "Users can view own confirmations" ON public.invoice_confirmations
   FOR SELECT USING (auth.uid()::text = (SELECT email FROM public.tpc_invoices WHERE invoice_no = invoice_confirmations.invoice_no LIMIT 1));
 
-CREATE POLICY IF NOT EXISTS "Admins can view all confirmations" ON public.invoice_confirmations
+DROP POLICY IF EXISTS "Admins can view all confirmations" ON public.invoice_confirmations;
+CREATE POLICY "Admins can view all confirmations" ON public.invoice_confirmations
   FOR SELECT USING (public.is_admin_uuid(auth.uid()));
 
 -- Phase 3: Create submit_invoice_confirmation RPC

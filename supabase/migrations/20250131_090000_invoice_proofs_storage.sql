@@ -14,6 +14,7 @@ ON CONFLICT (id) DO NOTHING;
 
 -- RLS policies for invoice-proofs bucket
 -- Allow authenticated users to upload
+DROP POLICY IF EXISTS "Authenticated users can upload invoice proofs" ON storage.objects;
 CREATE POLICY "Authenticated users can upload invoice proofs" ON storage.objects
 FOR INSERT WITH CHECK (
     bucket_id = 'invoice-proofs' AND 
@@ -21,6 +22,7 @@ FOR INSERT WITH CHECK (
 );
 
 -- Allow users to view their own uploads (if needed)
+DROP POLICY IF EXISTS "Users can view own invoice proofs" ON storage.objects;
 CREATE POLICY "Users can view own invoice proofs" ON storage.objects
 FOR SELECT USING (
     bucket_id = 'invoice-proofs' AND 
@@ -28,6 +30,7 @@ FOR SELECT USING (
 );
 
 -- Allow admins to view all proofs
+DROP POLICY IF EXISTS "Admins can view all invoice proofs" ON storage.objects;
 CREATE POLICY "Admins can view all invoice proofs" ON storage.objects
 FOR SELECT USING (
     bucket_id = 'invoice-proofs' AND 
