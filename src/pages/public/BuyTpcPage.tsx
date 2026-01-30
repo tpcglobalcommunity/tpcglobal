@@ -38,6 +38,16 @@ const BuyTpcPage = () => {
   const { t, lang, withLang } = useI18n();
   const navigate = useNavigate();
   
+  // SAFE translation helper to prevent raw key leakage
+  const safeT = (key: string, defaultValue?: string) => {
+    const translation = t(key);
+    // If translation equals the key, it means the key wasn't found
+    if (translation === key && defaultValue) {
+      return defaultValue;
+    }
+    return translation;
+  };
+  
   // SAFE numeric helpers
   const toNum = (v: unknown, fallback = 0) => {
     const n = typeof v === 'number' ? v : Number(v);
@@ -195,7 +205,8 @@ const BuyTpcPage = () => {
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-xl">{t(`buyTpc.${stage.stage}.title`)}</CardTitle>
                   <Badge className={getStatusColor(stage.status)}>
-                    {t(`buyTpc.${stage.stage}.status.${stage.status.toLowerCase()}`)}
+                    {safeT(`buyTpc.${stage.stage}.status.${stage.status.toLowerCase()}`, 
+                      stage.status.charAt(0) + stage.status.slice(1).toLowerCase())}
                   </Badge>
                 </div>
               </CardHeader>
@@ -322,7 +333,7 @@ const BuyTpcPage = () => {
                       <SelectContent>
                         {paymentMethods.map((method) => (
                           <SelectItem key={method.id} value={method.id}>
-                            {t(`buyTpc.paymentMethods.${method.id}`)}
+                            {safeT(`buyTpc.paymentMethods.${method.id}`, method.id)}
                           </SelectItem>
                         ))}
                       </SelectContent>

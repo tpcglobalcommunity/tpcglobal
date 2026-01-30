@@ -435,6 +435,10 @@ export const copy = {
         creatingInvoice: "Membuat invoice...",
         createInvoice: "Buat Invoice"
       },
+      // Legal links
+      terms: "Syarat & Ketentuan",
+      risk: "Risiko", 
+      disclaimer: "Disklaimer",
       paymentMethods: {
         USDC: "USDC",
         SOL: "SOL", 
@@ -1332,6 +1336,26 @@ export const copy = {
         sold: "Sold",
         remaining: "Remaining",
         countdown: "Countdown",
+        status: {
+          active: "Active",
+          soldOut: "Sold Out",
+          expired: "Expired",
+          upcoming: "Upcoming"
+        }
+      },
+      stage2: {
+        title: "Stage 2",
+        supply: "Supply",
+        price: "Price",
+        sold: "Sold",
+        remaining: "Remaining",
+        countdown: "Countdown",
+        status: {
+          active: "Active",
+          soldOut: "Sold Out",
+          expired: "Expired",
+          upcoming: "Upcoming"
+        }
       },
       dexPlan: {
         title: "DEX Plan",
@@ -1349,8 +1373,17 @@ export const copy = {
         terms: "I agree to the Terms & Conditions",
         readTerms: "Read Terms & Conditions",
         buyButton: "Buy TPC",
-        termsRequired: "You must agree to the terms and conditions"
+        termsRequired: "You must agree to the terms and conditions",
+        // Additional keys for hardening
+        agreeTerms: "I have read and agree to the Terms, Risk Disclosure, and Disclaimer.",
+        invalidAmount: "Please enter a valid TPC amount.",
+        creatingInvoice: "Creating invoice...",
+        createInvoice: "Create Invoice"
       },
+      // Legal links
+      terms: "Terms",
+      risk: "Risk Disclosure", 
+      disclaimer: "Disclaimer",
       paymentMethods: {
         USDC: "USDC",
         SOL: "SOL",
