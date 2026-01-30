@@ -1,4 +1,5 @@
 import { useI18n } from "@/i18n/i18n";
+import { logger } from "@/lib/logger";
 import { PremiumShell } from "@/components/layout/PremiumShell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,7 +38,7 @@ const VerifiedPage = () => {
       await navigator.clipboard.writeText(text);
       // You could add a toast notification here
     } catch (err) {
-      console.error('Failed to copy text: ', err);
+      logger.error('Failed to copy text', { error: err });
     }
   };
 

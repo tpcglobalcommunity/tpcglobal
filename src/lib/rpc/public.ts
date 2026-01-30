@@ -1,6 +1,8 @@
 // RPC functions for public data access
 // These use typed queries that work with the generated types
 
+import { logger } from '@/lib/logger';
+
 export interface InvoicePublic {
   id: string;
   invoice_no: string;
@@ -156,7 +158,7 @@ export const createInvoicePublic = async (request: CreateInvoiceRequest): Promis
     const { emailService } = await import('@/lib/emailService');
     await emailService.sendInvoiceEmail(request.buyer_email, mockInvoice.invoice_no, 'id'); // Default to Indonesian
   } catch (error) {
-    console.error('Failed to send invoice email:', error);
+    logger.error('Failed to send invoice email', { error });
   }
   
   return mockInvoice;
@@ -180,7 +182,7 @@ export const confirmInvoicePublic = async (invoiceNo: string): Promise<{ success
     
     return { success: true, message: 'Confirmation received. Admin will check during business hours.' };
   } catch (error) {
-    console.error('Failed to confirm invoice:', error);
+    logger.error('Failed to confirm invoice', { error });
     return { success: false, message: 'Failed to confirm payment. Please try again.' };
   }
 };

@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import MetaTags from "@/components/MetaTags";
+import { AppErrorBoundary } from "@/components/system/AppErrorBoundary";
 import { AppRoutes } from "./routes";
 import "./index.css";
 
@@ -23,7 +24,9 @@ const App = () => (
           <Toaster />
           <Sonner />
           <MetaTags />
-          <AppRoutes />
+          <AppErrorBoundary>
+            <AppRoutes />
+          </AppErrorBoundary>
         </TooltipProvider>
       </I18nProvider>
     </BrowserRouter>

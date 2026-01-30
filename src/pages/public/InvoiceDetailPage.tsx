@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
+import { logger } from "@/lib/logger";
 import { PremiumShell } from "@/components/layout/PremiumShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,17 +58,13 @@ const InvoiceDetailPage = () => {
         if (data) {
           setInvoice(data);
         } else {
-          // Use console.info instead of error for "not found" case
-          if (process.env.NODE_ENV === 'development') {
-            console.info('[Invoice] Not found:', invoice_no);
-          }
+          // Use logger.info for "not found" case
+          logger.info('Invoice not found', { invoice_no });
           toast.info("Invoice tidak ditemukan atau sudah tidak aktif.");
           navigate(withLang("/"));
         }
       } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.info('[Invoice] Failed to load:', error);
-        }
+        logger.info('Failed to load invoice', { error, invoice_no });
         toast.info("Gagal memuat invoice. Silakan coba lagi.");
       } finally {
         setLoading(false);
@@ -105,7 +102,7 @@ const InvoiceDetailPage = () => {
         toast.error(t("invoice.confirmError"));
       }
     } catch (error) {
-      console.error("Failed to confirm payment:", error);
+      logger.error('Failed to confirm payment', { error });
       toast.error(t("invoice.confirmError"));
     } finally {
       setConfirming(false);
@@ -127,7 +124,7 @@ const InvoiceDetailPage = () => {
         setInvoice(updatedInvoice);
       }
     } catch (error) {
-      console.error("Failed to upload proof:", error);
+      logger.error('Failed to upload proof', { error });
       toast.error(lang === 'en' ? 'Failed to upload proof' : 'Gagal mengupload bukti');
     } finally {
       setUploadingProof(false);

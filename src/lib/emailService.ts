@@ -14,16 +14,13 @@ interface EmailService {
 class MockEmailService implements EmailService {
   private async sendEmail(to: string, subject: string, htmlContent: string): Promise<boolean> {
     // Mock implementation - in production, this would integrate with actual email service
-    console.log('📧 Sending Email:');
-    console.log('To:', to);
-    console.log('Subject:', subject);
-    console.log('Content Length:', htmlContent.length, 'characters');
+    logger.debug('Sending email', { to, subject, contentLength: htmlContent.length });
     
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Simulate success (in production, this would handle actual errors)
-    console.log('✅ Email sent successfully');
+    logger.debug('Email sent successfully');
     return true;
   }
 
@@ -34,7 +31,7 @@ class MockEmailService implements EmailService {
     try {
       const invoice = await getInvoicePublic(invoiceNo);
       if (!invoice) {
-        logger.info('Invoice not found:', invoiceNo);
+        logger.info('Invoice not found', { invoiceNo });
         return false;
       }
 
@@ -45,7 +42,7 @@ class MockEmailService implements EmailService {
 
       return await this.sendEmail(to, subject, template);
     } catch (error) {
-      console.error('Failed to send invoice email:', error);
+      logger.error('Failed to send invoice email', { error });
       return false;
     }
   }
@@ -61,7 +58,7 @@ class MockEmailService implements EmailService {
 
       return await this.sendEmail(to, subject, template);
     } catch (error) {
-      console.error('Failed to send confirmation email:', error);
+      logger.error('Failed to send confirmation email', { error });
       return false;
     }
   }
@@ -83,7 +80,7 @@ class MockEmailService implements EmailService {
 
       return await this.sendEmail(to, subject, template);
     } catch (error) {
-      console.error('Failed to send approval email:', error);
+      logger.error('Failed to send approval email', { error });
       return false;
     }
   }
@@ -104,7 +101,7 @@ class MockEmailService implements EmailService {
 
       return await this.sendEmail(to, subject, template);
     } catch (error) {
-      console.error('Failed to send rejection email:', error);
+      logger.error('Failed to send rejection email', { error });
       return false;
     }
   }
@@ -137,7 +134,7 @@ class MockEmailService implements EmailService {
       const adminEmail = 'admin@tpcglobal.io';
       return await this.sendEmail(adminEmail, subject, htmlContent);
     } catch (error) {
-      console.error('Failed to send admin notification:', error);
+      logger.error('Failed to send admin notification', { error });
       return false;
     }
   }
@@ -175,10 +172,10 @@ class ProductionEmailService implements EmailService {
       }
 
       const data = await response.json();
-      console.log('Email sent successfully:', data.id);
+      logger.debug('Email sent successfully', { emailId: data.id });
       return true;
     } catch (error) {
-      console.error('Failed to send email:', error);
+      logger.error('Failed to send email', { error });
       return false;
     }
   }
@@ -266,11 +263,11 @@ export const getEmailService = (): EmailService => {
   const fromEmail = process.env.FROM_EMAIL || 'noreply@tpcglobal.io';
   
   if (!apiKey) {
-    console.warn('⚠️ No email API key found, falling back to mock service');
+    logger.warn('No email API key found, falling back to mock service');
     return new MockEmailService();
   }
   
-  console.log('📧 Using Production Email Service');
+  logger.debug('Using Production Email Service');
   return new ProductionEmailService(apiKey, fromEmail);
 };
 

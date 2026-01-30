@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useI18n } from '@/i18n/i18n';
+import { logger } from '@/lib/logger';
 import { PremiumShell } from '@/components/layout/PremiumShell';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -48,7 +49,7 @@ const PresaleStatsPage = () => {
         };
         setStats(mockStats);
       } catch (error) {
-        console.error('Failed to load presale stats:', error);
+        logger.error('Failed to load presale stats', { error });
       } finally {
         setLoading(false);
       }

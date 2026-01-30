@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useI18n } from "@/i18n/i18n";
+import { logger } from "@/lib/logger";
 import { PremiumShell } from "@/components/layout/PremiumShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,7 +61,7 @@ const AdminInvoicesPage = () => {
         : await getAllInvoices(filterStatus || undefined, filterStage || undefined);
       setInvoices(data);
     } catch (error) {
-      console.error("Failed to load invoices:", error);
+      logger.error('Failed to load invoices', { error });
       toast.error("Failed to load invoices");
     } finally {
       setLoading(false);
@@ -131,7 +132,7 @@ const AdminInvoicesPage = () => {
         toast.error("Failed to approve invoice");
       }
     } catch (error) {
-      console.error("Failed to approve invoice:", error);
+      logger.error('Failed to approve invoice', { error });
       toast.error("Failed to approve invoice");
     } finally {
       setProcessingInvoice(null);
@@ -171,7 +172,7 @@ const AdminInvoicesPage = () => {
         toast.error("Failed to reject invoice");
       }
     } catch (error) {
-      console.error("Failed to reject invoice:", error);
+      logger.error('Failed to reject invoice', { error });
       toast.error("Failed to reject invoice");
     } finally {
       setProcessingInvoice(null);

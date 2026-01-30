@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
+import { logger } from "@/lib/logger";
 import { PremiumShell } from "@/components/layout/PremiumShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,9 +59,7 @@ const BuyTpcPage = () => {
         setStages(stagesData);
         setPaymentMethods(paymentMethodsData);
       } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.info('[BuyTPC] Failed to load presale data:', error);
-        }
+        logger.info('Failed to load presale data', { error });
         // Don't show error toast for public browsing - just use empty state
         setStages([]);
         setPaymentMethods([]);
@@ -137,7 +136,7 @@ const BuyTpcPage = () => {
         toast.error("Failed to create invoice");
       }
     } catch (error) {
-      console.error("Failed to create invoice:", error);
+      logger.error('Failed to create invoice', { error });
       toast.error("Failed to create invoice");
     } finally {
       setIsSubmitting(false);

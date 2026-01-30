@@ -1,6 +1,8 @@
 // Admin RPC functions
 // These will be fully implemented after types regenerate
 
+import { logger } from '@/lib/logger';
+
 export interface AdminInvoiceResult {
   id: string;
   invoice_no: string;
@@ -85,7 +87,7 @@ export const adminApproveInvoice = async (request: ApproveInvoiceRequest): Promi
     
     return mockInvoice;
   } catch (error) {
-    console.error('Failed to approve invoice:', error);
+    logger.error('Failed to approve invoice', { error });
     return null;
   }
 };
@@ -131,7 +133,7 @@ export const adminRejectInvoice = async (request: RejectInvoiceRequest): Promise
     
     return mockInvoice;
   } catch (error) {
-    console.error('Failed to reject invoice:', error);
+    logger.error('Failed to reject invoice', { error });
     return null;
   }
 };
