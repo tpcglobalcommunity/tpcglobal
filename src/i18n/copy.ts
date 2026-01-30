@@ -534,6 +534,24 @@ export const copy = {
         openInvoice: "Buka Detail Invoice",
         copyAddress: "Salin Alamat Treasury"
       },
+      // Invoice confirmation
+      confirm: {
+        title: "Konfirmasi Pembayaran",
+        method: "Metode Pembayaran",
+        wallet: "Wallet Penerima (Solana)",
+        tx: "Signature / Reference Transaksi",
+        proof: "Upload Bukti Pembayaran",
+        submit: "Kirim Konfirmasi",
+        success: "Konfirmasi berhasil dikirim!",
+        pending: "Pembayaran sedang ditinjau"
+      },
+      // Invoice status
+      status: {
+        unpaid: "Belum Dibayar",
+        pending: "Menunggu Review",
+        paid: "Disetujui",
+        rejected: "Ditolak"
+      },
       // Toast messages
       toast: {
         invoiceCreated: "Invoice berhasil dibuat!",
@@ -543,7 +561,10 @@ export const copy = {
       validation: {
         invalidEmail: "Email tidak valid",
         invalidAmount: "Jumlah TPC harus lebih dari 0",
-        mustAcceptTerms: "Anda harus menyetujui syarat dan ketentuan"
+        mustAcceptTerms: "Anda harus menyetujui syarat dan ketentuan",
+        walletRequired: "Wallet penerima wajib diisi (minimal 32 karakter)",
+        methodRequired: "Metode pembayaran wajib dipilih",
+        proofRequiredBank: "Upload bukti pembayaran wajib untuk transfer bank"
       },
       // Legal links
       terms: "Syarat & Ketentuan",
@@ -1320,6 +1341,24 @@ export const copy = {
         title: "Destination Address",
         copy: "Copy Address"
       },
+      // Invoice confirmation
+      confirm: {
+        title: "Confirm Payment",
+        method: "Payment Method",
+        wallet: "Receiver Wallet (Solana)",
+        tx: "Transaction Signature / Reference",
+        proof: "Upload Payment Proof",
+        submit: "Submit Confirmation",
+        success: "Confirmation submitted successfully!",
+        pending: "Payment is under review"
+      },
+      // Invoice status
+      status: {
+        unpaid: "Unpaid",
+        pending: "Pending Review",
+        paid: "Approved",
+        rejected: "Rejected"
+      },
       // What happens next
       next: {
         title: "What Happens Next?",
@@ -1343,7 +1382,10 @@ export const copy = {
       validation: {
         invalidEmail: "Invalid email address",
         invalidAmount: "TPC amount must be greater than 0",
-        mustAcceptTerms: "You must accept the terms and conditions"
+        mustAcceptTerms: "You must accept the terms and conditions",
+        walletRequired: "Receiver wallet is required (minimum 32 characters)",
+        methodRequired: "Payment method is required",
+        proofRequiredBank: "Payment proof upload is required for bank transfer"
       },
       // Legal links
       terms: "Terms",

@@ -278,6 +278,7 @@ export type Database = {
           payer_ref: string | null;
           tx_signature: string | null;
           proof_url: string | null;
+          receiver_wallet: string | null;
           created_at: string;
           expires_at: string;
           reviewed_at: string | null;
@@ -287,12 +288,13 @@ export type Database = {
       submit_invoice_confirmation: {
         Args: { 
           p_invoice_no: string; 
+          p_email?: string; 
           p_payment_method: string; 
           p_payer_name?: string; 
           p_payer_ref?: string; 
           p_tx_signature?: string; 
           p_proof_url?: string; 
-          p_email?: string 
+          p_receiver_wallet?: string 
         }
         Returns: {
           invoice_no: string;
@@ -302,6 +304,7 @@ export type Database = {
           payer_ref: string | null;
           tx_signature: string | null;
           proof_url: string | null;
+          receiver_wallet: string | null;
           updated_at: string;
         }[]
       }
