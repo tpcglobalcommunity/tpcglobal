@@ -185,6 +185,42 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_confirmations: {
+        Row: {
+          id: number
+          invoice_no: string
+          user_id: string
+          payment_method: string
+          payer_name: string | null
+          payer_ref: string | null
+          tx_signature: string | null
+          proof_url: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: number
+          invoice_no: string
+          user_id: string
+          payment_method: string
+          payer_name?: string | null
+          payer_ref?: string | null
+          tx_signature?: string | null
+          proof_url?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: number
+          invoice_no?: string
+          user_id?: string
+          payment_method?: string
+          payer_name?: string | null
+          payer_ref?: string | null
+          tx_signature?: string | null
+          proof_url?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -236,6 +272,14 @@ export type Database = {
       }
       cancel_invoice: {
         Args: { p_invoice_no: string }
+        Returns: void
+      }
+      submit_invoice_confirmation: {
+        Args: { p_invoice_no: string; p_payment_method: string; p_payer_name?: string; p_payer_ref?: string; p_tx_signature?: string; p_proof_url?: string }
+        Returns: void
+      }
+      admin_review_invoice: {
+        Args: { p_invoice_no: string; p_action: string; p_note?: string }
         Returns: void
       }
     }

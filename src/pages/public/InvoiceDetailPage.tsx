@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
 import { logger } from "@/lib/logger";
-import { PremiumShell } from "@/components/layout/PremiumShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,9 +18,11 @@ import {
   AlertCircle,
   ExternalLink,
   Copy,
-  Mail
+  Mail,
+  Upload
 } from "lucide-react";
-import { getInvoicePublic, confirmInvoicePublic, type InvoicePublic } from "@/lib/rpc/public";
+import { getInvoicePublic, type InvoicePublic } from "@/lib/rpc/public";
+import { submitPaymentConfirmation } from "@/lib/rpc/paymentConfirmation";
 import { formatIdr } from "@/lib/tokenSale";
 
 const InvoiceDetailPage = () => {
@@ -35,6 +36,13 @@ const InvoiceDetailPage = () => {
   const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [uploadingProof, setUploadingProof] = useState<boolean>(false);
+  
+  // Payment confirmation form state
+  const [paymentMethod, setPaymentMethod] = useState<string>("");
+  const [payerName, setPayerName] = useState<string>("");
+  const [payerRef, setPayerRef] = useState<string>("");
+  const [txSignature, setTxSignature] = useState<string>("");
+  const [proofUrl, setProofUrl] = useState<string>("");
   
   // Prevent double fetch in StrictMode
   const hasFetchedRef = useRef<string | null>(null);
@@ -76,34 +84,49 @@ const InvoiceDetailPage = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'PENDING': return 'bg-yellow-500';
-      case 'CONFIRMED': return 'bg-blue-500';
-      case 'APPROVED': return 'bg-green-500';
+      case 'UNPAID': return 'bg-yellow-500';
+      case 'PENDING_REVIEW': return 'bg-blue-500';
+      case 'PAID': return 'bg-green-500';
       case 'REJECTED': return 'bg-red-500';
       default: return 'bg-gray-500';
     }
   };
 
-  const handleConfirmPayment = async () => {
+  const handleSubmitConfirmation = async () => {
     if (!invoice) return;
+    if (!paymentMethod) {
+      toast.error("Payment method is required");
+      return;
+    }
 
     setConfirming(true);
     try {
-      const result = await confirmInvoicePublic(invoice.invoice_no);
-      if (result.success) {
-        toast.success(result.message);
-        setShowConfirmDialog(true);
-        // Reload invoice to get updated status
-        const updatedInvoice = await getInvoicePublic(invoice.invoice_no);
-        if (updatedInvoice) {
-          setInvoice(updatedInvoice);
-        }
-      } else {
-        toast.error(t("invoice.confirmError"));
+      await submitPaymentConfirmation({
+        invoice_no: invoice.invoice_no,
+        payment_method: paymentMethod,
+        payer_name: payerName || null,
+        payer_ref: payerRef || null,
+        tx_signature: txSignature || null,
+        proof_url: proofUrl || null
+      });
+      
+      toast.success("Payment confirmation submitted successfully!");
+      
+      // Reload invoice to get updated status
+      const updatedInvoice = await getInvoicePublic(invoice.invoice_no);
+      if (updatedInvoice) {
+        setInvoice(updatedInvoice);
       }
+      
+      // Reset form
+      setPaymentMethod("");
+      setPayerName("");
+      setPayerRef("");
+      setTxSignature("");
+      setProofUrl("");
     } catch (error) {
-      logger.error('Failed to confirm payment', { error });
-      toast.error(t("invoice.confirmError"));
+      logger.error('Failed to submit payment confirmation', { error });
+      toast.error("Failed to submit payment confirmation");
     } finally {
       setConfirming(false);
     }
@@ -147,294 +170,244 @@ const InvoiceDetailPage = () => {
 
   if (loading) {
     return (
-      <PremiumShell>
-        <div className="container-app section-spacing">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-2 text-muted-foreground">Loading invoice...</p>
-          </div>
+      <div className="container-app section-spacing">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-muted-foreground">Loading invoice...</p>
         </div>
-      </PremiumShell>
+      </div>
     );
   }
 
   if (!invoice) {
     return (
-      <PremiumShell>
-        <div className="container-app section-spacing">
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>Invoice tidak ditemukan atau sudah tidak aktif.</AlertDescription>
-          </Alert>
-        </div>
-      </PremiumShell>
+      <div className="container-app section-spacing">
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>Invoice tidak ditemukan atau sudah tidak aktif.</AlertDescription>
+        </Alert>
+      </div>
     );
   }
 
+  const isUnpaid = invoice.status === 'UNPAID';
+
   return (
-    <PremiumShell>
-      <div className="container-app section-spacing">
-        <div className="text-center mb-8">
+    <div className="container-app section-spacing">
+      {/* Invoice Header */}
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
           <FileText className="h-12 w-12 mx-auto mb-4 text-primary" />
-          <h1 className="text-3xl font-bold text-gradient-gold mb-2">{t("invoice.title")}</h1>
+          <span className="text-xs text-primary font-medium">
+            {invoice.status === 'UNPAID' ? 'Unpaid' : invoice.status}
+          </span>
         </div>
+        <h1 className="text-4xl font-bold text-gradient-gold mb-2">{invoice.invoice_no}</h1>
+        <p className="text-xl text-foreground max-w-2xl mx-auto">
+          {invoice.status === 'UNPAID' ? 'Menunggu Pembayaran' : 'Status: ' + invoice.status}
+        </p>
+      </div>
 
-        <div className="max-w-3xl mx-auto space-y-6">
-          {/* Invoice Header */}
-          <Card className="card-premium">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xl">{invoice.invoice_no}</CardTitle>
-                <Badge className={getStatusColor(invoice.status)}>
-                  {t(`invoice.statuses.${invoice.status}`)}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <div>
-                    <span className="text-sm text-muted-foreground">{t("invoice.stage")}:</span>
-                    <div className="font-semibold">{invoice.stage.toUpperCase()}</div>
-                  </div>
-                  <div>
-                    <span className="text-sm text-muted-foreground">{t("invoice.buyerEmail")}:</span>
-                    <div className="font-semibold">{invoice.buyer_email}</div>
-                  </div>
-                  <div>
-                    <span className="text-sm text-muted-foreground">{t("invoice.createdAt")}:</span>
-                    <div className="font-semibold">{formatDate(invoice.created_at)}</div>
-                  </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <div>
-                    <span className="text-sm text-muted-foreground">{t("invoice.paidAt")}:</span>
-                    <div className="font-semibold">{formatDate(invoice.paid_at)}</div>
-                  </div>
-                  <div>
-                    <span className="text-sm text-muted-foreground">{t("invoice.confirmedAt")}:</span>
-                    <div className="font-semibold">{formatDate(invoice.confirmed_at)}</div>
-                  </div>
-                  <div>
-                    <span className="text-sm text-muted-foreground">{t("invoice.approvedAt")}:</span>
-                    <div className="font-semibold">{formatDate(invoice.approved_at)}</div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Purchase Details */}
-          <Card className="card-premium">
-            <CardHeader>
-              <CardTitle>Purchase Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <span className="text-sm text-muted-foreground">{t("invoice.tpcAmount")}:</span>
-                  <div className="text-2xl font-bold">{invoice.tpc_amount.toLocaleString()} TPC</div>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">{t("invoice.priceUsd")}:</span>
-                  <div className="text-2xl font-bold">${invoice.price_usd}</div>
-                </div>
-              </div>
-              
-              <Separator />
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <span className="text-sm text-muted-foreground">{t("invoice.totalUsd")}:</span>
-                  <div className="text-xl font-semibold">${invoice.total_usd}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">{t("invoice.totalIdr")}:</span>
-                  <div className="text-xl font-semibold">{formatIdr(invoice.total_idr)}</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Payment Information */}
-          <Card className="card-premium">
-            <CardHeader>
-              <CardTitle>{t("invoice.paymentMethod")}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+      {/* Payment Confirmation Form - Only show for UNPAID invoices */}
+      {isUnpaid && (
+        <Card className="card-premium mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Upload className="h-5 w-5" />
+              Konfirmasi Pembayaran
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-4">
               <div>
-                <span className="text-sm text-muted-foreground">Method:</span>
-                <div className="font-semibold">{invoice.payment_method}</div>
-              </div>
-              
-              <div>
-                <span className="text-sm text-muted-foreground">{t("invoice.treasuryAddress")}:</span>
-                <div className="flex items-center gap-2">
-                  <div className="font-mono text-sm bg-muted p-2 rounded flex-1">
-                    {invoice.treasury_address}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => copyToClipboard(invoice.treasury_address)}
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-
-              {invoice.tx_hash && (
-                <div>
-                  <span className="text-sm text-muted-foreground">{t("invoice.txHash")}:</span>
-                  <div className="flex items-center gap-2">
-                    <div className="font-mono text-sm bg-muted p-2 rounded flex-1">
-                      {invoice.tx_hash}
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => copyToClipboard(invoice.tx_hash!)}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      asChild
-                    >
-                      <a
-                        href={getSolscanLink(invoice.tx_hash)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                      </a>
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {invoice.admin_note && (
-                <Alert>
-                  <Mail className="h-4 w-4" />
-                  <AlertDescription>
-                    <strong>{t("invoice.adminNote")}:</strong> {invoice.admin_note}
-                  </AlertDescription>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Proof Upload Section */}
-          {invoice.status === 'PENDING' && (
-            <Card className="card-premium">
-              <CardHeader>
-                <CardTitle>{lang === 'en' ? 'Upload Payment Proof' : 'Upload Bukti Pembayaran'}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="proof-file">{lang === 'en' ? 'Payment Proof (Image)' : 'Bukti Pembayaran (Gambar)'}</Label>
-                  <Input
-                    id="proof-file"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setProofFile(e.target.files?.[0] || null)}
-                    className="mt-2"
-                  />
-                  {proofFile && (
-                    <p className="text-sm text-muted-foreground mt-2">
-                      {lang === 'en' ? 'Selected file:' : 'File dipilih:'} {proofFile.name}
-                    </p>
-                  )}
-                </div>
-                
-                <Button
-                  onClick={handleProofUpload}
-                  disabled={!proofFile || uploadingProof}
-                  className="w-full"
-                  size="lg"
+                <Label htmlFor="paymentMethod">Metode Pembayaran</Label>
+                <select
+                  id="paymentMethod"
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  className="w-full p-2 border rounded-md"
+                  required
                 >
-                  {uploadingProof ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      {lang === 'en' ? 'Uploading...' : 'Mengupload...'}
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      {lang === 'en' ? 'Submit Proof' : 'Kirim Bukti'}
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-          )}
+                  <option value="">Pilih metode pembayaran</option>
+                  <option value="BANK">Transfer Bank</option>
+                  <option value="USDC">USDC</option>
+                  <option value="SOL">SOL</option>
+                </select>
+              </div>
+              
+              <div>
+                <Label htmlFor="payerName">Nama Pengirim (Opsional)</Label>
+                <Input
+                  id="payerName"
+                  type="text"
+                  value={payerName}
+                  onChange={(e) => setPayerName(e.target.value)}
+                  placeholder="Nama lengkap"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="payerRef">Referensi (Opsional)</Label>
+                <Input
+                  id="payerRef"
+                  type="text"
+                  value={payerRef}
+                  onChange={(e) => setPayerRef(e.target.value)}
+                  placeholder="No. Referensi Bank"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="txSignature">Tanda Tangan Transaksi (Opsional)</Label>
+                <Input
+                  id="txSignature"
+                  type="text"
+                  value={txSignature}
+                  onChange={(e) => setTxSignature(e.target.value)}
+                  placeholder="Tanda tangan digital"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="proofUrl">URL Bukti Pembayaran</Label>
+                <Input
+                  id="proofUrl"
+                  type="url"
+                  value={proofUrl}
+                  onChange={(e) => setProofUrl(e.target.value)}
+                  placeholder="https://example.com/proof.jpg"
+                />
+              </div>
+            </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            {invoice.status === 'PENDING' && (
+            <div className="flex gap-4">
               <Button
-                onClick={handleConfirmPayment}
-                disabled={confirming}
+                onClick={handleSubmitConfirmation}
+                disabled={confirming || !paymentMethod}
                 className="flex-1"
                 size="lg"
               >
                 {confirming ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Processing...
+                    <div className="animate-spin h-4 w-4 mr-2" />
+                    Mengirim...
                   </>
                 ) : (
                   <>
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    {t("invoice.confirmPayment")}
+                    <Upload className="h-4 w-4 mr-2" />
+                    Kirim Konfirmasi
                   </>
                 )}
               </Button>
-            )}
-            
-            <Button
-              variant="outline"
-              onClick={() => window.open(`mailto:support@tpcglobal.io?subject=Invoice ${invoice.invoice_no}`, '_blank')}
-              className="flex-1"
-            >
-              <Mail className="h-4 w-4 mr-2" />
-              Contact Support
-            </Button>
-          </div>
-        </div>
-
-        {/* Confirmation Dialog */}
-        <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-500" />
-                Payment Confirmation Received
-              </DialogTitle>
-              <DialogDescription>
-                {t("invoice.confirmSuccess")}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <Alert>
-                <Clock className="h-4 w-4" />
-                <AlertDescription>
-                  Our admin team will verify your payment during business hours. You will receive an email once the process is complete.
-                </AlertDescription>
-              </Alert>
+              
               <Button
-                onClick={() => setShowConfirmDialog(false)}
-                className="w-full"
+                onClick={handleProofUpload}
+                disabled={uploadingProof || !proofFile}
+                variant="outline"
+                className="flex-1"
               >
-                Got it
+                {uploadingProof ? (
+                  <>
+                    <div className="animate-spin h-4 w-4 mr-2" />
+                    Upload...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload Bukti
+                  </>
+                )}
               </Button>
             </div>
-          </DialogContent>
-        </Dialog>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Invoice Details */}
+      <Card className="card-premium">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Detail Invoice
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid md:grid-cols-2 gap-6 text-sm">
+            <div>
+              <span className="text-muted-foreground">Jumlah TPC:</span>
+              <div className="font-semibold">{invoice.tpc_amount.toLocaleString()}</div>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Total USD:</span>
+              <div className="font-semibold">${invoice.total_usd}</div>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Total IDR:</span>
+              <div className="font-semibold">{formatIdr(invoice.total_idr)}</div>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Status:</span>
+              <Badge className={getStatusColor(invoice.status)}>
+                {invoice.status}
+              </Badge>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Dibuat:</span>
+              <div className="font-semibold">{formatDate(invoice.created_at)}</div>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Alamat Treasury:</span>
+              <div className="font-mono text-sm bg-muted p-2 rounded">
+                {invoice.treasury_address}
+              </div>
+            </div>
+          </div>
+          
+          <Separator />
+          
+          <div className="text-sm text-muted-foreground">
+            <p className="mb-2">
+              <strong>Informasi Penting:</strong> 
+              Pastikan kembali ke halaman ini untuk melihat status pembayaran Anda setelah admin melakukan review.
+            </p>
+            <p className="mb-2">
+              <strong>Penting:</strong> 
+              Jika ada masalah dengan pembayaran, silakan hubungi admin melalui fitur kontak di website.
+            </p>
+          </div>
+          
+          <div className="flex gap-4">
+            <Button
+              onClick={() => copyToClipboard(invoice.invoice_no)}
+              variant="outline"
+              className="flex-1"
+            >
+              <Copy className="h-4 w-4 mr-2" />
+              Salin Invoice No
+            </Button>
+            
+            <Button
+              onClick={() => copyToClipboard(invoice.treasury_address)}
+              variant="outline"
+              className="flex-1"
+            >
+              <Copy className="h-4 w-4 mr-2" />
+              Salin Alamat Treasury
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Back Navigation */}
+      <div className="text-center">
+        <Button
+          onClick={() => navigate(withLang("/"))}
+          variant="outline"
+        >
+          Kembali ke Beranda
+        </Button>
       </div>
-    </PremiumShell>
+    </div>
   );
 };
 
