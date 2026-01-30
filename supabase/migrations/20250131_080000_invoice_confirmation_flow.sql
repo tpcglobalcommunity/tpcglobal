@@ -15,9 +15,9 @@ EXCEPTION WHEN undefined_object THEN
     -- Constraint doesn't exist, continue
 END;
 
-ALTER TABLE public.tpc_invoices 
-ADD CONSTRAINT tpc_invoices_status_check 
-CHECK (status IN ('UNPAID','PENDING_REVIEW','PAID','REJECTED','EXPIRED','CANCELLED'));
+    ALTER TABLE public.tpc_invoices 
+    ADD CONSTRAINT tpc_invoices_status_check 
+    CHECK (status IN ('UNPAID','PENDING_REVIEW','PAID','REJECTED','EXPIRED','CANCELLED'));
 END $$;
 
 -- Phase 2: Create confirmation log table (append-only)
