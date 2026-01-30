@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
 import { logger } from "@/lib/logger";
 import { PremiumShell } from "@/components/layout/PremiumShell";
@@ -28,6 +28,7 @@ const InvoiceDetailPage = () => {
   const { t, lang, withLang } = useI18n();
   const { invoice_no } = useParams<{ invoice_no: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [invoice, setInvoice] = useState<InvoicePublic | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -35,26 +36,61 @@ const InvoiceDetailPage = () => {
   const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [uploadingProof, setUploadingProof] = useState<boolean>(false);
+  
+  // Prevent double fetch in StrictMode
+  const hasFetchedRef = useRef<string | null>(null);
 
   useEffect(() => {
     const loadInvoice = async () => {
-      if (!invoice_no) {
-        toast.error("Invoice number is required");
-        navigate(withLang("/"));
+      // Debug: Log when this effect runs
+      if (process.env.NODE_ENV === 'development') {
+        console.info('[Invoice] Effect triggered for invoice_no:', invoice_no);
+        console.info('[Invoice] Current pathname:', location.pathname);
+      }
+
+      // Strong guard: Only fetch if we're actually on an invoice route
+      const isInvoiceRoute = location.pathname.includes('/invoice/');
+      if (!isInvoiceRoute || !invoice_no) {
+        if (process.env.NODE_ENV === 'development') {
+          console.info('[Invoice] Not on invoice route or no invoice_no, skipping fetch');
+          console.info('[Invoice] isInvoiceRoute:', isInvoiceRoute, 'invoice_no:', invoice_no);
+        }
         return;
       }
 
+      // Prevent double fetch in StrictMode
+      if (hasFetchedRef.current === invoice_no) {
+        if (process.env.NODE_ENV === 'development') {
+          console.info('[Invoice] Already fetched, skipping:', invoice_no);
+        }
+        return;
+      }
+      hasFetchedRef.current = invoice_no;
+
+      if (process.env.NODE_ENV === 'development') {
+        console.info('[Invoice] Starting fetch for:', invoice_no);
+      }
+
+      setLoading(true);
       try {
         const data = await getInvoicePublic(invoice_no);
         if (data) {
           setInvoice(data);
+          if (process.env.NODE_ENV === 'development') {
+            console.info('[Invoice] Successfully loaded:', invoice_no);
+          }
         } else {
-          logger.info('Invoice not found:', invoice_no);
+          // Use console.info instead of error for "not found" case
+          if (process.env.NODE_ENV === 'development') {
+            console.info('[Invoice] Not found:', invoice_no);
+          }
           toast.info("Invoice tidak ditemukan atau sudah tidak aktif.");
           navigate(withLang("/"));
         }
       } catch (error) {
-        logger.info('Failed to load invoice:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.info('[Invoice] Failed to load:', error);
+        }
         toast.info("Gagal memuat invoice. Silakan coba lagi.");
       } finally {
         setLoading(false);
@@ -62,7 +98,7 @@ const InvoiceDetailPage = () => {
     };
 
     loadInvoice();
-  }, [invoice_no, navigate, withLang]);
+  }, [invoice_no, navigate, withLang, location.pathname]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
