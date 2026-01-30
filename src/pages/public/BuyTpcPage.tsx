@@ -2,13 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
 import { logger } from "@/lib/logger";
-import { PremiumShell } from "@/components/layout/PremiumShell";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -33,6 +30,7 @@ import {
   type CreateInvoiceRequest
 } from "@/lib/rpc/public";
 import { formatIdr } from "@/lib/tokenSale";
+import { supabase } from "@/integrations/supabase/client";
 
 const BuyTpcPage = () => {
   const { t, lang, withLang } = useI18n();
@@ -107,7 +105,7 @@ const BuyTpcPage = () => {
     setSelectedPaymentMethod(method || null);
   };
 
-  const handleBuyTpc = async () => {
+  const handleCreateInvoice = async () => {
     if (!tpcAmount || !selectedPayment || !buyerEmail || !termsAccepted) {
       toast.error(t("buyTpc.purchase.termsRequired"));
       return;
@@ -120,21 +118,21 @@ const BuyTpcPage = () => {
 
     setIsSubmitting(true);
     try {
-      const request: CreateInvoiceRequest = {
-        stage: selectedStage,
-        tpc_amount: parseFloat(tpcAmount),
-        payment_method: selectedPayment,
-        buyer_email: buyerEmail
-      };
+      const { data, error } = await supabase.rpc('create_invoice', {
+        p_tpc_amount: parseFloat(tpcAmount),
+        p_referral_code: null
+      });
 
-      const invoice = await createInvoicePublic(request);
-      if (invoice) {
-        toast.success("Invoice created successfully!");
-        // TODO: Send invoice email
-        navigate(withLang(`/invoice/${invoice.invoice_no}`));
-      } else {
+      if (error) {
+        logger.error('Failed to create invoice', { error });
         toast.error("Failed to create invoice");
+        return;
       }
+
+      const invoiceNo = data?.[0]?.invoice_no || data?.invoice_no || data;
+      
+      toast.success("Invoice created successfully!");
+      navigate(withLang(`/invoice/${invoiceNo}`));
     } catch (error) {
       logger.error('Failed to create invoice', { error });
       toast.error("Failed to create invoice");

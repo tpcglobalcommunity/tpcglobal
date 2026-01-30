@@ -228,6 +228,16 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: void
       }
+      create_invoice: {
+        Args: { p_tpc_amount: number; p_referral_code?: string }
+        Returns: {
+          invoice_no: string
+        }[]
+      }
+      cancel_invoice: {
+        Args: { p_invoice_no: string }
+        Returns: void
+      }
     }
     Enums: {
       [_ in never]: never
