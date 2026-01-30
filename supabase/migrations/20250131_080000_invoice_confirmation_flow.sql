@@ -47,6 +47,21 @@ CREATE POLICY "Admins can view all confirmations" ON public.invoice_confirmation
   FOR SELECT USING (public.is_admin_uuid(auth.uid()));
 
 -- Phase 3: Create submit_invoice_confirmation RPC
+CREATE OR REPLACE FUNCTION public.is_admin_uuid(p_user_id uuid)
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    -- Hardcoded admin UUID list - replace with actual admin UUIDs
+    RETURN p_user_id IN (
+        '00000000-0000-0000-0000-000000000000000'  -- Replace with actual admin UUIDs
+        -- Add more admin UUIDs here
+    );
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION public.submit_invoice_confirmation(
     p_invoice_no text,
     p_email text DEFAULT NULL,
