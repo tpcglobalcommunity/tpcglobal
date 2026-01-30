@@ -1,11 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
-import { Home, Shield, BarChart3, ShoppingCart, User } from "lucide-react";
+import { Home, Shield, Store, ShoppingCart, User } from "lucide-react";
 
 const navItems = [
   { key: "nav.home", path: "/", icon: Home },
   { key: "nav.verified", path: "/verified", icon: Shield },
-  { key: "nav.presaleStats", path: "/presale-stats", icon: BarChart3 },
+  { key: "nav.marketplace", path: "/marketplace", icon: Store },
   { key: "nav.buyTpc", path: "/buytpc", icon: ShoppingCart },
   { key: "nav.login", path: "/login", icon: User },
 ];

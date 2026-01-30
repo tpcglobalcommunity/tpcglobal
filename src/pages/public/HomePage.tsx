@@ -2,15 +2,15 @@ import { Link } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
 import { PremiumShell } from "@/components/layout/PremiumShell";
 import { AntiScamBanner } from "@/components/security/AntiScamBanner";
-import { Shield, BarChart3, BookOpen, Users } from "lucide-react";
+import { Shield, BookOpen, Users, CheckCircle, XCircle, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const HomePage = () => {
   const { t, withLang } = useI18n();
 
   const features = [
     { icon: Shield, key: "home.ctaVerified", path: "/verified" },
-    { icon: BarChart3, key: "home.ctaPresale", path: "/presale-stats" },
     { icon: BookOpen, key: "home.ctaHowToBuy", path: "/how-to-buy-safely" },
     { icon: Users, key: "home.ctaTransparency", path: "/transparency" },
   ];
@@ -18,20 +18,56 @@ const HomePage = () => {
   return (
     <PremiumShell>
       <div className="container-app section-spacing">
-        {/* Hero */}
+        {/* Hero Section */}
         <div className="text-center space-y-6 mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
-            <span className="text-xs text-primary font-medium">{t("home.educationFirst")}</span>
+            <span className="text-xs text-primary font-medium">{t("home.trustBadges.educationOnly")}</span>
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gradient-gold">
             {t("home.heroTitle")}
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-foreground max-w-2xl mx-auto">
             {t("home.heroSubtitle")}
           </p>
           <p className="text-foreground/80 max-w-xl mx-auto">
             {t("home.heroDescription")}
           </p>
+          
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link to={withLang("/buytpc")}>
+              <Button size="lg" className="min-w-[140px]">
+                {t("home.ctaBuyTpc")}
+              </Button>
+            </Link>
+            <Link to={withLang("/verified")}>
+              <Button variant="outline" size="lg" className="min-w-[140px]">
+                {t("home.ctaVerified")}
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Trust Bar */}
+        <div className="mb-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="flex items-center justify-center gap-2 p-3 rounded-lg bg-muted/50">
+              <BookOpen className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium">{t("home.trustBadges.educationOnly")}</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 p-3 rounded-lg bg-muted/50">
+              <Shield className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium">{t("home.trustBadges.transparent")}</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 p-3 rounded-lg bg-muted/50">
+              <CheckCircle className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium">{t("home.trustBadges.securityFirst")}</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 p-3 rounded-lg bg-muted/50">
+              <Users className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium">{t("home.trustBadges.globalCommunity")}</span>
+            </div>
+          </div>
         </div>
 
         {/* Anti-Scam Banner */}
@@ -39,8 +75,94 @@ const HomePage = () => {
           <AntiScamBanner />
         </div>
 
+        {/* What is TPC */}
+        <div className="mb-16">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-2xl font-bold mb-6 text-gradient-gold">{t("home.whatIsTpcTitle")}</h2>
+            <div className="prose prose-lg dark:prose-invert max-w-none">
+              <p className="text-foreground leading-relaxed whitespace-pre-line">
+                {t("home.whatIsTpcDesc")}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* TPC IS / IS NOT */}
+        <div className="mb-16">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="card-premium p-6">
+              <h3 className="text-xl font-semibold mb-4 text-green-500">{t("home.tpcIsTitle")}</h3>
+              <ul className="space-y-3">
+                {[
+                  "Education & community",
+                  "Utility-based ecosystem", 
+                  "Transparent on-chain system"
+                ].map((item, index) => (
+                  <li key={index} className="flex items-center gap-3">
+                    <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    <span className="text-foreground">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="card-premium p-6">
+              <h3 className="text-xl font-semibold mb-4 text-red-500">{t("home.tpcIsNotTitle")}</h3>
+              <ul className="space-y-3">
+                {[
+                  "Investment scheme",
+                  "Profit guarantee program",
+                  "Money game / ponzi"
+                ].map((item, index) => (
+                  <li key={index} className="flex items-center gap-3">
+                    <XCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
+                    <span className="text-foreground">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* TPC Token */}
+        <div className="mb-16">
+          <div className="max-w-3xl mx-auto">
+            <div className="card-premium p-6 text-center">
+              <Coins className="h-12 w-12 mx-auto mb-4 text-primary" />
+              <h2 className="text-2xl font-bold mb-4 text-gradient-gold">{t("home.tokenTitle")}</h2>
+              <div className="prose prose-lg dark:prose-invert max-w-none">
+                <p className="text-foreground leading-relaxed whitespace-pre-line">
+                  {t("home.tokenDesc")}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Presale Info */}
+        <div className="mb-16">
+          <div className="max-w-3xl mx-auto">
+            <div className="card-premium p-6">
+              <h2 className="text-2xl font-bold mb-6 text-center text-gradient-gold">{t("home.presaleTitle")}</h2>
+              <div className="grid md:grid-cols-3 gap-6 text-center">
+                <div>
+                  <div className="text-lg font-semibold text-primary">{t("home.presaleStage1")}</div>
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-primary">{t("home.presaleStage2")}</div>
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-primary">{t("home.presalePlannedPrice")}</div>
+                </div>
+              </div>
+              <div className="mt-4 text-center">
+                <p className="text-sm text-muted-foreground">{t("home.presaleNote")}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Feature Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12">
           {features.map((feature) => {
             const Icon = feature.icon;
             return (
@@ -54,23 +176,9 @@ const HomePage = () => {
           })}
         </div>
 
-        {/* Trust Section */}
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="card-premium p-6 text-center">
-            <Shield className="h-10 w-10 mx-auto mb-4 text-primary" />
-            <h3 className="font-semibold mb-2">{t("home.trustTitle")}</h3>
-            <p className="text-sm text-muted-foreground">{t("home.trustDesc")}</p>
-          </div>
-          <div className="card-premium p-6 text-center">
-            <BookOpen className="h-10 w-10 mx-auto mb-4 text-primary" />
-            <h3 className="font-semibold mb-2">{t("home.educationFirst")}</h3>
-            <p className="text-sm text-muted-foreground">{t("home.educationDesc")}</p>
-          </div>
-          <div className="card-premium p-6 text-center">
-            <BarChart3 className="h-10 w-10 mx-auto mb-4 text-primary" />
-            <h3 className="font-semibold mb-2">{t("home.noPromises")}</h3>
-            <p className="text-sm text-muted-foreground">{t("home.noPromisesDesc")}</p>
-          </div>
+        {/* Final Disclaimer */}
+        <div className="text-center">
+          <p className="text-sm text-muted-foreground">{t("home.disclaimer")}</p>
         </div>
       </div>
     </PremiumShell>

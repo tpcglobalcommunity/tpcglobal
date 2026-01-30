@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { legalContent } from "@/content/legal-simple";
 import { toast } from "sonner";
 import { 
   ShoppingCart, 
@@ -30,6 +31,7 @@ import {
   type PaymentMethod,
   type CreateInvoiceRequest
 } from "@/lib/rpc/public";
+import { formatIdr } from "@/lib/tokenSale";
 
 const BuyTpcPage = () => {
   const { t, lang, withLang } = useI18n();
@@ -44,6 +46,7 @@ const BuyTpcPage = () => {
   const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [activeTab, setActiveTab] = useState<'terms' | 'risk' | 'disclaimer'>('terms');
 
   useEffect(() => {
     const loadData = async () => {
@@ -55,8 +58,12 @@ const BuyTpcPage = () => {
         setStages(stagesData);
         setPaymentMethods(paymentMethodsData);
       } catch (error) {
-        console.error("Failed to load data:", error);
-        toast.error("Failed to load presale data");
+        if (process.env.NODE_ENV === 'development') {
+          console.info('[BuyTPC] Failed to load presale data:', error);
+        }
+        // Don't show error toast for public browsing - just use empty state
+        setStages([]);
+        setPaymentMethods([]);
       }
     };
     loadData();
@@ -66,7 +73,7 @@ const BuyTpcPage = () => {
   const calculatedUsd = tpcAmount && currentStage ? 
     (parseFloat(tpcAmount) * currentStage.price_usd).toFixed(2) : "0.00";
   const calculatedIdr = tpcAmount && currentStage ? 
-    (parseFloat(tpcAmount) * currentStage.price_usd * 17000).toFixed(2) : "0.00";
+    formatIdr(parseFloat(tpcAmount) * currentStage.price_usd * 17000) : formatIdr(0);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -273,17 +280,119 @@ const BuyTpcPage = () => {
                     </div>
 
                     {selectedPaymentMethod && (
-                      <Alert>
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertDescription>
-                          {selectedPaymentMethod.instructions}
-                          {selectedPaymentMethod.address && (
-                            <div className="mt-1 font-mono text-xs bg-muted p-2 rounded">
+                      <div className="mt-6">
+                        {/* Crypto Address Display */}
+                        {selectedPaymentMethod.type === 'crypto' && selectedPaymentMethod.address && (
+                          <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                                <span className="text-gray-300 text-sm font-medium">Destination Address</span>
+                              </div>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(selectedPaymentMethod.address!);
+                                  toast.success("Address copied to clipboard!");
+                                }}
+                                className="bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 hover:border-gray-500 hover:text-white transition-all duration-200"
+                              >
+                                <span className="flex items-center gap-2">
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                  </svg>
+                                  <span>Copy</span>
+                                </span>
+                              </Button>
+                            </div>
+                            <div className="font-mono text-sm bg-black/50 border border-gray-600 rounded-lg p-4 break-all text-gray-100 leading-relaxed">
                               {selectedPaymentMethod.address}
                             </div>
-                          )}
-                        </AlertDescription>
-                      </Alert>
+                            <div className="flex items-center gap-2 mt-3 text-xs text-gray-500">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              <span>Tap to copy address</span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* E-wallet Display */}
+                        {selectedPaymentMethod.type === 'ewallet' && selectedPaymentMethod.address && (
+                          <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                <span className="text-gray-300 text-sm font-medium">{selectedPaymentMethod.name} Number</span>
+                              </div>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(selectedPaymentMethod.address!);
+                                  toast.success("Number copied to clipboard!");
+                                }}
+                                className="bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 hover:border-gray-500 hover:text-white transition-all duration-200"
+                              >
+                                <span className="flex items-center gap-2">
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                  </svg>
+                                  <span>Copy</span>
+                                </span>
+                              </Button>
+                            </div>
+                            <div className="font-mono text-sm bg-black/50 border border-gray-600 rounded-lg p-4 break-all text-gray-100 leading-relaxed">
+                              {selectedPaymentMethod.address}
+                            </div>
+                            <div className="flex items-center gap-2 mt-3 text-xs text-gray-500">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              <span>Tap to copy number</span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Bank Transfer Display */}
+                        {selectedPaymentMethod.type === 'bank' && selectedPaymentMethod.accountNumber && (
+                          <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                            <div className="space-y-3">
+                              {/* Bank Name */}
+                              <div className="text-white font-semibold">
+                                {selectedPaymentMethod.bankName}
+                              </div>
+                              
+                              {/* Account Name */}
+                              <div className="text-white font-semibold">
+                                {selectedPaymentMethod.accountName}
+                              </div>
+                              
+                              {/* Account Number */}
+                              <div className="flex items-center justify-between gap-3">
+                                <span className="text-white font-mono tabular-nums">{selectedPaymentMethod.accountNumber}</span>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(selectedPaymentMethod.accountNumber!);
+                                    toast.success("Copied!");
+                                  }}
+                                  className="bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 hover:border-gray-500 hover:text-white transition-all duration-200"
+                                >
+                                  <span className="flex items-center gap-1">
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                    </svg>
+                                    <span>Copy</span>
+                                  </span>
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -304,7 +413,7 @@ const BuyTpcPage = () => {
                     </div>
                     <div className="flex justify-between">
                       <span>{t("buyTpc.purchase.totalIdr")}:</span>
-                      <span>Rp {calculatedIdr}</span>
+                      <span>{calculatedIdr}</span>
                     </div>
                   </div>
                 </div>
@@ -324,21 +433,74 @@ const BuyTpcPage = () => {
                   
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="link" className="p-0 h-auto text-sm">
+                      <Button 
+                        variant="link" 
+                        className="p-0 h-auto text-sm"
+                        onClick={() => setActiveTab('terms')}
+                      >
                         <ExternalLink className="h-3 w-3 mr-1" />
                         {t("buyTpc.purchase.readTerms")}
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
+                    <DialogContent className="max-w-4xl max-h-[80vh]">
                       <DialogHeader>
-                        <DialogTitle>Terms & Conditions</DialogTitle>
-                        <DialogDescription>
-                          Please read the terms and conditions carefully before proceeding.
+                        <DialogTitle className="text-xl text-white">
+                          {legalContent[lang][activeTab].title}
+                        </DialogTitle>
+                        <DialogDescription className="sr-only">
+                          {lang === 'en' 
+                            ? 'Read the Terms, Risk Disclosure, and Disclaimer before proceeding.'
+                            : 'Baca Syarat, Risiko, dan Disklaimer sebelum melanjutkan.'
+                          }
                         </DialogDescription>
                       </DialogHeader>
-                      <div className="max-h-96 overflow-y-auto text-sm">
-                        {/* TODO: Add actual terms content */}
-                        <p>Terms and conditions content will be displayed here...</p>
+                      
+                      {/* Tab Buttons */}
+                      <div className="flex border-b border-gray-200 dark:border-gray-700">
+                        <button
+                          onClick={() => setActiveTab('terms')}
+                          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                            activeTab === 'terms'
+                              ? 'border-[#F0B90B] text-[#F0B90B]'
+                              : 'border-transparent text-gray-300 hover:text-gray-100'
+                          }`}
+                        >
+                          {lang === 'en' ? 'Terms' : 'Syarat'}
+                        </button>
+                        <button
+                          onClick={() => setActiveTab('risk')}
+                          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                            activeTab === 'risk'
+                              ? 'border-[#F0B90B] text-[#F0B90B]'
+                              : 'border-transparent text-gray-300 hover:text-gray-100'
+                          }`}
+                        >
+                          {lang === 'en' ? 'Risk' : 'Risiko'}
+                        </button>
+                        <button
+                          onClick={() => setActiveTab('disclaimer')}
+                          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                            activeTab === 'disclaimer'
+                              ? 'border-[#F0B90B] text-[#F0B90B]'
+                              : 'border-transparent text-gray-300 hover:text-gray-100'
+                          }`}
+                        >
+                          {lang === 'en' ? 'Disclaimer' : 'Disklaimer'}
+                        </button>
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="mt-4 max-h-[60vh] overflow-y-auto">
+                        <div className="text-sm leading-7 whitespace-pre-line text-gray-200">
+                          {legalContent[lang][activeTab].body}
+                        </div>
+                      </div>
+                      
+                      {/* Footer */}
+                      <div className="flex justify-end mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <Button variant="outline" onClick={() => setActiveTab('terms')}>
+                          {lang === 'en' ? 'Close' : 'Tutup'}
+                        </Button>
                       </div>
                     </DialogContent>
                   </Dialog>

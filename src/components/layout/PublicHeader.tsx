@@ -1,14 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Menu, Globe, X } from "lucide-react";
 import { useState } from "react";
 
 const navItems = [
   { key: "nav.verified", path: "/verified" },
   { key: "nav.transparency", path: "/transparency" },
-  { key: "nav.presaleStats", path: "/presale-stats" },
+  { key: "nav.marketplace", path: "/marketplace" },
   { key: "nav.buyTpc", path: "/buytpc" },
   { key: "nav.whitepaper", path: "/whitepaper" },
   { key: "nav.dao", path: "/dao" },
@@ -82,6 +82,14 @@ export const PublicHeader = () => {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-80 p-0">
+                <SheetHeader className="sr-only">
+                  <SheetTitle>
+                    {lang === "en" ? "Navigation Menu" : "Menu Navigasi"}
+                  </SheetTitle>
+                  <SheetDescription>
+                    {lang === "en" ? "Choose a page to continue." : "Pilih halaman untuk melanjutkan."}
+                  </SheetDescription>
+                </SheetHeader>
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between p-4 border-b border-border">
                     <span className="font-bold text-gradient-gold">TPC Global</span>

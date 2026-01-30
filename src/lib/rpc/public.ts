@@ -48,6 +48,9 @@ export interface PaymentMethod {
   type: 'crypto' | 'bank' | 'ewallet';
   address?: string;
   instructions?: string;
+  bankName?: string;
+  accountName?: string;
+  accountNumber?: string;
 }
 
 export interface PresaleStats {
@@ -108,13 +111,63 @@ export const getPaymentMethodsPublic = async (): Promise<PaymentMethod[]> => {
   return [
     { id: 'USDC', name: 'USDC', type: 'crypto', address: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM', instructions: 'Send USDC to the provided address' },
     { id: 'SOL', name: 'SOL', type: 'crypto', address: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM', instructions: 'Send SOL to the provided address' },
-    { id: 'BCA', name: 'BCA Bank Transfer', type: 'bank', instructions: 'Transfer to BCA account: 1234567890 (PTC Global)' },
-    { id: 'MANDIRI', name: 'Mandiri Bank Transfer', type: 'bank', instructions: 'Transfer to Mandiri account: 0987654321 (PTC Global)' },
-    { id: 'BNI', name: 'BNI Bank Transfer', type: 'bank', instructions: 'Transfer to BNI account: 1122334455 (PTC Global)' },
-    { id: 'BRI', name: 'BRI Bank Transfer', type: 'bank', instructions: 'Transfer to BRI account: 5544332211 (PTC Global)' },
-    { id: 'OVO', name: 'OVO', type: 'ewallet', instructions: 'Send to OVO number: 0812-3456-7890' },
-    { id: 'DANA', name: 'DANA', type: 'ewallet', instructions: 'Send to DANA number: 0812-3456-7891' },
-    { id: 'GOPAY', name: 'GoPay', type: 'ewallet', instructions: 'Send to GoPay number: 0812-3456-7892' },
+    { 
+      id: 'BCA', 
+      name: 'BCA Bank Transfer', 
+      type: 'bank', 
+      bankName: 'BCA',
+      accountName: 'PTC Global Indonesia',
+      accountNumber: '1234567890',
+      instructions: 'Transfer to BCA account' 
+    },
+    { 
+      id: 'MANDIRI', 
+      name: 'Mandiri Bank Transfer', 
+      type: 'bank', 
+      bankName: 'Bank Mandiri',
+      accountName: 'PTC Global Indonesia',
+      accountNumber: '0987654321',
+      instructions: 'Transfer to Mandiri account' 
+    },
+    { 
+      id: 'BNI', 
+      name: 'BNI Bank Transfer', 
+      type: 'bank', 
+      bankName: 'Bank BNI',
+      accountName: 'PTC Global Indonesia',
+      accountNumber: '1122334455',
+      instructions: 'Transfer to BNI account' 
+    },
+    { 
+      id: 'BRI', 
+      name: 'BRI Bank Transfer', 
+      type: 'bank', 
+      bankName: 'Bank BRI',
+      accountName: 'PTC Global Indonesia',
+      accountNumber: '5544332211',
+      instructions: 'Transfer to BRI account' 
+    },
+    { 
+      id: 'OVO', 
+      name: 'OVO', 
+      type: 'ewallet', 
+      address: '0812-3456-7890',
+      instructions: 'Send to OVO number' 
+    },
+    { 
+      id: 'DANA', 
+      name: 'DANA', 
+      type: 'ewallet', 
+      address: '0812-3456-7891',
+      instructions: 'Send to DANA number' 
+    },
+    { 
+      id: 'GOPAY', 
+      name: 'GoPay', 
+      type: 'ewallet', 
+      address: '0812-3456-7892',
+      instructions: 'Send to GoPay number' 
+    },
   ];
 };
 
@@ -142,6 +195,15 @@ export const createInvoicePublic = async (request: CreateInvoiceRequest): Promis
     confirmed_at: null,
     approved_at: null,
   };
+  
+  // Send invoice email
+  try {
+    const { emailService } = await import('@/lib/emailService');
+    await emailService.sendInvoiceEmail(request.buyer_email, mockInvoice.invoice_no, 'id'); // Default to Indonesian
+  } catch (error) {
+    console.error('Failed to send invoice email:', error);
+  }
+  
   return mockInvoice;
 };
 
@@ -149,5 +211,21 @@ export const createInvoicePublic = async (request: CreateInvoiceRequest): Promis
 export const confirmInvoicePublic = async (invoiceNo: string): Promise<{ success: boolean; message: string }> => {
   // TODO: Implement after database types are regenerated
   // This should: 1) Update invoice status to CONFIRMED, 2) Send admin email, 3) Create member record
-  return { success: true, message: 'Confirmation received. Admin will check during business hours.' };
+  
+  try {
+    const { emailService } = await import('@/lib/emailService');
+    
+    // Send confirmation email to buyer
+    // TODO: Get actual buyer email from database
+    const buyerEmail = 'buyer@example.com'; // Mock email
+    await emailService.sendConfirmationEmail(buyerEmail, invoiceNo, 'id');
+    
+    // Send notification to admin
+    await emailService.sendAdminNotification(invoiceNo, buyerEmail, 1000, 'USDC'); // Mock data
+    
+    return { success: true, message: 'Confirmation received. Admin will check during business hours.' };
+  } catch (error) {
+    console.error('Failed to confirm invoice:', error);
+    return { success: false, message: 'Failed to confirm payment. Please try again.' };
+  }
 };

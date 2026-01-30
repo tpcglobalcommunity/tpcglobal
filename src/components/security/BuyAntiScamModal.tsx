@@ -3,7 +3,7 @@ import { useI18n } from "@/i18n/i18n";
 import { AlertTriangle, Check, Copy, ExternalLink, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { PRIMARY_SITE_URL } from "@/config/site";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -41,6 +41,9 @@ export const BuyAntiScamModal = ({ open, onOpenChange, onContinue }: BuyAntiScam
             <AlertTriangle className="h-5 w-5" />
             {t("antiScam.modalTitle")}
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            {t("antiScam.modalDesc")}
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">

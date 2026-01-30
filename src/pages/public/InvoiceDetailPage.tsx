@@ -19,6 +19,7 @@ import {
   Mail
 } from "lucide-react";
 import { getInvoicePublic, confirmInvoicePublic, type InvoicePublic } from "@/lib/rpc/public";
+import { formatIdr } from "@/lib/tokenSale";
 
 const InvoiceDetailPage = () => {
   const { t, lang, withLang } = useI18n();
@@ -43,12 +44,17 @@ const InvoiceDetailPage = () => {
         if (data) {
           setInvoice(data);
         } else {
-          toast.error("Invoice not found");
+          if (process.env.NODE_ENV === 'development') {
+            console.info('[Invoice] Not found:', invoice_no);
+          }
+          toast.info("Invoice tidak ditemukan atau sudah tidak aktif.");
           navigate(withLang("/"));
         }
       } catch (error) {
-        console.error("Failed to load invoice:", error);
-        toast.error("Failed to load invoice");
+        if (process.env.NODE_ENV === 'development') {
+          console.info('[Invoice] Failed to load invoice:', error);
+        }
+        toast.info("Gagal memuat invoice. Silakan coba lagi.");
       } finally {
         setLoading(false);
       }
@@ -125,7 +131,7 @@ const InvoiceDetailPage = () => {
         <div className="container-app section-spacing">
           <Alert>
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>Invoice not found</AlertDescription>
+            <AlertDescription>Invoice tidak ditemukan atau sudah tidak aktif.</AlertDescription>
           </Alert>
         </div>
       </PremiumShell>
@@ -212,7 +218,7 @@ const InvoiceDetailPage = () => {
                 </div>
                 <div>
                   <span className="text-sm text-muted-foreground">{t("invoice.totalIdr")}:</span>
-                  <div className="text-xl font-semibold">Rp {invoice.total_idr.toLocaleString()}</div>
+                  <div className="text-xl font-semibold">{formatIdr(invoice.total_idr)}</div>
                 </div>
               </div>
             </CardContent>
