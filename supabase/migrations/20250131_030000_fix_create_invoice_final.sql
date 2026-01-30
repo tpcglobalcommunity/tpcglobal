@@ -11,8 +11,11 @@ CREATE TABLE IF NOT EXISTS public.app_settings (
 -- Enable RLS
 ALTER TABLE public.app_settings ENABLE ROW LEVEL SECURITY;
 
+-- Drop policy if exists and create new one
+DROP POLICY IF EXISTS "Public read access to app_settings" ON public.app_settings;
+
 -- Allow public read access
-CREATE POLICY IF NOT EXISTS "Public read access to app_settings" ON public.app_settings
+CREATE POLICY "Public read access to app_settings" ON public.app_settings
   FOR SELECT USING (true);
 
 -- Insert required settings
