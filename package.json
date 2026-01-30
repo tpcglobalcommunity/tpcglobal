@@ -11,10 +11,12 @@
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "prebuild": "npm run check:no-page-header",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "check:no-page-header": "node scripts/check-no-page-header.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
