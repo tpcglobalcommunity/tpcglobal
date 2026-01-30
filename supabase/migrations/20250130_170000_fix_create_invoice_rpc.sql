@@ -34,7 +34,7 @@ BEGIN
     END IF;
     
     IF p_tpc_amount > v_max_amount THEN
-        RAISE EXCEPTION 'Amount too large: Maximum amount is ' || v_max_amount || ' TPC';
+        RAISE EXCEPTION 'Amount too large: Maximum amount is % TPC', v_max_amount;
     END IF;
     
     -- Get active stage info
@@ -60,7 +60,7 @@ BEGIN
     
     -- Check if enough TPC available
     IF p_tpc_amount > v_remaining_amount THEN
-        RAISE EXCEPTION 'Insufficient TPC available: Only ' || v_remaining_amount || ' TPC remaining';
+        RAISE EXCEPTION 'Insufficient TPC available: Only % TPC remaining', v_remaining_amount;
     END IF;
     
     -- Calculate totals server-side (prevent tampering)
@@ -117,7 +117,7 @@ BEGIN
     WHERE invoice_no = p_invoice_no;
     
     IF NOT FOUND THEN
-        RAISE EXCEPTION 'Invoice not found: ' || p_invoice_no;
+        RAISE EXCEPTION 'Invoice not found: %', p_invoice_no;
     END IF;
 END;
 $$;
