@@ -462,6 +462,34 @@ export const copy = {
       invoiceCreationFailed: "Gagal membuat invoice",
       addressCopied: "Alamat disalin ke clipboard!",
       numberCopied: "Nomor disalin ke clipboard!",
+      // CTA Button
+      createInvoiceButton: "Buat Invoice Pembelian TPC",
+      // Invoice Summary
+      invoiceSummary: {
+        title: "Invoice Summary",
+        lockedLabel: "Data ini terkunci dan tidak dapat diubah",
+        tpcAmount: "Jumlah TPC",
+        totalUsd: "Total USD",
+        totalIdr: "Total IDR",
+        invoiceNumber: "Nomor Invoice"
+      },
+      // What Happens After Payment
+      afterPayment: {
+        title: "Apa yang terjadi setelah pembayaran?",
+        steps: [
+          "Pembayaran diterima ke alamat treasury resmi",
+          "Tim memverifikasi pembayaran",
+          "Status invoice diperbarui",
+          "Alokasi TPC dicatat secara internal",
+          "Informasi resmi diumumkan melalui kanal publik"
+        ]
+      },
+      // Legal Tabs
+      legal: {
+        termsTab: "Syarat & Ketentuan",
+        riskTab: "Risiko",
+        educationTab: "Disklaimer"
+      },
       // Legal links
       terms: "Syarat & Ketentuan",
       risk: "Risiko", 

@@ -92,7 +92,7 @@ export const I18nProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const t = useCallback(
-    (key: string): string => {
+    (key: string): string | string[] => {
       return getNestedValue(copy[lang] as unknown as Record<string, unknown>, key);
     },
     [lang]
