@@ -684,6 +684,26 @@ export const copy = {
       },
     },
     
+    // One-Pager
+    onePager: {
+      title: "What TPC Is",
+      description: "Trader Professional Community (TPC) adalah komunitas dan platform edukasi yang berfokus pada disiplin trading, transparansi, dan kolaborasi antar trader. TPC dibangun untuk mendukung proses belajar, pengelolaan risiko, dan pengembangan ekosistem komunitas berbasis teknologi. TPC mengedepankan education-first, keterbukaan data, dan verifikasi on-chain untuk membangun kepercayaan publik.",
+      
+      notTitle: "What TPC Is NOT",
+      notDescription: "TPC bukan:\n\nProduk investasi\n\nKontrak investasi atau program profit sharing\n\nPlatform yang menjanjikan keuntungan atau hasil tertentu\n\nPihak yang menghubungi pengguna melalui chat pribadi (DM/WA/Telegram)\n\nTPC tidak memberikan nasihat keuangan dan tidak menjanjikan nilai di masa depan.",
+      
+      verifyTitle: "How to Verify TPC",
+      verifyDescription: "Untuk memastikan keaslian informasi:\n\nGunakan hanya website resmi TPC\n\nVerifikasi alamat wallet melalui halaman Verified dan Transparency\n\nSemua proses pembelian dan pengecekan invoice dilakukan langsung di website\n\nTPC tidak pernah meminta data atau pembayaran melalui chat pribadi.",
+      
+      presaleTitle: "Presale Basics (Informational)",
+      presaleDescription: "Stage 1: 100.000.000 TPC — harga $0.001\n\nStage 2: 100.000.000 TPC — harga $0.002\n\nReferensi listing: $0.005 (informasi saja, bukan janji nilai)\n\nHarga dan tahap presale bersifat transparan. Tidak ada jaminan nilai di masa depan.",
+      
+      safetyTitle: "Safety Checklist",
+      safetyDescription: "Akses hanya melalui website resmi TPC\n\nAbaikan pesan pribadi yang mengatasnamakan TPC\n\nCek invoice dan status langsung di website\n\nVerifikasi wallet hanya di halaman resmi",
+      
+      footerDisclaimer: "Education-Only • No Financial Advice • High Risk\nTPC ditujukan untuk edukasi dan pengembangan komunitas, bukan untuk spekulasi atau janji keuntungan."
+    },
+    
     // Footer
     footer: {
       copyright: "© 2026 TPC Global. Hak cipta dilindungi.",
@@ -1668,6 +1688,26 @@ export const copy = {
         communityDeals: "Community Deals",
         communityDealsDesc: "Exclusive offers from verified TPC community members",
       },
+    },
+    
+    // One-Pager
+    onePager: {
+      title: "What TPC Is",
+      description: "Trader Professional Community (TPC) is an education-first community and platform focused on trading discipline, transparency, and collaboration among traders. TPC is designed to support learning processes, risk management, and the development of a transparent, technology-driven community ecosystem. TPC prioritizes education, on-chain verification, and public transparency.",
+      
+      notTitle: "What TPC Is NOT",
+      notDescription: "TPC is not:\n\nAn investment product\n\nAn investment contract or profit-sharing program\n\nA platform that guarantees profits or future value\n\nAn entity that contacts users via private messages\n\nTPC does not provide financial advice and does not promise any returns.",
+      
+      verifyTitle: "How to Verify TPC",
+      verifyDescription: "To verify official information:\n\nUse only the official TPC website\n\nCheck wallet addresses on the Verified and Transparency pages\n\nAll purchases and invoice tracking are done directly on the website\n\nTPC will never request payments or data through private messages.",
+      
+      presaleTitle: "Presale Basics (Informational)",
+      presaleDescription: "Stage 1: 100,000,000 TPC — price $0.001\n\nStage 2: 100,000,000 TPC — price $0.002\n\nListing reference: $0.005 (informational only, not a promise)\n\nPresale stages and pricing are transparent. No future value is guaranteed.",
+      
+      safetyTitle: "Safety Checklist",
+      safetyDescription: "Access TPC only via the official website\n\nIgnore private messages claiming to represent TPC\n\nTrack invoices and status directly on the website\n\nVerify wallets only on official pages",
+      
+      footerDisclaimer: "Education-Only • No Financial Advice • High Risk\nTPC is intended for education and community development, not speculation or profit guarantees."
     },
     
     // Footer
