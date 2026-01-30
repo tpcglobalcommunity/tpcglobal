@@ -124,6 +124,19 @@ const BuyTpcPage = () => {
 
       const invoiceNo = Array.isArray(data) ? data[0]?.invoice_no : data?.invoice_no || data;
       
+      // Update buyer email for the invoice
+      if (invoiceNo && buyerEmail) {
+        const { error: emailError } = await supabase.rpc('update_invoice_email', {
+          p_invoice_no: invoiceNo,
+          p_buyer_email: buyerEmail
+        });
+        
+        if (emailError) {
+          logger.error('Failed to update buyer email', { emailError });
+          // Continue anyway since invoice was created
+        }
+      }
+      
       toast.success("Invoice created successfully!");
       navigate(withLang(`/invoice/${invoiceNo}`));
     } catch (error) {

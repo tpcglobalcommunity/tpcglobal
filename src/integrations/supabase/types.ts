@@ -270,6 +270,10 @@ export type Database = {
           invoice_no: string
         }[]
       }
+      update_invoice_email: {
+        Args: { p_invoice_no: string; p_buyer_email: string }
+        Returns: void
+      }
       cancel_invoice: {
         Args: { p_invoice_no: string }
         Returns: void
