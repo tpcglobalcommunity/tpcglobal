@@ -20,6 +20,7 @@ import AntiScamFaqPage from "@/pages/public/AntiScamFaqPage";
 import OnePagerPage from "@/pages/public/OnePagerPage";
 import InvoiceDetailPage from "@/pages/public/InvoiceDetailPage";
 import LoginPage from "@/pages/auth/LoginPage";
+import AuthCallback from "@/pages/auth/AuthCallback";
 import AdminSettingsPage from "@/pages/admin/AdminSettingsPage";
 import DaoLitePage from "@/pages/public/DaoLitePage";
 import DaoSnapshotPage from "@/pages/public/DaoSnapshotPage";
@@ -77,7 +78,11 @@ export default function AppRoutes() {
           {/* Auth */}
           <Route path="login" element={<LoginPage />} />
           <Route path="admin/login" element={<LoginPage />} />
+          <Route path="auth/callback" element={<AuthCallback />} />
         </Route>
+
+        {/* Fallback auth routes without lang prefix */}
+        <Route path="auth/callback" element={<AuthCallback />} />
 
         {/* Member Routes */}
         <Route path="/member/*" element={

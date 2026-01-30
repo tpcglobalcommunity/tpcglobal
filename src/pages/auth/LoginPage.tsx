@@ -10,7 +10,7 @@ import { Mail, Loader2 } from "lucide-react";
 import { PremiumShell } from "@/components/layout/PremiumShell";
 
 const LoginPage = () => {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -23,7 +23,7 @@ const LoginPage = () => {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${PRIMARY_SITE_URL}/dashboard`,
+        emailRedirectTo: `${PRIMARY_SITE_URL}/${lang}/auth/callback`,
       },
     });
 
@@ -57,7 +57,7 @@ const LoginPage = () => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder={t("auth.emailPlaceholder")}
+                  placeholder={String(t("auth.emailPlaceholder"))}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
