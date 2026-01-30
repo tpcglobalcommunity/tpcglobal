@@ -1,28 +1,19 @@
 // RPC functions for public data access
 // These use typed queries that work with the generated types
 
+import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
 
 export interface InvoicePublic {
-  id: string;
   invoice_no: string;
+  status: string;
   stage: string;
   tpc_amount: number;
-  price_usd: number;
   total_usd: number;
-  usd_idr_rate: number;
   total_idr: number;
-  payment_method: string;
-  treasury_address: string;
-  buyer_email: string;
-  status: 'PENDING' | 'CONFIRMED' | 'APPROVED' | 'REJECTED';
-  admin_note: string | null;
-  tx_hash: string | null;
   created_at: string;
-  updated_at: string;
   paid_at: string | null;
-  confirmed_at: string | null;
-  approved_at: string | null;
+  treasury_address: string;
 }
 
 export interface PresaleStage {
@@ -64,10 +55,24 @@ export interface PresaleStats {
   remaining_tpc: number;
 }
 
-// Get invoice by invoice number (will be implemented after types regenerate)
-export const getInvoicePublic = async (_invoiceNo: string): Promise<InvoicePublic | null> => {
-  // TODO: Implement after database types are regenerated
-  return null;
+// Get invoice by invoice number using safe RPC
+export const getInvoicePublic = async (invoiceNo: string): Promise<InvoicePublic | null> => {
+  try {
+    const { data, error } = await supabase.rpc('get_invoice_public', {
+      p_invoice_no: invoiceNo
+    });
+
+    if (error) {
+      logger.error('Failed to get invoice public', error);
+      return null;
+    }
+
+    // RPC returns array, take first element or null
+    return data && data.length > 0 ? data[0] : null;
+  } catch (error) {
+    logger.error('Unexpected error getting invoice public', error);
+    return null;
+  }
 };
 
 // Get presale stages with real-time data
@@ -132,25 +137,15 @@ export const getPaymentMethodsPublic = async (): Promise<PaymentMethod[]> => {
 export const createInvoicePublic = async (request: CreateInvoiceRequest): Promise<InvoicePublic | null> => {
   // TODO: Implement after database types are regenerated
   const mockInvoice: InvoicePublic = {
-    id: 'mock-id',
     invoice_no: 'TPC' + new Date().getTime().toString().slice(-8),
     stage: request.stage,
     tpc_amount: request.tpc_amount,
-    price_usd: request.stage === 'stage1' ? 0.001 : 0.002,
     total_usd: request.tpc_amount * (request.stage === 'stage1' ? 0.001 : 0.002),
-    usd_idr_rate: 17000,
     total_idr: request.tpc_amount * (request.stage === 'stage1' ? 0.001 : 0.002) * 17000,
-    payment_method: request.payment_method,
-    treasury_address: '5AeayrU2pdy6yNBeiUpTXkfMxw3VpDQGUHC6kXrBt5vw',
-    buyer_email: request.buyer_email,
-    status: 'PENDING',
-    admin_note: null,
-    tx_hash: null,
     created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
     paid_at: null,
-    confirmed_at: null,
-    approved_at: null,
+    treasury_address: '5AeayrU2pdy6yNBeiUpTXkfMxw3VpDQGUHC6kXrBt5vw',
+    status: 'PENDING'
   };
   
   // Send invoice email

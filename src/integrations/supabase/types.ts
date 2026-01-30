@@ -140,14 +140,54 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_whitelist: {
+        Row: {
+          user_id: string
+          note: string | null
+          created_at: string
+        }
+        Insert: {
+          user_id: string
+          note?: string | null
+          created_at?: string
+        }
+        Update: {
+          user_id?: string
+          note?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       is_admin: {
-        Args: { p_email: string; p_user_id: string }
+        Args: { p_email?: string; p_user_id?: string }
         Returns: boolean
+      }
+      is_admin_uuid: {
+        Args: { p_user_id: string }
+        Returns: boolean
+      }
+      get_is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      get_invoice_public: {
+        Args: { p_invoice_no: string }
+        Returns: {
+          invoice_no: string
+          status: string
+          stage: string
+          tpc_amount: number
+          total_usd: number
+          total_idr: number
+          created_at: string
+          paid_at: string | null
+          treasury_address: string
+        }[]
       }
     }
     Enums: {

@@ -1,13 +1,8 @@
+import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
-
-// Admin UUID whitelist - in production this should come from environment variables
-const ADMIN_USER_IDS = [
-  // Add admin UUIDs here
-  // "admin-uuid-1",
-  // "admin-uuid-2",
-];
+import { isAdmin } from "@/lib/admin";
 
 interface RequireAdminProps {
   children: React.ReactNode;
@@ -25,9 +20,25 @@ export const RequireAdmin = ({ children, redirectTo = "/member" }: RequireAdminP
     return <Navigate to="/login" replace />;
   }
 
-  const isAdmin = ADMIN_USER_IDS.includes(user.id);
+  // Use database admin check instead of hardcoded list
+  const [isAdminUser, setIsAdminUser] = React.useState<boolean | null>(null);
+
+  React.useEffect(() => {
+    const checkAdminStatus = async () => {
+      const adminStatus = await isAdmin();
+      setIsAdminUser(adminStatus);
+    };
+
+    if (user) {
+      checkAdminStatus();
+    }
+  }, [user]);
+
+  if (isAdminUser === null) {
+    return <div>Checking permissions...</div>;
+  }
   
-  if (!isAdmin) {
+  if (!isAdminUser) {
     toast.error("Access denied. Admin privileges required.");
     return <Navigate to={redirectTo} replace />;
   }
