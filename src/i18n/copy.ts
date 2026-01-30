@@ -502,7 +502,6 @@ export const copy = {
         email: "Email",
         amount: "Jumlah TPC",
         referral: "Kode Referral (Opsional)",
-        paymentMethod: "Metode Pembayaran",
         termsLabel: "Saya menyetujui Syarat & Ketentuan, Risiko, dan Disclaimer"
       },
       // CTA button
@@ -1303,7 +1302,6 @@ export const copy = {
         email: "Email",
         amount: "TPC Amount",
         referral: "Referral Code (Optional)",
-        paymentMethod: "Payment Method",
         termsLabel: "I agree to Terms, Risk Disclosure, and Disclaimer"
       },
       // CTA button

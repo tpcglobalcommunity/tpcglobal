@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { 
@@ -33,7 +32,6 @@ const BuyTpcPage = () => {
   const [email, setEmail] = useState<string>("");
   const [tpcAmount, setTpcAmount] = useState<string>("");
   const [referralCode, setReferralCode] = useState<string>("");
-  const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   
@@ -84,12 +82,6 @@ const BuyTpcPage = () => {
       return lang === 'id' 
         ? `Jumlah terlalu besar. Maksimum ${MAX_TPC_AMOUNT.toLocaleString('id-ID')} TPC per invoice`
         : `Amount too large. Maximum ${MAX_TPC_AMOUNT.toLocaleString()} TPC per invoice`;
-    }
-    
-    if (!paymentMethod) {
-      return lang === 'id' 
-        ? 'Pilih metode pembayaran'
-        : 'Please select payment method';
     }
     
     if (!termsAccepted) {
@@ -166,7 +158,7 @@ const BuyTpcPage = () => {
     }
   };
 
-  const isFormValid = email && tpcAmount && paymentMethod && termsAccepted && !isSubmitting && !loading;
+  const isFormValid = email && tpcAmount && termsAccepted && !isSubmitting && !loading;
 
   return (
     <div className="container-app section-spacing">
@@ -285,17 +277,6 @@ const BuyTpcPage = () => {
                 onChange={(e) => setReferralCode(e.target.value)}
                 disabled={isSubmitting}
               />
-            </div>
-            <div>
-              <Label>{t("buyTpc.form.paymentMethod")}</Label>
-              <Select value={paymentMethod} onValueChange={setPaymentMethod} disabled={isSubmitting}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t("buyTpc.form.paymentMethod")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="crypto">{t("buyTpc.paymentMethods.crypto")}</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
           </div>
 
