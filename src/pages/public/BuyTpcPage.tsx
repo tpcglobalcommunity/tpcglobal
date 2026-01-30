@@ -59,6 +59,7 @@ const BuyTpcPage = () => {
   const [selectedPayment, setSelectedPayment] = useState<string>("");
   const [buyerEmail, setBuyerEmail] = useState<string>("");
   const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
+  const [legalConsent, setLegalConsent] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | null>(null);
   const [activeTab, setActiveTab] = useState<'terms' | 'risk' | 'disclaimer'>('terms');
@@ -167,7 +168,15 @@ const BuyTpcPage = () => {
     }
   };
 
-  const canBuy = currentStage?.status === 'ACTIVE' && tpcAmount && selectedPayment && buyerEmail && termsAccepted;
+  // Validation checks
+  const isValidAmount = tpcAmountNum > 0 && priceUsd > 0 && totalUsd > 0;
+  const canBuy = currentStage?.status === 'ACTIVE' && 
+               isValidAmount && 
+               selectedPayment && 
+               buyerEmail && 
+               termsAccepted &&
+               legalConsent &&
+               !isSubmitting;
 
   return (
     <PremiumShell>
@@ -401,19 +410,54 @@ const BuyTpcPage = () => {
                   )}
                 </div>
 
-                {/* Terms and Conditions */}
+                {/* Legal Consent Checkbox */}
                 <div className="space-y-3">
                   <div className="flex items-center space-x-2">
                     <Checkbox 
-                      id="terms" 
-                      checked={termsAccepted}
-                      onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                      id="legal-consent" 
+                      checked={legalConsent}
+                      onCheckedChange={(checked) => setLegalConsent(checked as boolean)}
                     />
-                    <Label htmlFor="terms" className="text-sm">
-                      {t("buyTpc.purchase.terms")}
+                    <Label htmlFor="legal-consent" className="text-sm">
+                      {t("buyTpc.agreeTerms")}
+                      <div className="flex gap-2 mt-1">
+                        <Button 
+                          variant="link" 
+                          className="p-0 h-auto text-xs underline"
+                          onClick={() => window.open(withLang('/terms'), '_blank')}
+                        >
+                          {t("buyTpc.terms")}
+                        </Button>
+                        <span>•</span>
+                        <Button 
+                          variant="link" 
+                          className="p-0 h-auto text-xs underline"
+                          onClick={() => window.open(withLang('/risk-disclosure'), '_blank')}
+                        >
+                          {t("buyTpc.risk")}
+                        </Button>
+                        <span>•</span>
+                        <Button 
+                          variant="link" 
+                          className="p-0 h-auto text-xs underline"
+                          onClick={() => window.open(withLang('/disclaimer'), '_blank')}
+                        >
+                          {t("buyTpc.disclaimer")}
+                        </Button>
+                      </div>
                     </Label>
                   </div>
                   
+                  {!isValidAmount && tpcAmount && (
+                    <Alert>
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        {t("buyTpc.invalidAmount")}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  {/* Optional: Detailed terms dialog */}
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button 
@@ -491,11 +535,18 @@ const BuyTpcPage = () => {
 
                 <Button 
                   onClick={handleCreateInvoice}
-                  disabled={!canBuy || isSubmitting}
+                  disabled={!canBuy}
                   className="w-full"
                   size="lg"
                 >
-                  {isSubmitting ? "Processing..." : (lang === 'en' ? 'Create Invoice' : 'Buat Invoice')}
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                      {t("buyTpc.creatingInvoice")}
+                    </>
+                  ) : (
+                    t("buyTpc.createInvoice")
+                  )}
                 </Button>
               </>
             )}

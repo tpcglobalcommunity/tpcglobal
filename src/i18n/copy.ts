@@ -432,15 +432,20 @@ export const copy = {
         terms: "Saya menyetujui Syarat & Ketentuan",
         readTerms: "Baca Syarat & Ketentuan",
         buyButton: "Beli TPC",
-        termsRequired: "Anda harus menyetujui syarat & ketentuan"
+        termsRequired: "Anda harus menyetujui syarat dan ketentuan untuk melanjutkan",
+        // Additional keys for hardening
+        agreeTerms: "Saya telah membaca dan menyetujui Syarat, Risiko, dan Disclaimer.",
+        invalidAmount: "Silakan masukkan jumlah TPC yang valid.",
+        creatingInvoice: "Membuat invoice...",
+        createInvoice: "Buat Invoice"
       },
       paymentMethods: {
         USDC: "USDC",
-        SOL: "SOL",
-        BCA: "BCA Bank Transfer",
-        MANDIRI: "Mandiri Bank Transfer",
-        BNI: "BNI Bank Transfer",
-        BRI: "BRI Bank Transfer",
+        SOL: "SOL", 
+        BCA: "Transfer Bank BCA",
+        MANDIRI: "Transfer Bank Mandiri",
+        BNI: "Transfer Bank BNI",
+        BRI: "Transfer Bank BRI",
         OVO: "OVO",
         DANA: "DANA",
         GOPAY: "GoPay"
@@ -1335,26 +1340,6 @@ export const copy = {
         sold: "Sold",
         remaining: "Remaining",
         countdown: "Countdown",
-        status: {
-          active: "ACTIVE",
-          soldOut: "SOLD OUT",
-          expired: "EXPIRED",
-          upcoming: "UPCOMING"
-        }
-      },
-      stage2: {
-        title: "Stage 2",
-        supply: "Supply",
-        price: "Price",
-        sold: "Sold",
-        remaining: "Remaining",
-        countdown: "Countdown",
-        status: {
-          active: "ACTIVE",
-          soldOut: "SOLD OUT",
-          expired: "EXPIRED",
-          upcoming: "UPCOMING"
-        }
       },
       dexPlan: {
         title: "DEX Plan",
