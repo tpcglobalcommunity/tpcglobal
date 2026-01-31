@@ -26,7 +26,7 @@ const MemberInvoicesPage = () => {
       setInvoices(data);
     } catch (error: any) {
       console.error("Failed to load invoices:", error);
-      toast.error(error.message || t("member.toast.uploadFailed"));
+      toast.error(error.message || t("memberInvoice.toast.loadFail"));
     } finally {
       setLoading(false);
     }
@@ -93,7 +93,7 @@ const MemberInvoicesPage = () => {
   const filteredInvoices = invoices
     .filter(invoice => {
       const matchesSearch = invoice.invoice_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           invoice.email.toLowerCase().includes(searchTerm.toLowerCase());
+                           invoice.buyer_email.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === "all" || invoice.status === statusFilter;
       return matchesSearch && matchesStatus;
     })
