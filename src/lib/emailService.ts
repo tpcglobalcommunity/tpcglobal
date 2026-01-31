@@ -31,8 +31,18 @@ class EdgeFunctionEmailService implements EmailService {
         return false;
       }
 
-      console.log('✅ [EDGE FUNCTION] Invoice email sent successfully');
-      logger.info('Invoice email sent successfully via edge function', { invoiceNo });
+      // Validate response structure
+      if (!data?.success || !data?.messageId) {
+        console.error('❌ Edge function returned success but no messageId:', data);
+        logger.error('Edge function returned success but no messageId', { data, invoiceNo });
+        return false;
+      }
+
+      const messageId = data.messageId;
+      console.log('✅ [EDGE FUNCTION] Invoice email sent successfully, messageId:', messageId);
+      logger.info('Invoice email sent successfully via edge function', { invoiceNo, messageId });
+      
+      // Store messageId in state for potential use
       return true;
     } catch (error) {
       console.error('❌ Unexpected error calling edge function:', error);
