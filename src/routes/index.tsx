@@ -10,6 +10,7 @@ import { AdminLayout } from "@/layouts/AdminLayout";
 import HomePage from "@/pages/public/HomePage";
 import VerifiedPage from "@/pages/public/VerifiedPage";
 import BuyTpcPage from "@/pages/public/BuyTpcPage";
+import TransparencyPage from "@/pages/public/TransparencyPage";
 import PresaleStatsPage from "@/pages/public/PresaleStatsPage";
 import ComingSoonPage from "@/pages/public/ComingSoonPage";
 import EducationPage from "@/pages/public/EducationPage";
@@ -35,6 +36,9 @@ export default function AppRoutes() {
         {/* Root redirect to default language */}
         <Route path="/" element={<Navigate to="/id" replace />} />
         
+        {/* Root transparency redirect */}
+        <Route path="/transparency" element={<Navigate to="/id/transparency" replace />} />
+        
         {/* Root DAO routes (redirect to default language) */}
         <Route path="/dao" element={<Navigate to="/id/dao" replace />} />
         <Route path="/dao/snapshot" element={<Navigate to="/id/dao/snapshot" replace />} />
@@ -44,6 +48,7 @@ export default function AppRoutes() {
           <Route index element={<HomePage />} />
           <Route path="verified" element={<VerifiedPage />} />
           <Route path="buytpc" element={<BuyTpcPage />} />
+          <Route path="transparency" element={<TransparencyPage />} />
           <Route path="presale-stats" element={<PresaleStatsPage />} />
           <Route path="anti-scam-faq" element={<AntiScamFaqPage />} />
           <Route path="education" element={<EducationPage />} />

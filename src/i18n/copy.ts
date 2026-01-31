@@ -1117,6 +1117,63 @@ export const copy = {
       finalReminderText: "Jika terdengar terlalu bagus untuk menjadi kenyataan, mungkin memang begitu.",
       finalReminderSubtitle: "Tetap aman, verifikasi semuanya, dan jangan terburu-buru dalam keputusan.",
     },
+    
+    // Transparency Page
+    transparency: {
+      title: "Transparansi",
+      subtitle: "Wallet treasury publik dan pergerakan yang dapat diverifikasi. Tidak ada DM, tidak ada perantara.",
+      hero: {
+        badge: "Registry Resmi"
+      },
+      badges: {
+        educationOnly: "Edukasi-Pertama",
+        securityFirst: "Keamanan-Pertama", 
+        publicWallets: "Wallet Publik"
+      },
+      section: {
+        wallets: {
+          title: "Registry Wallet Resmi",
+          desc: "Semua wallet treasury dan operasional TPC dapat diverifikasi secara publik di blockchain Solana."
+        },
+        verify: {
+          title: "Cara Memverifikasi Transaksi",
+          stepsTitle: "Langkah Verifikasi",
+          step1: "Salin alamat wallet dari registry resmi kami",
+          step2: "Buka explorer Solscan untuk melihat riwayat transaksi",
+          step3: "Bandingkan jumlah dengan pengumuman resmi",
+          step4: "Jangan percaya DM; hanya website + telegram yang dipin",
+          officialChannels: "Channel Resmi",
+          telegramNote: "Ini adalah SATU-SATUNYA channel Telegram resmi kami",
+          warning: "Jangan pernah percaya siapa pun yang menghubungi Anda secara pribadi mengaku sebagai tim TPC."
+        },
+        disclaimer: "Edukasi-Pertama • Tidak Ada Nasihat Keuangan • Risiko Tinggi • Selalu verifikasi melalui channel resmi"
+      },
+      actions: {
+        copy: "Salin Alamat",
+        viewExplorer: "Lihat di Explorer"
+      },
+      toast: {
+        copied: "Alamat disalin ke clipboard!",
+        copyFailed: "Gagal menyalin alamat"
+      },
+      // Wallet labels and purposes
+      wallets: {
+        stage1Supply: "Supply Stage 1",
+        stage1Purpose: "Supply Token Stage 1",
+        stage2Supply: "Supply Stage 2", 
+        stage2Purpose: "Supply Token Stage 2",
+        liquidity: "Likuiditas",
+        liquidityPurpose: "Pool Likuiditas DEX",
+        buyback: "Buyback",
+        buybackPurpose: "Dana Buyback Token",
+        burn: "Burn",
+        burnPurpose: "Alamat Burn Token",
+        mint: "Mint TPC",
+        mintPurpose: "Alamat Mint TPC Resmi",
+        payment: "Wallet Pembayaran",
+        paymentPurpose: "UNTUK PEMBAYARAN"
+      }
+    },
   },
   
   en: {
@@ -1743,19 +1800,59 @@ export const copy = {
     
     // Transparency Page
     transparency: {
-      title: "TPC Global Transparency",
-      subtitle: "Our commitment to openness and accountability",
-      whatTitle: "What We Do",
-      whatBullet1: "Public wallet address publication",
-      whatBullet2: "Periodic fund usage reports",
-      whatBullet3: "Smart contract audits by independent parties",
-      whatBullet4: "Real-time sales statistics",
-      howTitle: "How We Do It",
-      howBullet1: "All transactions trackable on blockchain",
-      howBullet2: "Separate wallets for each fund allocation",
-      howBullet3: "Encrypted invoice system",
-      howBullet4: "Multi-level verification for withdrawals",
-      walletsTitle: "Official Wallet List",
+      title: "Transparency",
+      subtitle: "Public treasury wallets and verifiable movements. No DMs, no intermediaries.",
+      hero: {
+        badge: "Official Registry"
+      },
+      badges: {
+        educationOnly: "Education-Only",
+        securityFirst: "Security-First", 
+        publicWallets: "Public Wallets"
+      },
+      section: {
+        wallets: {
+          title: "Official Wallet Registry",
+          desc: "All TPC treasury and operational wallets are publicly verifiable on Solana blockchain."
+        },
+        verify: {
+          title: "How to Verify Transactions",
+          stepsTitle: "Verification Steps",
+          step1: "Copy the wallet address from our official registry",
+          step2: "Open Solscan explorer to view transaction history",
+          step3: "Compare amounts with official announcements",
+          step4: "Never trust DMs; only website + pinned telegram",
+          officialChannels: "Official Channels",
+          telegramNote: "This is our ONLY official Telegram channel",
+          warning: "Never trust anyone contacting you privately claiming to be TPC team."
+        },
+        disclaimer: "Education-Only • No Financial Advice • High Risk • Always verify through official channels"
+      },
+      actions: {
+        copy: "Copy Address",
+        viewExplorer: "View on Explorer"
+      },
+      toast: {
+        copied: "Address copied to clipboard!",
+        copyFailed: "Failed to copy address"
+      },
+      // Wallet labels and purposes
+      wallets: {
+        stage1Supply: "Stage 1 Supply",
+        stage1Purpose: "Stage 1 Token Supply",
+        stage2Supply: "Stage 2 Supply", 
+        stage2Purpose: "Stage 2 Token Supply",
+        liquidity: "Liquidity",
+        liquidityPurpose: "DEX Liquidity Pool",
+        buyback: "Buyback",
+        buybackPurpose: "Token Buyback Fund",
+        burn: "Burn",
+        burnPurpose: "Token Burn Address",
+        mint: "Mint TPC",
+        mintPurpose: "Official TPC Mint Address",
+        payment: "Payment Wallet",
+        paymentPurpose: "FOR PAYMENT"
+      }
     },
     
     // Wallets
