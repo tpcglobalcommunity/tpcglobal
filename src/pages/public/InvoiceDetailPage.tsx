@@ -253,13 +253,13 @@ const InvoiceDetailPage = () => {
                   id="paymentMethod"
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 appearance-none bg-popover text-popover-foreground border-border hover:border-primary/50 transition-colors [&:not(:disabled)]:cursor-pointer"
                   required
                 >
-                  <option value="">Pilih metode pembayaran</option>
-                  <option value="BANK">Transfer Bank</option>
-                  <option value="USDC">USDC</option>
-                  <option value="SOL">SOL</option>
+                  <option value="" className="bg-popover text-popover-foreground">Pilih metode pembayaran</option>
+                  <option value="BANK" className="bg-popover text-popover-foreground hover:bg-primary hover:text-primary-foreground">Transfer Bank</option>
+                  <option value="USDC" className="bg-popover text-popover-foreground hover:bg-primary hover:text-primary-foreground">USDC</option>
+                  <option value="SOL" className="bg-popover text-popover-foreground hover:bg-primary hover:text-primary-foreground">SOL</option>
                 </select>
               </div>
               
