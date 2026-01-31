@@ -224,44 +224,10 @@ const BuyTpcPage = () => {
       setShowInvoiceModal(true);
       setInvoiceCreated(true);
       
-      // Send invoice email
-      try {
-        console.log('📧 Sending invoice email to:', invoiceEmail);
-        const { getEmailService } = await import('@/lib/emailService');
-        const emailService = getEmailService();
-        const emailSent = await emailService.sendInvoiceEmail(invoiceEmail, invoiceResult.invoice_no, lang);
-        
-        if (emailSent) {
-          console.log('✅ Invoice email sent successfully to:', invoiceEmail);
-          logger.info('Invoice email sent successfully', { email: invoiceEmail, invoice_no: invoiceResult.invoice_no });
-          
-          // Show success toast with email confirmation
-          toast.success(t("buyTpcNew.toast.invoiceCreated") + " - " + t("buyTpcNew.toast.emailSent"));
-        } else {
-          console.error('❌ Failed to send invoice email');
-          logger.error('Failed to send invoice email', { email: invoiceEmail, invoice_no: invoiceResult.invoice_no });
-          
-          // Show warning toast but don't fail the flow
-          toast.warning(t("buyTpcNew.toast.invoiceCreated") + " - " + t("buyTpcNew.toast.emailFailed"));
-        }
-        
-        // Generate confirm URL for copy button (member dashboard with invoice context)
-        const baseUrl = window.location.origin;
-        const confirmUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(`/${lang}/member/invoices/${invoiceResult.invoice_no}`)}`;
-        setConfirmUrl(confirmUrl);
-        
-      } catch (emailError) {
-        console.error('❌ Failed to send invoice email:', emailError);
-        logger.error('Failed to send invoice email', { error: emailError, email: invoiceEmail, invoice_no: invoiceResult.invoice_no });
-        
-        // Still generate confirm URL for manual access
-        const baseUrl = window.location.origin;
-        const confirmUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(`/${lang}/member/invoices/${invoiceResult.invoice_no}`)}`;
-        setConfirmUrl(confirmUrl);
-        
-        // Show warning toast but don't fail the flow
-        toast.warning(t("buyTpcNew.toast.invoiceCreated") + " - " + t("buyTpcNew.toast.emailFailed"));
-      }
+      // Generate confirm URL for copy button (member dashboard with invoice context)
+      const baseUrl = window.location.origin;
+      const confirmUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(`/${lang}/member/invoices/${invoiceResult.invoice_no}`)}`;
+      setConfirmUrl(confirmUrl);
       
     } catch (error) {
       logger.error('Unexpected error creating invoice', error);

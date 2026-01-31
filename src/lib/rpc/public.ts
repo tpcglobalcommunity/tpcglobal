@@ -211,36 +211,13 @@ export const createInvoicePublic = async (request: CreateInvoiceRequest): Promis
     review_note: null
   };
   
-  // Send invoice email
-  try {
-    const { emailService } = await import('@/lib/emailService');
-    await emailService.sendInvoiceEmail(request.buyer_email, mockInvoice.invoice_no, 'id'); // Default to Indonesian
-  } catch (error) {
-    logger.error('Failed to send invoice email', { error });
-  }
-  
   return mockInvoice;
 };
 
 // Confirm invoice payment
 export const confirmInvoicePublic = async (invoiceNo: string): Promise<{ success: boolean; message: string }> => {
   // TODO: Implement after database types are regenerated
-  // This should: 1) Update invoice status to CONFIRMED, 2) Send admin email, 3) Create member record
+  // This should: 1) Update invoice status to CONFIRMED, 2) Create member record
   
-  try {
-    const { emailService } = await import('@/lib/emailService');
-    
-    // Send confirmation email to buyer
-    // TODO: Get actual buyer email from database
-    const buyerEmail = 'buyer@example.com'; // Mock email
-    await emailService.sendConfirmationEmail(buyerEmail, invoiceNo, 'id');
-    
-    // Send notification to admin
-    await emailService.sendAdminNotification(invoiceNo, buyerEmail, 1000, 'USDC'); // Mock data
-    
-    return { success: true, message: 'Confirmation received. Admin will check during business hours.' };
-  } catch (error) {
-    logger.error('Failed to confirm invoice', { error });
-    return { success: false, message: 'Failed to confirm payment. Please try again.' };
-  }
+  return { success: true, message: 'Confirmation received. Admin will check during business hours.' };
 };
