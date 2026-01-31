@@ -32,15 +32,19 @@ const AuthCallback = () => {
           // Get next parameter from URL query
           const searchParams = new URLSearchParams(location.search);
           const nextParam = searchParams.get('next');
+          const returnTo = searchParams.get('returnTo');
           
           if (isAdmin) {
             navigate(`/${lang}/admin`);
+          } else if (returnTo) {
+            // Use returnTo parameter for custom redirect (member dashboard with invoice context)
+            navigate(returnTo, { replace: true });
           } else if (nextParam) {
             // Use next parameter for custom redirect (member dashboard with invoice context)
             navigate(nextParam, { replace: true });
           } else {
             // Default to member dashboard
-            navigate(`/${lang}/member`);
+            navigate(`/${lang}/dashboard`);
           }
         } else {
           // No session, redirect to login

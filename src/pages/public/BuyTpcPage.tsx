@@ -283,7 +283,16 @@ const BuyTpcPage = () => {
 
   const openInvoiceDetail = () => {
     if (invoiceData?.invoice_no) {
-      navigate(withLang(`/invoice/${invoiceData.invoice_no}`));
+      const target = `/${lang}/dashboard/invoices/${invoiceData.invoice_no}`;
+      
+      if (session?.user) {
+        // User is logged in, navigate directly to member dashboard
+        navigate(target);
+      } else {
+        // User is not logged in, navigate to login with returnTo
+        navigate(`/${lang}/login?returnTo=${encodeURIComponent(target)}`);
+      }
+      
       setShowInvoiceModal(false);
     }
   };

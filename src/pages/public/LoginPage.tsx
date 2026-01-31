@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Mail, Loader2, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/i18n/i18n";
@@ -8,10 +8,28 @@ import { supabase } from "@/integrations/supabase/client";
 const LoginPage = () => {
   const { t, lang } = useI18n();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  
+  // Get returnTo from query params
+  const returnTo = searchParams.get('returnTo');
+
+  // Check if user is already logged in and redirect if needed
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        // User is already logged in, redirect to returnTo or dashboard
+        const target = returnTo || `/${lang}/dashboard`;
+        navigate(target, { replace: true });
+      }
+    };
+    
+    checkAuth();
+  }, [returnTo, lang, navigate]);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,7 +42,7 @@ const LoginPage = () => {
 
     const emailStr = Array.isArray(email) ? email[0] : email;
     
-    if (!emailStr.trim()) {
+    if (!emailStr || typeof emailStr !== 'string') {
       setError(t("auth.requiredEmail"));
       return;
     }
@@ -40,7 +58,7 @@ const LoginPage = () => {
       const { error } = await supabase.auth.signInWithOtp({
         email: emailStr,
         options: {
-          emailRedirectTo: `${window.location.origin}/${lang}/auth/callback`,
+          emailRedirectTo: `${window.location.origin}/${lang}/auth/callback${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ''}`,
         },
       });
 
@@ -64,7 +82,7 @@ const LoginPage = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/${lang}/auth/callback`,
+          redirectTo: `${window.location.origin}/${lang}/auth/callback${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ''}`,
         },
       });
 
