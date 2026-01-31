@@ -950,6 +950,49 @@ export const copy = {
       noInvoices: "Belum ada invoice",
     },
     
+    // Member
+    member: {
+      title: "Dashboard Member",
+      subtitle: "Kelola invoice dan pembayaran Anda",
+      myInvoices: "Invoice Saya",
+      noInvoices: "Belum ada invoice",
+      viewInvoice: "Lihat Invoice",
+      invoiceDetailTitle: "Detail Invoice",
+      
+      status: {
+        unpaid: "Belum Dibayar",
+        pending_review: "Menunggu Review",
+        paid: "Sudah Dibayar",
+        rejected: "Ditolak",
+        expired: "Kadaluarsa",
+        cancelled: "Dibatalkan",
+      },
+      
+      confirm: {
+        title: "Konfirmasi Pembayaran",
+        subtitle: "Upload bukti pembayaran untuk melanjutkan",
+        paymentMethod: "Metode Pembayaran",
+        payerName: "Nama Pembayar",
+        payerRef: "Referensi Pembayaran",
+        txSignature: "Signature Transaksi",
+        proofUpload: "Upload Bukti Pembayaran",
+        uploadHint: "JPEG, PNG, atau PDF (Maks. 10MB)",
+        submit: "Submit Konfirmasi",
+        submitted: "Konfirmasi Dikirim!",
+        waitingReview: "Menunggu review dari admin...",
+        alreadyPaid: "Invoice ini sudah dibayar.",
+      },
+      
+      toast: {
+        uploadSuccess: "Bukti pembayaran berhasil diupload",
+        uploadFailed: "Gagal upload bukti pembayaran",
+        submitSuccess: "Konfirmasi pembayaran berhasil dikirim",
+        submitFailed: "Gagal mengirim konfirmasi pembayaran",
+        notAuthorized: "Anda tidak memiliki akses ke invoice ini",
+        invoiceNotFound: "Invoice tidak ditemukan",
+      },
+    },
+    
     // Admin
     admin: {
       title: "Admin Dashboard",
@@ -2245,6 +2288,49 @@ export const copy = {
       welcomeBack: "Welcome Back",
       myInvoices: "My Invoices",
       noInvoices: "No invoices yet",
+    },
+    
+    // Member
+    member: {
+      title: "Member Dashboard",
+      subtitle: "Manage your invoices and payments",
+      myInvoices: "My Invoices",
+      noInvoices: "No invoices yet",
+      viewInvoice: "View Invoice",
+      invoiceDetailTitle: "Invoice Details",
+      
+      status: {
+        unpaid: "Unpaid",
+        pending_review: "Pending Review",
+        paid: "Paid",
+        rejected: "Rejected",
+        expired: "Expired",
+        cancelled: "Cancelled",
+      },
+      
+      confirm: {
+        title: "Payment Confirmation",
+        subtitle: "Upload payment proof to continue",
+        paymentMethod: "Payment Method",
+        payerName: "Payer Name",
+        payerRef: "Payment Reference",
+        txSignature: "Transaction Signature",
+        proofUpload: "Upload Payment Proof",
+        uploadHint: "JPEG, PNG, or PDF (Max. 10MB)",
+        submit: "Submit Confirmation",
+        submitted: "Confirmation Submitted!",
+        waitingReview: "Waiting for admin review...",
+        alreadyPaid: "This invoice is already paid.",
+      },
+      
+      toast: {
+        uploadSuccess: "Payment proof uploaded successfully",
+        uploadFailed: "Failed to upload payment proof",
+        submitSuccess: "Payment confirmation submitted successfully",
+        submitFailed: "Failed to submit payment confirmation",
+        notAuthorized: "You don't have access to this invoice",
+        invoiceNotFound: "Invoice not found",
+      },
     },
     
     // Admin

@@ -24,6 +24,10 @@ import DaoSnapshotPage from "@/pages/public/DaoSnapshotPage";
 import LoginPage from "@/pages/public/LoginPage";
 import AuthCallback from "@/pages/auth/AuthCallback";
 
+// Member Pages
+import MemberDashboardPage from "@/pages/member/MemberDashboardPage";
+import MemberInvoiceDetailPage from "@/pages/member/MemberInvoiceDetailPage";
+
 // Admin Pages
 import AdminSettingsPage from "@/pages/admin/AdminSettingsPage";
 
@@ -55,6 +59,9 @@ export default function AppRoutes() {
         <Route path="/dao" element={<Navigate to="/id/dao" replace />} />
         <Route path="/dao/snapshot" element={<Navigate to="/id/dao/snapshot" replace />} />
         
+        {/* Root member redirect */}
+        <Route path="/member" element={<Navigate to="/id/member" replace />} />
+        
         {/* Language-prefixed routes */}
         <Route path="/:lang" element={<PublicLayout />}>
           <Route index element={<HomePage />} />
@@ -68,6 +75,10 @@ export default function AppRoutes() {
           <Route path="dao/snapshot" element={<DaoSnapshotPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="auth/callback" element={<AuthCallback />} />
+          
+          {/* Member Routes */}
+          <Route path="member" element={<MemberDashboardPage />} />
+          <Route path="member/invoices/:invoiceNo" element={<MemberInvoiceDetailPage />} />
         </Route>
 
         {/* Member Routes */}

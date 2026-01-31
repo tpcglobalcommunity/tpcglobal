@@ -1,5 +1,5 @@
 import { NavLink, useParams } from "react-router-dom";
-import { Home, Info, ShoppingCart, Eye, LogIn } from "lucide-react";
+import { Home, Info, ShoppingCart, Eye, LogIn, User } from "lucide-react";
 
 export const PublicBottomNav = () => {
   const params = useParams();
@@ -18,6 +18,7 @@ export const PublicBottomNav = () => {
     { icon: Info, label: "About", path: "/about" },
     { icon: ShoppingCart, label: "Buy TPC", path: "/buytpc" },
     { icon: Eye, label: "Transparency", path: "/transparency" },
+    { icon: User, label: "Member", path: "/member" },
     { icon: LogIn, label: "Login", path: "/login" },
   ];
 
