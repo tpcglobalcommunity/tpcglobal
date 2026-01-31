@@ -86,7 +86,14 @@ const AppRoutes = () => {
           {/* Protected admin routes */}
           <Route element={<RequireAdmin />}>
             <Route path="admin" element={<AdminLayout />}>
-              <Route index element={<AdminSettingsPage />} />
+              <Route index element={
+                <div style={{color: 'white', padding: '20px'}}>
+                  <h2>Admin Debug Page</h2>
+                  <p>If you see this, RequireAdmin and AdminLayout work!</p>
+                  <p>Now testing AdminSettingsPage...</p>
+                  <AdminSettingsPage />
+                </div>
+              } />
               <Route path="settings" element={<AdminSettingsPage />} />
               <Route path="invoices" element={<div>Admin Invoices (Coming Soon)</div>} />
             </Route>
