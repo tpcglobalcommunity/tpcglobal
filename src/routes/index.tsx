@@ -90,8 +90,8 @@ export default function AppRoutes() {
               <Route path="test" element={<MemberTestPage />} />
             </Route>
 
-            {/* Legacy member routes (LANG-PREFIXED) */}
-            <Route path="member" element={<Navigate to="../dashboard" replace />} />
+            {/* Legacy member routes (lang-aware) */}
+            <Route path="member" element={<Navigate to="dashboard" replace />} />
             <Route path="member/*" element={<Navigate to="../dashboard" replace />} />
           </Route>
 
@@ -113,6 +113,10 @@ export default function AppRoutes() {
         {/* Admin non-lang redirects */}
         <Route path="/admin" element={<Navigate to="/id/admin" replace />} />
         <Route path="/admin/*" element={<Navigate to="/id/admin" replace />} />
+
+        {/* Member non-lang redirects */}
+        <Route path="/dashboard" element={<Navigate to="/id/dashboard" replace />} />
+        <Route path="/member" element={<Navigate to="/id/member" replace />} />
 
         {/* Legacy /home redirects - MUST be before catch-all */}
         <Route path="/en/home" element={<Navigate to="/en" replace />} />
