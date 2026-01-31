@@ -917,12 +917,28 @@ export const copy = {
     auth: {
       loginTitle: "Masuk ke TPC Global",
       loginSubtitle: "Gunakan email Anda untuk masuk",
-      emailLabel: "Alamat Email",
-      emailPlaceholder: "email@contoh.com",
+      emailLabelOld: "Alamat Email",
+      emailPlaceholderOld: "email@contoh.com",
       sendMagicLink: "Kirim Magic Link",
       checkEmail: "Cek email Anda untuk link login",
       adminLoginTitle: "Admin Login",
       adminLoginSubtitle: "Hanya untuk administrator terverifikasi",
+      
+      // New Luma-style login keys
+      title: "Selamat Datang di TPC",
+      subtitle: "Silakan masuk atau daftar di bawah.",
+      emailLabel: "Email",
+      emailPlaceholder: "you@email.com",
+      continueEmail: "Lanjutkan dengan Email",
+      orDivider: "atau",
+      google: "Masuk dengan Google",
+      passkey: "Masuk dengan Passkey",
+      passkeySoon: "Passkey segera hadir.",
+      invalidEmail: "Masukkan email yang valid.",
+      requiredEmail: "Email wajib diisi.",
+      magicLinkSent: "Magic link terkirim!",
+      checkInbox: "Cek inbox email untuk lanjut.",
+      errorGeneric: "Terjadi kesalahan. Coba lagi.",
     },
     
     // Dashboard
@@ -2198,12 +2214,28 @@ export const copy = {
     auth: {
       loginTitle: "Login to TPC Global",
       loginSubtitle: "Use your email to login",
-      emailLabel: "Email Address",
-      emailPlaceholder: "email@example.com",
+      emailLabelOld: "Email Address",
+      emailPlaceholderOld: "email@example.com",
       sendMagicLink: "Send Magic Link",
       checkEmail: "Check your email for login link",
       adminLoginTitle: "Admin Login",
       adminLoginSubtitle: "For verified administrators only",
+      
+      // New Luma-style login keys
+      title: "Welcome to TPC",
+      subtitle: "Please sign in or sign up below.",
+      emailLabel: "Email",
+      emailPlaceholder: "you@email.com",
+      continueEmail: "Continue with Email",
+      orDivider: "or",
+      google: "Sign in with Google",
+      passkey: "Sign in with Passkey",
+      passkeySoon: "Passkeys coming soon.",
+      invalidEmail: "Please enter a valid email address.",
+      requiredEmail: "Email is required.",
+      magicLinkSent: "Magic link sent!",
+      checkInbox: "Check your inbox to continue.",
+      errorGeneric: "Something went wrong. Please try again.",
     },
     
     // Dashboard

@@ -21,7 +21,7 @@ import DaoLitePage from "@/pages/public/DaoLitePage";
 import DaoSnapshotPage from "@/pages/public/DaoSnapshotPage";
 
 // Auth Pages
-import LoginPage from "@/pages/auth/LoginPage";
+import LoginPage from "@/pages/public/LoginPage";
 import AuthCallback from "@/pages/auth/AuthCallback";
 
 // Admin Pages
@@ -66,31 +66,9 @@ export default function AppRoutes() {
           <Route path="education" element={<EducationPage />} />
           <Route path="dao" element={<DaoLitePage />} />
           <Route path="dao/snapshot" element={<DaoSnapshotPage />} />
-          
-          {/* Invoice routes - NESTED and ISOLATED */}
-          <Route path="invoice">
-            <Route path=":invoice_no" element={<InvoiceDetailPage />} />
-          </Route>
-          
-          {/* Coming Soon pages */}
-          <Route path="about" element={<ComingSoonPage titleKey="about.title" />} />
-          <Route path="whitepaper" element={<ComingSoonPage titleKey="whitepaper.title" />} />
-          <Route path="roadmap" element={<ComingSoonPage titleKey="roadmap.title" />} />
-          <Route path="terms" element={<ComingSoonPage titleKey="terms.title" />} />
-          <Route path="privacy" element={<ComingSoonPage titleKey="privacy.title" />} />
-          <Route path="cookies" element={<ComingSoonPage titleKey="cookies.title" />} />
-          <Route path="risk" element={<ComingSoonPage titleKey="risk.title" />} />
-          <Route path="faq" element={<ComingSoonPage titleKey="faq.title" />} />
-          <Route path="how-to-buy-safely" element={<ComingSoonPage titleKey="howToBuy.title" />} />
-          
-          {/* Auth */}
           <Route path="login" element={<LoginPage />} />
-          <Route path="admin/login" element={<LoginPage />} />
           <Route path="auth/callback" element={<AuthCallback />} />
         </Route>
-
-        {/* Fallback auth routes without lang prefix */}
-        <Route path="auth/callback" element={<AuthCallback />} />
 
         {/* Member Routes */}
         <Route path="/member/*" element={
