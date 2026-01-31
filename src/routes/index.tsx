@@ -110,6 +110,9 @@ export default function AppRoutes() {
         <Route path="/en/home" element={<Navigate to="/en" replace />} />
         <Route path="/id/home" element={<Navigate to="/id" replace />} />
         <Route path="/:lang/home" element={<HomeRedirect />} />
+        
+        {/* Non-lang auth callback redirect */}
+        <Route path="/auth/callback" element={<Navigate to="/id/auth/callback" replace />} />
 
         {/* Catch-all */}
         <Route path="*" element={<NotFound />} />

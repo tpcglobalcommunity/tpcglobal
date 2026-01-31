@@ -72,11 +72,15 @@ const LoginPage = () => {
 
     setLoading(true);
 
+    // Save returnTo to sessionStorage for magic link callback
+    const targetReturnTo = returnTo || `/${lang}/dashboard`;
+    sessionStorage.setItem('tpc_returnTo', targetReturnTo);
+
     try {
       const { error } = await supabase.auth.signInWithOtp({
         email: emailStr,
         options: {
-          emailRedirectTo: `${window.location.origin}/${lang}/auth/callback${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ''}`,
+          emailRedirectTo: `${window.location.origin}/${lang}/auth/callback`,
         },
       });
 
