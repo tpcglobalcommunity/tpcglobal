@@ -20,7 +20,7 @@ import DaoLitePage from "@/pages/public/DaoLitePage";
 import DaoSnapshotPage from "@/pages/public/DaoSnapshotPage";
 
 // Auth Pages
-import LoginPage from "@/pages/public/LoginPage";
+import LoginPage from "@/pages/auth/LoginPage";
 import AuthCallbackPage from "@/pages/auth/AuthCallbackPage";
 
 // Member Pages
