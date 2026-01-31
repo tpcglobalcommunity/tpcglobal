@@ -94,6 +94,15 @@ export default function AppRoutes() {
             <Route path="member" element={<Navigate to="../dashboard" replace />} />
             <Route path="member/*" element={<Navigate to="../dashboard" replace />} />
           </Route>
+
+          {/* Protected admin routes */}
+          <Route element={<RequireAdmin />}>
+            <Route path="admin" element={<AdminLayout />}>
+              <Route index element={<AdminSettingsPage />} />
+              <Route path="settings" element={<AdminSettingsPage />} />
+              <Route path="invoices" element={<div>Admin Invoices (Coming Soon)</div>} />
+            </Route>
+          </Route>
         </Route>
 
         {/* Non-lang redirects */}
@@ -101,16 +110,9 @@ export default function AppRoutes() {
         <Route path="/auth/callback" element={<Navigate to="/id/auth/callback" replace />} />
         <Route path="/callback" element={<Navigate to="/id/auth/callback" replace />} />
 
-        {/* Admin Routes */}
-        <Route path="/admin/*" element={
-          <RequireAdmin>
-            <AdminLayout />
-          </RequireAdmin>
-        }>
-          <Route index element={<div>Admin Dashboard (Coming Soon)</div>} />
-          <Route path="invoices" element={<div>Admin Invoices (Coming Soon)</div>} />
-          <Route path="settings" element={<AdminSettingsPage />} />
-        </Route>
+        {/* Admin non-lang redirects */}
+        <Route path="/admin" element={<Navigate to="/id/admin" replace />} />
+        <Route path="/admin/*" element={<Navigate to="/id/admin" replace />} />
 
         {/* Legacy /home redirects - MUST be before catch-all */}
         <Route path="/en/home" element={<Navigate to="/en" replace />} />

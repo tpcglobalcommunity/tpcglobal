@@ -1,12 +1,12 @@
 import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, Outlet } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import { isValidAdmin } from "@/config/admin";
 import { useI18n } from "@/i18n/i18n";
 import { Shield, ArrowLeft } from "lucide-react";
 
 interface RequireAdminProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   redirectTo?: string;
 }
 
@@ -115,5 +115,5 @@ export const RequireAdmin = ({ children, redirectTo }: RequireAdminProps) => {
     );
   }
 
-  return <>{children}</>;
+  return <>{children ?? <Outlet />}</>;
 };
