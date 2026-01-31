@@ -249,6 +249,37 @@ export type Database = {
           created_at: string
         }[]
       }
+      get_invoice_public: {
+        Args: { p_invoice_no: string }
+        Returns: {
+          invoice_no: string;
+          status: string;
+          stage: string;
+          tpc_amount: number;
+          total_usd: number;
+          total_idr: number;
+          treasury_address: string;
+          created_at: string;
+          expires_at: string;
+        }[]
+      }
+      submit_invoice_confirmation: {
+        Args: { 
+          p_invoice_no: string; 
+          p_payment_method: string; 
+          p_payer_name: string; 
+          p_payer_ref: string; 
+          p_tx_signature: string; 
+          p_proof_url: string; 
+        }
+        Returns: {
+          success: boolean;
+          invoice_no: string;
+          status: string;
+          payment_method: string;
+          confirmation_id: string;
+        }[]
+      }
       admin_whitelist_add: {
         Args: { p_user_id: string; p_note?: string }
         Returns: void
@@ -289,22 +320,21 @@ export type Database = {
         Args: { 
           p_invoice_no: string; 
           p_payment_method: string; 
-          p_receiver_wallet: string;
-          p_email?: string; 
-          p_payer_name?: string; 
-          p_payer_ref?: string; 
-          p_tx_signature?: string; 
-          p_proof_url?: string 
+          p_payer_name: string; 
+          p_payer_ref: string; 
+          p_tx_signature: string; 
+          p_proof_url: string; 
         }
         Returns: {
+          success: boolean;
           invoice_no: string;
           status: string;
-          payment_method: string | null;
-          payer_name: string | null;
-          payer_ref: string | null;
-          tx_signature: string | null;
-          proof_url: string | null;
-          receiver_wallet: string | null;
+          payment_method: string;
+          confirmation_id: string;
+        }[]
+      }
+    },
+    Tables: {
           updated_at: string;
         }[]
       }
