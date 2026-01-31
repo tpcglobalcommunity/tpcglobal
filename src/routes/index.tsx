@@ -85,6 +85,7 @@ export default function AppRoutes() {
         {/* Non-lang redirects */}
         <Route path="/login" element={<Navigate to="/id/login" replace />} />
         <Route path="/auth/callback" element={<Navigate to="/id/auth/callback" replace />} />
+        <Route path="/callback" element={<Navigate to="/id/auth/callback" replace />} />
 
         {/* Member Routes - Protected */}
         <Route path="/:lang/dashboard/*" element={<MemberShell />}>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { exchangeCodeForSession, getCurrentSession } from "@/lib/authHelpers";
 import { Loader2 } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 
@@ -21,67 +21,60 @@ const AuthCallbackPage = () => {
         console.info('[AUTH] Processing auth callback...');
         
         // Step 1: Try to exchange code for session (PKCE flow)
-        let session;
-        let exchangeError;
+        const { success, session, error: exchangeError } = await exchangeCodeForSession(window.location.href);
         
-        try {
-          console.info('[AUTH] Exchanging code for session...');
-          const result = await supabase.auth.exchangeCodeForSession(window.location.href);
-          session = result.data.session;
-          exchangeError = result.error;
-          console.info('[AUTH] Exchange result:', { session: !!session, error: exchangeError });
-        } catch (error) {
-          console.warn('[AUTH] Exchange failed:', error);
-          exchangeError = error;
-        }
+        console.info('[AUTH] Exchange result:', { success, session: !!session, error: exchangeError });
         
         // Step 2: Fallback to getSession if exchange failed
-        if (!session && !exchangeError) {
+        if (!success && !exchangeError) {
           console.info('[AUTH] Falling back to getSession...');
-          const sessionResult = await supabase.auth.getSession();
-          session = sessionResult.data.session;
-          exchangeError = sessionResult.error;
-          console.info('[AUTH] GetSession result:', { session: !!session, error: exchangeError });
+          const sessionResult = await getCurrentSession();
+          console.info('[AUTH] GetSession result:', { success: sessionResult.success, session: !!sessionResult.session });
+          
+          if (sessionResult.success && sessionResult.session) {
+            // Session found, proceed with redirect
+            handleSuccessfulRedirect();
+            return;
+          }
         }
         
-        if (exchangeError || !session) {
+        if (exchangeError || !success) {
           console.error('[AUTH] No session established:', exchangeError);
           setError(t("auth.callback.errorDesc"));
           setLoading(false);
           return;
         }
         
-        console.info('[AUTH] Session established, user:', session.user.email);
-        
-        // Determine target redirect
-        const searchParams = new URLSearchParams(location.search);
-        const returnTo = searchParams.get('returnTo');
-        
-        // Get returnTo from sessionStorage (for magic link and OAuth)
-        const savedReturnTo = sessionStorage.getItem('tpc_returnTo');
-        if (savedReturnTo) {
-          sessionStorage.removeItem('tpc_returnTo');
-        }
-        
-        // Security: ensure target starts with current language path
-        const safeReturnTo = returnTo && returnTo.startsWith(`/${lang}/`) ? returnTo : null;
-        const safeSavedReturnTo = savedReturnTo && savedReturnTo.startsWith(`/${lang}/`) ? savedReturnTo : null;
-        
-        const targetUrl = safeReturnTo || safeSavedReturnTo || `/${lang}/dashboard`;
-        
-        console.info('[AUTH] Callback success, redirecting to:', targetUrl);
-        navigate(targetUrl, { replace: true });
+        // Session established successfully
+        handleSuccessfulRedirect();
         
       } catch (error) {
         console.error('[AUTH] Callback error:', error);
         setError(t("auth.callback.errorDesc"));
-      } finally {
         setLoading(false);
       }
     };
-
+    
+    const handleSuccessfulRedirect = () => {
+      // Get returnTo from sessionStorage or query params
+      const returnTo = sessionStorage.getItem('tpc_returnTo') || 
+                       new URLSearchParams(location.search).get('returnTo');
+      
+      // Clear sessionStorage
+      sessionStorage.removeItem('tpc_returnTo');
+      
+      // Validate and redirect
+      let target = `/${lang}/dashboard`;
+      if (returnTo && returnTo.startsWith(`/${lang}/`)) {
+        target = returnTo;
+      }
+      
+      console.info('[AUTH] Callback success, redirecting to:', target);
+      navigate(target, { replace: true });
+    };
+    
     handleAuthCallback();
-  }, [navigate, location, params, t]);
+  }, [lang, navigate, location.search, t]);
 
   if (loading) {
     return (

@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Mail, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/i18n/i18n";
-import { supabase } from "@/integrations/supabase/client";
+import { signInWithGoogle, signInWithMagicLink, getCurrentSession } from "@/lib/authHelpers";
 
 const LoginPage = () => {
   const { t, lang } = useI18n();
@@ -42,8 +42,8 @@ const LoginPage = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
+        const { success, session } = await getCurrentSession();
+        if (success && session?.user) {
           // User is already logged in, redirect to returnTo or dashboard
           const safeReturnTo = returnTo && returnTo.startsWith(`/${lang}/`) ? returnTo : null;
           const target = safeReturnTo || `/${lang}/dashboard`;
@@ -72,25 +72,25 @@ const LoginPage = () => {
     // Save returnTo to sessionStorage for OAuth callback
     sessionStorage.setItem('tpc_returnTo', returnTo || '');
     
+    setLoading(true);
+    
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/${lang}/auth/callback`,
-        },
-      });
-
-      if (error) {
+      const { success, error } = await signInWithGoogle();
+      
+      if (!success) {
         // Check if Google provider is not enabled
-        if (error.message?.includes('provider is not enabled')) {
+        if (error?.includes('provider is not enabled')) {
           toast.error(t("auth.googleNotEnabled"));
         } else {
-          toast.error(t("auth.errorGeneric"));
+          toast.error(error || t("auth.errorGeneric"));
         }
       }
+      // If successful, OAuth will redirect automatically
     } catch (error: any) {
       console.error("Google login error:", error);
       toast.error(t("auth.errorGeneric"));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -115,31 +115,27 @@ const LoginPage = () => {
     sessionStorage.setItem('tpc_returnTo', targetReturnTo);
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/${lang}/auth/callback`,
-        },
-      });
+      const { success, error, message } = await signInWithMagicLink(email);
 
-      if (error) {
-        throw error;
+      if (!success) {
+        // Handle rate limit specifically
+        if (error === 'rate_limited') {
+          setError(t("auth.login.rateLimited"));
+          setRateLimitSec(300); // 5 minutes cooldown
+          toast.error(t("auth.login.tryGoogleNow"));
+        } else {
+          setError(error || t("auth.errorGeneric"));
+          toast.error(error || t("auth.errorGeneric"));
+        }
+        return;
       }
 
       setSent(true);
       toast.success(t("auth.login.checkEmailTitle"));
     } catch (error: any) {
       console.error("Login error:", error);
-      
-      // Handle rate limit specifically
-      if (error?.status === 429 || error?.message?.includes('rate limit')) {
-        setError(t("auth.login.rateLimited"));
-        setRateLimitSec(300); // 5 minutes cooldown
-        toast.error(t("auth.login.tryGoogleNow"));
-      } else {
-        setError(error.message || t("auth.errorGeneric"));
-        toast.error(t("auth.errorGeneric"));
-      }
+      setError(error.message || t("auth.errorGeneric"));
+      toast.error(t("auth.errorGeneric"));
     } finally {
       setLoading(false);
     }
