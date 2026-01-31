@@ -14,12 +14,18 @@ interface EmailService {
 class MockEmailService implements EmailService {
   private async sendEmail(to: string, subject: string, htmlContent: string): Promise<boolean> {
     // Mock implementation - in production, this would integrate with actual email service
+    console.log('📧 [MOCK EMAIL] Sending email:', { to, subject, contentLength: htmlContent.length });
+    console.log('📧 [MOCK EMAIL] To:', to);
+    console.log('📧 [MOCK EMAIL] Subject:', subject);
+    console.log('📧 [MOCK EMAIL] Content preview:', htmlContent.substring(0, 200) + '...');
+    
     logger.debug('Sending email', { to, subject, contentLength: htmlContent.length });
     
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Simulate success (in production, this would handle actual errors)
+    console.log('✅ [MOCK EMAIL] Email sent successfully to:', to);
     logger.debug('Email sent successfully');
     return true;
   }

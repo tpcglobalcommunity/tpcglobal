@@ -136,10 +136,11 @@ const BuyTpcPage = () => {
     setIsSubmitting(true);
     
     try {
+      // @ts-ignore - Supabase RPC type issue
       const { data, error } = await supabase.rpc('create_invoice', {
         p_email: email,
-        p_tpc_amount: parseFloat(tpcAmount),
-        p_referral_code: referralCode.trim() || null
+        p_tpc_amount: tpcAmount,
+        p_referral_code: referralCode || null
       });
 
       if (error) {
@@ -154,7 +155,7 @@ const BuyTpcPage = () => {
       }
 
       // Handle both array and object return types from Supabase RPC
-      const invoiceResult = Array.isArray(data) ? (data[0] ?? null) : (data ?? null);
+      const invoiceResult = data ? (Array.isArray(data) ? (data[0] ?? null) : (data)) : null;
       
       if (!invoiceResult?.invoice_no) {
         logger.error('create_invoice returned unexpected shape', { data });
@@ -181,11 +182,14 @@ const BuyTpcPage = () => {
       
       // Send invoice email
       try {
+        console.log('📧 Sending invoice email to:', email);
         const { getEmailService } = await import('@/lib/emailService');
         const emailService = getEmailService();
         await emailService.sendInvoiceEmail(email, invoiceResult.invoice_no, lang);
+        console.log('✅ Invoice email sent successfully to:', email);
         logger.info('Invoice email sent successfully', { email, invoice_no: invoiceResult.invoice_no });
       } catch (emailError) {
+        console.error('❌ Failed to send invoice email:', emailError);
         logger.error('Failed to send invoice email', { error: emailError, email, invoice_no: invoiceResult.invoice_no });
         // Don't show error to user since invoice was created successfully
       }
