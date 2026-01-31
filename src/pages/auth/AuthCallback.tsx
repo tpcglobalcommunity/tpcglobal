@@ -32,17 +32,11 @@ const AuthCallback = () => {
           // Get next parameter from URL query
           const searchParams = new URLSearchParams(location.search);
           const nextParam = searchParams.get('next');
-          const token = searchParams.get('token');
-          
-          // Handle simple token validation for localhost magic links
-          if (token && !session.user.email.includes(token.split(':')[0])) {
-            console.warn('Token validation failed, using default redirect');
-          }
           
           if (isAdmin) {
             navigate(`/${lang}/admin`);
           } else if (nextParam) {
-            // Use next parameter for custom redirect
+            // Use next parameter for custom redirect (member dashboard with invoice context)
             navigate(nextParam, { replace: true });
           } else {
             // Default to member dashboard

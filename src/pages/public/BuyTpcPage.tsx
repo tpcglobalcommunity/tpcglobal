@@ -190,11 +190,9 @@ const BuyTpcPage = () => {
         console.log('✅ Invoice email sent successfully to:', email);
         logger.info('Invoice email sent successfully', { email, invoice_no: invoiceResult.invoice_no });
         
-        // Generate confirm URL for copy button
+        // Generate confirm URL for copy button (member dashboard with invoice context)
         const baseUrl = window.location.origin;
-        const timestamp = Date.now();
-        const token = btoa(`${invoiceResult.invoice_no}:${timestamp}`);
-        const confirmUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(`/${lang}/member?invoice=${invoiceResult.invoice_no}`)}&invoice=${encodeURIComponent(invoiceResult.invoice_no)}&token=${encodeURIComponent(token)}`;
+        const confirmUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(`/${lang}/member/invoices/${invoiceResult.invoice_no}`)}`;
         setConfirmUrl(confirmUrl);
         
         // Show success toast with email confirmation
@@ -205,9 +203,7 @@ const BuyTpcPage = () => {
         
         // Still generate confirm URL for manual access
         const baseUrl = window.location.origin;
-        const timestamp = Date.now();
-        const token = btoa(`${invoiceResult.invoice_no}:${timestamp}`);
-        const confirmUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(`/${lang}/member?invoice=${invoiceResult.invoice_no}`)}&invoice=${encodeURIComponent(invoiceResult.invoice_no)}&token=${encodeURIComponent(token)}`;
+        const confirmUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(`/${lang}/member/invoices/${invoiceResult.invoice_no}`)}`;
         setConfirmUrl(confirmUrl);
         
         // Show warning toast but don't fail the flow
