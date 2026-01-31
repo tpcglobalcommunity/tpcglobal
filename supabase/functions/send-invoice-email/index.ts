@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { Resend } from "https://esm.sh/resend@2.0.0";
 
 // CORS headers for cross-origin requests
 const corsHeaders = {
@@ -15,6 +16,16 @@ serve(async (req) => {
   }
 
   try {
+    // Explicit environment validation
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendApiKey) {
+      console.log("[EDGE] RESEND_API_KEY is missing");
+      throw new Error("RESEND_API_KEY is missing");
+    }
+
+    const FROM_EMAIL = Deno.env.get("FROM_EMAIL") ?? "onboarding@resend.dev";
+    console.log("[EDGE] Using FROM_EMAIL:", FROM_EMAIL);
+
     // Only allow POST requests
     if (req.method !== "POST") {
       return new Response("Method not allowed", { 
@@ -60,7 +71,7 @@ serve(async (req) => {
       );
     }
 
-    console.log("[EDGE] Validation passed:", { invoice_no, email, lang });
+    console.log("[EDGE] Validation passed:", { invoice_no, email, lang, FROM_EMAIL });
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
@@ -136,101 +147,56 @@ serve(async (req) => {
     const emailHtml = buildInvoiceEmailHtml(invoice, lang, confirmUrl, siteUrl);
     const subject = lang === "id" ? `Invoice TPC - ${invoice_no}` : `TPC Invoice - ${invoice_no}`;
 
-    // Send email via Resend with safety checks
-    console.log("[EDGE] Preparing to send email via Resend");
-    
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    const fromEmail = Deno.env.get("FROM_EMAIL");
+    // Initialize Resend client
+    console.log("[EDGE] Initializing Resend client");
+    const resend = new Resend(resendApiKey);
 
-    if (!resendApiKey) {
-      console.log("[EDGE] RESEND_API_KEY not configured");
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          step: "config",
-          error: "Email service not configured: RESEND_API_KEY missing" 
-        }),
-        { 
-          status: 500, 
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
-    }
+    // Send email via Resend with hardened error handling
+    console.log("[EDGE] Sending email via Resend:", { to: email, from: FROM_EMAIL, subject });
 
-    if (!fromEmail) {
-      console.log("[EDGE] FROM_EMAIL not configured");
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          step: "config",
-          error: "Email service not configured: FROM_EMAIL missing" 
-        }),
-        { 
-          status: 500, 
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
-    }
-
-    console.log("[EDGE] Sending email via Resend:", { to: email, from: fromEmail });
-
-    let emailResult;
+    let sendResult;
     try {
-      const resendResponse = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${resendApiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: fromEmail,
-          to: [email],
-          subject: subject,
-          html: emailHtml,
-        }),
+      sendResult = await resend.emails.send({
+        from: FROM_EMAIL,
+        to: email,
+        subject: subject,
+        html: emailHtml,
       });
+      
+      console.log("[EDGE] Resend response:", sendResult);
 
-      if (!resendResponse.ok) {
-        const errorData = await resendResponse.json();
-        console.log("[EDGE] Resend API error:", { status: resendResponse.status, errorData });
-        return new Response(
-          JSON.stringify({ 
-            success: false, 
-            step: "send-email",
-            error: `Failed to send email: ${errorData.message || resendResponse.statusText}` 
-          }),
-          { 
-            status: 500, 
-            headers: { ...corsHeaders, "Content-Type": "application/json" }
-          }
-        );
-      }
-
-      emailResult = await resendResponse.json();
-      console.log("[EDGE] Email sent successfully:", emailResult);
-
-    } catch (emailError) {
-      console.log("[EDGE] Email sending error:", emailError);
+    } catch (err) {
+      console.error("[EDGE][RESEND ERROR]", err);
       return new Response(
-        JSON.stringify({ 
-          success: false, 
-          step: "send-email",
-          error: `Email sending failed: ${emailError.message}` 
+        JSON.stringify({
+          success: false,
+          step: "resend",
+          error: err.message ?? "Resend failed",
         }),
-        { 
-          status: 500, 
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
+        { status: 500, headers: corsHeaders }
+      );
+    }
+
+    // Return success only if Resend OK
+    if (!sendResult?.id) {
+      console.log("[EDGE] No messageId from Resend");
+      return new Response(
+        JSON.stringify({
+          success: false,
+          step: "resend",
+          error: "No messageId returned from Resend",
+        }),
+        { status: 500, headers: corsHeaders }
       );
     }
 
     // Success response
-    console.log("[EDGE] Function completed successfully");
+    console.log("[EDGE] Function completed successfully:", { messageId: sendResult.id });
     return new Response(
       JSON.stringify({ 
         success: true, 
         invoice_no,
-        messageId: emailResult.id
+        messageId: sendResult.id
       }),
       { 
         status: 200, 
