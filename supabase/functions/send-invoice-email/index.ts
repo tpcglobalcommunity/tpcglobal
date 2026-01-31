@@ -19,6 +19,8 @@ serve(async (req) => {
     console.log("[EDGE] Body:", body);
 
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")
+    console.log("[EDGE] RESEND_API_KEY present:", Boolean(RESEND_API_KEY));
+    
     if (!RESEND_API_KEY) {
       throw new Error("RESEND_API_KEY missing")
     }
@@ -26,14 +28,21 @@ serve(async (req) => {
     const resend = new Resend(RESEND_API_KEY);
 
     // TEMPORARY TEST EMAIL (NO RPC FIRST)
+    console.log("[EDGE] Sending test email to:", body.email);
     const result = await resend.emails.send({
       from: "onboarding@resend.dev",
       to: body.email,
       subject: `TPC Test Email - ${body.invoice_no || 'NO_INVOICE'}`,
-      html: `<p>Edge Function is alive</p><p>Invoice: ${body.invoice_no || 'NO_INVOICE'}</p>`,
+      html: `<p>Edge Function is alive</p><p>Invoice: ${body.invoice_no || 'NO_INVOICE'}</p><p>Timestamp: ${new Date().toISOString()}</p>`,
     });
 
-    console.log("[EDGE][RESEND RESULT]", result);
+    console.log("[EDGE] Resend result:", result);
+
+    // Validate result structure
+    if (result?.error) {
+      console.log("[EDGE] Resend returned error:", result.error);
+      throw new Error(`Resend error: ${result.error.message || result.error.name}`);
+    }
 
     // Validate messageId
     if (!result || (!result.id && !result.data?.id)) {
