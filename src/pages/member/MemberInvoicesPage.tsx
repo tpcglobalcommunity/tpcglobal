@@ -21,11 +21,13 @@ const MemberInvoicesPage = () => {
 
   const loadInvoices = async () => {
     try {
+      console.log("MemberInvoicesPage: Loading invoices...");
       setLoading(true);
       const data = await getMyInvoices();
+      console.log("MemberInvoicesPage: Invoices loaded:", data.length);
       setInvoices(data);
     } catch (error: any) {
-      console.error("Failed to load invoices:", error);
+      console.error("MemberInvoicesPage: Failed to load invoices:", error);
       toast.error(error.message || t("memberInvoice.toast.loadFail"));
     } finally {
       setLoading(false);

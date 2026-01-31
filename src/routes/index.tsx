@@ -30,6 +30,7 @@ import MemberHome from "@/pages/member/MemberHome";
 import MemberInvoicesPage from "@/pages/member/MemberInvoicesPage";
 import MemberInvoiceDetailPage from "@/pages/member/MemberInvoiceDetailPage";
 import MemberSettingsPage from "@/pages/member/MemberSettingsPage";
+import MemberTestPage from "@/pages/member/MemberTestPage";
 
 // Admin Pages
 import AdminSettingsPage from "@/pages/admin/AdminSettingsPage";
@@ -79,23 +80,20 @@ export default function AppRoutes() {
           <Route path="dao/snapshot" element={<DaoSnapshotPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="auth/callback" element={<AuthCallback />} />
-          
-          {/* Member Routes */}
-          <Route path="member" element={<MemberShell />}>
-            <Route index element={<MemberHome />} />
-            <Route path="invoices" element={<MemberInvoicesPage />} />
-            <Route path="invoices/:invoiceNo" element={<MemberInvoiceDetailPage />} />
-            <Route path="settings" element={<MemberSettingsPage />} />
-          </Route>
-          
-          {/* Dashboard Routes (Alias for Member) */}
-          <Route path="dashboard" element={<MemberShell />}>
-            <Route index element={<MemberHome />} />
-            <Route path="invoices" element={<MemberInvoicesPage />} />
-            <Route path="invoices/:invoiceNo" element={<MemberInvoiceDetailPage />} />
-            <Route path="settings" element={<MemberSettingsPage />} />
-          </Route>
         </Route>
+
+        {/* Member Routes - Protected */}
+        <Route path="/:lang/dashboard" element={<RequireAuth><MemberShell /></RequireAuth>}>
+          <Route index element={<MemberHome />} />
+          <Route path="invoices" element={<MemberInvoicesPage />} />
+          <Route path="invoices/:invoiceNo" element={<MemberInvoiceDetailPage />} />
+          <Route path="settings" element={<MemberSettingsPage />} />
+          <Route path="test" element={<MemberTestPage />} />
+        </Route>
+
+        {/* Legacy member routes - redirect to dashboard */}
+        <Route path="/:lang/member" element={<Navigate to={`/:lang/dashboard`} replace />} />
+        <Route path="/:lang/member/*" element={<Navigate to={`/:lang/dashboard/*`} replace />} />
 
         {/* Admin Routes */}
         <Route path="/admin/*" element={

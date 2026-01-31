@@ -17,32 +17,12 @@ const MemberShell = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
   // Get lang from URL params or fallback to 'id'
   const lang = (params.lang as string) || 'id';
 
-  useEffect(() => {
-    checkAuth();
-  }, [lang]);
-
-  const checkAuth = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate(`/${lang}/login`);
-        return;
-      }
-      setUser(session.user);
-    } catch (error) {
-      console.error("Auth check failed:", error);
-      navigate(`/${lang}/login`);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Remove auth check - RequireAuth handles this now
 
   const handleLogout = async () => {
     try {
@@ -79,25 +59,7 @@ const MemberShell = () => {
     return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4" 
-           style={{
-             backgroundColor: '#0B0F17',
-             background: 'radial-gradient(circle at top, rgba(240,185,11,0.08), transparent 40%)'
-           }}>
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-t-2 border-t-[#F0B90B] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <h2 className="text-xl font-semibold mb-2" style={{ color: '#E5E7EB' }}>
-            Loading...
-          </h2>
-          <p style={{ color: '#9CA3AF' }}>
-            Please wait while we load your account.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Remove loading state - RequireAuth handles this now
 
   return (
     <div className="min-h-screen flex" 

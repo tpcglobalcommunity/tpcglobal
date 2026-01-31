@@ -17,12 +17,14 @@ const MemberHome = () => {
 
   const loadInvoices = async () => {
     try {
+      console.log("MemberHome: Loading invoices...");
       setLoading(true);
       const data = await getMyInvoices();
+      console.log("MemberHome: Invoices loaded:", data.length);
       setInvoices(data);
     } catch (error: any) {
-      console.error("Failed to load invoices:", error);
-      toast.error(error.message || t("member.toast.uploadFailed"));
+      console.error("MemberHome: Failed to load invoices:", error);
+      toast.error(error.message || t("memberInvoice.toast.loadFail"));
     } finally {
       setLoading(false);
     }
