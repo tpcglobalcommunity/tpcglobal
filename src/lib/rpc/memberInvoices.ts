@@ -6,18 +6,23 @@ import { logger } from '@/lib/logger';
 
 export interface MemberInvoice {
   invoice_no: string;
-  email: string;
+  buyer_email: string;
   tpc_amount: number;
+  price_usd: number;
   total_usd: number;
   total_idr: number;
+  usd_idr_rate: number;
+  treasury_address: string;
   status: 'UNPAID' | 'PENDING_REVIEW' | 'PAID' | 'REJECTED' | 'EXPIRED' | 'CANCELLED';
   payment_method?: string;
-  payer_name?: string;
-  payer_ref?: string;
-  tx_signature?: string;
-  proof_url?: string;
+  admin_note?: string;
+  tx_hash?: string;
+  expires_at: string;
   created_at: string;
   updated_at: string;
+  paid_at?: string;
+  confirmed_at?: string;
+  approved_at?: string;
 }
 
 /**
@@ -27,7 +32,14 @@ export interface MemberInvoice {
  */
 export const getMyInvoices = async (): Promise<MemberInvoice[]> => {
   try {
-    console.log("Fetching user invoices");
+    // Check if user is authenticated before calling RPC
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      logger.warn('User not authenticated, returning empty invoices list');
+      return [];
+    }
+
+    console.log("Fetching user invoices for user:", session.user.id);
     
     // @ts-ignore - Supabase RPC type issue
     const { data, error } = await supabase.rpc('get_my_invoices');
@@ -50,7 +62,7 @@ export const getMyInvoices = async (): Promise<MemberInvoice[]> => {
     console.log("User invoices fetched successfully:", data?.length || 0);
     logger.info('User invoices fetched successfully', { count: data?.length || 0 });
     
-    return data || [];
+    return (data as MemberInvoice[]) || [];
   } catch (error) {
     console.error("Unexpected error fetching user invoices:", error);
     logger.error('Unexpected error fetching user invoices', error);
@@ -65,7 +77,14 @@ export const getMyInvoices = async (): Promise<MemberInvoice[]> => {
  */
 export const getMyInvoice = async (invoiceNo: string): Promise<MemberInvoice | null> => {
   try {
-    console.log("Fetching invoice:", invoiceNo);
+    // Check if user is authenticated before calling RPC
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      logger.warn('User not authenticated, cannot fetch invoice');
+      throw new Error('You must be logged in to view invoices.');
+    }
+
+    console.log("Fetching invoice:", invoiceNo, "for user:", session.user.id);
     
     // @ts-ignore - Supabase RPC type issue
     const { data, error } = await supabase.rpc('get_my_invoice', {
@@ -93,7 +112,7 @@ export const getMyInvoice = async (invoiceNo: string): Promise<MemberInvoice | n
     console.log("Invoice fetched successfully:", invoice ? invoice.invoice_no : null);
     logger.info('Invoice fetched successfully', { invoice_no: invoice?.invoice_no });
     
-    return invoice;
+    return invoice as MemberInvoice | null;
   } catch (error) {
     console.error("Unexpected error fetching invoice:", error);
     logger.error('Unexpected error fetching invoice', { error, invoiceNo });
