@@ -532,6 +532,7 @@ export const copy = {
           submit: "Kirim konfirmasi"
         },
         method: "Metode Pembayaran",
+        methodRequired: "Metode pembayaran wajib diisi",
         selectPayment: "Pilih metode pembayaran",
         wallet: "Wallet Penerima (Solana)",
         proof: "Bukti Pembayaran",
@@ -541,10 +542,12 @@ export const copy = {
         submit: "Kirim Konfirmasi",
         submitting: "Mengirim Konfirmasi...",
         success: "Konfirmasi berhasil dikirim!",
+        successMessage: "Cek email Anda untuk detail konfirmasi. Login untuk melihat status pembayaran.",
         pending: "Pembayaran sedang ditinjau",
         alreadySubmitted: "Konfirmasi sudah dikirim",
         changeFile: "Ganti File",
         maxSize: "Maksimal 10MB",
+        error: "Gagal mengirim konfirmasi",
         payerName: "Nama Pengirim",
         payerRef: "No. Referensi Bank",
         destination: {
@@ -1499,6 +1502,7 @@ export const copy = {
           submit: "Submit confirmation"
         },
         method: "Payment Method",
+        methodRequired: "Payment method is required",
         selectPayment: "Select payment method",
         wallet: "Receiver Wallet (Solana)",
         proof: "Payment Proof",
@@ -1508,10 +1512,12 @@ export const copy = {
         submit: "Submit Confirmation",
         submitting: "Submitting Confirmation...",
         success: "Confirmation submitted successfully!",
+        successMessage: "Check your email for confirmation details. Login to track payment status.",
         pending: "Payment is under review",
         alreadySubmitted: "Confirmation already submitted",
         changeFile: "Change File",
         maxSize: "Max 10MB",
+        error: "Failed to submit confirmation",
         payerName: "Sender Name",
         payerRef: "Bank Reference No.",
         destination: {

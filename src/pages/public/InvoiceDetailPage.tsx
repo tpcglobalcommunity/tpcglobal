@@ -44,7 +44,6 @@ const InvoiceDetailPage = () => {
   const [confirming, setConfirming] = useState<boolean>(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
   const [proofFile, setProofFile] = useState<File | null>(null);
-  const [uploadingProof, setUploadingProof] = useState<boolean>(false);
   
   // Payment confirmation form state
   const [paymentMethod, setPaymentMethod] = useState<string>("");
@@ -120,26 +119,47 @@ const InvoiceDetailPage = () => {
   const handleSubmitConfirmation = async () => {
     if (!invoice) return;
     if (!paymentMethod) {
-      toast.error("Payment method is required");
+      toast.error(t("confirm.methodRequired") || "Payment method is required");
       return;
     }
-    if (!proofUrl) {
-      toast.error(lang === 'en' ? 'Proof of payment is required' : 'Bukti pembayaran wajib diisi');
+    if (!proofFile) {
+      toast.error(t("confirm.proofRequired") || "Proof of payment is required");
       return;
     }
 
     setConfirming(true);
     try {
+      // Step 1: Upload proof first
+      const validation = validateProofFile(proofFile);
+      if (!validation.isValid) {
+        toast.error(validation.error);
+        setConfirming(false);
+        return;
+      }
+
+      const uploadResult = await uploadInvoiceProof({
+        file: proofFile,
+        invoiceNo: invoice.invoice_no
+      });
+
+      if (!uploadResult.success || !uploadResult.proofUrl) {
+        toast.error(uploadResult.error || (lang === 'en' ? 'Failed to upload proof' : 'Gagal mengunggah bukti'));
+        setConfirming(false);
+        return;
+      }
+
+      // Step 2: Submit confirmation with uploaded proof
       await submitPaymentConfirmation({
         invoice_no: invoice.invoice_no,
         payment_method: paymentMethod,
         payer_name: payerName || null,
         payer_ref: payerRef || null,
         tx_signature: null, // Removed - upload only flow
-        proof_url: proofUrl
+        proof_url: uploadResult.proofUrl
       });
       
-      toast.success("Payment confirmation submitted successfully!");
+      // Success flow
+      toast.success(t("confirm.success") || "Payment confirmation submitted successfully!");
       
       // Reload invoice to get updated status
       const updatedInvoice = await getInvoicePublic(invoice.invoice_no);
@@ -153,46 +173,21 @@ const InvoiceDetailPage = () => {
       setPayerRef("");
       setProofUrl("");
       setProofFile(null);
+      
+      // Show success message with instructions
+      setTimeout(() => {
+        toast.info(t("confirm.successMessage") || "Check your email for confirmation details. You can login to track payment status.");
+      }, 1000);
+      
     } catch (error) {
       logger.error('Failed to submit payment confirmation', { error });
-      toast.error("Failed to submit payment confirmation");
+      toast.error(t("confirm.error") || "Failed to submit payment confirmation");
     } finally {
       setConfirming(false);
     }
   };
 
-  const handleProofUpload = async () => {
-    if (!proofFile || !invoice) return;
-
-    // Validate file before upload
-    const validation = validateProofFile(proofFile);
-    if (!validation.isValid) {
-      toast.error(validation.error);
-      return;
-    }
-
-    setUploadingProof(true);
-    try {
-      const result = await uploadInvoiceProof({
-        file: proofFile,
-        invoiceNo: invoice.invoice_no
-      });
-
-      if (result.success && result.proofUrl) {
-        setProofUrl(result.proofUrl);
-        setProofFile(null);
-        toast.success(lang === 'en' ? '✅ Proof uploaded successfully!' : '✅ Bukti berhasil diunggah!');
-      } else {
-        toast.error(result.error || (lang === 'en' ? 'Failed to upload proof' : 'Gagal mengunggah bukti'));
-      }
-    } catch (error) {
-      logger.error('Failed to upload proof', { error });
-      toast.error(lang === 'en' ? 'Failed to upload proof' : 'Gagal mengunggah bukti');
-    } finally {
-      setUploadingProof(false);
-    }
-  };
-
+  
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -488,7 +483,7 @@ const InvoiceDetailPage = () => {
             <div className="space-y-3">
               <Label htmlFor="proofFile">{t("confirm.proof")} *</Label>
               
-              {!proofUrl ? (
+              {!proofFile ? (
                 <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
                   <input
                     id="proofFile"
@@ -514,7 +509,7 @@ const InvoiceDetailPage = () => {
                         <FileText className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-foreground">{proofFile?.name}</p>
+                        <p className="text-sm font-medium text-foreground">{proofFile.name}</p>
                         <p className="text-xs text-green-600">{t("confirm.proofSuccess")}</p>
                       </div>
                     </div>
@@ -530,11 +525,11 @@ const InvoiceDetailPage = () => {
               )}
             </div>
             
-            {/* Submit Button */}
+            {/* Submit Button - Integrated Upload + Submit */}
             <div className="space-y-3">
               <Button
                 onClick={handleSubmitConfirmation}
-                disabled={confirming || !paymentMethod || !proofUrl}
+                disabled={confirming || !paymentMethod || !proofFile}
                 className="w-full"
                 size="lg"
               >
@@ -552,7 +547,7 @@ const InvoiceDetailPage = () => {
               </Button>
               
               {/* Validation Error */}
-              {!proofUrl && (
+              {!proofFile && (
                 <p className="text-sm text-destructive text-center">
                   {t("confirm.proofRequired")}
                 </p>
