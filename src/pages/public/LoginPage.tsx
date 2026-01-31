@@ -97,7 +97,7 @@ const LoginPage = () => {
       const { error } = await supabase.auth.signInWithOtp({
         email: emailStr,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback-page`,
+          emailRedirectTo: `${window.location.origin}/${lang}/auth/callback`,
         },
       });
 
@@ -132,7 +132,7 @@ const LoginPage = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback-page`,
+          redirectTo: `${window.location.origin}/${lang}/auth/callback`,
         },
       });
 

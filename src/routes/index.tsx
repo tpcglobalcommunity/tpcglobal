@@ -80,8 +80,8 @@ export default function AppRoutes() {
           <Route path="dao" element={<DaoLitePage />} />
           <Route path="dao/snapshot" element={<DaoSnapshotPage />} />
           <Route path="login" element={<LoginPage />} />
-          <Route path="auth/callback" element={<AuthCallback />} />
-          <Route path="auth/callback-page" element={<AuthCallbackPage />} />
+          <Route path="auth/callback" element={<AuthCallbackPage />} />
+          <Route path="auth/callback-page" element={<Navigate to={`/:lang/auth/callback`} replace />} />
         </Route>
 
         {/* Member Routes - Protected */}
@@ -114,8 +114,8 @@ export default function AppRoutes() {
         <Route path="/:lang/home" element={<HomeRedirect />} />
         
         {/* Non-lang auth callback redirect */}
-        <Route path="/auth/callback" element={<Navigate to="/id/auth/callback-page" replace />} />
-        <Route path="/auth/callback-page" element={<Navigate to="/id/auth/callback-page" replace />} />
+        <Route path="/auth/callback" element={<Navigate to="/id/auth/callback" replace />} />
+        <Route path="/auth/callback-page" element={<Navigate to="/id/auth/callback" replace />} />
 
         {/* Catch-all */}
         <Route path="*" element={<NotFound />} />

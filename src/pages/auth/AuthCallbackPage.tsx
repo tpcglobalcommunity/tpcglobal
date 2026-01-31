@@ -14,22 +14,34 @@ const AuthCallbackPage = () => {
       try {
         console.info("[AUTH] Processing auth callback...");
         
-        // Get session from Supabase
-        const { data: { session }, error } = await supabase.auth.getSession();
+        // Step 1: Try to exchange code for session (PKCE flow)
+        let session;
+        let exchangeError;
         
-        if (error) {
-          console.error("[AUTH] Session error:", error);
-          setError("Authentication failed");
-          setLoading(false);
-          return;
+        try {
+          console.info("[AUTH] Exchanging code for session...");
+          const result = await supabase.auth.exchangeCodeForSession(window.location.href);
+          session = result.data.session;
+          exchangeError = result.error;
+          console.info("[AUTH] Exchange result:", { session: !!session, error: exchangeError });
+        } catch (error) {
+          console.warn("[AUTH] Exchange failed:", error);
+          exchangeError = error;
         }
         
-        if (!session) {
-          console.warn("[AUTH] No session found, redirecting to login");
-          // Extract language from URL or default to 'id'
-          const pathParts = location.pathname.split('/').filter(Boolean);
-          const lang = pathParts[0] || 'id';
-          navigate(`/${lang}/login`, { replace: true });
+        // Step 2: Fallback to getSession if exchange failed
+        if (!session && !exchangeError) {
+          console.info("[AUTH] Falling back to getSession...");
+          const sessionResult = await supabase.auth.getSession();
+          session = sessionResult.data.session;
+          exchangeError = sessionResult.error;
+          console.info("[AUTH] GetSession result:", { session: !!session, error: exchangeError });
+        }
+        
+        if (exchangeError || !session) {
+          console.error("[AUTH] No session established:", exchangeError);
+          setError("Authentication failed. Please try again.");
+          setLoading(false);
           return;
         }
         
@@ -39,15 +51,15 @@ const AuthCallbackPage = () => {
         const searchParams = new URLSearchParams(location.search);
         const returnTo = searchParams.get('returnTo');
         
-        // Extract language from URL or default to 'id'
-        const pathParts = location.pathname.split('/').filter(Boolean);
-        const lang = pathParts[0] || 'id';
-        
         // Get returnTo from sessionStorage (for magic link and OAuth)
         const savedReturnTo = sessionStorage.getItem('tpc_returnTo');
         if (savedReturnTo) {
           sessionStorage.removeItem('tpc_returnTo');
         }
+        
+        // Extract language from URL or default to 'id'
+        const pathParts = location.pathname.split('/').filter(Boolean);
+        const lang = pathParts[0] || 'id';
         
         // Security: ensure returnTo starts with current language path
         const safeReturnTo = returnTo && returnTo.startsWith(`/${lang}/`) ? returnTo : null;
@@ -60,7 +72,7 @@ const AuthCallbackPage = () => {
         
       } catch (error) {
         console.error("[AUTH] Callback error:", error);
-        setError("Authentication failed");
+        setError("Authentication failed. Please try again.");
       } finally {
         setLoading(false);
       }
