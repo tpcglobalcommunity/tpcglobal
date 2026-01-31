@@ -55,13 +55,6 @@ export default function AppRoutes() {
         <Route path="/dao" element={<Navigate to="/id/dao" replace />} />
         <Route path="/dao/snapshot" element={<Navigate to="/id/dao/snapshot" replace />} />
         
-        {/* Invalid /home routes - redirect to canonical language root */}
-        <Route path="/en/home" element={<Navigate to="/en" replace />} />
-        <Route path="/id/home" element={<Navigate to="/id" replace />} />
-        
-        {/* Dynamic /home alias for valid languages */}
-        <Route path="/:lang/home" element={<HomeRedirect />} />
-        
         {/* Language-prefixed routes */}
         <Route path="/:lang" element={<PublicLayout />}>
           <Route index element={<HomePage />} />
@@ -121,6 +114,11 @@ export default function AppRoutes() {
           <Route path="invoices" element={<div>Admin Invoices (Coming Soon)</div>} />
           <Route path="settings" element={<AdminSettingsPage />} />
         </Route>
+
+        {/* Legacy /home redirects - MUST be before catch-all */}
+        <Route path="/en/home" element={<Navigate to="/en" replace />} />
+        <Route path="/id/home" element={<Navigate to="/id" replace />} />
+        <Route path="/:lang/home" element={<HomeRedirect />} />
 
         {/* Catch-all */}
         <Route path="*" element={<NotFound />} />
