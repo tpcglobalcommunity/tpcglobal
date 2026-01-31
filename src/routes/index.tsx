@@ -23,6 +23,7 @@ import DaoSnapshotPage from "@/pages/public/DaoSnapshotPage";
 // Auth Pages
 import LoginPage from "@/pages/public/LoginPage";
 import AuthCallback from "@/pages/auth/AuthCallback";
+import AuthCallbackPage from "@/pages/auth/AuthCallbackPage";
 
 // Member Pages
 import MemberShell from "@/pages/member/MemberShell";
@@ -80,6 +81,7 @@ export default function AppRoutes() {
           <Route path="dao/snapshot" element={<DaoSnapshotPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="auth/callback" element={<AuthCallback />} />
+          <Route path="auth/callback-page" element={<AuthCallbackPage />} />
         </Route>
 
         {/* Member Routes - Protected */}
@@ -112,7 +114,8 @@ export default function AppRoutes() {
         <Route path="/:lang/home" element={<HomeRedirect />} />
         
         {/* Non-lang auth callback redirect */}
-        <Route path="/auth/callback" element={<Navigate to="/id/auth/callback" replace />} />
+        <Route path="/auth/callback" element={<Navigate to="/id/auth/callback-page" replace />} />
+        <Route path="/auth/callback-page" element={<Navigate to="/id/auth/callback-page" replace />} />
 
         {/* Catch-all */}
         <Route path="*" element={<NotFound />} />
