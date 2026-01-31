@@ -15,7 +15,7 @@ export interface AdminInvoiceResult {
   payment_method: string;
   treasury_address: string;
   buyer_email: string;
-  status: 'PENDING' | 'CONFIRMED' | 'APPROVED' | 'REJECTED';
+  status: 'PENDING' | 'CONFIRMED' | 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED';
   admin_note: string | null;
   tx_hash: string | null;
   created_at: string;

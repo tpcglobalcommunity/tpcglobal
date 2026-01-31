@@ -37,7 +37,7 @@ const AdminInvoicesPage = () => {
   
   const [invoices, setInvoices] = useState<AdminInvoiceResult[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [filterStatus, setFilterStatus] = useState<string>("CONFIRMED");
+  const [filterStatus, setFilterStatus] = useState<string>("PENDING_REVIEW");
   const [filterStage, setFilterStage] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [processingInvoice, setProcessingInvoice] = useState<string | null>(null);
@@ -71,6 +71,7 @@ const AdminInvoicesPage = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'PENDING': return 'bg-yellow-500';
+      case 'PENDING_REVIEW': return 'bg-blue-500';
       case 'CONFIRMED': return 'bg-blue-500';
       case 'APPROVED': return 'bg-green-500';
       case 'REJECTED': return 'bg-red-500';
@@ -81,6 +82,7 @@ const AdminInvoicesPage = () => {
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case 'PENDING': return 'default';
+      case 'PENDING_REVIEW': return 'secondary';
       case 'CONFIRMED': return 'secondary';
       case 'APPROVED': return 'default';
       case 'REJECTED': return 'destructive';
@@ -183,7 +185,14 @@ const AdminInvoicesPage = () => {
     invoice.invoice_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
     invoice.buyer_email.toLowerCase().includes(searchTerm.toLowerCase())
   ).sort((a, b) => {
-    // Sort pending invoices to the top, newest first
+    // Sort pending review invoices to the top, newest first
+    if (a.status === 'PENDING_REVIEW' && b.status !== 'PENDING_REVIEW') return -1;
+    if (a.status !== 'PENDING_REVIEW' && b.status === 'PENDING_REVIEW') return 1;
+    if (a.status === 'PENDING_REVIEW' && b.status === 'PENDING_REVIEW') {
+      // For pending review invoices, sort newest first
+      return new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime();
+    }
+    // Sort confirmed invoices to the top, newest first
     if (a.status === 'CONFIRMED' && b.status !== 'CONFIRMED') return -1;
     if (a.status !== 'CONFIRMED' && b.status === 'CONFIRMED') return 1;
     if (a.status === 'CONFIRMED' && b.status === 'CONFIRMED') {
@@ -227,6 +236,7 @@ const AdminInvoicesPage = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="PENDING_REVIEW">Pending Review</SelectItem>
                     <SelectItem value="CONFIRMED">Confirmed (Pending Approval)</SelectItem>
                     <SelectItem value="PENDING">Pending</SelectItem>
                     <SelectItem value="APPROVED">Approved</SelectItem>

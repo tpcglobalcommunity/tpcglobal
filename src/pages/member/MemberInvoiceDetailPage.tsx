@@ -322,7 +322,7 @@ const MemberInvoiceDetailPage = () => {
                         color: getStatusColor(invoice.status).text,
                         borderColor: getStatusColor(invoice.status).border
                       }}>
-                  {t(`member.status.${invoice.status.toLowerCase()}`)}
+                  {t(`memberInvoice.status.${invoice.status.toLowerCase()}`)}
                 </span>
               </div>
             </div>
@@ -469,11 +469,11 @@ const MemberInvoiceDetailPage = () => {
                }}>
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: '#E5E7EB' }}>
               <Upload className="w-5 h-5" style={{ color: 'rgba(240,185,11,0.35)' }} />
-              {t("member.confirm.title")}
+              {t("memberInvoice.confirmation.title")}
             </h2>
             
             <p className="text-sm mb-6" style={{ color: '#9CA3AF' }}>
-              {t("member.confirm.subtitle")}
+              {t("memberInvoice.confirmation.subtitle")}
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -674,10 +674,10 @@ const MemberInvoiceDetailPage = () => {
                }}>
             <AlertCircle className="w-8 h-8 mx-auto mb-2" style={{ color: '#3B82F6' }} />
             <h3 className="text-lg font-semibold mb-2" style={{ color: '#E5E7EB' }}>
-              {t("member.confirm.waitingReview")}
+              {t("memberInvoice.panels.pendingReview.title")}
             </h3>
             <p style={{ color: '#9CA3AF' }}>
-              Your payment confirmation has been submitted and is being reviewed by our team.
+              {t("memberInvoice.panels.pendingReview.message")}
             </p>
           </div>
         )}
@@ -690,11 +690,46 @@ const MemberInvoiceDetailPage = () => {
                }}>
             <CheckCircle className="w-8 h-8 mx-auto mb-2" style={{ color: '#22C55E' }} />
             <h3 className="text-lg font-semibold mb-2" style={{ color: '#E5E7EB' }}>
-              {t("member.confirm.alreadyPaid")}
+              {t("memberInvoice.panels.paid.title")}
             </h3>
             <p style={{ color: '#9CA3AF' }}>
-              This invoice has been paid and confirmed.
+              {t("memberInvoice.panels.paid.message")}
             </p>
+          </div>
+        )}
+
+        {(invoice.status === 'EXPIRED' || invoice.status === 'CANCELLED') && (
+          <div className="p-6 rounded-lg text-center" 
+               style={{
+                 backgroundColor: 'rgba(107,114,128,0.1)',
+                 border: '1px solid rgba(107,114,128,0.2)'
+               }}>
+            <XCircle className="w-8 h-8 mx-auto mb-2" style={{ color: '#6B7280' }} />
+            <h3 className="text-lg font-semibold mb-2" style={{ color: '#E5E7EB' }}>
+              {t("memberInvoice.panels.expired.title")}
+            </h3>
+            <p style={{ color: '#9CA3AF' }} className="mb-4">
+              {t("memberInvoice.panels.expired.message")}
+            </p>
+            <button
+              onClick={() => navigate(`/${lang}/buytpc`)}
+              className="px-6 py-2 font-medium rounded-lg transition-all"
+              style={{
+                backgroundColor: 'rgba(240,185,11,0.1)',
+                border: '1px solid rgba(240,185,11,0.3)',
+                color: '#F0B90B'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(240,185,11,0.2)';
+                e.currentTarget.style.borderColor = 'rgba(240,185,11,0.5)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(240,185,11,0.1)';
+                e.currentTarget.style.borderColor = 'rgba(240,185,11,0.3)';
+              }}
+            >
+              {t("memberInvoice.panels.expired.cta")}
+            </button>
           </div>
         )}
       </div>

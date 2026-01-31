@@ -1030,6 +1030,7 @@ export const copy = {
     memberInvoice: {
       confirmation: {
         title: "Konfirmasi Pembayaran",
+        subtitle: "Upload bukti pembayaran dan lengkapi detail transaksi untuk mempercepat proses verifikasi.",
         methodLabel: "Pilih Metode Pembayaran",
         proofLabel: "Upload Bukti Pembayaran",
         refLabel: "No. Referensi",
@@ -1061,7 +1062,32 @@ export const copy = {
       },
       toast: {
         confirmSuccess: "Konfirmasi pembayaran berhasil dikirim. Admin akan segera memeriksa.",
-        confirmFail: "Gagal mengirim konfirmasi. Silakan coba lagi."
+        confirmFail: "Gagal mengirim konfirmasi. Silakan coba lagi.",
+        uploadFail: "Gagal upload bukti pembayaran",
+        loadFail: "Gagal memuat invoice"
+      },
+      panels: {
+        pendingReview: {
+          title: "Menunggu Review Admin",
+          message: "Konfirmasi pembayaran Anda telah dikirim dan sedang ditinjau oleh tim kami."
+        },
+        paid: {
+          title: "Pembayaran Berhasil",
+          message: "Invoice ini telah dibayar dan dikonfirmasi."
+        },
+        expired: {
+          title: "Invoice Kadaluarsa",
+          message: "Invoice ini telah kadaluarsa. Silakan buat invoice baru.",
+          cta: "Beli TPC Lagi"
+        }
+      },
+      status: {
+        unpaid: "Belum Dibayar",
+        pendingReview: "Menunggu Review",
+        paid: "Sudah Dibayar",
+        rejected: "Ditolak",
+        expired: "Kadaluarsa",
+        cancelled: "Dibatalkan"
       }
     },
     
@@ -2442,6 +2468,7 @@ export const copy = {
     memberInvoice: {
       confirmation: {
         title: "Payment Confirmation",
+        subtitle: "Upload payment proof and provide transaction details to speed up verification.",
         methodLabel: "Select Payment Method",
         proofLabel: "Upload Payment Proof",
         refLabel: "Reference Number",
@@ -2473,7 +2500,32 @@ export const copy = {
       },
       toast: {
         confirmSuccess: "Payment confirmation submitted successfully. Admin will review it shortly.",
-        confirmFail: "Failed to submit confirmation. Please try again."
+        confirmFail: "Failed to submit confirmation. Please try again.",
+        uploadFail: "Failed to upload payment proof",
+        loadFail: "Failed to load invoice"
+      },
+      panels: {
+        pendingReview: {
+          title: "Waiting for Admin Review",
+          message: "Your payment confirmation has been submitted and is being reviewed by our team."
+        },
+        paid: {
+          title: "Payment Successful",
+          message: "This invoice has been paid and confirmed."
+        },
+        expired: {
+          title: "Invoice Expired",
+          message: "This invoice has expired. Please create a new invoice.",
+          cta: "Buy TPC Again"
+        }
+      },
+      status: {
+        unpaid: "Unpaid",
+        pendingReview: "Pending Review",
+        paid: "Paid",
+        rejected: "Rejected",
+        expired: "Expired",
+        cancelled: "Cancelled"
       }
     },
     
