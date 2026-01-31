@@ -87,7 +87,7 @@ export const I18nProvider = ({ children }: { children: ReactNode }) => {
         return result;
       } catch (error) {
         // Log error in development but don't throw during render
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
           console.warn(`Translation key not found: ${key}`, error);
         }
         return key; // Fallback to key name

@@ -76,7 +76,7 @@ export class AppErrorBoundary extends Component<Props, State> {
                 </Button>
               </div>
 
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {import.meta.env.DEV && this.state.error && (
                 <details className="mt-4 p-3 bg-gray-100 rounded text-sm">
                   <summary className="cursor-pointer font-medium text-gray-700">
                     Error Details (Development Only)

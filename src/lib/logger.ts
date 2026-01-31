@@ -16,7 +16,7 @@ class Logger {
   private isDevelopment: boolean;
 
   constructor() {
-    this.isDevelopment = process.env.NODE_ENV === 'development';
+    this.isDevelopment = import.meta.env.DEV;
   }
 
   private shouldLog(level: LogLevel): boolean {

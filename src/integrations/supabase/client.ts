@@ -2,37 +2,24 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-// Canonical Supabase environment configuration
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+// Standardized Supabase environment configuration
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Fallback logic for backward compatibility
-const supabaseKey = SUPABASE_ANON_KEY || SUPABASE_PUBLISHABLE_KEY;
-
-// Fail-fast validation with clear error messages
-if (!SUPABASE_URL) {
-  const errorMsg = 'Missing required environment variable: VITE_SUPABASE_URL';
-  if (import.meta.env.DEV) {
-    throw new Error(errorMsg);
-  } else {
-    console.error(errorMsg);
-  }
+// HARD GUARD - NO SILENT FAIL
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error("Supabase ENV not injected at build time: check VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY");
 }
 
-if (!supabaseKey) {
-  const errorMsg = 'Missing required environment variable: VITE_SUPABASE_ANON_KEY (or VITE_SUPABASE_PUBLISHABLE_KEY as fallback)';
-  if (import.meta.env.DEV) {
-    throw new Error(errorMsg);
-  } else {
-    console.error(errorMsg);
-  }
+// Dev-only confirmation (boolean only, not exposing values)
+if (import.meta.env.DEV) {
+  console.log('Supabase client initialized:', !!supabaseUrl && !!supabaseKey);
 }
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, supabaseKey, {
+export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
   auth: {
     storage: localStorage,
     persistSession: true,
