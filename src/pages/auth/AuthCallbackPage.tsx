@@ -56,21 +56,38 @@ const AuthCallbackPage = () => {
     };
     
     const handleSuccessfulRedirect = () => {
-      // Get returnTo from sessionStorage or query params
-      const returnTo = sessionStorage.getItem('tpc_returnTo') || 
-                       new URLSearchParams(location.search).get('returnTo');
+      // Get next destination from multiple sources
+      const qsNext = new URLSearchParams(location.search).get('next');
+      const stored = sessionStorage.getItem('tpc:returnTo');
+      const fallback = `/${lang}/dashboard`; // Default to member area
       
       // Clear sessionStorage
-      sessionStorage.removeItem('tpc_returnTo');
+      sessionStorage.removeItem('tpc:returnTo');
       
-      // Validate and redirect
-      let target = `/${lang}/dashboard`;
-      if (returnTo && returnTo.startsWith(`/${lang}/`)) {
-        target = returnTo;
+      // Sanitize and determine destination
+      const sanitizeNext = (path: string | null): string => {
+        if (!path) return fallback;
+        
+        // Only allow paths starting with '/' and no protocol
+        if (!path.startsWith('/') || path.startsWith('//') || path.startsWith('http')) {
+          return fallback;
+        }
+        
+        return path;
+      };
+      
+      const dest = sanitizeNext(qsNext || stored || fallback);
+      
+      // Prevent loops
+      const currentPath = `/${lang}/auth/callback`;
+      if (dest === currentPath) {
+        console.warn('[AUTH] Preventing redirect loop, using fallback');
+        navigate(fallback, { replace: true });
+        return;
       }
       
-      console.info('[AUTH] Callback success, redirecting to:', target);
-      navigate(target, { replace: true });
+      console.info('[AUTH] Callback success, redirecting to:', dest);
+      navigate(dest, { replace: true });
     };
     
     handleAuthCallback();

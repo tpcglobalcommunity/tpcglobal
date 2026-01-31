@@ -16,8 +16,8 @@ const LoginPage = () => {
   const [cooldownSec, setCooldownSec] = useState(0);
   const [rateLimitSec, setRateLimitSec] = useState(0);
   
-  // Get returnTo from query params
-  const returnTo = searchParams.get('returnTo');
+  // Get next destination from query params (default to member area)
+  const next = searchParams.get('next') || `/${lang}/dashboard`;
 
   // Cooldown timer effects
   useEffect(() => {
@@ -44,10 +44,9 @@ const LoginPage = () => {
       try {
         const { success, session } = await getCurrentSession();
         if (success && session?.user) {
-          // User is already logged in, redirect to returnTo or dashboard
-          const safeReturnTo = returnTo && returnTo.startsWith(`/${lang}/`) ? returnTo : null;
-          const target = safeReturnTo || `/${lang}/dashboard`;
-          navigate(target, { replace: true });
+          // User is already logged in, redirect to next or dashboard
+          const safeNext = next && next.startsWith(`/${lang}/`) ? next : `/${lang}/dashboard`;
+          navigate(safeNext, { replace: true });
         }
       } catch (error) {
         console.error("Auth check failed:", error);
@@ -55,7 +54,7 @@ const LoginPage = () => {
     };
     
     checkAuth();
-  }, [returnTo, lang, navigate]);
+  }, [next, lang, navigate]);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -69,8 +68,8 @@ const LoginPage = () => {
   };
 
   const handleGoogleLogin = async () => {
-    // Save returnTo to sessionStorage for OAuth callback
-    sessionStorage.setItem('tpc_returnTo', returnTo || '');
+    // Store next destination for OAuth callback
+    sessionStorage.setItem('tpc:returnTo', next);
     
     setLoading(true);
     
@@ -110,9 +109,8 @@ const LoginPage = () => {
 
     setLoading(true);
 
-    // Save returnTo to sessionStorage for magic link callback
-    const targetReturnTo = returnTo || `/${lang}/dashboard`;
-    sessionStorage.setItem('tpc_returnTo', targetReturnTo);
+    // Store next destination for magic link callback
+    sessionStorage.setItem('tpc:returnTo', next);
 
     try {
       const { success, error, message } = await signInWithMagicLink(email);

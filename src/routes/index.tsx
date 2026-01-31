@@ -88,7 +88,11 @@ export default function AppRoutes() {
         <Route path="/callback" element={<Navigate to="/id/auth/callback" replace />} />
 
         {/* Member Routes - Protected */}
-        <Route path="/:lang/dashboard/*" element={<MemberShell />}>
+        <Route path="/:lang/dashboard/*" element={
+          <RequireAuth>
+            <MemberShell />
+          </RequireAuth>
+        }>
           <Route index element={<MemberHome />} />
           <Route path="invoices" element={<MemberInvoicesPage />} />
           <Route path="invoices/:invoiceNo" element={<MemberInvoiceDetailPage />} />

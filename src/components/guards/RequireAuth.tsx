@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
+import { useI18n } from "@/i18n/i18n";
 
 interface RequireAuthProps {
   children: React.ReactNode;
@@ -8,6 +9,7 @@ interface RequireAuthProps {
 export const RequireAuth = ({ children }: RequireAuthProps) => {
   const { user, loading } = useAuth();
   const location = useLocation();
+  const { t } = useI18n();
 
   if (loading) {
     return (
@@ -19,7 +21,7 @@ export const RequireAuth = ({ children }: RequireAuthProps) => {
         backgroundColor: '#0B0F17',
         color: '#E5E7EB'
       }}>
-        <div>Loading...</div>
+        <div>{t("common.loading")}</div>
       </div>
     );
   }
@@ -29,10 +31,10 @@ export const RequireAuth = ({ children }: RequireAuthProps) => {
     const pathSegments = location.pathname.split('/');
     const lang = pathSegments[1] || 'id';
     
-    // Build returnTo with current path
-    const returnTo = encodeURIComponent(location.pathname + location.search);
+    // Build next with current path
+    const next = encodeURIComponent(location.pathname + location.search);
     
-    return <Navigate to={`/${lang}/login?returnTo=${returnTo}`} replace />;
+    return <Navigate to={`/${lang}/login?next=${next}`} replace />;
   }
 
   return <>{children}</>;
