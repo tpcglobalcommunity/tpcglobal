@@ -58,8 +58,15 @@ export async function uploadInvoiceProof({ file, invoiceNo }: UploadProofOptions
       
       // More specific error messages
       let errorMessage = 'Failed to upload file. Please try again.';
-      if (uploadError.message.includes('Bucket not found')) {
-        errorMessage = 'Storage bucket not found. Please contact support.';
+      if (uploadError.message.includes('Bucket not found') || uploadError.message.includes('The bucket')) {
+        errorMessage = 'Storage bucket "invoice-proofs" not found. Please contact support to create it.';
+        if (import.meta.env.DEV) {
+          console.warn('DEV: Please create "invoice-proofs" bucket in Supabase Storage with:');
+          console.warn('- Name: invoice-proofs');
+          console.warn('- Private: true');
+          console.warn('- Allowed: jpg/png/pdf');
+          console.warn('- Limit: 10MB');
+        }
       } else if (uploadError.message.includes('duplicate')) {
         errorMessage = 'File already exists. Please try again with a different file.';
       } else if (uploadError.message.includes('quota')) {

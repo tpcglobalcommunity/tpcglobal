@@ -84,12 +84,6 @@ export const I18nProvider = ({ children }: { children: ReactNode }) => {
     (key: string): string | string[] => {
       try {
         const result = getNestedValue(copy[lang] as unknown as Record<string, unknown>, key);
-        
-        // DEV check for confirm keys
-        if (import.meta.env.DEV && key.startsWith('confirm.')) {
-          console.log(`[i18n] ${lang} confirm key "${key}":`, result);
-        }
-        
         return result;
       } catch (error) {
         // Log error in development but don't throw during render
