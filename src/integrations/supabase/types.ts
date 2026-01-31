@@ -263,23 +263,6 @@ export type Database = {
           expires_at: string;
         }[]
       }
-      submit_invoice_confirmation: {
-        Args: { 
-          p_invoice_no: string; 
-          p_payment_method: string; 
-          p_payer_name: string; 
-          p_payer_ref: string; 
-          p_tx_signature: string; 
-          p_proof_url: string; 
-        }
-        Returns: {
-          success: boolean;
-          invoice_no: string;
-          status: string;
-          payment_method: string;
-          confirmation_id: string;
-        }[]
-      }
       admin_whitelist_add: {
         Args: { p_user_id: string; p_note?: string }
         Returns: void
