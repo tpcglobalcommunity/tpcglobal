@@ -292,30 +292,6 @@ export type Database = {
         Args: {}
         Returns: PresaleSettings[]
       }
-      get_invoice_public: {
-        Args: { p_invoice_no: string }
-        Returns: {
-          invoice_no: string;
-          stage: string;
-          tpc_amount: number;
-          price_usd: number;
-          total_usd: number;
-          total_idr: number;
-          usd_idr_rate: number;
-          treasury_address: string;
-          status: string;
-          payment_method: string | null;
-          payer_name: string | null;
-          payer_ref: string | null;
-          tx_signature: string | null;
-          proof_url: string | null;
-          receiver_wallet: string | null;
-          created_at: string;
-          expires_at: string;
-          reviewed_at: string | null;
-          review_note: string | null;
-        }[]
-      }
       submit_invoice_confirmation: {
         Args: { 
           p_invoice_no: string; 
@@ -333,80 +309,19 @@ export type Database = {
           confirmation_id: string;
         }[]
       }
-    },
-    Tables: {
-          updated_at: string;
-        }[]
-      }
-      admin_review_invoice: {
-        Args: { p_invoice_no: string; p_action: string; p_note?: string }
-        Returns: {
-          invoice_no: string;
-          old_status: string;
-          new_status: string;
-          reviewed_by: string;
-          reviewed_at: string;
-          review_note: string | null;
-        }[]
-      }
-      admin_list_invoices: {
-        Args: { p_status?: string; p_limit?: number; p_offset?: number }
-        Returns: {
-          invoice_no: string;
-          stage: string;
-          tpc_amount: number;
-          total_usd: number;
-          total_idr: number;
-          status: string;
-          payment_method: string | null;
-          payer_name: string | null;
-          payer_ref: string | null;
-          proof_url: string | null;
-          created_at: string;
-          reviewed_at: string | null;
-          reviewed_by: string | null;
-          review_note: string | null;
-        }[]
-      }
-      generate_proof_upload_url: {
-        Args: { p_invoice_no: string; p_file_name: string; p_content_type: string }
-        Returns: {
-          upload_url: string;
-          file_path: string;
-        }[]
-      }
-      create_invoice: {
-        Args: { p_email: string; p_tpc_amount: number; p_referral_code?: string }
-        Returns: {
-          invoice_no: string;
-          stage: string;
-          tpc_amount: number;
-          price_usd: number;
-          total_usd: number;
-          total_idr: number;
-          usd_idr_rate: number;
-          treasury_address: string;
-          expires_at: string;
-          status: string;
-        }[]
-      }
-      update_invoice_email: {
-        Args: { p_invoice_no: string; p_buyer_email: string }
-        Returns: void
-      }
-      cancel_invoice: {
-        Args: { p_invoice_no: string }
-        Returns: void
-      }
-    }
-    Enums: {
+    Views: {
       [_ in never]: never
     }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+    Enums: {}
+    CompositeTypes: {}
   }
 }
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
@@ -524,9 +439,3 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
-
-export const Constants = {
-  public: {
-    Enums: {},
-  },
-} as const
