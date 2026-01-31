@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FileText, Upload, Loader2, ArrowLeft, Calendar, DollarSign, Wallet, CheckCircle, XCircle, AlertCircle, Clock, Download } from "lucide-react";
+import { FileText, Upload, Loader2, ArrowLeft, Calendar, DollarSign, Wallet, CheckCircle, XCircle, AlertCircle, Clock, Copy, Eye, Download } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/i18n/i18n";
 import { getMyInvoice, type MemberInvoice } from "@/lib/rpc/memberInvoices";
@@ -70,6 +70,22 @@ const MemberInvoiceDetailPage = () => {
       } else {
         setPreviewUrl("");
       }
+    }
+  };
+
+  const handleCopyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(t("member.toast.copySuccess"));
+    } catch (error) {
+      console.error("Failed to copy:", error);
+      toast.error("Failed to copy to clipboard");
+    }
+  };
+
+  const handleViewPublicInvoice = () => {
+    if (invoice) {
+      window.open(`/${lang}/invoice/${invoice.invoice_no}`, '_blank');
     }
   };
 
@@ -288,10 +304,32 @@ const MemberInvoiceDetailPage = () => {
                 </span>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-sm" style={{ color: '#9CA3AF' }}>
-                {formatDate(invoice.created_at)}
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <div className="text-sm" style={{ color: '#9CA3AF' }}>
+                  {formatDate(invoice.created_at)}
+                </div>
               </div>
+              <button
+                onClick={handleViewPublicInvoice}
+                className="px-4 py-2 font-medium rounded-lg transition-all flex items-center gap-2"
+                style={{
+                  background: 'transparent',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  color: '#E5E7EB'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(240,185,11,0.4)';
+                  e.currentTarget.style.color = '#F0B90B';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
+                  e.currentTarget.style.color = '#E5E7EB';
+                }}
+              >
+                <Eye className="w-4 h-4" />
+                {t("member.detail.openPublic")}
+              </button>
             </div>
           </div>
         </div>
@@ -362,8 +400,10 @@ const MemberInvoiceDetailPage = () => {
             
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-medium mb-2" style={{ color: '#9CA3AF' }}>Treasury Address</h3>
-                <div className="p-3 rounded-lg font-mono text-sm" 
+                <h3 className="text-sm font-medium mb-2" style={{ color: '#9CA3AF' }}>
+                  {t("member.detail.treasury")}
+                </h3>
+                <div className="p-3 rounded-lg font-mono text-sm relative" 
                      style={{ 
                        backgroundColor: '#111827', 
                        border: '1px solid rgba(255,255,255,0.12)',
@@ -371,11 +411,20 @@ const MemberInvoiceDetailPage = () => {
                      }}>
                   {/* This should come from config or RPC */}
                   TBC... (Treasury Address)
+                  <button
+                    onClick={() => handleCopyToClipboard("TBC... (Treasury Address)")}
+                    className="absolute top-2 right-2 p-1 rounded transition-all hover:bg-[rgba(240,185,11,0.1)]"
+                    style={{ color: '#9CA3AF' }}
+                  >
+                    <Copy className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
               
               <div>
-                <h3 className="text-sm font-medium mb-2" style={{ color: '#9CA3AF' }}>Amount to Transfer</h3>
+                <h3 className="text-sm font-medium mb-2" style={{ color: '#9CA3AF' }}>
+                  Amount to Transfer
+                </h3>
                 <div className="p-3 rounded-lg" 
                      style={{ 
                        backgroundColor: '#111827', 

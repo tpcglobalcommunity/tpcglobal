@@ -959,6 +959,37 @@ export const copy = {
       viewInvoice: "Lihat Invoice",
       invoiceDetailTitle: "Detail Invoice",
       
+      // Navigation
+      nav: {
+        dashboard: "Dashboard",
+        invoices: "Invoice",
+        settings: "Pengaturan"
+      },
+      
+      // Page
+      page: {
+        title: "Dashboard Member",
+        subtitle: "Selamat datang di area member TPC"
+      },
+      
+      // Invoices
+      invoices: {
+        title: "Daftar Invoice",
+        emptyTitle: "Belum ada invoice",
+        emptySubtitle: "Anda belum membuat invoice apapun. Mulai dengan membeli TPC tokens.",
+        createInvoice: "Buat Invoice",
+        view: "Lihat"
+      },
+      
+      // Detail
+      detail: {
+        title: "Detail Invoice",
+        summary: "Ringkasan Invoice",
+        treasury: "Alamat Treasury",
+        copy: "Salin",
+        openPublic: "Lihat Publik"
+      },
+      
       status: {
         unpaid: "Belum Dibayar",
         pending_review: "Menunggu Review",
@@ -979,7 +1010,7 @@ export const copy = {
         uploadHint: "JPEG, PNG, atau PDF (Maks. 10MB)",
         submit: "Submit Konfirmasi",
         submitted: "Konfirmasi Dikirim!",
-        waitingReview: "Menunggu review dari admin...",
+        waiting: "Menunggu review dari admin...",
         alreadyPaid: "Invoice ini sudah dibayar.",
       },
       
@@ -990,6 +1021,7 @@ export const copy = {
         submitFailed: "Gagal mengirim konfirmasi pembayaran",
         notAuthorized: "Anda tidak memiliki akses ke invoice ini",
         invoiceNotFound: "Invoice tidak ditemukan",
+        copySuccess: "Berhasil disalin ke clipboard"
       },
     },
     
@@ -2299,6 +2331,37 @@ export const copy = {
       viewInvoice: "View Invoice",
       invoiceDetailTitle: "Invoice Details",
       
+      // Navigation
+      nav: {
+        dashboard: "Dashboard",
+        invoices: "Invoices",
+        settings: "Settings"
+      },
+      
+      // Page
+      page: {
+        title: "Member Dashboard",
+        subtitle: "Welcome to your TPC member area"
+      },
+      
+      // Invoices
+      invoices: {
+        title: "Invoice List",
+        emptyTitle: "No invoices yet",
+        emptySubtitle: "You haven't created any invoices yet. Start by buying TPC tokens.",
+        createInvoice: "Create Invoice",
+        view: "View"
+      },
+      
+      // Detail
+      detail: {
+        title: "Invoice Details",
+        summary: "Invoice Summary",
+        treasury: "Treasury Address",
+        copy: "Copy",
+        openPublic: "View Public"
+      },
+      
       status: {
         unpaid: "Unpaid",
         pending_review: "Pending Review",
@@ -2319,7 +2382,7 @@ export const copy = {
         uploadHint: "JPEG, PNG, or PDF (Max. 10MB)",
         submit: "Submit Confirmation",
         submitted: "Confirmation Submitted!",
-        waitingReview: "Waiting for admin review...",
+        waiting: "Waiting for admin review...",
         alreadyPaid: "This invoice is already paid.",
       },
       
@@ -2330,6 +2393,7 @@ export const copy = {
         submitFailed: "Failed to submit payment confirmation",
         notAuthorized: "You don't have access to this invoice",
         invoiceNotFound: "Invoice not found",
+        copySuccess: "Copied to clipboard successfully"
       },
     },
     

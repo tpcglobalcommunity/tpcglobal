@@ -25,8 +25,11 @@ import LoginPage from "@/pages/public/LoginPage";
 import AuthCallback from "@/pages/auth/AuthCallback";
 
 // Member Pages
-import MemberDashboardPage from "@/pages/member/MemberDashboardPage";
+import MemberShell from "@/pages/member/MemberShell";
+import MemberHome from "@/pages/member/MemberHome";
+import MemberInvoicesPage from "@/pages/member/MemberInvoicesPage";
 import MemberInvoiceDetailPage from "@/pages/member/MemberInvoiceDetailPage";
+import MemberSettingsPage from "@/pages/member/MemberSettingsPage";
 
 // Admin Pages
 import AdminSettingsPage from "@/pages/admin/AdminSettingsPage";
@@ -77,20 +80,12 @@ export default function AppRoutes() {
           <Route path="auth/callback" element={<AuthCallback />} />
           
           {/* Member Routes */}
-          <Route path="member" element={<MemberDashboardPage />} />
-          <Route path="member/invoices/:invoiceNo" element={<MemberInvoiceDetailPage />} />
-        </Route>
-
-        {/* Member Routes */}
-        <Route path="/member/*" element={
-          <RequireAuth>
-            <MemberLayout />
-          </RequireAuth>
-        }>
-          <Route index element={<div>Member Dashboard (Coming Soon)</div>} />
-          <Route path="invoices" element={<div>Member Invoices (Coming Soon)</div>} />
-          <Route path="referral" element={<div>Member Referral (Coming Soon)</div>} />
-          <Route path="profile" element={<div>Member Profile (Coming Soon)</div>} />
+          <Route path="member" element={<MemberShell />}>
+            <Route index element={<MemberHome />} />
+            <Route path="invoices" element={<MemberInvoicesPage />} />
+            <Route path="invoices/:invoiceNo" element={<MemberInvoiceDetailPage />} />
+            <Route path="settings" element={<MemberSettingsPage />} />
+          </Route>
         </Route>
 
         {/* Admin Routes */}
