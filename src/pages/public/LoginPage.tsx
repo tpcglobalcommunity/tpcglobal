@@ -23,7 +23,9 @@ const LoginPage = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         // User is already logged in, redirect to returnTo or dashboard
-        const target = returnTo || `/${lang}/dashboard`;
+        // Basic security: ensure returnTo starts with current language path
+        const safeReturnTo = returnTo && returnTo.startsWith(`/${lang}/`) ? returnTo : null;
+        const target = safeReturnTo || `/${lang}/dashboard`;
         navigate(target, { replace: true });
       }
     };

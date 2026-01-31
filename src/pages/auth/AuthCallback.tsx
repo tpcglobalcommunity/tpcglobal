@@ -34,11 +34,14 @@ const AuthCallback = () => {
           const nextParam = searchParams.get('next');
           const returnTo = searchParams.get('returnTo');
           
+          // Basic security: ensure returnTo starts with current language path
+          const safeReturnTo = returnTo && returnTo.startsWith(`/${lang}/`) ? returnTo : null;
+          
           if (isAdmin) {
             navigate(`/${lang}/admin`);
-          } else if (returnTo) {
+          } else if (safeReturnTo) {
             // Use returnTo parameter for custom redirect (member dashboard with invoice context)
-            navigate(returnTo, { replace: true });
+            navigate(safeReturnTo, { replace: true });
           } else if (nextParam) {
             // Use next parameter for custom redirect (member dashboard with invoice context)
             navigate(nextParam, { replace: true });
