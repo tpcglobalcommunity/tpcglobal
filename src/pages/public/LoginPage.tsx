@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Mail, Loader2 } from "lucide-react";
+import { Mail, Loader2, RefreshCw, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/i18n/i18n";
 import { signInWithGoogle, signInWithMagicLink, getCurrentSession } from "@/lib/authHelpers";
+import { logAuthEvent } from "@/lib/auth/session";
 
 const LoginPage = () => {
   const { t, lang } = useI18n();
@@ -15,6 +16,8 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [cooldownSec, setCooldownSec] = useState(0);
   const [rateLimitSec, setRateLimitSec] = useState(0);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [errorType, setErrorType] = useState<'generic' | 'oauth_canceled' | 'magic_link_expired' | 'rate_limited'>('generic');
   
   // Get next destination from query params (default to member area)
   const next = searchParams.get('next') || `/${lang}/dashboard`;
@@ -72,22 +75,32 @@ const LoginPage = () => {
     sessionStorage.setItem('tpc:returnTo', next);
     
     setLoading(true);
+    setError("");
+    setErrorType('generic');
     
     try {
       const { success, error } = await signInWithGoogle();
       
       if (!success) {
-        // Check if Google provider is not enabled
+        // Check specific error types
         if (error?.includes('provider is not enabled')) {
-          toast.error(t("auth.googleNotEnabled"));
+          setError(t("auth.googleNotEnabled"));
+          setErrorType('generic');
+        } else if (error?.includes('access_denied') || error?.includes('popup_closed')) {
+          setError(t("auth.login.error.oauthCanceled"));
+          setErrorType('oauth_canceled');
         } else {
-          toast.error(error || t("auth.errorGeneric"));
+          setError(error || t("auth.errorGeneric"));
+          setErrorType('generic');
         }
+        logAuthEvent('LOGIN_FAILED', { error, method: 'google_oauth' });
       }
       // If successful, OAuth will redirect automatically
     } catch (error: any) {
       console.error("Google login error:", error);
-      toast.error(t("auth.errorGeneric"));
+      setError(t("auth.errorGeneric"));
+      setErrorType('generic');
+      logAuthEvent('LOGIN_FAILED', { error: error.message, method: 'google_oauth' });
     } finally {
       setLoading(false);
     }
@@ -96,6 +109,7 @@ const LoginPage = () => {
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setErrorType('generic');
 
     // Prevent double submit and cooldown
     if (loading || cooldownSec > 0 || rateLimitSec > 0) {
@@ -104,6 +118,7 @@ const LoginPage = () => {
 
     if (!validateEmail(email)) {
       setError(t("auth.login.emailInvalid"));
+      setErrorType('generic');
       return;
     }
 
@@ -116,26 +131,68 @@ const LoginPage = () => {
       const { success, error, message } = await signInWithMagicLink(email);
 
       if (!success) {
-        // Handle rate limit specifically
+        // Handle specific error types
         if (error === 'rate_limited') {
-          setError(t("auth.login.rateLimited"));
+          setError(t("auth.login.error.rateLimited"));
+          setErrorType('rate_limited');
           setRateLimitSec(300); // 5 minutes cooldown
           toast.error(t("auth.login.tryGoogleNow"));
+        } else if (error?.includes('expired') || error?.includes('invalid')) {
+          setError(t("auth.login.error.magicLinkExpired"));
+          setErrorType('magic_link_expired');
         } else {
           setError(error || t("auth.errorGeneric"));
+          setErrorType('generic');
           toast.error(error || t("auth.errorGeneric"));
         }
+        logAuthEvent('LOGIN_FAILED', { error, method: 'magic_link' });
         return;
       }
 
       setSent(true);
       toast.success(t("auth.login.checkEmailTitle"));
+      logAuthEvent('LOGIN_SUCCESS', { method: 'magic_link_sent', email });
     } catch (error: any) {
       console.error("Login error:", error);
       setError(error.message || t("auth.errorGeneric"));
+      setErrorType('generic');
       toast.error(t("auth.errorGeneric"));
+      logAuthEvent('LOGIN_FAILED', { error: error.message, method: 'magic_link' });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendMagicLink = async () => {
+    if (!validateEmail(email) || resendLoading) {
+      return;
+    }
+
+    setResendLoading(true);
+    setError("");
+    setErrorType('generic');
+
+    try {
+      const { success, error } = await signInWithMagicLink(email);
+
+      if (!success) {
+        setError(error || t("auth.login.resendFailed"));
+        setErrorType('generic');
+        toast.error(t("auth.login.resendFailed"));
+        logAuthEvent('LOGIN_FAILED', { error, method: 'magic_link_resend' });
+        return;
+      }
+
+      toast.success(t("auth.login.resendSuccess"));
+      logAuthEvent('LOGIN_SUCCESS', { method: 'magic_link_resent', email });
+    } catch (error: any) {
+      console.error("Resend error:", error);
+      setError(error.message || t("auth.login.resendFailed"));
+      setErrorType('generic');
+      toast.error(t("auth.login.resendFailed"));
+      logAuthEvent('LOGIN_FAILED', { error: error.message, method: 'magic_link_resend' });
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -154,6 +211,65 @@ const LoginPage = () => {
           <p className="text-sm" style={{ color: '#9CA3AF' }}>
             {t("auth.login.checkEmailDesc")}
           </p>
+          
+          <div className="mt-6 space-y-3">
+            <button
+              onClick={handleResendMagicLink}
+              disabled={resendLoading}
+              className="w-full px-4 py-2 rounded-lg transition-all font-medium flex items-center justify-center gap-2"
+              style={{ 
+                backgroundColor: resendLoading ? 'rgba(240,185,11,0.3)' : '#F0B90B', 
+                color: '#111827',
+                cursor: resendLoading ? 'not-allowed' : 'pointer'
+              }}
+              onMouseOver={(e) => {
+                if (!resendLoading) {
+                  e.currentTarget.style.backgroundColor = '#D4A008';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!resendLoading) {
+                  e.currentTarget.style.backgroundColor = '#F0B90B';
+                }
+              }}
+            >
+              {resendLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  {t("auth.login.resend")}
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="w-4 h-4" />
+                  {t("auth.login.resend")}
+                </>
+              )}
+            </button>
+            
+            <button
+              onClick={() => {
+                setSent(false);
+                setError("");
+                setErrorType('generic');
+              }}
+              className="w-full px-4 py-2 rounded-lg transition-all font-medium"
+              style={{ 
+                backgroundColor: 'transparent', 
+                color: '#9CA3AF',
+                border: '1px solid #374151'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#374151';
+                e.currentTarget.style.color = '#E5E7EB';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = '#9CA3AF';
+              }}
+            >
+              {t("auth.login.backToLogin")}
+            </button>
+          </div>
         </div>
       </div>
     );

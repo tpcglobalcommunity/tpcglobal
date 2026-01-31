@@ -930,7 +930,16 @@ export const copy = {
         checkEmailDesc: "Periksa inbox Anda dan klik link untuk masuk.",
         cooldown: "Tunggu {{seconds}} detik",
         rateLimited: "Kita kena rate limit. Coba lagi nanti atau gunakan Google.",
-        tryGoogleNow: "Gunakan Google untuk login cepat"
+        tryGoogleNow: "Gunakan Google untuk login cepat",
+        error: {
+          oauthCanceled: "Login dibatalkan. Silakan coba lagi.",
+          magicLinkExpired: "Link magic link sudah kadaluarsa. Silakan kirim ulang.",
+          rateLimited: "Terlalu banyak percobaan. Coba lagi dalam 5 menit."
+        },
+        resend: "Kirim Ulang",
+        resendSuccess: "Link berhasil dikirim ulang!",
+        resendFailed: "Gagal mengirim ulang link. Silakan coba lagi.",
+        backToLogin: "Kembali ke Login"
       },
       callback: {
         loading: "Memproses Login...",
@@ -938,6 +947,21 @@ export const copy = {
         errorTitle: "Login Gagal",
         errorDesc: "Terjadi kesalahan saat login. Silakan coba lagi.",
         backToLogin: "Kembali ke Login"
+      },
+      notAuthorized: {
+        title: "Tidak Diizinkan",
+        desc: "Anda tidak memiliki izin untuk mengakses halaman admin. Hanya administrator yang diizinkan.",
+        cta: "Kembali ke Dashboard"
+      },
+      callbackFailed: {
+        title: "Login Gagal",
+        desc: "Terjadi kesalahan saat memproses login. Silakan coba lagi.",
+        retry: "Coba Lagi",
+        tooManyRetries: "Terlalu banyak percobaan. Silakan coba lagi nanti."
+      },
+      loading: {
+        title: "Memuat...",
+        desc: "Sedang memverifikasi identitas Anda"
       },
       googleNotEnabled: "Google belum aktif. Aktifkan di Supabase Dashboard → Auth → Providers → Google.",
       errorGeneric: "Terjadi kesalahan. Silakan coba lagi."
@@ -2377,7 +2401,16 @@ export const copy = {
         checkEmailDesc: "Check your inbox and click the link to sign in.",
         cooldown: "Wait {{seconds}} seconds",
         rateLimited: "We're rate limited. Try again later or use Google.",
-        tryGoogleNow: "Use Google for quick login"
+        tryGoogleNow: "Use Google for quick login",
+        error: {
+          oauthCanceled: "Login was cancelled. Please try again.",
+          magicLinkExpired: "Magic link has expired. Please resend.",
+          rateLimited: "Too many attempts. Try again in 5 minutes."
+        },
+        resend: "Resend",
+        resendSuccess: "Link successfully resent!",
+        resendFailed: "Failed to resend link. Please try again.",
+        backToLogin: "Back to Login"
       },
       callback: {
         loading: "Processing Login...",
@@ -2385,6 +2418,21 @@ export const copy = {
         errorTitle: "Login Failed",
         errorDesc: "An error occurred during login. Please try again.",
         backToLogin: "Back to Login"
+      },
+      notAuthorized: {
+        title: "Not Authorized",
+        desc: "You don't have permission to access the admin page. Only administrators are allowed.",
+        cta: "Back to Dashboard"
+      },
+      callbackFailed: {
+        title: "Login Failed",
+        desc: "An error occurred while processing login. Please try again.",
+        retry: "Try Again",
+        tooManyRetries: "Too many attempts. Please try again later."
+      },
+      loading: {
+        title: "Loading...",
+        desc: "Verifying your identity"
       },
       googleNotEnabled: "Google is not enabled. Enable it in Supabase Dashboard → Auth → Providers → Google.",
       errorGeneric: "An error occurred. Please try again."

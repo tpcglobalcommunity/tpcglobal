@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { exchangeCodeForSession, getCurrentSession } from "@/lib/authHelpers";
-import { Loader2 } from "lucide-react";
+import { logAuthEvent } from "@/lib/auth/session";
+import { Loader2, AlertTriangle, RefreshCw } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 
 const AuthCallbackPage = () => {
@@ -11,87 +12,154 @@ const AuthCallbackPage = () => {
   const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   
   // Get lang from params or fallback to 'id'
   const lang = (params.lang as string) || 'id';
 
-  useEffect(() => {
-    const handleAuthCallback = async () => {
-      try {
-        console.info('[AUTH] Processing auth callback...');
+  // Enhanced sanitize function with extra validation
+  const sanitizeNext = (path: string | null): string => {
+    if (!path) return `/${lang}/dashboard`;
+    
+    try {
+      // Decode URI component first
+      const decoded = decodeURIComponent(path);
+      
+      // Reject any path containing encoded protocol
+      if (decoded.includes('%2F%2F') || decoded.includes('%3A')) {
+        console.warn('[AUTH] Blocked redirect with encoded protocol:', path);
+        return `/${lang}/dashboard`;
+      }
+      
+      // Reject any newline characters
+      if (decoded.includes('\n') || decoded.includes('\r')) {
+        console.warn('[AUTH] Blocked redirect with newline characters:', path);
+        return `/${lang}/dashboard`;
+      }
+      
+      // Only allow paths starting with '/' and no protocol
+      if (!decoded.startsWith('/') || decoded.startsWith('//') || decoded.startsWith('http')) {
+        console.warn('[AUTH] Blocked invalid redirect path:', path);
+        return `/${lang}/dashboard`;
+      }
+      
+      // Only allow same-origin relative paths
+      if (decoded.includes('://') || decoded.includes('javascript:') || decoded.includes('data:')) {
+        console.warn('[AUTH] Blocked potentially dangerous redirect:', path);
+        return `/${lang}/dashboard`;
+      }
+      
+      return decoded;
+    } catch (e) {
+      console.error('[AUTH] Error sanitizing redirect path:', e);
+      return `/${lang}/dashboard`;
+    }
+  };
+
+  // Check and increment redirect attempt count
+  const checkRedirectAttempts = (): boolean => {
+    const currentCount = parseInt(sessionStorage.getItem('tpc:redirectCount') || '0');
+    if (currentCount >= 2) {
+      console.warn('[AUTH] Too many redirect attempts, falling back to dashboard');
+      sessionStorage.removeItem('tpc:redirectCount');
+      return false;
+    }
+    sessionStorage.setItem('tpc:redirectCount', (currentCount + 1).toString());
+    return true;
+  };
+
+  const handleSuccessfulRedirect = () => {
+    // Check redirect attempts
+    if (!checkRedirectAttempts()) {
+      navigate(`/${lang}/dashboard`, { replace: true });
+      return;
+    }
+    
+    // Get next destination from multiple sources
+    const qsNext = new URLSearchParams(location.search).get('next');
+    const stored = sessionStorage.getItem('tpc:returnTo');
+    const fallback = `/${lang}/dashboard`; // Default to member area
+    
+    // Clear sessionStorage
+    sessionStorage.removeItem('tpc:returnTo');
+    sessionStorage.removeItem('tpc:redirectCount');
+    
+    // Sanitize and determine destination
+    const dest = sanitizeNext(qsNext || stored || fallback);
+    
+    // Prevent loops
+    const currentPath = `/${lang}/auth/callback`;
+    if (dest === currentPath) {
+      console.warn('[AUTH] Preventing redirect loop, using fallback');
+      navigate(fallback, { replace: true });
+      return;
+    }
+    
+    console.info('[AUTH] Callback success, redirecting to:', dest);
+    logAuthEvent('LOGIN_SUCCESS', { destination: dest, method: 'callback' });
+    navigate(dest, { replace: true });
+  };
+
+  const handleRetry = () => {
+    if (retryCount >= 2) {
+      setError(t("auth.callbackFailed.tooManyRetries"));
+      return;
+    }
+    
+    setRetryCount(prev => prev + 1);
+    setError(null);
+    setLoading(true);
+    
+    // Retry the auth process
+    setTimeout(() => {
+      handleAuthCallback();
+    }, 1000);
+  };
+
+  const handleAuthCallback = async () => {
+    try {
+      console.info('[AUTH] Processing auth callback...');
+      
+      // Step 1: Try to exchange code for session (PKCE flow)
+      const { success, session, error: exchangeError } = await exchangeCodeForSession(window.location.href);
+      
+      console.info('[AUTH] Exchange result:', { success, session: !!session, error: exchangeError });
+      
+      // Step 2: Fallback to getSession if exchange failed
+      if (!success && !exchangeError) {
+        console.info('[AUTH] Falling back to getSession...');
+        const sessionResult = await getCurrentSession();
+        console.info('[AUTH] GetSession result:', { success: sessionResult.success, session: !!sessionResult.session });
         
-        // Step 1: Try to exchange code for session (PKCE flow)
-        const { success, session, error: exchangeError } = await exchangeCodeForSession(window.location.href);
-        
-        console.info('[AUTH] Exchange result:', { success, session: !!session, error: exchangeError });
-        
-        // Step 2: Fallback to getSession if exchange failed
-        if (!success && !exchangeError) {
-          console.info('[AUTH] Falling back to getSession...');
-          const sessionResult = await getCurrentSession();
-          console.info('[AUTH] GetSession result:', { success: sessionResult.success, session: !!sessionResult.session });
-          
-          if (sessionResult.success && sessionResult.session) {
-            // Session found, proceed with redirect
-            handleSuccessfulRedirect();
-            return;
-          }
-        }
-        
-        if (exchangeError || !success) {
-          console.error('[AUTH] No session established:', exchangeError);
-          setError(t("auth.callback.errorDesc"));
-          setLoading(false);
+        if (sessionResult.success && sessionResult.session) {
+          // Session found, proceed with redirect
+          handleSuccessfulRedirect();
           return;
         }
-        
-        // Session established successfully
-        handleSuccessfulRedirect();
-        
-      } catch (error) {
-        console.error('[AUTH] Callback error:', error);
-        setError(t("auth.callback.errorDesc"));
-        setLoading(false);
       }
-    };
-    
-    const handleSuccessfulRedirect = () => {
-      // Get next destination from multiple sources
-      const qsNext = new URLSearchParams(location.search).get('next');
-      const stored = sessionStorage.getItem('tpc:returnTo');
-      const fallback = `/${lang}/dashboard`; // Default to member area
       
-      // Clear sessionStorage
-      sessionStorage.removeItem('tpc:returnTo');
-      
-      // Sanitize and determine destination
-      const sanitizeNext = (path: string | null): string => {
-        if (!path) return fallback;
-        
-        // Only allow paths starting with '/' and no protocol
-        if (!path.startsWith('/') || path.startsWith('//') || path.startsWith('http')) {
-          return fallback;
-        }
-        
-        return path;
-      };
-      
-      const dest = sanitizeNext(qsNext || stored || fallback);
-      
-      // Prevent loops
-      const currentPath = `/${lang}/auth/callback`;
-      if (dest === currentPath) {
-        console.warn('[AUTH] Preventing redirect loop, using fallback');
-        navigate(fallback, { replace: true });
+      if (exchangeError || !success) {
+        console.error('[AUTH] No session established:', exchangeError);
+        logAuthEvent('LOGIN_FAILED', { error: exchangeError, step: 'callback' });
+        setError(t("auth.callbackFailed.desc"));
+        setLoading(false);
         return;
       }
       
-      console.info('[AUTH] Callback success, redirecting to:', dest);
-      navigate(dest, { replace: true });
-    };
-    
+      // Session established successfully
+      handleSuccessfulRedirect();
+      
+    } catch (error) {
+      console.error('[AUTH] Callback error:', error);
+      logAuthEvent('LOGIN_FAILED', { error: 'exception', step: 'callback' });
+      setError(t("auth.callbackFailed.desc"));
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     handleAuthCallback();
-  }, [lang, navigate, location.search, t]);
+  }, [lang, navigate, location.search, t, retryCount]);
 
   if (loading) {
     return (
@@ -117,30 +185,62 @@ const AuthCallbackPage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center" 
            style={{ backgroundColor: '#0B0F17' }}>
-        <div className="text-center max-w-md mx-auto p-6">
+        <div className="text-center max-w-md mx-auto p-8">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-               style={{ backgroundColor: 'rgba(239,68,68,0.1)' }}>
-            <Loader2 className="w-8 h-8 text-red-500" />
+               style={{ backgroundColor: 'rgba(239,68,68,0.15)' }}>
+            <AlertTriangle className="w-8 h-8" style={{ color: '#EF4444' }} />
           </div>
-          <h2 className="text-2xl font-bold mb-2 text-red-500">
-            {t("auth.callback.errorTitle")}
+          <h2 className="text-2xl font-bold mb-2" style={{ color: '#E5E7EB' }}>
+            {t("auth.callbackFailed.title")}
           </h2>
           <p className="text-muted-foreground mb-6" style={{ color: '#9CA3AF' }}>
             {error}
           </p>
-          <button
-            onClick={() => navigate(`/${lang}/login`, { replace: true })}
-            className="px-6 py-3 rounded-lg transition-all font-medium"
-            style={{ backgroundColor: '#F0B90B', color: '#111827' }}
-          >
-            {t("auth.callback.backToLogin")}
-          </button>
+          
+          <div className="space-y-3">
+            {retryCount < 2 && (
+              <button
+                onClick={handleRetry}
+                className="w-full px-6 py-3 rounded-lg transition-all font-medium flex items-center justify-center gap-2"
+                style={{ backgroundColor: '#F0B90B', color: '#111827' }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = '#D4A008';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = '#F0B90B';
+                }}
+              >
+                <RefreshCw className="w-4 h-4" />
+                {t("auth.callbackFailed.retry")}
+              </button>
+            )}
+            
+            <button
+              onClick={() => navigate(`/${lang}/login`, { replace: true })}
+              className="w-full px-6 py-3 rounded-lg transition-all font-medium"
+              style={{ 
+                backgroundColor: 'transparent', 
+                color: '#9CA3AF',
+                border: '1px solid #374151'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#374151';
+                e.currentTarget.style.color = '#E5E7EB';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = '#9CA3AF';
+              }}
+            >
+              {t("auth.callback.backToLogin")}
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
-  return null; // Will redirect automatically
+  return null;
 };
 
 export default AuthCallbackPage;

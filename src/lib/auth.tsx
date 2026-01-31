@@ -1,7 +1,15 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
 import { isValidAdmin } from "@/config/admin";
+import { 
+  initializeAuthManager, 
+  getCurrentUser, 
+  getCurrentSession, 
+  isAuthenticated,
+  signOutSafe,
+  onSessionChange,
+  refreshSessionIfNeeded
+} from "./auth/session";
 
 interface AuthContextValue {
   user: User | null;
@@ -9,6 +17,7 @@ interface AuthContextValue {
   loading: boolean;
   isAdmin: boolean;
   signOut: () => Promise<void>;
+  refreshSession: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -20,49 +29,68 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Check admin status synchronously using UUID whitelist
-        if (session?.user) {
-          const adminStatus = isValidAdmin(session.user.id, session.user.email);
-          setIsAdmin(adminStatus);
-        } else {
-          setIsAdmin(false);
-        }
-        
-        setLoading(false);
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        const adminStatus = isValidAdmin(session.user.id, session.user.email);
-        setIsAdmin(adminStatus);
-      }
-      
-      setLoading(false);
+    console.info('[AUTH-HARDEN] AuthProvider initializing...');
+    
+    // Initialize auth manager
+    const subscription = initializeAuthManager();
+    
+    // Get initial state
+    const currentUser = getCurrentUser();
+    const currentSession = getCurrentSession();
+    const isAuthed = isAuthenticated();
+    
+    setUser(currentUser);
+    setSession(currentSession);
+    setIsAdmin(isValidAdmin(currentUser?.id, currentUser?.email));
+    setLoading(false);
+    
+    // Subscribe to session changes
+    const unsubscribe = onSessionChange((newSession) => {
+      console.info('[AUTH-HARDEN] AuthProvider session updated');
+      setUser(newSession?.user ?? null);
+      setSession(newSession);
+      setIsAdmin(isValidAdmin(newSession?.user?.id, newSession?.user?.email));
     });
-
-    return () => subscription.unsubscribe();
+    
+    // Cleanup
+    return () => {
+      subscription?.unsubscribe();
+      unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setSession(null);
-    setIsAdmin(false);
+    setLoading(true);
+    const success = await signOutSafe();
+    if (success) {
+      setUser(null);
+      setSession(null);
+      setIsAdmin(false);
+    }
+    setLoading(false);
+  };
+
+  const refreshSession = async () => {
+    const success = await refreshSessionIfNeeded();
+    if (success) {
+      const currentUser = getCurrentUser();
+      const currentSession = getCurrentSession();
+      setUser(currentUser);
+      setSession(currentSession);
+      setIsAdmin(isValidAdmin(currentUser?.id, currentUser?.email));
+    }
+    return success;
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, isAdmin, signOut }}>
+    <AuthContext.Provider value={{
+      user,
+      session,
+      loading,
+      isAdmin,
+      signOut,
+      refreshSession
+    }}>
       {children}
     </AuthContext.Provider>
   );
