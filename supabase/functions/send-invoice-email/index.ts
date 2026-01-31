@@ -25,12 +25,19 @@ serve(async (req) => {
 
     // Parse request body
     const body = await req.json();
+    console.log("[EDGE] Incoming payload:", body);
+    
     const { invoice_no, email, lang = "id" } = body;
 
-    // Validate required fields
-    if (!invoice_no || !email) {
+    // Hard validation - fail fast
+    if (!invoice_no) {
+      console.log("[EDGE] Validation failed: missing invoice_no");
       return new Response(
-        JSON.stringify({ error: "Missing required fields: invoice_no and email" }),
+        JSON.stringify({ 
+          success: false, 
+          step: "validation",
+          error: "Missing required field: invoice_no" 
+        }),
         { 
           status: 400, 
           headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -38,19 +45,74 @@ serve(async (req) => {
       );
     }
 
+    if (!email) {
+      console.log("[EDGE] Validation failed: missing email");
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          step: "validation",
+          error: "Missing required field: email" 
+        }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+
+    console.log("[EDGE] Validation passed:", { invoice_no, email, lang });
+
     // Initialize Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    
+    if (!supabaseUrl || !supabaseKey) {
+      console.log("[EDGE] Missing Supabase configuration");
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          step: "config",
+          error: "Supabase configuration missing" 
+        }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+    
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Fetch invoice data using RPC (same as frontend)
+    // Fetch invoice data using RPC with structured logging
+    console.log("[EDGE] Fetching invoice:", invoice_no);
     const { data: invoice, error: invoiceError } = await supabase
       .rpc('get_invoice_public', { p_invoice_no: invoice_no });
 
-    if (invoiceError || !invoice) {
-      console.error("Invoice not found:", invoiceError);
+    console.log("[EDGE] RPC result:", { invoice, invoiceError });
+
+    if (invoiceError) {
+      console.log("[EDGE] RPC error:", invoiceError);
       return new Response(
-        JSON.stringify({ error: "Invoice not found" }),
+        JSON.stringify({ 
+          success: false, 
+          step: "fetch-invoice",
+          error: `Failed to fetch invoice: ${invoiceError.message}` 
+        }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+
+    if (!invoice) {
+      console.log("[EDGE] Invoice not found:", invoice_no);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          step: "fetch-invoice",
+          error: "Invoice not found" 
+        }),
         { 
           status: 404, 
           headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -58,21 +120,36 @@ serve(async (req) => {
       );
     }
 
+    console.log("[EDGE] Invoice data found:", {
+      invoice_no: invoice.invoice_no,
+      status: invoice.status,
+      tpc_amount: invoice.tpc_amount,
+      total_usd: invoice.total_usd
+    });
+
     // Build email content
     const siteUrl = Deno.env.get("SITE_URL") || "http://localhost:8084";
     const confirmUrl = `${siteUrl}/auth/callback?next=${encodeURIComponent(`/${lang}/member/invoices/${invoice_no}`)}`;
     
+    console.log("[EDGE] Building email content:", { siteUrl, confirmUrl });
+    
     const emailHtml = buildInvoiceEmailHtml(invoice, lang, confirmUrl, siteUrl);
     const subject = lang === "id" ? `Invoice TPC - ${invoice_no}` : `TPC Invoice - ${invoice_no}`;
 
-    // Send email via Resend
+    // Send email via Resend with safety checks
+    console.log("[EDGE] Preparing to send email via Resend");
+    
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    const fromEmail = Deno.env.get("FROM_EMAIL") || "noreply@tpcglobal.io";
+    const fromEmail = Deno.env.get("FROM_EMAIL");
 
     if (!resendApiKey) {
-      console.error("RESEND_API_KEY not configured");
+      console.log("[EDGE] RESEND_API_KEY not configured");
       return new Response(
-        JSON.stringify({ error: "Email service not configured" }),
+        JSON.stringify({ 
+          success: false, 
+          step: "config",
+          error: "Email service not configured: RESEND_API_KEY missing" 
+        }),
         { 
           status: 500, 
           headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -80,25 +157,14 @@ serve(async (req) => {
       );
     }
 
-    const resendResponse = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${resendApiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: fromEmail,
-        to: [email],
-        subject: subject,
-        html: emailHtml,
-      }),
-    });
-
-    if (!resendResponse.ok) {
-      const errorData = await resendResponse.json();
-      console.error("Failed to send email:", errorData);
+    if (!fromEmail) {
+      console.log("[EDGE] FROM_EMAIL not configured");
       return new Response(
-        JSON.stringify({ error: "Failed to send email" }),
+        JSON.stringify({ 
+          success: false, 
+          step: "config",
+          error: "Email service not configured: FROM_EMAIL missing" 
+        }),
         { 
           status: 500, 
           headers: { ...corsHeaders, "Content-Type": "application/json" }
@@ -106,14 +172,65 @@ serve(async (req) => {
       );
     }
 
-    const emailData = await resendResponse.json();
-    console.log("Email sent successfully:", emailData);
+    console.log("[EDGE] Sending email via Resend:", { to: email, from: fromEmail });
 
+    let emailResult;
+    try {
+      const resendResponse = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: fromEmail,
+          to: [email],
+          subject: subject,
+          html: emailHtml,
+        }),
+      });
+
+      if (!resendResponse.ok) {
+        const errorData = await resendResponse.json();
+        console.log("[EDGE] Resend API error:", { status: resendResponse.status, errorData });
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            step: "send-email",
+            error: `Failed to send email: ${errorData.message || resendResponse.statusText}` 
+          }),
+          { 
+            status: 500, 
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          }
+        );
+      }
+
+      emailResult = await resendResponse.json();
+      console.log("[EDGE] Email sent successfully:", emailResult);
+
+    } catch (emailError) {
+      console.log("[EDGE] Email sending error:", emailError);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          step: "send-email",
+          error: `Email sending failed: ${emailError.message}` 
+        }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
+      );
+    }
+
+    // Success response
+    console.log("[EDGE] Function completed successfully");
     return new Response(
       JSON.stringify({ 
         success: true, 
-        messageId: emailData.id,
-        invoice_no: invoice_no 
+        invoice_no,
+        messageId: emailResult.id
       }),
       { 
         status: 200, 
@@ -122,9 +239,13 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error("Unexpected error:", error);
+    console.log("[EDGE] Unexpected error:", error);
     return new Response(
-      JSON.stringify({ error: "Internal server error" }),
+      JSON.stringify({ 
+        success: false, 
+        step: "unknown",
+        error: `Internal server error: ${error.message}` 
+      }),
       { 
         status: 500, 
         headers: { ...corsHeaders, "Content-Type": "application/json" }
