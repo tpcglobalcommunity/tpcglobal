@@ -5,23 +5,26 @@ import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { 
+  Alert,
+  AlertDescription
+} from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { 
   FileText, 
-  CheckCircle, 
-  Clock, 
-  AlertCircle,
+  Clock,
   ExternalLink,
   Copy,
   Mail,
   Upload,
   Image,
-  File
+  File,
+  CheckCircle,
+  AlertCircle
 } from "lucide-react";
 import { getInvoicePublic, type InvoicePublic } from "@/lib/rpc/public";
 import { submitPaymentConfirmation } from "@/lib/rpc/paymentConfirmation";
@@ -217,52 +220,111 @@ const InvoiceDetailPage = () => {
   }
 
   const isUnpaid = invoice.status === 'UNPAID';
+  const isPendingReview = invoice.status === 'PENDING_REVIEW';
+  const isPaid = invoice.status === 'PAID';
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'UNPAID':
+        return 'bg-primary/10 text-primary border-primary/20';
+      case 'PENDING_REVIEW':
+        return 'bg-primary text-primary-foreground';
+      case 'PAID':
+        return 'bg-success/10 text-success border-success/20';
+      case 'REJECTED':
+        return 'bg-destructive/10 text-destructive border-destructive/20';
+      default:
+        return 'bg-muted text-muted-foreground';
+    }
+  };
 
   return (
     <div className="container-app section-spacing">
       {/* Invoice Header */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
-          <FileText className="h-12 w-12 mx-auto mb-4 text-primary" />
-          <span className="text-xs text-primary font-medium">
-            {invoice.status === 'UNPAID' ? 'Unpaid' : invoice.status}
+        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border mb-6 ${getStatusBadge(invoice.status)}`}>
+          <FileText className="h-4 w-4" />
+          <span className="text-xs font-medium">
+            {t(`status.${invoice.status.toLowerCase()}`) || invoice.status}
           </span>
         </div>
         <h1 className="text-4xl font-bold text-gradient-gold mb-2">{invoice.invoice_no}</h1>
         <p className="text-xl text-foreground max-w-2xl mx-auto">
-          {invoice.status === 'UNPAID' ? 'Menunggu Pembayaran' : 'Status: ' + invoice.status}
+          {invoice.status === 'UNPAID' ? 'Menunggu Pembayaran' : t(`status.${invoice.status.toLowerCase()}`) || `Status: ${invoice.status}`}
         </p>
       </div>
 
       {/* Payment Confirmation Form - Only show for UNPAID invoices */}
       {isUnpaid && (
         <Card className="card-premium mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Upload className="h-5 w-5" />
-              Konfirmasi Pembayaran
+          <CardHeader className="text-center pb-4">
+            <CardTitle className="flex items-center justify-center gap-2 text-xl">
+              <Upload className="h-6 w-6 text-primary" />
+              {t("confirm.title")}
             </CardTitle>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              {t("confirm.subtitle")}
+            </p>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="paymentMethod">Metode Pembayaran</Label>
-                <select
-                  id="paymentMethod"
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 appearance-none bg-popover text-popover-foreground border-border hover:border-primary/50 transition-colors [&:not(:disabled)]:cursor-pointer"
-                  required
-                >
-                  <option value="" className="bg-popover text-popover-foreground">Pilih metode pembayaran</option>
-                  <option value="BANK" className="bg-popover text-popover-foreground hover:bg-primary hover:text-primary-foreground">Transfer Bank</option>
-                  <option value="USDC" className="bg-popover text-popover-foreground hover:bg-primary hover:text-primary-foreground">USDC</option>
-                  <option value="SOL" className="bg-popover text-popover-foreground hover:bg-primary hover:text-primary-foreground">SOL</option>
-                </select>
+          
+          {/* Stepper */}
+          <div className="px-6 pb-6">
+            <div className="flex items-center justify-center space-x-4 md:space-x-8">
+              <div className="flex flex-col items-center">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                  proofUrl ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                }`}>
+                  {proofUrl ? '✓' : '1'}
+                </div>
+                <span className="text-xs mt-1 text-muted-foreground">{t("confirm.steps.upload")}</span>
               </div>
               
+              <div className="flex-1 h-0.5 bg-border max-w-8"></div>
+              
+              <div className="flex flex-col items-center">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                  proofUrl ? 'bg-muted text-muted-foreground' : 'bg-muted text-muted-foreground'
+                }`}>
+                  2
+                </div>
+                <span className="text-xs mt-1 text-muted-foreground">{t("confirm.steps.review")}</span>
+              </div>
+              
+              <div className="flex-1 h-0.5 bg-border max-w-8"></div>
+              
+              <div className="flex flex-col items-center">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                  proofUrl ? 'bg-muted text-muted-foreground' : 'bg-muted text-muted-foreground'
+                }`}>
+                  3
+                </div>
+                <span className="text-xs mt-1 text-muted-foreground">{t("confirm.steps.submit")}</span>
+              </div>
+            </div>
+          </div>
+          
+          <CardContent className="space-y-6 pt-0">
+            {/* Payment Method Selection */}
+            <div>
+              <Label htmlFor="paymentMethod">{t("confirm.method")}</Label>
+              <select
+                id="paymentMethod"
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 appearance-none bg-popover text-popover-foreground border-border hover:border-primary/50 transition-colors [&:not(:disabled)]:cursor-pointer"
+                required
+              >
+                <option value="" className="bg-popover text-popover-foreground">{t("confirm.selectPayment")}</option>
+                <option value="BANK" className="bg-popover text-popover-foreground hover:bg-primary hover:text-primary-foreground">Transfer Bank</option>
+                <option value="USDC" className="bg-popover text-popover-foreground hover:bg-primary hover:text-primary-foreground">USDC</option>
+                <option value="SOL" className="bg-popover text-popover-foreground hover:bg-primary hover:text-primary-foreground">SOL</option>
+              </select>
+            </div>
+            
+            {/* Optional Fields */}
+            <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="payerName">Nama Pengirim (Opsional)</Label>
+                <Label htmlFor="payerName">{t("confirm.payerName") || "Nama Pengirim (Opsional)"}</Label>
                 <Input
                   id="payerName"
                   type="text"
@@ -273,7 +335,7 @@ const InvoiceDetailPage = () => {
               </div>
               
               <div>
-                <Label htmlFor="payerRef">Referensi (Opsional)</Label>
+                <Label htmlFor="payerRef">{t("confirm.payerRef") || "Referensi (Opsional)"}</Label>
                 <Input
                   id="payerRef"
                   type="text"
@@ -282,84 +344,105 @@ const InvoiceDetailPage = () => {
                   placeholder="No. Referensi Bank"
                 />
               </div>
-              
-              {/* Upload Bukti Pembayaran - REQUIRED */}
-              <div>
-                <Label htmlFor="proofFile">Upload Bukti Pembayaran *</Label>
-                <input
-                  id="proofFile"
-                  type="file"
-                  accept="image/*,application/pdf"
-                  capture="environment"
-                  onChange={handleFileSelect}
-                  className="w-full p-2 border rounded-md bg-popover text-popover-foreground border-border"
-                  required
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Upload foto/screenshot bukti pembayaran dari HP Anda
-                </p>
-                
-                {/* File Preview */}
-                {proofFile && (
-                  <div className="mt-2 p-2 bg-muted rounded-md">
-                    <p className="text-sm text-foreground">📎 {proofFile.name}</p>
-                    {proofUrl && (
-                      <p className="text-xs text-green-600 mt-1">✅ Upload berhasil</p>
-                    )}
-                  </div>
-                )}
-              </div>
             </div>
-
-            {/* Upload & Submit Button - Combined Flow */}
-            <div className="space-y-4">
+            
+            {/* Upload Area - REQUIRED */}
+            <div className="space-y-3">
+              <Label htmlFor="proofFile">{t("confirm.proof")} *</Label>
+              
               {!proofUrl ? (
-                <Button
-                  onClick={handleProofUpload}
-                  disabled={uploadingProof || !proofFile}
-                  className="w-full"
-                  size="lg"
-                >
-                  {uploadingProof ? (
-                    <>
-                      <div className="animate-spin h-4 w-4 mr-2" />
-                      Upload Bukti...
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload Bukti Pembayaran
-                    </>
-                  )}
-                </Button>
+                <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
+                  <input
+                    id="proofFile"
+                    type="file"
+                    accept="image/*,application/pdf"
+                    capture="environment"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                    required
+                  />
+                  <label htmlFor="proofFile" className="cursor-pointer">
+                    <Upload className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
+                    <p className="text-sm text-foreground mb-2">{t("confirm.proof")}</p>
+                    <p className="text-xs text-muted-foreground mb-3">{t("confirm.proofHelper")}</p>
+                    <p className="text-xs text-muted-foreground">{t("confirm.maxSize")}</p>
+                  </label>
+                </div>
               ) : (
-                <Button
-                  onClick={handleSubmitConfirmation}
-                  disabled={confirming || !paymentMethod || !proofUrl}
-                  className="w-full"
-                  size="lg"
-                >
-                  {confirming ? (
-                    <>
-                      <div className="animate-spin h-4 w-4 mr-2" />
-                      Mengirim Konfirmasi...
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="h-4 w-4 mr-2" />
-                      Kirim Konfirmasi Pembayaran
-                    </>
-                  )}
-                </Button>
+                <div className="bg-muted rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                        <FileText className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{proofFile?.name}</p>
+                        <p className="text-xs text-green-600">{t("confirm.proofSuccess")}</p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => document.getElementById('proofFile')?.click()}
+                    >
+                      {t("confirm.changeFile")}
+                    </Button>
+                  </div>
+                </div>
               )}
+            </div>
+            
+            {/* Submit Button */}
+            <div className="space-y-3">
+              <Button
+                onClick={handleSubmitConfirmation}
+                disabled={confirming || !paymentMethod || !proofUrl}
+                className="w-full"
+                size="lg"
+              >
+                {confirming ? (
+                  <>
+                    <div className="animate-spin h-4 w-4 mr-2" />
+                    {t("confirm.submitting")}
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4 mr-2" />
+                    {t("confirm.submit")}
+                  </>
+                )}
+              </Button>
               
               {/* Validation Error */}
-              {!proofUrl && proofFile && (
-                <p className="text-sm text-destructive">
-                  Silakan upload bukti pembayaran terlebih dahulu
+              {!proofUrl && (
+                <p className="text-sm text-destructive text-center">
+                  {t("confirm.proofRequired")}
                 </p>
               )}
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Confirmation Status - Show for PENDING_REVIEW/PAID */}
+      {(isPendingReview || isPaid) && (
+        <Card className="card-premium mb-8">
+          <CardContent className="text-center py-8">
+            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border mb-4 ${getStatusBadge(invoice.status)}`}>
+              <CheckCircle className="h-4 w-4" />
+              <span className="text-sm font-medium">
+                {t("confirm.alreadySubmitted")}
+              </span>
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">
+              {t("confirm.pending")}
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              {isPendingReview 
+                ? "Konfirmasi pembayaran Anda telah diterima dan sedang ditinjau oleh admin."
+                : "Pembayaran Anda telah disetujui. Terima kasih!"
+              }
+            </p>
           </CardContent>
         </Card>
       )}

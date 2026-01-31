@@ -525,13 +525,25 @@ export const copy = {
       // Invoice confirmation
       confirm: {
         title: "Konfirmasi Pembayaran",
+        subtitle: "Upload bukti pembayaran dari HP (foto/screenshot/PDF)",
+        steps: {
+          upload: "Upload Bukti",
+          review: "Periksa Ringkasan", 
+          submit: "Kirim Konfirmasi"
+        },
         method: "Metode Pembayaran",
         wallet: "Wallet Penerima (Solana)",
-        tx: "Signature / Reference Transaksi",
         proof: "Upload Bukti Pembayaran",
+        proofRequired: "Upload bukti pembayaran wajib diisi",
+        proofHelper: "Upload foto/screenshot bukti pembayaran dari HP Anda",
+        proofSuccess: "✅ Upload berhasil",
         submit: "Kirim Konfirmasi",
+        submitting: "Mengirim Konfirmasi...",
         success: "Konfirmasi berhasil dikirim!",
-        pending: "Pembayaran sedang ditinjau"
+        pending: "Pembayaran sedang ditinjau",
+        alreadySubmitted: "Konfirmasi sudah dikirim",
+        changeFile: "Ganti File",
+        maxSize: "Maksimal file: 10MB"
       },
       // Invoice status
       status: {
@@ -1464,13 +1476,25 @@ export const copy = {
       // Invoice confirmation
       confirm: {
         title: "Confirm Payment",
+        subtitle: "Upload payment proof from your phone (photo/screenshot/PDF)",
+        steps: {
+          upload: "Upload Proof",
+          review: "Review Summary", 
+          submit: "Submit Confirmation"
+        },
         method: "Payment Method",
         wallet: "Receiver Wallet (Solana)",
-        tx: "Transaction Signature / Reference",
         proof: "Upload Payment Proof",
+        proofRequired: "Payment proof upload is required",
+        proofHelper: "Upload photo/screenshot of payment proof from your phone",
+        proofSuccess: "✅ Upload successful",
         submit: "Submit Confirmation",
+        submitting: "Submitting Confirmation...",
         success: "Confirmation submitted successfully!",
-        pending: "Payment is under review"
+        pending: "Payment is under review",
+        alreadySubmitted: "Confirmation already submitted",
+        changeFile: "Change File",
+        maxSize: "Max file size: 10MB"
       },
       // Invoice status
       status: {
