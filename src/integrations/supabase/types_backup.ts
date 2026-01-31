@@ -60,152 +60,142 @@ export type Database = {
           tpc_usd_idr_rate?: number
           updated_at?: string
         }
+        Relationships: []
       }
       profiles: {
         Row: {
-          id: string
+          created_at: string
+          email: string | null
           updated_at: string
-          username: string | null
-          full_name: string | null
-          avatar_url: string | null
-          website: string | null
+          user_id: string
         }
         Insert: {
-          id: string
+          created_at?: string
+          email?: string | null
           updated_at?: string
-          username?: string | null
-          full_name?: string | null
-          avatar_url?: string | null
-          website?: string | null
+          user_id: string
         }
         Update: {
-          id?: string
+          created_at?: string
+          email?: string | null
           updated_at?: string
-          username?: string | null
-          full_name?: string | null
-          avatar_url?: string | null
-          website?: string | null
+          user_id?: string
         }
+        Relationships: []
       }
       tpc_invoices: {
         Row: {
-          invoice_no: string
-          stage: string
-          tpc_amount: number
-          unit_price_usd: number
-          total_usd: number
-          total_idr: number
-          usd_idr_rate: number
-          treasury_address: string
-          status: string
-          payment_method: string | null
-          payer_name: string | null
-          payer_ref: string | null
-          tx_signature: string | null
-          proof_url: string | null
-          receiver_wallet: string | null
+          admin_note: string | null
           buyer_email: string
           created_at: string
-          expires_at: string
-          reviewed_at: string | null
-          review_note: string | null
+          id: string
+          invoice_no: string
+          paid_at: string | null
+          payment_method: string
+          price_usd: number
+          proof_url: string | null
+          stage: string
+          status: string
+          total_idr: number
+          total_usd: number
+          tpc_amount: number
+          treasury_address: string
           updated_at: string
+          usd_idr_rate: number
+          user_id: string | null
         }
         Insert: {
-          invoice_no: string
-          stage?: string
-          tpc_amount?: number
-          unit_price_usd?: number
-          total_usd?: number
-          total_idr?: number
-          usd_idr_rate?: number
-          treasury_address?: string
-          status?: string
-          payment_method?: string | null
-          payer_name?: string | null
-          payer_ref?: string | null
-          tx_signature?: string | null
-          proof_url?: string | null
-          receiver_wallet?: string | null
-          buyer_email?: string
+          admin_note?: string | null
+          buyer_email: string
           created_at?: string
-          expires_at?: string
-          reviewed_at?: string | null
-          review_note?: string | null
+          id?: string
+          invoice_no: string
+          paid_at?: string | null
+          payment_method: string
+          price_usd: number
+          proof_url?: string | null
+          stage: string
+          status?: string
+          total_idr: number
+          total_usd: number
+          tpc_amount: number
+          treasury_address: string
           updated_at?: string
+          usd_idr_rate: number
+          user_id?: string | null
         }
         Update: {
-          invoice_no?: string
-          stage?: string
-          tpc_amount?: number
-          unit_price_usd?: number
-          total_usd?: number
-          total_idr?: number
-          usd_idr_rate?: number
-          treasury_address?: string
-          status?: string
-          payment_method?: string | null
-          payer_name?: string | null
-          payer_ref?: string | null
-          tx_signature?: string | null
-          proof_url?: string | null
-          receiver_wallet?: string | null
+          admin_note?: string | null
           buyer_email?: string
           created_at?: string
-          expires_at?: string
-          reviewed_at?: string | null
-          review_note?: string | null
+          id?: string
+          invoice_no?: string
+          paid_at?: string | null
+          payment_method?: string
+          price_usd?: number
+          proof_url?: string | null
+          stage?: string
+          status?: string
+          total_idr?: number
+          total_usd?: number
+          tpc_amount?: number
+          treasury_address?: string
           updated_at?: string
+          usd_idr_rate?: number
+          user_id?: string | null
         }
+        Relationships: []
       }
       admin_whitelist: {
         Row: {
           user_id: string
-          email: string
           note: string | null
           created_at: string
         }
         Insert: {
           user_id: string
-          email?: string
           note?: string | null
           created_at?: string
         }
         Update: {
           user_id?: string
-          email?: string
           note?: string | null
           created_at?: string
         }
+        Relationships: []
       }
       admin_whitelist_audit: {
         Row: {
           id: number
-          user_id: string
-          action: string
-          admin_id: string
+          action: 'ADD' | 'REMOVE'
+          target_user_id: string
+          note: string | null
+          actor_user_id: string
           created_at: string
         }
         Insert: {
           id?: number
-          user_id: string
-          action: string
-          admin_id: string
+          action: 'ADD' | 'REMOVE'
+          target_user_id: string
+          note?: string | null
+          actor_user_id: string
           created_at?: string
         }
         Update: {
           id?: number
-          user_id?: string
-          action?: string
-          admin_id?: string
+          action?: 'ADD' | 'REMOVE'
+          target_user_id?: string
+          note?: string | null
+          actor_user_id?: string
           created_at?: string
         }
+        Relationships: []
       }
       invoice_confirmations: {
         Row: {
-          id: string
+          id: number
           invoice_no: string
-          user_id: string | null
+          user_id: string
           payment_method: string
           payer_name: string | null
           payer_ref: string | null
@@ -214,9 +204,9 @@ export type Database = {
           created_at: string
         }
         Insert: {
-          id?: string
+          id?: number
           invoice_no: string
-          user_id?: string | null
+          user_id: string
           payment_method: string
           payer_name?: string | null
           payer_ref?: string | null
@@ -225,9 +215,9 @@ export type Database = {
           created_at?: string
         }
         Update: {
-          id?: string
+          id?: number
           invoice_no?: string
-          user_id?: string | null
+          user_id?: string
           payment_method?: string
           payer_name?: string | null
           payer_ref?: string | null
@@ -235,6 +225,7 @@ export type Database = {
           proof_url?: string | null
           created_at?: string
         }
+        Relationships: []
       }
     }
     Views: {
@@ -262,25 +253,27 @@ export type Database = {
         Args: { p_invoice_no: string }
         Returns: {
           invoice_no: string;
+          status: string;
           stage: string;
           tpc_amount: number;
-          unit_price_usd: number;
           total_usd: number;
           total_idr: number;
-          usd_idr_rate: number;
           treasury_address: string;
-          status: string;
-          payment_method: string | null;
-          payer_name: string | null;
-          payer_ref: string | null;
-          tx_signature: string | null;
-          proof_url: string | null;
-          receiver_wallet: string | null;
           created_at: string;
           expires_at: string;
-          reviewed_at: string | null;
-          review_note: string | null;
         }[]
+      }
+      admin_whitelist_add: {
+        Args: { p_user_id: string; p_note?: string }
+        Returns: void
+      }
+      admin_whitelist_remove: {
+        Args: { p_user_id: string }
+        Returns: void
+      }
+      get_presale_settings_public: {
+        Args: {}
+        Returns: PresaleSettings[]
       }
       submit_invoice_confirmation: {
         Args: { 
@@ -299,41 +292,8 @@ export type Database = {
           confirmation_id: string;
         }[]
       }
-      admin_whitelist_add: {
-        Args: { p_user_id: string; p_note?: string }
-        Returns: void
-      }
-      admin_whitelist_remove: {
-        Args: { p_user_id: string }
-        Returns: void
-      }
-      get_presale_settings_public: {
-        Args: {}
-        Returns: PresaleSettings[]
-      }
-      create_invoice: {
-        Args: { p_email: string; p_tpc_amount: number; p_referral_code: string }
-        Returns: {
-          invoice_no: string;
-          stage: string;
-          tpc_amount: number;
-          price_usd: number;
-          total_usd: number;
-          total_idr: number;
-          usd_idr_rate: number;
-          treasury_address: string;
-          expires_at: string;
-          status: string;
-        }[]
-      }
-      update_invoice_email: {
-        Args: { p_invoice_no: string; p_email: string }
-        Returns: boolean
-      }
-      cancel_invoice: {
-        Args: { p_invoice_no: string }
-        Returns: boolean
-      }
+    Views: {
+      [_ in never]: never
     }
     Enums: {}
     CompositeTypes: {}
@@ -351,17 +311,27 @@ export type Tables<
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchemaTableNameOrOptions
-    : never
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName]
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions]
-  : never
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
@@ -371,16 +341,22 @@ export type TablesInsert<
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchemaTableNameOrOptions
-    : never
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName]["Insert"]
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions]["Insert"]
-  : never
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
@@ -390,16 +366,22 @@ export type TablesUpdate<
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchemaTableNameOrOptions
-    : never
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName]["Update"]
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions]["Update"]
-  : never
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
@@ -412,13 +394,6 @@ export type Enums<
     : DefaultSchemaEnumNameOrOptions extends keyof Database["public"]["Enums"]
     ? Database["public"]["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
-> = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof Database
-}
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof Database["public"]["Enums"]
-    ? Database["public"]["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
@@ -429,12 +404,5 @@ export type CompositeTypes<
   }
     ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
     : PublicCompositeTypeNameOrOptions extends keyof Database["public"]["CompositeTypes"]
-    ? Database["public"]["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never
-> = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof Database
-}
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof Database["public"]["CompositeTypes"]
     ? Database["public"]["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
