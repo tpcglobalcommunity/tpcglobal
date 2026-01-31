@@ -130,6 +130,8 @@ const InvoiceDetailPage = () => {
     setConfirming(true);
     try {
       // Step 1: Upload proof first
+      console.log("Starting proof upload...", { fileName: proofFile.name, fileSize: proofFile.size });
+      
       const validation = validateProofFile(proofFile);
       if (!validation.isValid) {
         toast.error(validation.error);
@@ -142,6 +144,8 @@ const InvoiceDetailPage = () => {
         invoiceNo: invoice.invoice_no
       });
 
+      console.log("Upload result:", uploadResult);
+
       if (!uploadResult.success || !uploadResult.proofUrl) {
         toast.error(uploadResult.error || (lang === 'en' ? 'Failed to upload proof' : 'Gagal mengunggah bukti'));
         setConfirming(false);
@@ -149,6 +153,12 @@ const InvoiceDetailPage = () => {
       }
 
       // Step 2: Submit confirmation with uploaded proof
+      console.log("Submitting confirmation...", { 
+        invoice_no: invoice.invoice_no, 
+        payment_method: paymentMethod,
+        proof_url: uploadResult.proofUrl 
+      });
+
       await submitPaymentConfirmation({
         invoice_no: invoice.invoice_no,
         payment_method: paymentMethod,
@@ -180,8 +190,33 @@ const InvoiceDetailPage = () => {
       }, 1000);
       
     } catch (error) {
+      console.error("Submit confirmation error:", error);
       logger.error('Failed to submit payment confirmation', { error });
-      toast.error(t("confirm.error") || "Failed to submit payment confirmation");
+      
+      // More specific error messages
+      let errorMessage = t("confirm.error") || "Failed to submit payment confirmation";
+      
+      if (error instanceof Error) {
+        if (error.message.includes("Failed to submit payment confirmation")) {
+          errorMessage = lang === 'en' 
+            ? "Failed to submit confirmation. Please check your data and try again." 
+            : "Gagal mengirim konfirmasi. Silakan periksa data dan coba lagi.";
+        } else if (error.message.includes("Failed to upload file")) {
+          errorMessage = lang === 'en' 
+            ? "Failed to upload file. Please try again." 
+            : "Gagal mengunggah file. Silakan coba lagi.";
+        } else if (error.message.includes("File size")) {
+          errorMessage = lang === 'en' 
+            ? "File too large. Maximum size is 5MB." 
+            : "File terlalu besar. Maksimal ukuran 5MB.";
+        } else if (error.message.includes("Only JPG, PNG, and PDF")) {
+          errorMessage = lang === 'en' 
+            ? "Only JPG, PNG, and PDF files are allowed." 
+            : "Hanya file JPG, PNG, dan PDF yang diperbolehkan.";
+        }
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setConfirming(false);
     }

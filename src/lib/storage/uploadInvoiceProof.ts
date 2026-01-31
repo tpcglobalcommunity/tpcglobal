@@ -17,8 +17,11 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'application/pdf'];
 
 export async function uploadInvoiceProof({ file, invoiceNo }: UploadProofOptions): Promise<UploadProofResult> {
   try {
+    console.log("Starting upload...", { fileName: file.name, fileSize: file.size, fileType: file.type });
+    
     // Validation
     if (file.size > MAX_FILE_SIZE) {
+      console.error("File too large:", file.size, "max:", MAX_FILE_SIZE);
       return {
         success: false,
         error: 'File size must be less than 5MB'
@@ -26,6 +29,7 @@ export async function uploadInvoiceProof({ file, invoiceNo }: UploadProofOptions
     }
 
     if (!ALLOWED_TYPES.includes(file.type)) {
+      console.error("Invalid file type:", file.type, "allowed:", ALLOWED_TYPES);
       return {
         success: false,
         error: 'Only JPG, PNG, and PDF files are allowed'
@@ -38,6 +42,8 @@ export async function uploadInvoiceProof({ file, invoiceNo }: UploadProofOptions
     const fileName = `${timestamp}.${fileExt}`;
     const filePath = `invoice-proofs/${invoiceNo}/${fileName}`;
 
+    console.log("Uploading to path:", filePath);
+
     // Upload to Supabase Storage
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('invoice-proofs')
@@ -47,12 +53,26 @@ export async function uploadInvoiceProof({ file, invoiceNo }: UploadProofOptions
       });
 
     if (uploadError) {
+      console.error("Upload error:", uploadError);
       logger.error('Failed to upload proof file', { error: uploadError, invoiceNo, fileName });
+      
+      // More specific error messages
+      let errorMessage = 'Failed to upload file. Please try again.';
+      if (uploadError.message.includes('Bucket not found')) {
+        errorMessage = 'Storage bucket not found. Please contact support.';
+      } else if (uploadError.message.includes('duplicate')) {
+        errorMessage = 'File already exists. Please try again with a different file.';
+      } else if (uploadError.message.includes('quota')) {
+        errorMessage = 'Storage quota exceeded. Please contact support.';
+      }
+      
       return {
         success: false,
-        error: 'Failed to upload file. Please try again.'
+        error: errorMessage
       };
     }
+
+    console.log("Upload successful:", uploadData);
 
     // Get public URL (assuming bucket is public with appropriate policies)
     const { data: urlData } = supabase.storage
@@ -60,6 +80,7 @@ export async function uploadInvoiceProof({ file, invoiceNo }: UploadProofOptions
       .getPublicUrl(filePath);
 
     const proofUrl = urlData.publicUrl;
+    console.log("Public URL generated:", proofUrl);
 
     logger.info('Proof file uploaded successfully', { invoiceNo, filePath, proofUrl });
 
@@ -69,10 +90,22 @@ export async function uploadInvoiceProof({ file, invoiceNo }: UploadProofOptions
     };
 
   } catch (error) {
+    console.error("Unexpected error during proof upload:", error);
     logger.error('Unexpected error during proof upload', { error, invoiceNo });
+    
+    // More specific error handling
+    let errorMessage = 'An unexpected error occurred. Please try again.';
+    if (error instanceof Error) {
+      if (error.message.includes('Network')) {
+        errorMessage = 'Network error. Please check your connection and try again.';
+      } else if (error.message.includes('timeout')) {
+        errorMessage = 'Upload timeout. Please try again.';
+      }
+    }
+    
     return {
       success: false,
-      error: 'An unexpected error occurred. Please try again.'
+      error: errorMessage
     };
   }
 }

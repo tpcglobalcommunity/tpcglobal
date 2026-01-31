@@ -26,6 +26,9 @@ export interface AdminReviewRequest {
  */
 export async function submitPaymentConfirmation(request: PaymentConfirmationRequest): Promise<void> {
   try {
+    console.log("Submitting payment confirmation:", request);
+    
+    // @ts-ignore - Supabase RPC type issue
     const { error } = await supabase.rpc('submit_invoice_confirmation', {
       p_invoice_no: request.invoice_no,
       p_payment_method: request.payment_method,
@@ -36,12 +39,28 @@ export async function submitPaymentConfirmation(request: PaymentConfirmationRequ
     });
 
     if (error) {
+      console.error("RPC error:", error);
       logger.error('Failed to submit payment confirmation', { error, request });
-      throw new Error('Failed to submit payment confirmation: ' + error.message);
+      
+      // More specific error messages
+      let errorMessage = 'Failed to submit payment confirmation: ' + error.message;
+      if (error.message.includes('function not found')) {
+        errorMessage = 'RPC function not found. Please contact support.';
+      } else if (error.message.includes('permission denied')) {
+        errorMessage = 'Permission denied. You can only confirm your own invoices.';
+      } else if (error.message.includes('not found')) {
+        errorMessage = 'Invoice not found. Please check your invoice number.';
+      } else if (error.message.includes('already confirmed')) {
+        errorMessage = 'Invoice already confirmed. Cannot submit again.';
+      }
+      
+      throw new Error(errorMessage);
     }
 
+    console.log("Payment confirmation submitted successfully");
     logger.info('Payment confirmation submitted successfully', { invoice_no: request.invoice_no });
   } catch (error) {
+    console.error("Unexpected error submitting payment confirmation:", error);
     logger.error('Unexpected error submitting payment confirmation', error);
     throw error;
   }
@@ -54,6 +73,7 @@ export async function submitPaymentConfirmation(request: PaymentConfirmationRequ
  */
 export async function adminReviewInvoice(request: AdminReviewRequest): Promise<void> {
   try {
+    // @ts-ignore - Supabase RPC type issue
     const { error } = await supabase.rpc('admin_review_invoice', {
       p_invoice_no: request.invoice_no,
       p_action: request.action,
