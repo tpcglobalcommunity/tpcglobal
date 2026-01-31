@@ -55,13 +55,13 @@ Set these in **Cloudflare Pages → Settings → Environment variables**:
 
 ```bash
 # Production Environment
-VITE_SUPABASE_URL=https://[YOUR_PROJECT_REF].supabase.co
+VITE_SUPABASE_URL=https://mzzwhrmciijyuqtfgtgg.supabase.co
 VITE_SUPABASE_ANON_KEY=[YOUR_ANON_KEY]
 VITE_SUPABASE_PUBLISHABLE_KEY=[YOUR_ANON_KEY]  # Legacy fallback
 VITE_USD_IDR_RATE=17000
 
 # Preview Environment (SAME VALUES)
-VITE_SUPABASE_URL=https://[YOUR_PROJECT_REF].supabase.co
+VITE_SUPABASE_URL=https://mzzwhrmciijyuqtfgtgg.supabase.co
 VITE_SUPABASE_ANON_KEY=[YOUR_ANON_KEY]
 VITE_SUPABASE_PUBLISHABLE_KEY=[YOUR_ANON_KEY]  # Legacy fallback
 VITE_USD_IDR_RATE=17000
