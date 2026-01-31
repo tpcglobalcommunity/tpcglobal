@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     setUser(currentUser);
     setSession(currentSession);
-    setIsAdmin(isValidAdmin(currentUser?.id, currentUser?.email));
+    setIsAdmin(isValidAdmin(currentUser?.id));
     setLoading(false);
     
     // Subscribe to session changes
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.info('[AUTH-HARDEN] AuthProvider session updated');
       setUser(newSession?.user ?? null);
       setSession(newSession);
-      setIsAdmin(isValidAdmin(newSession?.user?.id, newSession?.user?.email));
+      setIsAdmin(isValidAdmin(newSession?.user?.id));
     });
     
     // Cleanup
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const currentSession = getCurrentSession();
       setUser(currentUser);
       setSession(currentSession);
-      setIsAdmin(isValidAdmin(currentUser?.id, currentUser?.email));
+      setIsAdmin(isValidAdmin(currentUser?.id));
     }
     return success;
   };
