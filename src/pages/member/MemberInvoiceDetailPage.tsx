@@ -149,19 +149,19 @@ const MemberInvoiceDetailPage = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'UNPAID':
-        return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
+        return { bg: 'rgba(250,204,21,0.1)', text: '#FACC15', border: 'rgba(250,204,21,0.2)' };
       case 'PENDING_REVIEW':
-        return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+        return { bg: 'rgba(59,130,246,0.1)', text: '#3B82F6', border: 'rgba(59,130,246,0.2)' };
       case 'PAID':
-        return 'bg-green-500/10 text-green-400 border-green-500/20';
+        return { bg: 'rgba(34,197,94,0.1)', text: '#22C55E', border: 'rgba(34,197,94,0.2)' };
       case 'REJECTED':
-        return 'bg-red-500/10 text-red-400 border-red-500/20';
+        return { bg: 'rgba(239,68,68,0.1)', text: '#EF4444', border: 'rgba(239,68,68,0.2)' };
       case 'EXPIRED':
-        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
+        return { bg: 'rgba(107,114,128,0.1)', text: '#6B7280', border: 'rgba(107,114,128,0.2)' };
       case 'CANCELLED':
-        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
+        return { bg: 'rgba(107,114,128,0.1)', text: '#6B7280', border: 'rgba(107,114,128,0.2)' };
       default:
-        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
+        return { bg: 'rgba(107,114,128,0.1)', text: '#6B7280', border: 'rgba(107,114,128,0.2)' };
     }
   };
 
@@ -186,15 +186,19 @@ const MemberInvoiceDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
+      <div className="min-h-screen p-4" 
+           style={{
+             backgroundColor: '#0B0F17',
+             background: 'radial-gradient(circle at top, rgba(240,185,11,0.08), transparent 40%)'
+           }}>
         <div className="container-app section-spacing">
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center">
-              <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-white mb-2">
+              <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" style={{ color: '#F0B90B' }} />
+              <h2 className="text-xl font-semibold mb-2" style={{ color: '#E5E7EB' }}>
                 Loading Invoice...
               </h2>
-              <p className="text-gray-300">
+              <p style={{ color: '#9CA3AF' }}>
                 Please wait while we fetch your invoice details.
               </p>
             </div>
@@ -206,15 +210,29 @@ const MemberInvoiceDetailPage = () => {
 
   if (!invoice) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
+      <div className="min-h-screen p-4" 
+           style={{
+             backgroundColor: '#0B0F17',
+             background: 'radial-gradient(circle at top, rgba(240,185,11,0.08), transparent 40%)'
+           }}>
         <div className="container-app section-spacing">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-white mb-4">
+            <h1 className="text-2xl font-bold mb-4" style={{ color: '#E5E7EB' }}>
               {t("member.toast.invoiceNotFound")}
             </h1>
             <button
               onClick={() => navigate(`/${lang}/member`)}
-              className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all"
+              className="px-6 py-2 font-medium rounded-lg transition-all"
+              style={{
+                background: 'linear-gradient(180deg, #F0B90B, #D9A441)',
+                color: '#111827'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.filter = 'brightness(1.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.filter = 'brightness(1)';
+              }}
             >
               Back to Dashboard
             </button>
@@ -225,33 +243,53 @@ const MemberInvoiceDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
+    <div className="min-h-screen p-4" 
+         style={{
+           backgroundColor: '#0B0F17',
+           background: 'radial-gradient(circle at top, rgba(240,185,11,0.08), transparent 40%)'
+         }}>
       <div className="container-app section-spacing">
         {/* Back Button */}
         <button
           onClick={() => navigate(`/${lang}/member`)}
-          className="mb-6 flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+          className="mb-6 flex items-center gap-2 transition-colors"
+          style={{ color: '#9CA3AF' }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = '#E5E7EB';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = '#9CA3AF';
+          }}
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Dashboard
         </button>
 
         {/* Invoice Header */}
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 mb-6">
+        <div className="p-6 rounded-xl mb-6" 
+             style={{
+               backgroundColor: '#0F1624',
+               border: '1px solid rgba(240,185,11,0.25)'
+             }}>
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-white mb-2">
+              <h1 className="text-2xl font-bold mb-2" style={{ color: '#E5E7EB' }}>
                 {invoice.invoice_no}
               </h1>
               <div className="flex items-center gap-3">
                 {getStatusIcon(invoice.status)}
-                <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(invoice.status)}`}>
+                <span className="px-3 py-1 rounded-full text-sm font-medium border"
+                      style={{
+                        backgroundColor: getStatusColor(invoice.status).bg,
+                        color: getStatusColor(invoice.status).text,
+                        borderColor: getStatusColor(invoice.status).border
+                      }}>
                   {t(`member.status.${invoice.status.toLowerCase()}`)}
                 </span>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-sm text-gray-400">
+              <div className="text-sm" style={{ color: '#9CA3AF' }}>
                 {formatDate(invoice.created_at)}
               </div>
             </div>
@@ -259,37 +297,41 @@ const MemberInvoiceDetailPage = () => {
         </div>
 
         {/* Invoice Details */}
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 mb-6">
-          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <FileText className="w-5 h-5" />
+        <div className="p-6 rounded-xl mb-6" 
+             style={{
+               backgroundColor: '#0F1624',
+               border: '1px solid rgba(240,185,11,0.25)'
+             }}>
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: '#E5E7EB' }}>
+            <FileText className="w-5 h-5" style={{ color: 'rgba(240,185,11,0.35)' }} />
             Invoice Details
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-sm font-medium text-gray-400 mb-2">Order Details</h3>
+              <h3 className="text-sm font-medium mb-2" style={{ color: '#9CA3AF' }}>Order Details</h3>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-300">TPC Amount:</span>
-                  <span className="text-white font-medium">{invoice.tpc_amount} TPC</span>
+                  <span style={{ color: '#9CA3AF' }}>TPC Amount:</span>
+                  <span className="font-medium" style={{ color: '#E5E7EB' }}>{invoice.tpc_amount} TPC</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-300">Total USD:</span>
-                  <span className="text-white font-medium">{formatCurrency(invoice.total_usd, 'USD')}</span>
+                  <span style={{ color: '#9CA3AF' }}>Total USD:</span>
+                  <span className="font-medium" style={{ color: '#E5E7EB' }}>{formatCurrency(invoice.total_usd, 'USD')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-300">Total IDR:</span>
-                  <span className="text-white font-medium">{formatCurrency(invoice.total_idr, 'IDR')}</span>
+                  <span style={{ color: '#9CA3AF' }}>Total IDR:</span>
+                  <span className="font-medium" style={{ color: '#E5E7EB' }}>{formatCurrency(invoice.total_idr, 'IDR')}</span>
                 </div>
               </div>
             </div>
             
             <div>
-              <h3 className="text-sm font-medium text-gray-400 mb-2">Contact Information</h3>
+              <h3 className="text-sm font-medium mb-2" style={{ color: '#9CA3AF' }}>Contact Information</h3>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-300">Email:</span>
-                  <span className="text-white font-medium">{invoice.email}</span>
+                  <span style={{ color: '#9CA3AF' }}>Email:</span>
+                  <span className="font-medium" style={{ color: '#E5E7EB' }}>{invoice.email}</span>
                 </div>
               </div>
             </div>
@@ -298,32 +340,49 @@ const MemberInvoiceDetailPage = () => {
 
         {/* Payment Instructions */}
         {(invoice.status === 'UNPAID' || invoice.status === 'REJECTED') && (
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 mb-6">
-            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Wallet className="w-5 h-5" />
+          <div className="p-6 rounded-xl mb-6" 
+               style={{
+                 backgroundColor: '#0F1624',
+                 border: '1px solid rgba(240,185,11,0.25)'
+               }}>
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: '#E5E7EB' }}>
+              <Wallet className="w-5 h-5" style={{ color: 'rgba(240,185,11,0.35)' }} />
               Payment Instructions
             </h2>
             
-            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 mb-4">
-              <p className="text-yellow-400 text-sm">
+            <div className="p-4 rounded-lg mb-4" 
+                 style={{
+                   backgroundColor: 'rgba(250,204,21,0.1)',
+                   border: '1px solid rgba(250,204,21,0.2)'
+                 }}>
+              <p className="text-sm" style={{ color: '#FACC15' }}>
                 Please transfer the exact amount to the treasury address and upload the payment proof below.
               </p>
             </div>
             
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-medium text-gray-400 mb-2">Treasury Address</h3>
-                <div className="bg-black/30 border border-white/10 rounded-lg p-3 font-mono text-sm text-white">
+                <h3 className="text-sm font-medium mb-2" style={{ color: '#9CA3AF' }}>Treasury Address</h3>
+                <div className="p-3 rounded-lg font-mono text-sm" 
+                     style={{ 
+                       backgroundColor: '#111827', 
+                       border: '1px solid rgba(255,255,255,0.12)',
+                       color: '#E5E7EB'
+                     }}>
                   {/* This should come from config or RPC */}
                   TBC... (Treasury Address)
                 </div>
               </div>
               
               <div>
-                <h3 className="text-sm font-medium text-gray-400 mb-2">Amount to Transfer</h3>
-                <div className="bg-black/30 border border-white/10 rounded-lg p-3">
-                  <div className="text-white font-medium">{formatCurrency(invoice.total_idr, 'IDR')}</div>
-                  <div className="text-gray-400 text-sm">{formatCurrency(invoice.total_usd, 'USD')}</div>
+                <h3 className="text-sm font-medium mb-2" style={{ color: '#9CA3AF' }}>Amount to Transfer</h3>
+                <div className="p-3 rounded-lg" 
+                     style={{ 
+                       backgroundColor: '#111827', 
+                       border: '1px solid rgba(255,255,255,0.12)'
+                     }}>
+                  <div className="font-medium" style={{ color: '#E5E7EB' }}>{formatCurrency(invoice.total_idr, 'IDR')}</div>
+                  <div className="text-sm" style={{ color: '#9CA3AF' }}>{formatCurrency(invoice.total_usd, 'USD')}</div>
                 </div>
               </div>
             </div>
@@ -332,26 +391,41 @@ const MemberInvoiceDetailPage = () => {
 
         {/* Payment Confirmation Form */}
         {(invoice.status === 'UNPAID' || invoice.status === 'REJECTED') && (
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6">
-            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Upload className="w-5 h-5" />
+          <div className="p-6 rounded-xl" 
+               style={{
+                 backgroundColor: '#0F1624',
+                 border: '1px solid rgba(240,185,11,0.25)'
+               }}>
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: '#E5E7EB' }}>
+              <Upload className="w-5 h-5" style={{ color: 'rgba(240,185,11,0.35)' }} />
               {t("member.confirm.title")}
             </h2>
             
-            <p className="text-gray-300 text-sm mb-6">
+            <p className="text-sm mb-6" style={{ color: '#9CA3AF' }}>
               {t("member.confirm.subtitle")}
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Payment Method */}
               <div>
-                <label className="block text-sm font-medium text-gray-200 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: '#E5E7EB' }}>
                   {t("member.confirm.paymentMethod")}
                 </label>
                 <select
                   value={formData.payment_method}
                   onChange={(e) => setFormData({ ...formData, payment_method: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-lg focus:outline-none transition-all"
+                  style={{
+                    backgroundColor: '#111827',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    color: '#E5E7EB'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#F0B90B';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255,255,255,0.12)';
+                  }}
                   required
                 >
                   <option value="">Select payment method</option>
@@ -364,27 +438,49 @@ const MemberInvoiceDetailPage = () => {
               {/* Optional Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: '#E5E7EB' }}>
                     {t("member.confirm.payerName")} (Optional)
                   </label>
                   <input
                     type="text"
                     value={formData.payer_name}
                     onChange={(e) => setFormData({ ...formData, payer_name: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-3 rounded-lg focus:outline-none transition-all"
+                    style={{
+                      backgroundColor: '#111827',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      color: '#E5E7EB'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#F0B90B';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = 'rgba(255,255,255,0.12)';
+                    }}
                     placeholder="Your name"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: '#E5E7EB' }}>
                     {t("member.confirm.payerRef")} (Optional)
                   </label>
                   <input
                     type="text"
                     value={formData.payer_ref}
                     onChange={(e) => setFormData({ ...formData, payer_ref: e.target.value })}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-3 rounded-lg focus:outline-none transition-all"
+                    style={{
+                      backgroundColor: '#111827',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      color: '#E5E7EB'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#F0B90B';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = 'rgba(255,255,255,0.12)';
+                    }}
                     placeholder="Reference number"
                   />
                 </div>
@@ -392,13 +488,24 @@ const MemberInvoiceDetailPage = () => {
 
               {/* Transaction Signature (for crypto) */}
               <div>
-                <label className="block text-sm font-medium text-gray-200 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: '#E5E7EB' }}>
                   {t("member.confirm.txSignature")} (Optional)
                 </label>
                 <textarea
                   value={formData.tx_signature}
                   onChange={(e) => setFormData({ ...formData, tx_signature: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-lg focus:outline-none transition-all"
+                  style={{
+                    backgroundColor: '#111827',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    color: '#E5E7EB'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#F0B90B';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255,255,255,0.12)';
+                  }}
                   placeholder="Transaction hash or signature"
                   rows={3}
                 />
@@ -406,10 +513,19 @@ const MemberInvoiceDetailPage = () => {
 
               {/* File Upload */}
               <div>
-                <label className="block text-sm font-medium text-gray-200 mb-2">
-                  {t("member.confirm.proofUpload")} <span className="text-red-400">*</span>
+                <label className="block text-sm font-medium mb-2" style={{ color: '#E5E7EB' }}>
+                  {t("member.confirm.proofUpload")} <span style={{ color: '#EF4444' }}>*</span>
                 </label>
-                <div className="border-2 border-dashed border-white/20 rounded-lg p-6 text-center hover:border-white/40 transition-colors">
+                <div className="p-6 text-center rounded-lg border-2 border-dashed transition-colors"
+                     style={{
+                       borderColor: 'rgba(255,255,255,0.12)'
+                     }}
+                     onMouseEnter={(e) => {
+                       e.currentTarget.style.borderColor = 'rgba(240,185,11,0.4)';
+                     }}
+                     onMouseLeave={(e) => {
+                       e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
+                     }}>
                   <input
                     type="file"
                     accept="image/jpeg,image/png,application/pdf"
@@ -421,11 +537,11 @@ const MemberInvoiceDetailPage = () => {
                     htmlFor="proof-upload"
                     className="cursor-pointer flex flex-col items-center gap-2"
                   >
-                    <Upload className="w-8 h-8 text-gray-400" />
-                    <span className="text-gray-300">
+                    <Upload className="w-8 h-8" style={{ color: '#9CA3AF' }} />
+                    <span style={{ color: '#E5E7EB' }}>
                       {proofFile ? proofFile.name : "Click to upload or drag and drop"}
                     </span>
-                    <span className="text-gray-400 text-sm">
+                    <span className="text-sm" style={{ color: '#9CA3AF' }}>
                       {t("member.confirm.uploadHint")}
                     </span>
                   </label>
@@ -437,7 +553,8 @@ const MemberInvoiceDetailPage = () => {
                     <img
                       src={previewUrl}
                       alt="Proof preview"
-                      className="max-w-full h-auto rounded-lg border border-white/10"
+                      className="max-w-full h-auto rounded-lg"
+                      style={{ border: '1px solid rgba(255,255,255,0.12)' }}
                     />
                   </div>
                 )}
@@ -447,7 +564,18 @@ const MemberInvoiceDetailPage = () => {
               <button
                 type="submit"
                 disabled={submitting || !proofFile}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium py-3 px-4 rounded-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="w-full font-medium py-3 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  background: 'linear-gradient(180deg, #F0B90B, #D9A441)',
+                  color: '#111827'
+                }}
+                onMouseEnter={(e) => {
+                  if (!submitting && !proofFile) return;
+                  e.currentTarget.style.filter = 'brightness(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.filter = 'brightness(1)';
+                }}
               >
                 {submitting ? (
                   <>
@@ -464,24 +592,32 @@ const MemberInvoiceDetailPage = () => {
 
         {/* Status Messages */}
         {invoice.status === 'PENDING_REVIEW' && (
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-6 text-center">
-            <AlertCircle className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-            <h3 className="text-lg font-semibold text-white mb-2">
+          <div className="p-6 rounded-lg text-center" 
+               style={{
+                 backgroundColor: 'rgba(59,130,246,0.1)',
+                 border: '1px solid rgba(59,130,246,0.2)'
+               }}>
+            <AlertCircle className="w-8 h-8 mx-auto mb-2" style={{ color: '#3B82F6' }} />
+            <h3 className="text-lg font-semibold mb-2" style={{ color: '#E5E7EB' }}>
               {t("member.confirm.waitingReview")}
             </h3>
-            <p className="text-gray-300">
+            <p style={{ color: '#9CA3AF' }}>
               Your payment confirmation has been submitted and is being reviewed by our team.
             </p>
           </div>
         )}
 
         {invoice.status === 'PAID' && (
-          <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-6 text-center">
-            <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
-            <h3 className="text-lg font-semibold text-white mb-2">
+          <div className="p-6 rounded-lg text-center" 
+               style={{
+                 backgroundColor: 'rgba(34,197,94,0.1)',
+                 border: '1px solid rgba(34,197,94,0.2)'
+               }}>
+            <CheckCircle className="w-8 h-8 mx-auto mb-2" style={{ color: '#22C55E' }} />
+            <h3 className="text-lg font-semibold mb-2" style={{ color: '#E5E7EB' }}>
               {t("member.confirm.alreadyPaid")}
             </h3>
-            <p className="text-gray-300">
+            <p style={{ color: '#9CA3AF' }}>
               This invoice has been paid and confirmed.
             </p>
           </div>

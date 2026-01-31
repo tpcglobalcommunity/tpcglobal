@@ -50,19 +50,19 @@ const MemberDashboardPage = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'UNPAID':
-        return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
+        return { bg: 'rgba(250,204,21,0.1)', text: '#FACC15', border: 'rgba(250,204,21,0.2)' };
       case 'PENDING_REVIEW':
-        return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+        return { bg: 'rgba(59,130,246,0.1)', text: '#3B82F6', border: 'rgba(59,130,246,0.2)' };
       case 'PAID':
-        return 'bg-green-500/10 text-green-400 border-green-500/20';
+        return { bg: 'rgba(34,197,94,0.1)', text: '#22C55E', border: 'rgba(34,197,94,0.2)' };
       case 'REJECTED':
-        return 'bg-red-500/10 text-red-400 border-red-500/20';
+        return { bg: 'rgba(239,68,68,0.1)', text: '#EF4444', border: 'rgba(239,68,68,0.2)' };
       case 'EXPIRED':
-        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
+        return { bg: 'rgba(107,114,128,0.1)', text: '#6B7280', border: 'rgba(107,114,128,0.2)' };
       case 'CANCELLED':
-        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
+        return { bg: 'rgba(107,114,128,0.1)', text: '#6B7280', border: 'rgba(107,114,128,0.2)' };
       default:
-        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
+        return { bg: 'rgba(107,114,128,0.1)', text: '#6B7280', border: 'rgba(107,114,128,0.2)' };
     }
   };
 
@@ -91,15 +91,19 @@ const MemberDashboardPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
+      <div className="min-h-screen p-4" 
+           style={{
+             backgroundColor: '#0B0F17',
+             background: 'radial-gradient(circle at top, rgba(240,185,11,0.08), transparent 40%)'
+           }}>
         <div className="container-app section-spacing">
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center">
-              <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-white mb-2">
+              <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" style={{ color: '#F0B90B' }} />
+              <h2 className="text-xl font-semibold mb-2" style={{ color: '#E5E7EB' }}>
                 {t("member.title")}
               </h2>
-              <p className="text-gray-300">
+              <p style={{ color: '#9CA3AF' }}>
                 Loading your invoices...
               </p>
             </div>
@@ -110,37 +114,54 @@ const MemberDashboardPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
+    <div className="min-h-screen p-4" 
+         style={{
+           backgroundColor: '#0B0F17',
+           background: 'radial-gradient(circle at top, rgba(240,185,11,0.08), transparent 40%)'
+         }}>
       <div className="container-app section-spacing">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className="text-3xl font-bold mb-2" style={{ color: '#F0B90B' }}>
             {t("member.title")}
           </h1>
-          <p className="text-gray-300">
+          <p style={{ color: '#9CA3AF' }}>
             {t("member.subtitle")}
           </p>
         </div>
 
         {/* Invoices Section */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-            <FileText className="w-5 h-5" />
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2" style={{ color: '#E5E7EB' }}>
+            <FileText className="w-5 h-5" style={{ color: 'rgba(240,185,11,0.35)' }} />
             {t("member.myInvoices")}
           </h2>
 
           {invoices.length === 0 ? (
             <div className="text-center py-12">
-              <FileText className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-300 mb-2">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
+                   style={{ backgroundColor: '#0F1624', border: '1px solid rgba(240,185,11,0.25)' }}>
+                <FileText className="w-8 h-8" style={{ color: 'rgba(240,185,11,0.35)' }} />
+              </div>
+              <h3 className="text-lg font-medium mb-2" style={{ color: '#E5E7EB' }}>
                 {t("member.noInvoices")}
               </h3>
-              <p className="text-gray-400 text-sm">
+              <p className="text-sm mb-4" style={{ color: '#9CA3AF' }}>
                 You haven't created any invoices yet.
               </p>
               <button
                 onClick={() => navigate(`/${lang}/buytpc`)}
-                className="mt-4 px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all"
+                className="mt-4 px-6 py-2 font-medium rounded-lg transition-all"
+                style={{
+                  background: 'linear-gradient(180deg, #F0B90B, #D9A441)',
+                  color: '#111827'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.filter = 'brightness(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.filter = 'brightness(1)';
+                }}
               >
                 Create Invoice
               </button>
@@ -150,30 +171,45 @@ const MemberDashboardPage = () => {
               {invoices.map((invoice) => (
                 <div
                   key={invoice.invoice_no}
-                  className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all"
+                  className="p-6 rounded-xl transition-all"
+                  style={{
+                    backgroundColor: '#0F1624',
+                    border: '1px solid rgba(240,185,11,0.25)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(240,185,11,0.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#0F1624';
+                  }}
                 >
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     {/* Invoice Info */}
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-white">
+                        <h3 className="text-lg font-semibold" style={{ color: '#E5E7EB' }}>
                           {invoice.invoice_no}
                         </h3>
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium border flex items-center gap-1 ${getStatusColor(invoice.status)}`}>
+                        <span className="px-3 py-1 rounded-full text-xs font-medium border flex items-center gap-1"
+                              style={{
+                                backgroundColor: getStatusColor(invoice.status).bg,
+                                color: getStatusColor(invoice.status).text,
+                                borderColor: getStatusColor(invoice.status).border
+                              }}>
                           {getStatusIcon(invoice.status)}
                           {t(`member.status.${invoice.status.toLowerCase()}`)}
                         </span>
                       </div>
                       
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div className="flex items-center gap-2 text-gray-300">
+                        <div className="flex items-center gap-2" style={{ color: '#9CA3AF' }}>
                           <DollarSign className="w-4 h-4" />
                           <span>{invoice.tpc_amount} TPC</span>
                         </div>
-                        <div className="flex items-center gap-2 text-gray-300">
+                        <div className="flex items-center gap-2" style={{ color: '#9CA3AF' }}>
                           <span>{formatCurrency(invoice.total_usd, 'USD')}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-gray-300">
+                        <div className="flex items-center gap-2" style={{ color: '#9CA3AF' }}>
                           <Calendar className="w-4 h-4" />
                           <span>{formatDate(invoice.created_at)}</span>
                         </div>
@@ -184,7 +220,17 @@ const MemberDashboardPage = () => {
                     <div className="flex items-center">
                       <button
                         onClick={() => handleViewInvoice(invoice.invoice_no)}
-                        className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all flex items-center gap-2"
+                        className="px-4 py-2 font-medium rounded-lg transition-all flex items-center gap-2"
+                        style={{
+                          background: 'linear-gradient(180deg, #F0B90B, #D9A441)',
+                          color: '#111827'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.filter = 'brightness(1.05)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.filter = 'brightness(1)';
+                        }}
                       >
                         <Eye className="w-4 h-4" />
                         {t("member.viewInvoice")}
