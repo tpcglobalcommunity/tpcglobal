@@ -13,17 +13,20 @@ interface NavItem {
 }
 
 const MemberShell = () => {
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // Get lang from URL params or fallback to 'id'
+  const lang = (params.lang as string) || 'id';
 
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [lang]);
 
   const checkAuth = async () => {
     try {
@@ -70,7 +73,7 @@ const MemberShell = () => {
       icon: Settings,
       path: `/${lang}/member/settings`
     }
-  ];
+  ] as NavItem[];
 
   const isActivePath = (path: string) => {
     return location.pathname === path || location.pathname.startsWith(path + '/');
