@@ -39,10 +39,11 @@ export async function uploadInvoiceProof({ file, invoiceNo }: UploadProofOptions
     // Generate unique filename with timestamp
     const timestamp = Date.now();
     const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
-    const fileName = `${timestamp}.${fileExt}`;
+    const fileName = `${timestamp}-${file.name}`;
     const filePath = `invoice-proofs/${invoiceNo}/${fileName}`;
 
     console.log("Uploading to path:", filePath);
+    console.log("Using bucket name: invoice-proofs");
 
     // Upload to Supabase Storage
     const { data: uploadData, error: uploadError } = await supabase.storage
@@ -58,10 +59,10 @@ export async function uploadInvoiceProof({ file, invoiceNo }: UploadProofOptions
       
       // More specific error messages
       let errorMessage = 'Failed to upload file. Please try again.';
-      if (uploadError.message.includes('Bucket not found') || uploadError.message.includes('The bucket')) {
-        errorMessage = 'Storage bucket "invoice-proofs" not found. Please contact support to create it.';
+      if (uploadError.message.includes('Bucket not found') || uploadError.message.includes('The bucket') || uploadError.message.includes('StorageError: bucket_not_found')) {
+        errorMessage = 'Bucket invoice-proofs belum dibuat di Supabase Storage.';
         if (import.meta.env.DEV) {
-          console.warn('DEV: Please create "invoice-proofs" bucket in Supabase Storage with:');
+          console.warn('DEV: Bucket "invoice-proofs" not found. Please create it in Supabase Storage with:');
           console.warn('- Name: invoice-proofs');
           console.warn('- Private: true');
           console.warn('- Allowed: jpg/png/pdf');
@@ -103,7 +104,16 @@ export async function uploadInvoiceProof({ file, invoiceNo }: UploadProofOptions
     // More specific error handling
     let errorMessage = 'An unexpected error occurred. Please try again.';
     if (error instanceof Error) {
-      if (error.message.includes('Network')) {
+      if (error.message.includes('Bucket not found') || error.message.includes('StorageError: bucket_not_found')) {
+        errorMessage = 'Bucket invoice-proofs belum dibuat di Supabase Storage.';
+        if (import.meta.env.DEV) {
+          console.warn('DEV: Bucket "invoice-proofs" not found. Please create it in Supabase Storage with:');
+          console.warn('- Name: invoice-proofs');
+          console.warn('- Private: true');
+          console.warn('- Allowed: jpg/png/pdf');
+          console.warn('- Limit: 10MB');
+        }
+      } else if (error.message.includes('Network')) {
         errorMessage = 'Network error. Please check your connection and try again.';
       } else if (error.message.includes('timeout')) {
         errorMessage = 'Upload timeout. Please try again.';
