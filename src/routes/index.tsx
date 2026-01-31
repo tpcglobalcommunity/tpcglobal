@@ -4,7 +4,6 @@ import { AuthProvider } from "@/lib/auth";
 import { RequireAuth } from "@/components/guards/RequireAuth";
 import { RequireAdmin } from "@/components/guards/RequireAdmin";
 import { PublicLayout } from "@/layouts/PublicLayout";
-import { MemberLayout } from "@/layouts/MemberLayout";
 import { AdminLayout } from "@/layouts/AdminLayout";
 
 // Public Pages
@@ -80,29 +79,27 @@ export default function AppRoutes() {
           <Route path="dao/snapshot" element={<DaoSnapshotPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="auth/callback" element={<AuthCallbackPage />} />
+
+          {/* Protected member routes */}
+          <Route element={<RequireAuth />}>
+            <Route path="dashboard" element={<MemberShell />}>
+              <Route index element={<MemberHome />} />
+              <Route path="invoices" element={<MemberInvoicesPage />} />
+              <Route path="invoices/:invoiceNo" element={<MemberInvoiceDetailPage />} />
+              <Route path="settings" element={<MemberSettingsPage />} />
+              <Route path="test" element={<MemberTestPage />} />
+            </Route>
+
+            {/* Legacy member routes (LANG-PREFIXED) */}
+            <Route path="member" element={<Navigate to="../dashboard" replace />} />
+            <Route path="member/*" element={<Navigate to="../dashboard" replace />} />
+          </Route>
         </Route>
 
         {/* Non-lang redirects */}
         <Route path="/login" element={<Navigate to="/id/login" replace />} />
         <Route path="/auth/callback" element={<Navigate to="/id/auth/callback" replace />} />
         <Route path="/callback" element={<Navigate to="/id/auth/callback" replace />} />
-
-        {/* Member Routes - Protected */}
-        <Route path="/:lang/dashboard/*" element={
-          <RequireAuth>
-            <MemberShell />
-          </RequireAuth>
-        }>
-          <Route index element={<MemberHome />} />
-          <Route path="invoices" element={<MemberInvoicesPage />} />
-          <Route path="invoices/:invoiceNo" element={<MemberInvoiceDetailPage />} />
-          <Route path="settings" element={<MemberSettingsPage />} />
-          <Route path="test" element={<MemberTestPage />} />
-        </Route>
-
-        {/* Legacy member routes - redirect to dashboard */}
-        <Route path="/:lang/member" element={<Navigate to={`/:lang/dashboard`} replace />} />
-        <Route path="/:lang/member/*" element={<Navigate to={`/:lang/dashboard/*`} replace />} />
 
         {/* Admin Routes */}
         <Route path="/admin/*" element={
