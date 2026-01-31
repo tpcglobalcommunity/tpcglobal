@@ -14,6 +14,7 @@ const LoginPage = () => {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
   const [cooldownSec, setCooldownSec] = useState(0);
+  const [rateLimitSec, setRateLimitSec] = useState(0);
 
   // Get returnTo from query params
   const returnTo = searchParams.get('returnTo');
@@ -27,6 +28,16 @@ const LoginPage = () => {
       return () => clearTimeout(timer);
     }
   }, [cooldownSec]);
+
+  // Rate limit timer effect
+  useEffect(() => {
+    if (rateLimitSec > 0) {
+      const timer = setTimeout(() => {
+        setRateLimitSec(prev => Math.max(0, prev - 1));
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [rateLimitSec]);
 
   // Check if user is already logged in and redirect if needed
   useEffect(() => {
@@ -49,12 +60,18 @@ const LoginPage = () => {
     return emailRegex.test(email);
   };
 
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+  };
+
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     // Prevent double submit and cooldown
-    if (loading || cooldownSec > 0) {
+    if (loading || cooldownSec > 0 || rateLimitSec > 0) {
       return;
     }
 
@@ -95,9 +112,9 @@ const LoginPage = () => {
       
       // Handle rate limit specifically
       if (error?.status === 429 || error?.message?.includes('rate limit')) {
-        setError(t("auth.rateLimit.message"));
-        setCooldownSec(90); // 90 seconds cooldown
-        toast.error(t("auth.rateLimit.title"));
+        setError(lang === 'id' ? 'Kita kena limit. Pakai Google dulu atau tunggu 5 menit.' : 'We\'re rate limited. Use Google login or wait 5 minutes.');
+        setRateLimitSec(300); // 5 minutes cooldown
+        toast.error(lang === 'id' ? 'Email dibatasi' : 'Email limited');
       } else {
         setError(error.message || t("auth.errorGeneric"));
         toast.error(t("auth.errorGeneric"));
@@ -196,14 +213,14 @@ const LoginPage = () => {
 
               <button
                 type="submit"
-                disabled={loading || cooldownSec > 0}
+                disabled={loading || cooldownSec > 0 || rateLimitSec > 0}
                 className="w-full font-medium py-3 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
                   background: 'linear-gradient(180deg, #F0B90B, #D9A441)',
                   color: '#111827'
                 }}
                 onMouseEnter={(e) => {
-                  if (!loading && cooldownSec === 0) {
+                  if (!loading && cooldownSec === 0 && rateLimitSec === 0) {
                     e.currentTarget.style.filter = 'brightness(1.05)';
                   }
                 }}
@@ -211,12 +228,12 @@ const LoginPage = () => {
                   e.currentTarget.style.filter = 'brightness(1)';
                 }}
                 onMouseDown={(e) => {
-                  if (cooldownSec === 0) {
+                  if (cooldownSec === 0 && rateLimitSec === 0) {
                     e.currentTarget.style.filter = 'brightness(0.95)';
                   }
                 }}
                 onMouseUp={(e) => {
-                  if (cooldownSec === 0) {
+                  if (cooldownSec === 0 && rateLimitSec === 0) {
                     e.currentTarget.style.filter = 'brightness(1.05)';
                   }
                 }}
@@ -226,6 +243,8 @@ const LoginPage = () => {
                     <Loader2 className="w-4 h-4 animate-spin inline mr-2" />
                     {t("auth.continueEmail")}
                   </>
+                ) : rateLimitSec > 0 ? (
+                  lang === 'id' ? `Email dibatasi. Coba lagi dalam ${formatTime(rateLimitSec)}` : `Email limited. Try again in ${formatTime(rateLimitSec)}`
                 ) : cooldownSec > 0 ? (
                   lang === 'id' ? `Tunggu ${cooldownSec} detik` : `Wait ${cooldownSec}s`
                 ) : (
@@ -265,24 +284,50 @@ const LoginPage = () => {
           {/* Social buttons */}
           {!sent && (
             <div className="space-y-3">
+              {/* Rate limit helper text */}
+              {rateLimitSec > 0 && (
+                <div className="text-center p-4 rounded-lg" style={{ backgroundColor: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)' }}>
+                  <p className="text-sm font-medium" style={{ color: '#22C55E' }}>
+                    {lang === 'id' ? '🚀 Gunakan Google untuk login cepat' : '🚀 Use Google for quick login'}
+                  </p>
+                  <p className="text-xs mt-1" style={{ color: '#9CA3AF' }}>
+                    {lang === 'id' ? 'Email akan tersedia lagi setelah limit berakhir' : 'Email will be available again after limit expires'}
+                  </p>
+                </div>
+              )}
+
               <button
                 onClick={handleGoogleLogin}
                 disabled={loading}
-                className="w-full font-medium py-3 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                className={`w-full font-medium py-3 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 ${
+                  rateLimitSec > 0 
+                    ? 'border-2 shadow-lg' 
+                    : 'border'
+                }`}
                 style={{
-                  background: 'transparent',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  color: '#E5E7EB'
+                  background: rateLimitSec > 0 
+                    ? 'linear-gradient(180deg, #4285F4, #1967D2)' 
+                    : 'transparent',
+                  borderColor: rateLimitSec > 0 
+                    ? '#4285F4' 
+                    : 'rgba(255,255,255,0.12)',
+                  color: rateLimitSec > 0 
+                    ? 'white' 
+                    : '#E5E7EB'
                 }}
                 onMouseEnter={(e) => {
                   if (!loading) {
-                    e.currentTarget.style.borderColor = 'rgba(240,185,11,0.4)';
-                    e.currentTarget.style.color = '#F0B90B';
+                    e.currentTarget.style.borderColor = rateLimitSec > 0 ? '#4285F4' : 'rgba(240,185,11,0.4)';
+                    e.currentTarget.style.color = rateLimitSec > 0 ? 'white' : '#F0B90B';
                   }
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
-                  e.currentTarget.style.color = '#E5E7EB';
+                  e.currentTarget.style.borderColor = rateLimitSec > 0 
+                    ? '#4285F4' 
+                    : 'rgba(255,255,255,0.12)';
+                  e.currentTarget.style.color = rateLimitSec > 0 
+                    ? 'white' 
+                    : '#E5E7EB';
                 }}
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -291,7 +336,10 @@ const LoginPage = () => {
                   <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                 </svg>
-                {t("auth.google")}
+                {rateLimitSec > 0 
+                  ? (lang === 'id' ? '🔥 Login dengan Google (Direkomendasikan)' : '🔥 Login with Google (Recommended)')
+                  : t("auth.google")
+                }
               </button>
 
               <button
