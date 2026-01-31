@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { AuthProvider } from "@/lib/auth";
 import { RequireAuth } from "@/components/guards/RequireAuth";
 import { RequireAdmin } from "@/components/guards/RequireAdmin";
@@ -29,6 +30,17 @@ import AdminSettingsPage from "@/pages/admin/AdminSettingsPage";
 // System
 import NotFound from "@/pages/NotFound";
 
+// HomeRedirect component for dynamic /:lang/home routes
+const HomeRedirect = () => {
+  const { lang } = useParams<{ lang: string }>();
+  
+  // Only redirect for valid languages, fallback to /id
+  const validLangs = ['en', 'id'];
+  const targetLang = validLangs.includes(lang || '') ? lang : 'id';
+  
+  return <Navigate to={`/${targetLang}`} replace />;
+};
+
 export default function AppRoutes() {
   return (
     <AuthProvider>
@@ -46,6 +58,9 @@ export default function AppRoutes() {
         {/* Invalid /home routes - redirect to canonical language root */}
         <Route path="/en/home" element={<Navigate to="/en" replace />} />
         <Route path="/id/home" element={<Navigate to="/id" replace />} />
+        
+        {/* Dynamic /home alias for valid languages */}
+        <Route path="/:lang/home" element={<HomeRedirect />} />
         
         {/* Language-prefixed routes */}
         <Route path="/:lang" element={<PublicLayout />}>
