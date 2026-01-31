@@ -127,9 +127,20 @@ revoke all on function public.get_invoice_public(text) from public;
 grant execute on function public.get_invoice_public(text) to anon, authenticated;
 
 -- =========================================================
--- 4) CANONICAL: submit_invoice_confirmation(6 params exact)
+-- 4) CANONICAL: submit_invoice_confirmation(6 params exact) + ANTI-TYPO
 -- =========================================================
-create or replace function public.submit_invoice_confirmation(
+-- 1) DROP dulu function existing (sesuai hint)
+drop function if exists public.submit_invoice_confirmation(
+  text, text, text, text, text, text
+);
+
+-- (opsional tapi aman) drop overload lain kalau pernah ada
+drop function if exists public.submit_invoice_confirmation(text, text, text, text, text);
+drop function if exists public.submit_invoice_confirmation(text, text, text, text);
+drop function if exists public.submit_invoice_confirmation(text, text, text);
+
+-- 2) CREATE ulang dengan signature & return TABLE yang canonical + anti-typo (NO RAISE)
+create function public.submit_invoice_confirmation(
   p_invoice_no text,
   p_payment_method text,
   p_payer_name text,
@@ -151,49 +162,49 @@ as $$
 declare
   v_exists boolean;
   v_conf_id bigint;
+  v_method text;
 begin
-  -- Basic validation (server-side)
-  if p_invoice_no is null or length(trim(p_invoice_no)) = 0 then
-    return query select false, p_invoice_no, null::text, null::text, null::bigint;
-    return;
+  -- normalize method: trim + upper
+  v_method := upper(trim(coalesce(p_payment_method,'')));
+
+  -- tolerate aliases/typos
+  if v_method in ('BANK_TRANSFER','BANK TRANSFER','TRANSFER','TRANSFER_BANK','BANK','BANK_TRANSFERS','BANK_TRANSFERS','BANK_TRANSFERs') then
+    v_method := 'BANK_TRANSFER';
+  elsif v_method in ('USDC','USDC_TRANSFER','USDC-SPL','USDC_SPL') then
+    v_method := 'USDC';
+  elsif v_method in ('SOL','SOLANA') then
+    v_method := 'SOL';
   end if;
 
-  if p_payment_method is null or length(trim(p_payment_method)) = 0 then
-    return query select false, p_invoice_no, null::text, null::text, null::bigint;
-    return;
+  -- validations (NO RAISE)
+  if p_invoice_no is null or length(trim(p_invoice_no)) = 0 then
+    return query select false, p_invoice_no, null::text, null::text, null::bigint; return;
+  end if;
+
+  if v_method is null or v_method = '' then
+    return query select false, p_invoice_no, null::text, null::text, null::bigint; return;
+  end if;
+
+  if v_method not in ('BANK_TRANSFER','USDC','SOL') then
+    return query select false, p_invoice_no, null::text, v_method, null::bigint; return;
   end if;
 
   if p_proof_url is null or length(trim(p_proof_url)) = 0 then
-    -- allow only if method does not require proof? For now keep strict:
-    return query select false, p_invoice_no, null::text, null::text, null::bigint;
-    return;
+    return query select false, p_invoice_no, null::text, v_method, null::bigint; return;
   end if;
 
-  -- Ensure invoice exists
   select exists(
-    select 1 from public.tpc_invoices i
-    where i.invoice_no = p_invoice_no
+    select 1 from public.tpc_invoices i where i.invoice_no = p_invoice_no
   ) into v_exists;
 
   if not v_exists then
-    return query select false, p_invoice_no, null::text, null::text, null::bigint;
-    return;
+    return query select false, p_invoice_no, null::text, v_method, null::bigint; return;
   end if;
 
-  -- Append-only log (anon-safe: auth.uid() may be null)
   insert into public.invoice_confirmations (
-    invoice_no,
-    user_id,
-    payment_method,
-    payer_name,
-    payer_ref,
-    tx_signature,
-    proof_url,
-    created_at
+    invoice_no, user_id, payment_method, payer_name, payer_ref, tx_signature, proof_url, created_at
   ) values (
-    p_invoice_no,
-    auth.uid(),
-    p_payment_method,
+    p_invoice_no, auth.uid(), v_method,
     nullif(trim(p_payer_name), ''),
     nullif(trim(p_payer_ref), ''),
     nullif(trim(p_tx_signature), ''),
@@ -202,22 +213,21 @@ begin
   )
   returning id into v_conf_id;
 
-  -- Update invoice status for admin review
   update public.tpc_invoices
   set
     status = 'PENDING_REVIEW',
-    payment_method = p_payment_method,
+    payment_method = v_method,
     payer_name = nullif(trim(p_payer_name), ''),
     payer_ref = nullif(trim(p_payer_ref), ''),
     tx_signature = nullif(trim(p_tx_signature), ''),
     proof_url = nullif(trim(p_proof_url), '')
   where invoice_no = p_invoice_no;
 
-  return query
-    select true, p_invoice_no, 'PENDING_REVIEW'::text, p_payment_method, v_conf_id;
+  return query select true, p_invoice_no, 'PENDING_REVIEW'::text, v_method, v_conf_id;
 end;
 $$;
 
+-- 3) GRANTS ulang
 revoke all on function public.submit_invoice_confirmation(text, text, text, text, text, text) from public;
 grant execute on function public.submit_invoice_confirmation(text, text, text, text, text, text) to anon, authenticated;
 
