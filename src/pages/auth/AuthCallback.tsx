@@ -34,14 +34,24 @@ const AuthCallback = () => {
           const nextParam = searchParams.get('next');
           const returnTo = searchParams.get('returnTo');
           
+          // Try to get returnTo from sessionStorage (for OAuth)
+          const savedReturnTo = sessionStorage.getItem('tpc_returnTo');
+          if (savedReturnTo) {
+            sessionStorage.removeItem('tpc_returnTo');
+          }
+          
           // Basic security: ensure returnTo starts with current language path
           const safeReturnTo = returnTo && returnTo.startsWith(`/${lang}/`) ? returnTo : null;
+          const safeSavedReturnTo = savedReturnTo && savedReturnTo.startsWith(`/${lang}/`) ? savedReturnTo : null;
           
           if (isAdmin) {
             navigate(`/${lang}/admin`);
           } else if (safeReturnTo) {
             // Use returnTo parameter for custom redirect (member dashboard with invoice context)
             navigate(safeReturnTo, { replace: true });
+          } else if (safeSavedReturnTo) {
+            // Use saved returnTo from sessionStorage (OAuth)
+            navigate(safeSavedReturnTo, { replace: true });
           } else if (nextParam) {
             // Use next parameter for custom redirect (member dashboard with invoice context)
             navigate(nextParam, { replace: true });

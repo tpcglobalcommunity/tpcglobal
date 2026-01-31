@@ -13,9 +13,20 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
-  
+  const [cooldownSec, setCooldownSec] = useState(0);
+
   // Get returnTo from query params
   const returnTo = searchParams.get('returnTo');
+
+  // Cooldown timer effect
+  useEffect(() => {
+    if (cooldownSec > 0) {
+      const timer = setTimeout(() => {
+        setCooldownSec(prev => Math.max(0, prev - 1));
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldownSec]);
 
   // Check if user is already logged in and redirect if needed
   useEffect(() => {
@@ -41,6 +52,11 @@ const LoginPage = () => {
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    // Prevent double submit and cooldown
+    if (loading || cooldownSec > 0) {
+      return;
+    }
 
     const emailStr = Array.isArray(email) ? email[0] : email;
     
@@ -72,14 +88,25 @@ const LoginPage = () => {
       toast.success(t("auth.magicLinkSent"));
     } catch (error: any) {
       console.error("Login error:", error);
-      setError(error.message || t("auth.errorGeneric"));
-      toast.error(t("auth.errorGeneric"));
+      
+      // Handle rate limit specifically
+      if (error?.status === 429 || error?.message?.includes('rate limit')) {
+        setError(t("auth.rateLimit.message"));
+        setCooldownSec(90); // 90 seconds cooldown
+        toast.error(t("auth.rateLimit.title"));
+      } else {
+        setError(error.message || t("auth.errorGeneric"));
+        toast.error(t("auth.errorGeneric"));
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
+    // Save returnTo to sessionStorage for OAuth callback
+    sessionStorage.setItem('tpc_returnTo', returnTo || '');
+    
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -165,14 +192,14 @@ const LoginPage = () => {
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || cooldownSec > 0}
                 className="w-full font-medium py-3 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
                   background: 'linear-gradient(180deg, #F0B90B, #D9A441)',
                   color: '#111827'
                 }}
                 onMouseEnter={(e) => {
-                  if (!loading) {
+                  if (!loading && cooldownSec === 0) {
                     e.currentTarget.style.filter = 'brightness(1.05)';
                   }
                 }}
@@ -180,10 +207,14 @@ const LoginPage = () => {
                   e.currentTarget.style.filter = 'brightness(1)';
                 }}
                 onMouseDown={(e) => {
-                  e.currentTarget.style.filter = 'brightness(0.95)';
+                  if (cooldownSec === 0) {
+                    e.currentTarget.style.filter = 'brightness(0.95)';
+                  }
                 }}
                 onMouseUp={(e) => {
-                  e.currentTarget.style.filter = 'brightness(1.05)';
+                  if (cooldownSec === 0) {
+                    e.currentTarget.style.filter = 'brightness(1.05)';
+                  }
                 }}
               >
                 {loading ? (
@@ -191,6 +222,8 @@ const LoginPage = () => {
                     <Loader2 className="w-4 h-4 animate-spin inline mr-2" />
                     {t("auth.continueEmail")}
                   </>
+                ) : cooldownSec > 0 ? (
+                  lang === 'id' ? `Tunggu ${cooldownSec} detik` : `Wait ${cooldownSec}s`
                 ) : (
                   t("auth.continueEmail")
                 )}
@@ -285,6 +318,35 @@ const LoginPage = () => {
                 </div>
                 {t("auth.passkey")}
               </button>
+
+              {/* DEV ONLY - Quick login button */}
+              {import.meta.env.DEV && (
+                <button
+                  onClick={handleGoogleLogin}
+                  className="w-full font-medium py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-3"
+                  style={{
+                    background: 'rgba(34,197,94,0.1)',
+                    border: '1px solid rgba(34,197,94,0.3)',
+                    color: '#22C55E'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(34,197,94,0.2)';
+                    e.currentTarget.style.borderColor = 'rgba(34,197,94,0.5)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(34,197,94,0.1)';
+                    e.currentTarget.style.borderColor = 'rgba(34,197,94,0.3)';
+                  }}
+                >
+                  <div className="w-5 h-5 rounded-sm flex items-center justify-center"
+                       style={{ background: 'rgba(34,197,94,0.2)' }}>
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  {lang === 'id' ? 'Masuk cepat (DEV)' : 'Quick login (DEV)'}
+                </button>
+              )}
             </div>
           )}
         </div>

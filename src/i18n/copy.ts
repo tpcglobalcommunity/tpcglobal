@@ -935,11 +935,18 @@ export const copy = {
       google: "Masuk dengan Google",
       passkey: "Masuk dengan Passkey",
       passkeySoon: "Passkey segera hadir.",
-      invalidEmail: "Masukkan email yang valid.",
-      requiredEmail: "Email wajib diisi.",
-      magicLinkSent: "Magic link terkirim!",
-      checkInbox: "Cek inbox email untuk lanjut.",
-      errorGeneric: "Terjadi kesalahan. Coba lagi.",
+      invalidEmail: "Format email tidak valid",
+      requiredEmail: "Email wajib diisi",
+      magicLinkSent: "Link magic telah dikirim!",
+      checkInbox: "Periksa inbox Anda untuk melanjutkan.",
+      errorGeneric: "Terjadi kesalahan. Silakan coba lagi.",
+      rateLimit: {
+        title: "Terlalu banyak percobaan",
+        message: "Terlalu banyak percobaan. Kita tunggu sebentar lalu coba lagi."
+      },
+      cooldown: {
+        wait: "Tunggu {{seconds}} detik"
+      },
     },
     
     // Dashboard
@@ -2377,7 +2384,14 @@ export const copy = {
       requiredEmail: "Email is required.",
       magicLinkSent: "Magic link sent!",
       checkInbox: "Check your inbox to continue.",
-      errorGeneric: "Something went wrong. Please try again.",
+      errorGeneric: "An error occurred. Please try again.",
+      rateLimit: {
+        title: "Too many attempts",
+        message: "Too many attempts. Please wait and try again."
+      },
+      cooldown: {
+        wait: "Wait {{seconds}}s"
+      },
     },
     
     // Dashboard
