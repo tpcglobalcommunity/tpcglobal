@@ -92,8 +92,30 @@ const MemberInvoiceDetailPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!invoice || !proofFile) {
-      toast.error("Please upload payment proof");
+    // Validation
+    if (!invoice) {
+      toast.error(t("member.toast.invoiceNotFound"));
+      return;
+    }
+    
+    if (!proofFile) {
+      toast.error(t("memberInvoice.confirmation.errors.proofRequired"));
+      return;
+    }
+    
+    if (!formData.payment_method) {
+      toast.error(t("memberInvoice.confirmation.errors.methodRequired"));
+      return;
+    }
+    
+    // Method-specific validation
+    if (formData.payment_method.startsWith('CRYPTO_') && !formData.tx_signature) {
+      toast.error(t("memberInvoice.confirmation.errors.hashRequired"));
+      return;
+    }
+    
+    if ((formData.payment_method.startsWith('BANK_') || formData.payment_method.startsWith('EWALLET_')) && !formData.payer_ref) {
+      toast.error(t("memberInvoice.confirmation.errors.refRequired"));
       return;
     }
 
@@ -113,14 +135,14 @@ const MemberInvoiceDetailPage = () => {
       // Submit payment confirmation
       await submitPaymentConfirmation({
         invoice_no: invoice.invoice_no,
-        payment_method: formData.payment_method || "Bank Transfer",
+        payment_method: formData.payment_method,
         payer_name: formData.payer_name || undefined,
         payer_ref: formData.payer_ref || undefined,
         tx_signature: formData.tx_signature || undefined,
         proof_url: uploadResult.proofUrl,
       });
 
-      toast.success(t("member.toast.submitSuccess"));
+      toast.success(t("memberInvoice.toast.confirmSuccess"));
       
       // Reload invoice to get updated status
       await loadInvoice(invoice.invoice_no);
@@ -137,7 +159,7 @@ const MemberInvoiceDetailPage = () => {
       
     } catch (error: any) {
       console.error("Failed to submit confirmation:", error);
-      toast.error(error.message || t("member.toast.submitFailed"));
+      toast.error(error.message || t("memberInvoice.toast.confirmFail"));
     } finally {
       setSubmitting(false);
     }
@@ -470,17 +492,34 @@ const MemberInvoiceDetailPage = () => {
                     color: '#E5E7EB'
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = '#F0B90B';
+                    e.target.style.borderColor = 'rgba(240,185,11,0.4)';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(240,185,11,0.1)';
                   }}
                   onBlur={(e) => {
                     e.target.style.borderColor = 'rgba(255,255,255,0.12)';
+                    e.target.style.boxShadow = 'none';
                   }}
                   required
                 >
-                  <option value="">Select payment method</option>
-                  <option value="Bank Transfer">Bank Transfer</option>
-                  <option value="E-Wallet">E-Wallet</option>
-                  <option value="Crypto">Crypto</option>
+                  <option value="">{t("memberInvoice.confirmation.methodLabel")}</option>
+                  
+                  <optgroup label={t("memberInvoice.paymentMethod.bank")}>
+                    <option value="BANK_BCA">{t("memberInvoice.paymentMethod.BANK_BCA")}</option>
+                    <option value="BANK_MANDIRI">{t("memberInvoice.paymentMethod.BANK_MANDIRI")}</option>
+                    <option value="BANK_BRI">{t("memberInvoice.paymentMethod.BANK_BRI")}</option>
+                    <option value="BANK_BNI">{t("memberInvoice.paymentMethod.BANK_BNI")}</option>
+                  </optgroup>
+                  
+                  <optgroup label={t("memberInvoice.paymentMethod.ewallet")}>
+                    <option value="EWALLET_OVO">{t("memberInvoice.paymentMethod.EWALLET_OVO")}</option>
+                    <option value="EWALLET_DANA">{t("memberInvoice.paymentMethod.EWALLET_DANA")}</option>
+                    <option value="EWALLET_GOPAY">{t("memberInvoice.paymentMethod.EWALLET_GOPAY")}</option>
+                  </optgroup>
+                  
+                  <optgroup label={t("memberInvoice.paymentMethod.crypto")}>
+                    <option value="CRYPTO_USDC">{t("memberInvoice.paymentMethod.CRYPTO_USDC")}</option>
+                    <option value="CRYPTO_SOL">{t("memberInvoice.paymentMethod.CRYPTO_SOL")}</option>
+                  </optgroup>
                 </select>
               </div>
 
@@ -488,31 +527,11 @@ const MemberInvoiceDetailPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: '#E5E7EB' }}>
-                    {t("member.confirm.payerName")} (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.payer_name}
-                    onChange={(e) => setFormData({ ...formData, payer_name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg focus:outline-none transition-all"
-                    style={{
-                      backgroundColor: '#111827',
-                      border: '1px solid rgba(255,255,255,0.12)',
-                      color: '#E5E7EB'
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#F0B90B';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = 'rgba(255,255,255,0.12)';
-                    }}
-                    placeholder="Your name"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: '#E5E7EB' }}>
-                    {t("member.confirm.payerRef")} (Optional)
+                    {t("memberInvoice.confirmation.refLabel")}
+                    {formData.payment_method?.startsWith('BANK_') || formData.payment_method?.startsWith('EWALLET_') ? 
+                      <span className="text-red-400 ml-1">*</span> : 
+                      <span className="text-muted-foreground ml-1">({t("common.optional")})</span>
+                    }
                   </label>
                   <input
                     type="text"
@@ -525,39 +544,46 @@ const MemberInvoiceDetailPage = () => {
                       color: '#E5E7EB'
                     }}
                     onFocus={(e) => {
-                      e.target.style.borderColor = '#F0B90B';
+                      e.target.style.borderColor = 'rgba(240,185,11,0.4)';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(240,185,11,0.1)';
                     }}
                     onBlur={(e) => {
                       e.target.style.borderColor = 'rgba(255,255,255,0.12)';
+                      e.target.style.boxShadow = 'none';
                     }}
-                    placeholder="Reference number"
+                    placeholder={t("memberInvoice.confirmation.refPlaceholder")}
                   />
                 </div>
-              </div>
-
-              {/* Transaction Signature (for crypto) */}
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: '#E5E7EB' }}>
-                  {t("member.confirm.txSignature")} (Optional)
-                </label>
-                <textarea
-                  value={formData.tx_signature}
-                  onChange={(e) => setFormData({ ...formData, tx_signature: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg focus:outline-none transition-all"
-                  style={{
-                    backgroundColor: '#111827',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    color: '#E5E7EB'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#F0B90B';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(255,255,255,0.12)';
-                  }}
-                  placeholder="Transaction hash or signature"
-                  rows={3}
-                />
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: '#E5E7EB' }}>
+                    {t("memberInvoice.confirmation.hashLabel")}
+                    {formData.payment_method?.startsWith('CRYPTO_') ? 
+                      <span className="text-red-400 ml-1">*</span> : 
+                      <span className="text-muted-foreground ml-1">({t("common.optional")})</span>
+                    }
+                  </label>
+                  <textarea
+                    value={formData.tx_signature}
+                    onChange={(e) => setFormData({ ...formData, tx_signature: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg focus:outline-none transition-all resize-none"
+                    rows={3}
+                    style={{
+                      backgroundColor: '#111827',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      color: '#E5E7EB'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = 'rgba(240,185,11,0.4)';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(240,185,11,0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = 'rgba(255,255,255,0.12)';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                    placeholder={t("memberInvoice.confirmation.hashPlaceholder")}
+                  />
+                </div>
               </div>
 
               {/* File Upload */}

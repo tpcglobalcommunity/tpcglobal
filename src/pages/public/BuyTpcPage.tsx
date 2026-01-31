@@ -44,7 +44,6 @@ const BuyTpcPage = () => {
   // Modal state
   const [showInvoiceModal, setShowInvoiceModal] = useState<boolean>(false);
   const [invoiceData, setInvoiceData] = useState<any>(null);
-  const [confirmUrl, setConfirmUrl] = useState<string>("");
   
   // Toast state (to prevent render-time calls)
   const [invoiceCreated, setInvoiceCreated] = useState<boolean>(false);
@@ -223,11 +222,6 @@ const BuyTpcPage = () => {
 
       setShowInvoiceModal(true);
       setInvoiceCreated(true);
-      
-      // Generate confirm URL for copy button (member dashboard with invoice context)
-      const baseUrl = window.location.origin;
-      const confirmUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(`/${lang}/member/invoices/${invoiceResult.invoice_no}`)}`;
-      setConfirmUrl(confirmUrl);
       
     } catch (error) {
       logger.error('Unexpected error creating invoice', error);
@@ -501,16 +495,6 @@ const BuyTpcPage = () => {
                   <ExternalLink className="h-4 w-4 mr-2" />
                   {t("buyTpcNew.modal.viewInvoice")}
                 </Button>
-                {confirmUrl && (
-                  <Button 
-                    variant="outline"
-                    onClick={() => copyToClipboard(confirmUrl)}
-                    className="w-full"
-                  >
-                    <Copy className="h-4 w-4 mr-2" />
-                    {t("buyTpcNew.modal.copyConfirmLink")}
-                  </Button>
-                )}
                 <Button 
                   variant="outline"
                   onClick={() => setShowInvoiceModal(false)}

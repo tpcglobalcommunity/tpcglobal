@@ -10,6 +10,7 @@ export const copy = {
       copy: "Salin",
       copied: "Tersalin!",
       openExplorer: "Buka Explorer",
+      optional: "Opsional",
       back: "Kembali",
       continue: "Lanjutkan",
       loading: "Memuat...",
@@ -1025,6 +1026,45 @@ export const copy = {
       },
     },
     
+    // Member Invoice Detail
+    memberInvoice: {
+      confirmation: {
+        title: "Konfirmasi Pembayaran",
+        methodLabel: "Pilih Metode Pembayaran",
+        proofLabel: "Upload Bukti Pembayaran",
+        refLabel: "No. Referensi",
+        hashLabel: "Transaction Hash",
+        submit: "Kirim Konfirmasi",
+        submitting: "Mengirim...",
+        refPlaceholder: "Masukkan nomor referensi transaksi",
+        hashPlaceholder: "Masukkan transaction hash",
+        errors: {
+          methodRequired: "Metode pembayaran wajib dipilih",
+          proofRequired: "Bukti pembayaran wajib diupload",
+          hashRequired: "Transaction hash wajib diisi untuk pembayaran crypto",
+          refRequired: "Nomor referensi wajib diisi untuk bank/e-wallet"
+        }
+      },
+      paymentMethod: {
+        bank: "Bank Transfer",
+        ewallet: "E-Wallet",
+        crypto: "Cryptocurrency",
+        BANK_BCA: "BCA",
+        BANK_MANDIRI: "Mandiri",
+        BANK_BRI: "BRI",
+        BANK_BNI: "BNI",
+        EWALLET_OVO: "OVO",
+        EWALLET_DANA: "DANA",
+        EWALLET_GOPAY: "GoPay",
+        CRYPTO_USDC: "USDC",
+        CRYPTO_SOL: "SOL"
+      },
+      toast: {
+        confirmSuccess: "Konfirmasi pembayaran berhasil dikirim. Admin akan segera memeriksa.",
+        confirmFail: "Gagal mengirim konfirmasi. Silakan coba lagi."
+      }
+    },
+    
     // Admin
     admin: {
       title: "Admin Dashboard",
@@ -1311,10 +1351,11 @@ export const copy = {
       copy: "Copy",
       copied: "Copied!",
       openExplorer: "Open Explorer",
+      optional: "Optional",
       back: "Back",
       continue: "Continue",
       loading: "Loading...",
-      error: "An error occurred",
+      error: "Error occurred",
       success: "Success",
       comingSoon: "Coming Soon",
       learnMore: "Learn More",
@@ -2395,6 +2436,45 @@ export const copy = {
         invoiceNotFound: "Invoice not found",
         copySuccess: "Copied to clipboard successfully"
       },
+    },
+    
+    // Member Invoice Detail
+    memberInvoice: {
+      confirmation: {
+        title: "Payment Confirmation",
+        methodLabel: "Select Payment Method",
+        proofLabel: "Upload Payment Proof",
+        refLabel: "Reference Number",
+        hashLabel: "Transaction Hash",
+        submit: "Submit Confirmation",
+        submitting: "Submitting...",
+        refPlaceholder: "Enter transaction reference number",
+        hashPlaceholder: "Enter transaction hash",
+        errors: {
+          methodRequired: "Payment method is required",
+          proofRequired: "Payment proof is required",
+          hashRequired: "Transaction hash is required for crypto payments",
+          refRequired: "Reference number is required for bank/e-wallet payments"
+        }
+      },
+      paymentMethod: {
+        bank: "Bank Transfer",
+        ewallet: "E-Wallet",
+        crypto: "Cryptocurrency",
+        BANK_BCA: "BCA",
+        BANK_MANDIRI: "Mandiri",
+        BANK_BRI: "BRI",
+        BANK_BNI: "BNI",
+        EWALLET_OVO: "OVO",
+        EWALLET_DANA: "DANA",
+        EWALLET_GOPAY: "GoPay",
+        CRYPTO_USDC: "USDC",
+        CRYPTO_SOL: "SOL"
+      },
+      toast: {
+        confirmSuccess: "Payment confirmation submitted successfully. Admin will review it shortly.",
+        confirmFail: "Failed to submit confirmation. Please try again."
+      }
     },
     
     // Admin
