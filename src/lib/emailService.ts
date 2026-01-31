@@ -2,6 +2,23 @@
 // This would typically integrate with services like SendGrid, Resend, or AWS SES
 
 import { logger } from './logger';
+import { supabase } from '@/integrations/supabase/client';
+
+// Helper to build member dashboard URL
+const buildMemberDashboardUrl = (lang: 'id' | 'en', baseUrl?: string) => {
+  const base = baseUrl || (typeof window !== 'undefined' && window.location.host.includes('localhost') 
+    ? 'http://localhost:8084'
+    : 'https://tpcglobal.io');
+  return `${base}/${lang}/member`;
+};
+
+// Helper to build auth callback URL with next parameter
+const buildAuthCallbackUrl = (lang: 'id' | 'en', nextPath: string, baseUrl?: string) => {
+  const base = baseUrl || (typeof window !== 'undefined' && window.location.host.includes('localhost') 
+    ? 'http://localhost:8084'
+    : 'https://tpcglobal.io');
+  return `${base}/auth/callback?next=${encodeURIComponent(nextPath)}`;
+};
 
 interface EmailService {
   sendInvoiceEmail: (to: string, invoiceNo: string, lang: 'id' | 'en') => Promise<boolean>;
@@ -41,15 +58,33 @@ class MockEmailService implements EmailService {
         return false;
       }
 
-      // Build confirm URL for localhost
-      const baseUrl = window.location.host.includes('localhost') 
-        ? 'http://localhost:8084'
-        : 'https://tpcglobal.io';
-      const confirmUrl = `${baseUrl}/${lang}/invoice/${invoiceNo}`;
+      // Build member dashboard URL
+      const memberDashboardUrl = buildMemberDashboardUrl(lang);
+      const authCallbackUrl = buildAuthCallbackUrl(lang, `/${lang}/member`);
       
-      console.log('🔗 [MOCK EMAIL] Confirm URL:', confirmUrl);
+      console.log('🔗 [MOCK EMAIL] Member Dashboard URL:', memberDashboardUrl);
+      console.log('🔗 [MOCK EMAIL] Auth Callback URL:', authCallbackUrl);
 
-      const template = InvoiceEmailTemplate({ invoice, lang });
+      // Generate magic link for auto-login
+      let magicLinkUrl = authCallbackUrl;
+      try {
+        // For now, use simple magic link generation
+        // In production, this should use proper Supabase magic link generation
+        const timestamp = Date.now();
+        const token = btoa(`${to}:${timestamp}:${invoiceNo}`);
+        magicLinkUrl = `${authCallbackUrl}&token=${encodeURIComponent(token)}`;
+        console.log('🔗 [MOCK EMAIL] Simple Token Generated:', token);
+        console.log('🔗 [MOCK EMAIL] Magic Link URL:', magicLinkUrl);
+      } catch (linkError) {
+        console.warn('Failed to generate magic link, using callback URL:', linkError);
+      }
+
+      const template = InvoiceEmailTemplate({ 
+        invoice, 
+        lang, 
+        memberDashboardUrl,
+        authCallbackUrl: magicLinkUrl
+      });
       const subject = lang === 'id' 
         ? `Invoice TPC - ${invoiceNo}` 
         : `TPC Invoice - ${invoiceNo}`;

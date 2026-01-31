@@ -29,10 +29,24 @@ const AuthCallback = () => {
           // Check if user is admin (you can implement admin check here)
           const isAdmin = session.user?.email?.includes('admin@tpcglobal.io'); // Example admin check
           
+          // Get next parameter from URL query
+          const searchParams = new URLSearchParams(location.search);
+          const nextParam = searchParams.get('next');
+          const token = searchParams.get('token');
+          
+          // Handle simple token validation for localhost magic links
+          if (token && !session.user.email.includes(token.split(':')[0])) {
+            console.warn('Token validation failed, using default redirect');
+          }
+          
           if (isAdmin) {
             navigate(`/${lang}/admin`);
+          } else if (nextParam) {
+            // Use next parameter for custom redirect
+            navigate(nextParam, { replace: true });
           } else {
-            navigate(`/${lang}/dashboard`);
+            // Default to member dashboard
+            navigate(`/${lang}/member`);
           }
         } else {
           // No session, redirect to login

@@ -3,16 +3,27 @@ import { InvoicePublic } from "@/lib/rpc/public";
 interface InvoiceEmailTemplateProps {
   invoice: InvoicePublic;
   lang: 'id' | 'en';
+  memberDashboardUrl?: string;
+  authCallbackUrl?: string;
 }
 
-const InvoiceEmailTemplate = ({ invoice, lang }: InvoiceEmailTemplateProps) => {
+const InvoiceEmailTemplate = ({ invoice, lang, memberDashboardUrl, authCallbackUrl }: InvoiceEmailTemplateProps) => {
   const isIndonesian = lang === 'id';
   
-  // Build confirm URL for localhost
-  const baseUrl = typeof window !== 'undefined' && window.location.host.includes('localhost') 
-    ? 'http://localhost:8084'
-    : 'https://tpcglobal.io';
-  const confirmUrl = `${baseUrl}/${lang}/invoice/${invoice.invoice_no}`;
+  // Use provided URLs or fallback to old logic
+  const dashboardUrl = memberDashboardUrl || (() => {
+    const baseUrl = typeof window !== 'undefined' && window.location.host.includes('localhost') 
+      ? 'http://localhost:8084'
+      : 'https://tpcglobal.io';
+    return `${baseUrl}/${lang}/member`;
+  })();
+  
+  const callbackUrl = authCallbackUrl || (() => {
+    const baseUrl = typeof window !== 'undefined' && window.location.host.includes('localhost') 
+      ? 'http://localhost:8084'
+      : 'https://tpcglobal.io';
+    return `${baseUrl}/auth/callback?next=${encodeURIComponent(`/${lang}/member`)}`;
+  })();
   
   const translations = {
     id: {
@@ -40,7 +51,8 @@ const InvoiceEmailTemplate = ({ invoice, lang }: InvoiceEmailTemplateProps) => {
       website: 'www.tpcglobal.io',
       email: 'support@tpcglobal.io',
       viewInvoice: 'Lihat Detail Invoice',
-      confirmPayment: 'Konfirmasi Pembayaran'
+      confirmPayment: 'Konfirmasi Pembayaran',
+      goToDashboard: 'Masuk Dashboard'
     },
     en: {
       title: 'TPC PURCHASE INVOICE',
@@ -67,7 +79,8 @@ const InvoiceEmailTemplate = ({ invoice, lang }: InvoiceEmailTemplateProps) => {
       website: 'www.tpcglobal.io',
       email: 'support@tpcglobal.io',
       viewInvoice: 'View Invoice Details',
-      confirmPayment: 'Confirm Payment'
+      confirmPayment: 'Confirm Payment',
+      goToDashboard: 'Go to Dashboard'
     }
   };
 
@@ -529,12 +542,24 @@ const InvoiceEmailTemplate = ({ invoice, lang }: InvoiceEmailTemplateProps) => {
             
             <!-- Action Buttons -->
             <div class="action-buttons">
-                <a href="${confirmUrl}" class="action-button primary">
-                    ${t.confirmPayment}
+                <a href="${callbackUrl}" class="action-button primary">
+                    ${t.goToDashboard}
                 </a>
-                <a href="${confirmUrl}" class="action-button secondary">
+                <a href="${dashboardUrl}" class="action-button secondary">
                     ${t.viewInvoice}
                 </a>
+            </div>
+            
+            <!-- Plain Text Fallback -->
+            <div class="plain-text-fallback">
+                <p style="font-size: 12px; color: #666; margin-top: 20px;">
+                    ${isIndonesian 
+                        ? 'Jika tombol tidak berfungsi, salin link ini:' 
+                        : 'If buttons don\'t work, copy this link:'}
+                </p>
+                <p style="font-size: 11px; word-break: break-all; color: #999;">
+                    ${callbackUrl}
+                </p>
             </div>
             
             <!-- Security Warning -->
