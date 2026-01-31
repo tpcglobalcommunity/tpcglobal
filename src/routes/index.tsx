@@ -64,6 +64,7 @@ export default function AppRoutes() {
         
         {/* Root member redirect */}
         <Route path="/member" element={<Navigate to="/id/member" replace />} />
+        <Route path="/dashboard" element={<Navigate to="/id/dashboard" replace />} />
         
         {/* Language-prefixed routes */}
         <Route path="/:lang" element={<PublicLayout />}>
@@ -81,6 +82,14 @@ export default function AppRoutes() {
           
           {/* Member Routes */}
           <Route path="member" element={<MemberShell />}>
+            <Route index element={<MemberHome />} />
+            <Route path="invoices" element={<MemberInvoicesPage />} />
+            <Route path="invoices/:invoiceNo" element={<MemberInvoiceDetailPage />} />
+            <Route path="settings" element={<MemberSettingsPage />} />
+          </Route>
+          
+          {/* Dashboard Routes (Alias for Member) */}
+          <Route path="dashboard" element={<MemberShell />}>
             <Route index element={<MemberHome />} />
             <Route path="invoices" element={<MemberInvoicesPage />} />
             <Route path="invoices/:invoiceNo" element={<MemberInvoiceDetailPage />} />

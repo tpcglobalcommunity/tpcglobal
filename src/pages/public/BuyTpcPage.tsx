@@ -30,6 +30,10 @@ const BuyTpcPage = () => {
   const navigate = useNavigate();
   const { settings, loading, error } = usePresaleSettings();
   
+  // Auth state
+  const [session, setSession] = useState<any>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
   // Form state
   const [email, setEmail] = useState<string>("");
   const [tpcAmount, setTpcAmount] = useState<string>("");
@@ -45,6 +49,32 @@ const BuyTpcPage = () => {
   // Toast state (to prevent render-time calls)
   const [invoiceCreated, setInvoiceCreated] = useState<boolean>(false);
   const [invoiceError, setInvoiceError] = useState<string | null>(null);
+
+  // Check auth state on mount and listen for changes
+  useEffect(() => {
+    checkAuth();
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setIsLoggedIn(!!session?.user);
+      
+      // Auto-fill email from session when logged in
+      if (session?.user?.email) {
+        setEmail(session.user.email);
+      }
+    });
+
+    return () => subscription?.unsubscribe();
+  }, []);
+
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    setSession(session);
+    setIsLoggedIn(!!session?.user);
+    if (session?.user?.email) {
+      setEmail(session.user.email);
+    }
+  };
 
   // Handle success toast after state commit
   useEffect(() => {
@@ -102,7 +132,8 @@ const BuyTpcPage = () => {
 
   // Validation
   const validateForm = (): string | null => {
-    if (!email || !email.includes('@')) {
+    // Email validation only for non-logged-in users
+    if (!isLoggedIn && (!email || !email.includes('@'))) {
       const msg = t("buyTpcNew.form.email.error");
       return typeof msg === 'string' ? msg : String(msg);
     }
@@ -137,9 +168,21 @@ const BuyTpcPage = () => {
     setIsSubmitting(true);
     
     try {
+      // Determine email to use
+      const invoiceEmail = isLoggedIn ? session?.user?.email : email;
+      
+      if (!invoiceEmail) {
+        const msg = isLoggedIn 
+          ? "Session email not found. Please log out and log in again."
+          : "Email is required to create invoice.";
+        throw new Error(msg);
+      }
+      
+      console.log('📝 Creating invoice with email:', invoiceEmail, 'logged in:', isLoggedIn);
+      
       // @ts-ignore - Supabase RPC type issue
       const { data, error } = await supabase.rpc('create_invoice', {
-        p_email: email,
+        p_email: invoiceEmail,
         p_tpc_amount: tpcAmount,
         p_referral_code: referralCode || null
       });
@@ -183,20 +226,20 @@ const BuyTpcPage = () => {
       
       // Send invoice email
       try {
-        console.log('📧 Sending invoice email to:', email);
+        console.log('📧 Sending invoice email to:', invoiceEmail);
         const { getEmailService } = await import('@/lib/emailService');
         const emailService = getEmailService();
-        const emailSent = await emailService.sendInvoiceEmail(email, invoiceResult.invoice_no, lang);
+        const emailSent = await emailService.sendInvoiceEmail(invoiceEmail, invoiceResult.invoice_no, lang);
         
         if (emailSent) {
-          console.log('✅ Invoice email sent successfully to:', email);
-          logger.info('Invoice email sent successfully', { email, invoice_no: invoiceResult.invoice_no });
+          console.log('✅ Invoice email sent successfully to:', invoiceEmail);
+          logger.info('Invoice email sent successfully', { email: invoiceEmail, invoice_no: invoiceResult.invoice_no });
           
           // Show success toast with email confirmation
           toast.success(t("buyTpcNew.toast.invoiceCreated") + " - " + t("buyTpcNew.toast.emailSent"));
         } else {
           console.error('❌ Failed to send invoice email');
-          logger.error('Failed to send invoice email', { email, invoice_no: invoiceResult.invoice_no });
+          logger.error('Failed to send invoice email', { email: invoiceEmail, invoice_no: invoiceResult.invoice_no });
           
           // Show warning toast but don't fail the flow
           toast.warning(t("buyTpcNew.toast.invoiceCreated") + " - " + t("buyTpcNew.toast.emailFailed"));
@@ -209,7 +252,7 @@ const BuyTpcPage = () => {
         
       } catch (emailError) {
         console.error('❌ Failed to send invoice email:', emailError);
-        logger.error('Failed to send invoice email', { error: emailError, email, invoice_no: invoiceResult.invoice_no });
+        logger.error('Failed to send invoice email', { error: emailError, email: invoiceEmail, invoice_no: invoiceResult.invoice_no });
         
         // Still generate confirm URL for manual access
         const baseUrl = window.location.origin;
@@ -245,7 +288,7 @@ const BuyTpcPage = () => {
     }
   };
 
-  const isFormValid = email && tpcAmount && referralCode && termsAccepted && !isSubmitting && !loading;
+  const isFormValid = (isLoggedIn ? true : email && email.includes('@')) && tpcAmount && referralCode && termsAccepted && !isSubmitting && !loading;
 
   return (
     <div className="container-app section-spacing">
@@ -282,18 +325,36 @@ const BuyTpcPage = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="email">{t("buyTpcNew.form.email.label")}</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder={String(t("buyTpcNew.form.email.placeholder"))}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isSubmitting}
-                className="mt-1"
-              />
-            </div>
+            {/* Email Field - Only show for non-logged-in users */}
+            {!isLoggedIn && (
+              <div>
+                <Label htmlFor="email">{t("buyTpcNew.form.email.label")}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder={String(t("buyTpcNew.form.email.placeholder"))}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isSubmitting}
+                  className="mt-1"
+                />
+              </div>
+            )}
+            
+            {/* Logged-in user email indicator */}
+            {isLoggedIn && session?.user?.email && (
+              <div className="p-3 rounded-lg border" style={{ backgroundColor: 'rgba(240,185,11,0.1)', borderColor: 'rgba(240,185,11,0.2)' }}>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                  <span className="text-sm font-medium" style={{ color: '#F0B90B' }}>
+                    Email penagihan diambil dari akun Anda
+                  </span>
+                </div>
+                <p className="text-sm mt-1" style={{ color: '#E5E7EB' }}>
+                  {session.user.email}
+                </p>
+              </div>
+            )}
             
             <div>
               <Label htmlFor="amount">{String(t("buyTpcNew.form.amount.label"))}</Label>
