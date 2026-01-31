@@ -43,12 +43,9 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Fetch invoice data
+    // Fetch invoice data using RPC (same as frontend)
     const { data: invoice, error: invoiceError } = await supabase
-      .from("invoices")
-      .select("*")
-      .eq("invoice_no", invoice_no)
-      .single();
+      .rpc('get_invoice_public', { p_invoice_no: invoice_no });
 
     if (invoiceError || !invoice) {
       console.error("Invoice not found:", invoiceError);

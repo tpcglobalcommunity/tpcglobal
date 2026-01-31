@@ -186,17 +186,27 @@ const BuyTpcPage = () => {
         console.log('📧 Sending invoice email to:', email);
         const { getEmailService } = await import('@/lib/emailService');
         const emailService = getEmailService();
-        await emailService.sendInvoiceEmail(email, invoiceResult.invoice_no, lang);
-        console.log('✅ Invoice email sent successfully to:', email);
-        logger.info('Invoice email sent successfully', { email, invoice_no: invoiceResult.invoice_no });
+        const emailSent = await emailService.sendInvoiceEmail(email, invoiceResult.invoice_no, lang);
+        
+        if (emailSent) {
+          console.log('✅ Invoice email sent successfully to:', email);
+          logger.info('Invoice email sent successfully', { email, invoice_no: invoiceResult.invoice_no });
+          
+          // Show success toast with email confirmation
+          toast.success(t("buyTpcNew.toast.invoiceCreated") + " - " + t("buyTpcNew.toast.emailSent"));
+        } else {
+          console.error('❌ Failed to send invoice email');
+          logger.error('Failed to send invoice email', { email, invoice_no: invoiceResult.invoice_no });
+          
+          // Show warning toast but don't fail the flow
+          toast.warning(t("buyTpcNew.toast.invoiceCreated") + " - " + t("buyTpcNew.toast.emailFailed"));
+        }
         
         // Generate confirm URL for copy button (member dashboard with invoice context)
         const baseUrl = window.location.origin;
         const confirmUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(`/${lang}/member/invoices/${invoiceResult.invoice_no}`)}`;
         setConfirmUrl(confirmUrl);
         
-        // Show success toast with email confirmation
-        toast.success(t("buyTpcNew.toast.invoiceCreated") + " - " + t("buyTpcNew.toast.emailSent"));
       } catch (emailError) {
         console.error('❌ Failed to send invoice email:', emailError);
         logger.error('Failed to send invoice email', { error: emailError, email, invoice_no: invoiceResult.invoice_no });
