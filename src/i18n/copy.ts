@@ -525,17 +525,18 @@ export const copy = {
       // Invoice confirmation
       confirm: {
         title: "Konfirmasi Pembayaran",
-        subtitle: "Upload bukti pembayaran dari HP (foto/screenshot/PDF)",
+        subtitle: "Lengkapi data dan upload bukti pembayaran dari HP.",
         steps: {
           upload: "Upload bukti",
           review: "Periksa invoice", 
           submit: "Kirim konfirmasi"
         },
         method: "Metode Pembayaran",
+        selectPayment: "Pilih metode pembayaran",
         wallet: "Wallet Penerima (Solana)",
-        proof: "Upload Bukti Pembayaran",
+        proof: "Bukti Pembayaran",
         proofRequired: "Upload bukti pembayaran wajib diisi",
-        proofHelper: "Upload foto/screenshot bukti pembayaran dari HP Anda",
+        proofHelper: "Upload foto/screenshot bukti pembayaran (JPG/PNG/PDF).",
         proofSuccess: "✅ Upload berhasil",
         submit: "Kirim Konfirmasi",
         submitting: "Mengirim Konfirmasi...",
@@ -543,7 +544,9 @@ export const copy = {
         pending: "Pembayaran sedang ditinjau",
         alreadySubmitted: "Konfirmasi sudah dikirim",
         changeFile: "Ganti File",
-        maxSize: "Maksimal file: 10MB",
+        maxSize: "Maksimal 10MB",
+        payerName: "Nama Pengirim",
+        payerRef: "No. Referensi Bank",
         destination: {
           title: "Rekening Resmi TPC",
           subtitle: "Gunakan data resmi ini. Jangan transfer ke DM atau pihak lain.",
@@ -1489,17 +1492,18 @@ export const copy = {
       // Invoice confirmation
       confirm: {
         title: "Confirm Payment",
-        subtitle: "Upload payment proof from your phone (photo/screenshot/PDF)",
+        subtitle: "Complete the details and upload payment proof from your phone.",
         steps: {
           upload: "Upload proof",
           review: "Review invoice", 
           submit: "Submit confirmation"
         },
         method: "Payment Method",
+        selectPayment: "Select payment method",
         wallet: "Receiver Wallet (Solana)",
-        proof: "Upload Payment Proof",
+        proof: "Payment Proof",
         proofRequired: "Payment proof upload is required",
-        proofHelper: "Upload photo/screenshot of payment proof from your phone",
+        proofHelper: "Upload a photo/screenshot of your payment proof (JPG/PNG/PDF).",
         proofSuccess: "✅ Upload successful",
         submit: "Submit Confirmation",
         submitting: "Submitting Confirmation...",
@@ -1507,7 +1511,9 @@ export const copy = {
         pending: "Payment is under review",
         alreadySubmitted: "Confirmation already submitted",
         changeFile: "Change File",
-        maxSize: "Max file size: 10MB",
+        maxSize: "Max 10MB",
+        payerName: "Sender Name",
+        payerRef: "Bank Reference No.",
         destination: {
           title: "Official TPC Payment Details",
           subtitle: "Use these official details only. Never send funds to DMs or third parties.",
