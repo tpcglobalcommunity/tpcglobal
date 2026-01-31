@@ -12,8 +12,8 @@ const getNestedValue = (obj: Record<string, unknown>, path: string): string | st
     if (current && typeof current === "object" && key in current) {
       current = (current as Record<string, unknown>)[key];
     } else {
-      // Return key if not found (no console.info during render)
-      return path;
+      // Key not found - return empty string instead of raw key
+      return "";
     }
   }
   
@@ -23,7 +23,7 @@ const getNestedValue = (obj: Record<string, unknown>, path: string): string | st
   } else if (Array.isArray(current)) {
     return current.join(', ');
   } else {
-    return String(current || path);
+    return String(current || "");
   }
 };
 
@@ -84,6 +84,12 @@ export const I18nProvider = ({ children }: { children: ReactNode }) => {
     (key: string): string | string[] => {
       try {
         const result = getNestedValue(copy[lang] as unknown as Record<string, unknown>, key);
+        
+        // DEV check for confirm keys
+        if (import.meta.env.DEV && key.startsWith('confirm.')) {
+          console.log(`[i18n] ${lang} confirm key "${key}":`, result);
+        }
+        
         return result;
       } catch (error) {
         // Log error in development but don't throw during render
