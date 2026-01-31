@@ -31,6 +31,7 @@ const InvoiceEmailTemplate = ({ invoice, lang, memberDashboardUrl, authCallbackU
       subtitle: 'Terima kasih telah bergabung dengan presale TPC Global',
       invoiceDetails: 'Detail Invoice',
       invoiceNo: 'No. Invoice',
+      expires: 'Kadaluarsa',
       stage: 'Stage',
       tpcAmount: 'Jumlah TPC',
       priceUsd: 'Harga per TPC',
@@ -59,6 +60,7 @@ const InvoiceEmailTemplate = ({ invoice, lang, memberDashboardUrl, authCallbackU
       subtitle: 'Thank you for joining the TPC Global presale',
       invoiceDetails: 'Invoice Details',
       invoiceNo: 'Invoice No.',
+      expires: 'Expires',
       stage: 'Stage',
       tpcAmount: 'TPC Amount',
       priceUsd: 'Price per TPC',
@@ -473,6 +475,7 @@ const InvoiceEmailTemplate = ({ invoice, lang, memberDashboardUrl, authCallbackU
                 </div>
                 <div class="invoice-meta">
                     <div><strong>${isIndonesian ? 'Tanggal' : 'Date'}:</strong> ${formatDate(invoice.created_at)}</div>
+                    <div><strong>${isIndonesian ? 'Kadaluarsa' : 'Expires'}:</strong> ${formatDate(invoice.expires_at)}</div>
                     <div><strong>${t.stage}:</strong> ${invoice.stage.toUpperCase()}</div>
                     ${invoice.payment_method ? `<div><strong>${isIndonesian ? 'Metode' : 'Method'}:</strong> ${getPaymentMethodIcon(invoice.payment_method)} ${invoice.payment_method}</div>` : ''}
                 </div>

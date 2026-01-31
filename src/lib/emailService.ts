@@ -12,12 +12,14 @@ const buildMemberDashboardUrl = (lang: 'id' | 'en', baseUrl?: string) => {
   return `${base}/${lang}/member`;
 };
 
-// Helper to build auth callback URL with next parameter
-const buildAuthCallbackUrl = (lang: 'id' | 'en', nextPath: string, baseUrl?: string) => {
+// Helper to build auth callback URL with invoice context
+const buildAuthCallbackUrl = (lang: 'id' | 'en', nextPath: string, invoiceNo: string, baseUrl?: string) => {
   const base = baseUrl || (typeof window !== 'undefined' && window.location.host.includes('localhost') 
     ? 'http://localhost:8084'
     : 'https://tpcglobal.io');
-  return `${base}/auth/callback?next=${encodeURIComponent(nextPath)}`;
+  const timestamp = Date.now();
+  const token = btoa(`${invoiceNo}:${timestamp}`);
+  return `${base}/auth/callback?next=${encodeURIComponent(nextPath)}&invoice=${encodeURIComponent(invoiceNo)}&token=${encodeURIComponent(token)}`;
 };
 
 interface EmailService {
@@ -60,7 +62,7 @@ class MockEmailService implements EmailService {
 
       // Build member dashboard URL
       const memberDashboardUrl = buildMemberDashboardUrl(lang);
-      const authCallbackUrl = buildAuthCallbackUrl(lang, `/${lang}/member`);
+      const authCallbackUrl = buildAuthCallbackUrl(lang, `/${lang}/member`, invoiceNo);
       
       console.log('🔗 [MOCK EMAIL] Member Dashboard URL:', memberDashboardUrl);
       console.log('🔗 [MOCK EMAIL] Auth Callback URL:', authCallbackUrl);
@@ -301,23 +303,23 @@ class ProductionEmailService implements EmailService {
 // Factory function to get the appropriate email service
 export const getEmailService = (): EmailService => {
   const isDevelopment = process.env.NODE_ENV === 'development';
+  const hasResendKey = !!process.env.RESEND_API_KEY;
+  
+  console.log('📧 Email service config:', { isDevelopment, hasResendKey });
+  
+  if (hasResendKey) {
+    console.log('📧 Using Production Email Service (Resend)');
+    return new ProductionEmailService(process.env.RESEND_API_KEY!, process.env.FROM_EMAIL || 'noreply@tpcglobal.io');
+  }
   
   if (isDevelopment) {
-    logger.debug('Using Mock Email Service (Development)');
+    console.log('📧 Using Mock Email Service (Development)');
     return new MockEmailService();
   }
   
-  // In production, use real email service
-  const apiKey = process.env.RESEND_API_KEY || process.env.EMAIL_API_KEY;
-  const fromEmail = process.env.FROM_EMAIL || 'noreply@tpcglobal.io';
-  
-  if (!apiKey) {
-    logger.warn('No email API key found, falling back to mock service');
-    return new MockEmailService();
-  }
-  
-  logger.debug('Using Production Email Service');
-  return new ProductionEmailService(apiKey, fromEmail);
+  // Fallback to mock service
+  console.log('📧 Falling back to Mock Email Service');
+  return new MockEmailService();
 };
 
 // Export singleton instance

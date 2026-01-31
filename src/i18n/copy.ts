@@ -1563,14 +1563,9 @@ export const copy = {
       },
       // Invoice modal
       modal: {
-        title: "Invoice Created Successfully!",
-        openInvoice: "Open Invoice Detail",
-        copyAddress: "Copy Treasury Address"
-      },
-      // Toast messages
-      toast: {
-        invoiceCreated: "Invoice created successfully!",
-        invoiceFailed: "Failed to create invoice. Please try again.",
+        title: "Invoice Berhasil Dibuat!",
+        desc: "Invoice telah dibuat. Cek email Anda untuk detail pembayaran.",
+        invoiceNo: "No. Invoice",
         emailSent: "Email sent",
         emailFailed: "Email failed to send"
       },
@@ -1657,6 +1652,7 @@ export const copy = {
         status: "Status",
         expires: "Expires",
         viewInvoice: "View Invoice Detail",
+        copyConfirmLink: "Copy Confirm Link",
         close: "Close"
       },
       faq: {

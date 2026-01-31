@@ -40,6 +40,7 @@ const BuyTpcPage = () => {
   // Modal state
   const [showInvoiceModal, setShowInvoiceModal] = useState<boolean>(false);
   const [invoiceData, setInvoiceData] = useState<any>(null);
+  const [confirmUrl, setConfirmUrl] = useState<string>("");
   
   // Toast state (to prevent render-time calls)
   const [invoiceCreated, setInvoiceCreated] = useState<boolean>(false);
@@ -189,11 +190,25 @@ const BuyTpcPage = () => {
         console.log('✅ Invoice email sent successfully to:', email);
         logger.info('Invoice email sent successfully', { email, invoice_no: invoiceResult.invoice_no });
         
+        // Generate confirm URL for copy button
+        const baseUrl = window.location.origin;
+        const timestamp = Date.now();
+        const token = btoa(`${invoiceResult.invoice_no}:${timestamp}`);
+        const confirmUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(`/${lang}/member?invoice=${invoiceResult.invoice_no}`)}&invoice=${encodeURIComponent(invoiceResult.invoice_no)}&token=${encodeURIComponent(token)}`;
+        setConfirmUrl(confirmUrl);
+        
         // Show success toast with email confirmation
         toast.success(t("buyTpcNew.toast.invoiceCreated") + " - " + t("buyTpcNew.toast.emailSent"));
       } catch (emailError) {
         console.error('❌ Failed to send invoice email:', emailError);
         logger.error('Failed to send invoice email', { error: emailError, email, invoice_no: invoiceResult.invoice_no });
+        
+        // Still generate confirm URL for manual access
+        const baseUrl = window.location.origin;
+        const timestamp = Date.now();
+        const token = btoa(`${invoiceResult.invoice_no}:${timestamp}`);
+        const confirmUrl = `${baseUrl}/auth/callback?next=${encodeURIComponent(`/${lang}/member?invoice=${invoiceResult.invoice_no}`)}&invoice=${encodeURIComponent(invoiceResult.invoice_no)}&token=${encodeURIComponent(token)}`;
+        setConfirmUrl(confirmUrl);
         
         // Show warning toast but don't fail the flow
         toast.warning(t("buyTpcNew.toast.invoiceCreated") + " - " + t("buyTpcNew.toast.emailFailed"));
@@ -444,6 +459,16 @@ const BuyTpcPage = () => {
                   <ExternalLink className="h-4 w-4 mr-2" />
                   {t("buyTpcNew.modal.viewInvoice")}
                 </Button>
+                {confirmUrl && (
+                  <Button 
+                    variant="outline"
+                    onClick={() => copyToClipboard(confirmUrl)}
+                    className="w-full"
+                  >
+                    <Copy className="h-4 w-4 mr-2" />
+                    {t("buyTpcNew.modal.copyConfirmLink")}
+                  </Button>
+                )}
                 <Button 
                   variant="outline"
                   onClick={() => setShowInvoiceModal(false)}
