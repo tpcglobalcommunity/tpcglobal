@@ -916,20 +916,38 @@ export const copy = {
     
     // Auth
     auth: {
+      login: {
+        title: "Selamat Datang di TPC",
+        subtitle: "Masuk dengan Google atau kirim link login ke email Anda",
+        googlePrimary: "Masuk dengan Google",
+        or: "atau",
+        emailLabel: "Email",
+        emailPlaceholder: "email@example.com",
+        sendLink: "Kirim Link Login",
+        emailHelp: "Kita menggunakan rate limiting untuk keamanan. Jika terkena limit, gunakan Google login.",
+        emailInvalid: "Format email tidak valid",
+        checkEmailTitle: "Link Terkirim!",
+        checkEmailDesc: "Periksa inbox Anda dan klik link untuk masuk.",
+        cooldown: "Tunggu {{seconds}} detik",
+        rateLimited: "Kita kena rate limit. Coba lagi nanti atau gunakan Google.",
+        tryGoogleNow: "Gunakan Google untuk login cepat"
+      },
+      callback: {
+        loading: "Memproses Login...",
+        loadingDesc: "Sedang memverifikasi identitas Anda",
+        errorTitle: "Login Gagal",
+        errorDesc: "Terjadi kesalahan saat login. Silakan coba lagi.",
+        backToLogin: "Kembali ke Login"
+      },
+      googleNotEnabled: "Google belum aktif. Aktifkan di Supabase Dashboard → Auth → Providers → Google.",
+      errorGeneric: "Terjadi kesalahan. Silakan coba lagi."
+      },
+      
+      // Legacy keys (keep for compatibility)
       loginTitle: "Masuk ke TPC Global",
       loginSubtitle: "Gunakan email Anda untuk masuk",
       emailLabelOld: "Alamat Email",
       emailPlaceholderOld: "email@contoh.com",
-      sendMagicLink: "Kirim Magic Link",
-      checkEmail: "Cek email Anda untuk link login",
-      adminLoginTitle: "Admin Login",
-      adminLoginSubtitle: "Hanya untuk administrator terverifikasi",
-      
-      // New Luma-style login keys
-      title: "Selamat Datang di TPC",
-      subtitle: "Silakan masuk atau daftar di bawah.",
-      emailLabel: "Email",
-      emailPlaceholder: "you@email.com",
       continueEmail: "Lanjutkan dengan Email",
       orDivider: "atau",
       google: "Masuk dengan Google",
@@ -938,189 +956,173 @@ export const copy = {
       invalidEmail: "Format email tidak valid",
       requiredEmail: "Email wajib diisi",
       magicLinkSent: "Link magic telah dikirim!",
-      checkInbox: "Periksa inbox Anda untuk melanjutkan.",
-      errorGeneric: "Terjadi kesalahan. Silakan coba lagi.",
-      rateLimit: {
-        title: "Terlalu banyak percobaan",
-        message: "Terlalu banyak percobaan. Kita tunggu sebentar lalu coba lagi."
-      },
-      cooldown: {
-        wait: "Tunggu {{seconds}} detik"
-      },
-    },
-    
-    // Dashboard
-    dashboard: {
-      title: "Dashboard Saya",
-      subtitle: "Kelola akun dan transaksi Anda",
-      welcomeBack: "Selamat Datang Kembali",
-      myInvoices: "Invoice Saya",
-      noInvoices: "Belum ada invoice",
-    },
-    
-    // Member
-    member: {
-      title: "Dashboard Member",
-      subtitle: "Kelola invoice dan pembayaran Anda",
-      myInvoices: "Invoice Saya",
-      noInvoices: "Belum ada invoice",
-      viewInvoice: "Lihat Invoice",
-      invoiceDetailTitle: "Detail Invoice",
+      checkInbox: "Periksa inbox Anda untuk link login",
+      adminLoginTitle: "Admin Login",
+      adminLoginSubtitle: "Hanya untuk administrator terverifikasi",
       
-      // Navigation
-      nav: {
-        dashboard: "Dashboard",
-        invoices: "Invoice",
-        settings: "Pengaturan"
+      // Dashboard
+      dashboard: {
+        title: "Dashboard Saya",
+        subtitle: "Kelola akun dan transaksi Anda",
+        welcomeBack: "Selamat Datang Kembali",
+        myInvoices: "Invoice Saya",
+        noInvoices: "Belum ada invoice"
       },
       
-      // Page
-      page: {
+      // Member
+      member: {
         title: "Dashboard Member",
-        subtitle: "Selamat datang di area member TPC"
+        subtitle: "Kelola invoice dan pembayaran Anda",
+        myInvoices: "Invoice Saya",
+        noInvoices: "Belum ada invoice",
+        viewInvoice: "Lihat Invoice",
+        invoiceDetailTitle: "Detail Invoice",
+        
+        // Navigation
+        nav: {
+          dashboard: "Dashboard",
+          invoices: "Invoice",
+          settings: "Pengaturan"
+        },
+        
+        // Page
+        page: {
+          title: "Dashboard Member",
+          subtitle: "Selamat datang di area member TPC"
+        },
+        
+        // Invoices
+        invoices: {
+          title: "Daftar Invoice",
+          emptyTitle: "Belum ada invoice",
+          emptySubtitle: "Anda belum membuat invoice apapun. Mulai dengan membeli TPC tokens.",
+          createInvoice: "Buat Invoice",
+          view: "Lihat"
+        },
+        
+        // Detail
+        detail: {
+          title: "Detail Invoice",
+          summary: "Ringkasan Invoice",
+          treasury: "Alamat Treasury",
+          copy: "Salin",
+          openPublic: "Lihat Publik"
+        },
+        
+        status: {
+          unpaid: "Belum Dibayar",
+          pending_review: "Menunggu Review",
+          paid: "Sudah Dibayar",
+          rejected: "Ditolak",
+          expired: "Kadaluarsa",
+          cancelled: "Dibatalkan",
+        },
+        
+        confirm: {
+          title: "Konfirmasi Pembayaran",
+          subtitle: "Upload bukti pembayaran untuk melanjutkan",
+          paymentMethod: "Metode Pembayaran",
+          payerName: "Nama Pembayar",
+          payerRef: "Referensi Pembayaran",
+          txSignature: "Signature Transaksi",
+          proofUpload: "Upload Bukti Pembayaran",
+          uploadHint: "JPEG, PNG, atau PDF (Maks. 10MB)",
+          submit: "Submit Konfirmasi",
+          submitted: "Konfirmasi Dikirim!",
+          waiting: "Menunggu review dari admin...",
+          alreadyPaid: "Invoice ini sudah dibayar.",
+        },
+        
+        toast: {
+          uploadSuccess: "Bukti pembayaran berhasil diupload",
+          uploadFailed: "Gagal upload bukti pembayaran",
+          submitSuccess: "Konfirmasi pembayaran berhasil dikirim",
+          submitFailed: "Gagal mengirim konfirmasi pembayaran",
+          notAuthorized: "Anda tidak memiliki akses ke invoice ini",
+          invoiceNotFound: "Invoice tidak ditemukan",
+          copySuccess: "Berhasil disalin ke clipboard"
+        },
       },
       
-      // Invoices
-      invoices: {
-        title: "Daftar Invoice",
-        emptyTitle: "Belum ada invoice",
-        emptySubtitle: "Anda belum membuat invoice apapun. Mulai dengan membeli TPC tokens.",
-        createInvoice: "Buat Invoice",
-        view: "Lihat"
-      },
-      
-      // Detail
-      detail: {
-        title: "Detail Invoice",
-        summary: "Ringkasan Invoice",
-        treasury: "Alamat Treasury",
-        copy: "Salin",
-        openPublic: "Lihat Publik"
-      },
-      
-      status: {
-        unpaid: "Belum Dibayar",
-        pending_review: "Menunggu Review",
-        paid: "Sudah Dibayar",
-        rejected: "Ditolak",
-        expired: "Kadaluarsa",
-        cancelled: "Dibatalkan",
-      },
-      
-      confirm: {
-        title: "Konfirmasi Pembayaran",
-        subtitle: "Upload bukti pembayaran untuk melanjutkan",
-        paymentMethod: "Metode Pembayaran",
-        payerName: "Nama Pembayar",
-        payerRef: "Referensi Pembayaran",
-        txSignature: "Signature Transaksi",
-        proofUpload: "Upload Bukti Pembayaran",
-        uploadHint: "JPEG, PNG, atau PDF (Maks. 10MB)",
-        submit: "Submit Konfirmasi",
-        submitted: "Konfirmasi Dikirim!",
-        waiting: "Menunggu review dari admin...",
-        alreadyPaid: "Invoice ini sudah dibayar.",
-      },
-      
-      toast: {
-        uploadSuccess: "Bukti pembayaran berhasil diupload",
-        uploadFailed: "Gagal upload bukti pembayaran",
-        submitSuccess: "Konfirmasi pembayaran berhasil dikirim",
-        submitFailed: "Gagal mengirim konfirmasi pembayaran",
-        notAuthorized: "Anda tidak memiliki akses ke invoice ini",
-        invoiceNotFound: "Invoice tidak ditemukan",
-        copySuccess: "Berhasil disalin ke clipboard"
-      },
-    },
-    
-    // Member Invoice Detail
-    memberInvoice: {
-      confirmation: {
-        title: "Konfirmasi Pembayaran",
-        subtitle: "Upload bukti pembayaran dan lengkapi detail transaksi untuk mempercepat proses verifikasi.",
-        methodLabel: "Pilih Metode Pembayaran",
-        proofLabel: "Upload Bukti Pembayaran",
-        refLabel: "No. Referensi",
-        hashLabel: "Transaction Hash",
-        submit: "Kirim Konfirmasi",
-        submitting: "Mengirim...",
-        refPlaceholder: "Masukkan nomor referensi transaksi",
-        hashPlaceholder: "Masukkan transaction hash",
-        errors: {
-          methodRequired: "Metode pembayaran wajib dipilih",
-          proofRequired: "Bukti pembayaran wajib diupload",
-          hashRequired: "Transaction hash wajib diisi untuk pembayaran crypto",
-          refRequired: "Nomor referensi wajib diisi untuk bank/e-wallet"
+      // Member Invoice Detail
+      memberInvoice: {
+        confirmation: {
+          title: "Konfirmasi Pembayaran",
+          subtitle: "Upload bukti pembayaran dan lengkapi detail transaksi untuk mempercepat proses verifikasi.",
+          methodLabel: "Pilih Metode Pembayaran",
+          proofLabel: "Upload Bukti Pembayaran",
+          refLabel: "No. Referensi",
+          hashLabel: "Transaction Hash",
+          submit: "Kirim Konfirmasi",
+          submitting: "Mengirim...",
+          refPlaceholder: "Masukkan nomor referensi transaksi",
+          hashPlaceholder: "Masukkan transaction hash",
+          errors: {
+            methodRequired: "Metode pembayaran wajib dipilih",
+            proofRequired: "Bukti pembayaran wajib diupload",
+            hashRequired: "Transaction hash wajib diisi untuk pembayaran crypto",
+            refRequired: "Nomor referensi wajib diisi untuk bank/e-wallet"
+          }
+        },
+        paymentMethod: {
+          bank: "Bank Transfer",
+          ewallet: "E-Wallet",
+          crypto: "Cryptocurrency",
+          BANK_BCA: "BCA",
+          BANK_MANDIRI: "Mandiri",
+          BANK_BRI: "BRI",
+          BANK_BNI: "BNI",
+          EWALLET_OVO: "OVO",
+          EWALLET_DANA: "DANA",
+          EWALLET_GOPAY: "GoPay",
+          CRYPTO_USDC: "USDC",
+          CRYPTO_SOL: "SOL"
+        },
+        toast: {
+          confirmSuccess: "Konfirmasi pembayaran berhasil dikirim. Admin akan segera memeriksa.",
+          confirmFail: "Gagal mengirim konfirmasi. Silakan coba lagi.",
+          uploadFail: "Gagal upload bukti pembayaran",
+          loadFail: "Gagal memuat invoice"
+        },
+        panels: {
+          pendingReview: {
+            title: "Menunggu Review Admin",
+            message: "Konfirmasi pembayaran Anda telah dikirim dan sedang ditinjau oleh tim kami."
+          },
+          paid: {
+            title: "Pembayaran Berhasil",
+            message: "Invoice ini telah dibayar dan dikonfirmasi."
+          },
+          expired: {
+            title: "Invoice Kadaluarsa",
+            message: "Invoice ini telah kadaluarsa. Silakan buat invoice baru.",
+            cta: "Beli TPC Lagi"
+          }
+        },
+        status: {
+          unpaid: "Belum Dibayar",
+          pendingReview: "Menunggu Review",
+          paid: "Sudah Dibayar",
+          rejected: "Ditolak",
+          expired: "Kadaluarsa",
+          cancelled: "Dibatalkan"
         }
       },
-      paymentMethod: {
-        bank: "Bank Transfer",
-        ewallet: "E-Wallet",
-        crypto: "Cryptocurrency",
-        BANK_BCA: "BCA",
-        BANK_MANDIRI: "Mandiri",
-        BANK_BRI: "BRI",
-        BANK_BNI: "BNI",
-        EWALLET_OVO: "OVO",
-        EWALLET_DANA: "DANA",
-        EWALLET_GOPAY: "GoPay",
-        CRYPTO_USDC: "USDC",
-        CRYPTO_SOL: "SOL"
+      
+      // Admin
+      admin: {
+        title: "Admin Dashboard",
+        subtitle: "Kelola platform TPC Global",
+        settingsTitle: "Pengaturan Admin",
       },
-      toast: {
-        confirmSuccess: "Konfirmasi pembayaran berhasil dikirim. Admin akan segera memeriksa.",
-        confirmFail: "Gagal mengirim konfirmasi. Silakan coba lagi.",
-        uploadFail: "Gagal upload bukti pembayaran",
-        loadFail: "Gagal memuat invoice"
-      },
-      panels: {
-        pendingReview: {
-          title: "Menunggu Review Admin",
-          message: "Konfirmasi pembayaran Anda telah dikirim dan sedang ditinjau oleh tim kami."
-        },
-        paid: {
-          title: "Pembayaran Berhasil",
-          message: "Invoice ini telah dibayar dan dikonfirmasi."
-        },
-        expired: {
-          title: "Invoice Kadaluarsa",
-          message: "Invoice ini telah kadaluarsa. Silakan buat invoice baru.",
-          cta: "Beli TPC Lagi"
-        }
-      },
+      
+      // Status
       status: {
-        unpaid: "Belum Dibayar",
-        pendingReview: "Menunggu Review",
-        paid: "Sudah Dibayar",
-        rejected: "Ditolak",
-        expired: "Kadaluarsa",
-        cancelled: "Dibatalkan"
-      }
-    },
-    
-    // Admin
-    admin: {
-      title: "Admin Dashboard",
-      subtitle: "Kelola platform TPC Global",
-      totalInvoices: "Total Invoice",
-      pendingInvoices: "Pending",
-      paidInvoices: "Paid",
-      totalSalesUsd: "Total Penjualan (USD)",
-      invoicesTitle: "Daftar Invoice",
-      updateStatus: "Update Status",
-      settingsTitle: "Pengaturan",
-      usdIdrRate: "Kurs USD/IDR",
-      updateRate: "Update Kurs",
-      currentRate: "Kurs Saat Ini",
-    },
-    
-    // Status
-    status: {
-      pending: "Pending",
-      submitted: "Submitted",
-      paid: "Paid",
-      rejected: "Rejected",
-    },
+        pending: "Pending",
+        submitted: "Submitted",
+        paid: "Paid",
+        rejected: "Rejected",
+      },
     
     // Coming Soon Pages
     comingSoonPages: {
@@ -2361,20 +2363,38 @@ export const copy = {
     
     // Auth
     auth: {
+      login: {
+        title: "Welcome to TPC",
+        subtitle: "Sign in with Google or send a login link to your email",
+        googlePrimary: "Sign in with Google",
+        or: "or",
+        emailLabel: "Email",
+        emailPlaceholder: "email@example.com",
+        sendLink: "Send Login Link",
+        emailHelp: "We use rate limiting for security. If rate limited, use Google login.",
+        emailInvalid: "Invalid email format",
+        checkEmailTitle: "Link Sent!",
+        checkEmailDesc: "Check your inbox and click the link to sign in.",
+        cooldown: "Wait {{seconds}} seconds",
+        rateLimited: "We're rate limited. Try again later or use Google.",
+        tryGoogleNow: "Use Google for quick login"
+      },
+      callback: {
+        loading: "Processing Login...",
+        loadingDesc: "Verifying your identity",
+        errorTitle: "Login Failed",
+        errorDesc: "An error occurred during login. Please try again.",
+        backToLogin: "Back to Login"
+      },
+      googleNotEnabled: "Google is not enabled. Enable it in Supabase Dashboard → Auth → Providers → Google.",
+      errorGeneric: "An error occurred. Please try again."
+      },
+      
+      // Legacy keys (keep for compatibility)
       loginTitle: "Login to TPC Global",
       loginSubtitle: "Use your email to login",
       emailLabelOld: "Email Address",
       emailPlaceholderOld: "email@example.com",
-      sendMagicLink: "Send Magic Link",
-      checkEmail: "Check your email for login link",
-      adminLoginTitle: "Admin Login",
-      adminLoginSubtitle: "For verified administrators only",
-      
-      // New Luma-style login keys
-      title: "Welcome to TPC",
-      subtitle: "Please sign in or sign up below.",
-      emailLabel: "Email",
-      emailPlaceholder: "you@email.com",
       continueEmail: "Continue with Email",
       orDivider: "or",
       google: "Sign in with Google",
@@ -2384,14 +2404,16 @@ export const copy = {
       requiredEmail: "Email is required.",
       magicLinkSent: "Magic link sent!",
       checkInbox: "Check your inbox to continue.",
-      errorGeneric: "An error occurred. Please try again.",
-      rateLimit: {
-        title: "Too many attempts",
-        message: "Too many attempts. Please wait and try again."
-      },
-      cooldown: {
-        wait: "Wait {{seconds}}s"
-      },
+      adminLoginTitle: "Admin Login",
+      adminLoginSubtitle: "For verified administrators only",
+    },
+    
+    // Status
+    status: {
+      pending: "Pending",
+      submitted: "Submitted",
+      paid: "Paid",
+      rejected: "Rejected",
     },
     
     // Dashboard
@@ -2694,6 +2716,14 @@ export const copy = {
       finalReminderSubtitle: "Stay safe, verify everything, and never rush into decisions.",
     },
     
+    // Referral Information
+    referral: {
+      referralTitle: "Referral Code",
+      referralDescription: "Use official referral code to join TPC presale. Super Admin code: TPC000001",
+      referralCode: "TPC000001",
+      referralNote: "Referral code is required for all presale purchases. Use Super Admin official code if you don't have one from a member."
+    },
+    
     // Status
     status: {
       pending: "Pending",
@@ -2760,5 +2790,4 @@ export const copy = {
       copyright: "© 2026 TPC Global. All rights reserved.",
       disclaimer: "Crypto investment carries high risk. Not investment advice."
     }
-  }
 };

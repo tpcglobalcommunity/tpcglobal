@@ -22,7 +22,6 @@ import DaoSnapshotPage from "@/pages/public/DaoSnapshotPage";
 
 // Auth Pages
 import LoginPage from "@/pages/public/LoginPage";
-import AuthCallback from "@/pages/auth/AuthCallback";
 import AuthCallbackPage from "@/pages/auth/AuthCallbackPage";
 
 // Member Pages
@@ -81,11 +80,14 @@ export default function AppRoutes() {
           <Route path="dao/snapshot" element={<DaoSnapshotPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="auth/callback" element={<AuthCallbackPage />} />
-          <Route path="auth/callback-page" element={<Navigate to={`/:lang/auth/callback`} replace />} />
         </Route>
 
+        {/* Non-lang redirects */}
+        <Route path="/login" element={<Navigate to="/id/login" replace />} />
+        <Route path="/auth/callback" element={<Navigate to="/id/auth/callback" replace />} />
+
         {/* Member Routes - Protected */}
-        <Route path="/:lang/dashboard" element={<RequireAuth><MemberShell /></RequireAuth>}>
+        <Route path="/:lang/dashboard/*" element={<MemberShell />}>
           <Route index element={<MemberHome />} />
           <Route path="invoices" element={<MemberInvoicesPage />} />
           <Route path="invoices/:invoiceNo" element={<MemberInvoiceDetailPage />} />
