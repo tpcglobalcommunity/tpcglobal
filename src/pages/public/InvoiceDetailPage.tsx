@@ -385,24 +385,26 @@ const InvoiceDetailPage = () => {
                   {PAYMENT_DESTINATIONS[paymentMethod].type === 'bank' ? (
                     // Bank Details
                     <>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium">{t("confirm.destination.bankName")}:</span>
-                          <span className="text-sm text-foreground">{PAYMENT_DESTINATIONS[paymentMethod].details.bankName}</span>
+                      <div className="space-y-3">
+                        <div className="flex flex-col sm:flex sm:items-center sm:justify-between gap-2">
+                          <span className="text-sm font-medium text-muted-foreground">{t("confirm.destination.bankName")}:</span>
+                          <span className="text-sm text-foreground font-medium">{PAYMENT_DESTINATIONS[paymentMethod].details.bankName}</span>
                         </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium">{t("confirm.destination.accountName")}:</span>
-                          <span className="text-sm text-foreground">{PAYMENT_DESTINATIONS[paymentMethod].details.accountName}</span>
+                        <div className="flex flex-col sm:flex sm:items-center sm:justify-between gap-2">
+                          <span className="text-sm font-medium text-muted-foreground">{t("confirm.destination.accountName")}:</span>
+                          <span className="text-sm text-foreground font-medium">{PAYMENT_DESTINATIONS[paymentMethod].details.accountName}</span>
                         </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium">{t("confirm.destination.accountNumber")}:</span>
+                        <div className="flex flex-col sm:flex sm:items-center sm:justify-between gap-2">
+                          <span className="text-sm font-medium text-muted-foreground">{t("confirm.destination.accountNumber")}:</span>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-sm bg-muted px-2 py-1 rounded">{PAYMENT_DESTINATIONS[paymentMethod].details.accountNumber}</span>
+                            <span className="font-mono text-sm bg-muted px-3 py-2 rounded-md border border-border flex-1 min-w-0">
+                              {PAYMENT_DESTINATIONS[paymentMethod].details.accountNumber}
+                            </span>
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => copyToClipboard(PAYMENT_DESTINATIONS[paymentMethod].details.accountNumber!)}
-                              className="h-8 px-3"
+                              className="h-8 px-3 flex-shrink-0"
                             >
                               <Copy className="h-3 w-3 mr-1" />
                               {copiedText === PAYMENT_DESTINATIONS[paymentMethod].details.accountNumber ? t("confirm.destination.copied") : t("confirm.destination.copy")}
@@ -415,19 +417,19 @@ const InvoiceDetailPage = () => {
                     // Crypto Details (USDC/SOL)
                     <>
                       <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium">
+                        <div className="flex flex-col sm:flex sm:items-center sm:justify-between gap-2">
+                          <span className="text-sm font-medium text-muted-foreground">
                             {paymentMethod === 'USDC' ? t("confirm.destination.usdcLabel") : t("confirm.destination.solLabel")}:
                           </span>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-sm bg-muted px-2 py-1 rounded max-w-[200px] truncate">
+                            <span className="font-mono text-sm bg-muted px-3 py-2 rounded-md border border-border flex-1 min-w-0 max-w-[300px] truncate">
                               {PAYMENT_DESTINATIONS[paymentMethod].details.address}
                             </span>
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => copyToClipboard(PAYMENT_DESTINATIONS[paymentMethod].details.address!)}
-                              className="h-8 px-3"
+                              className="h-8 px-3 flex-shrink-0"
                             >
                               <Copy className="h-3 w-3 mr-1" />
                               {copiedText === PAYMENT_DESTINATIONS[paymentMethod].details.address ? t("confirm.destination.copied") : t("confirm.destination.copy")}
@@ -437,14 +439,16 @@ const InvoiceDetailPage = () => {
                         
                         {/* QR Code */}
                         {qrCodeUrl && (
-                          <div className="text-center space-y-2">
+                          <div className="text-center space-y-3">
                             <p className="text-xs text-muted-foreground">{t("confirm.destination.qrLabel")}</p>
-                            <div className="inline-block p-2 bg-muted rounded-lg border border-border">
-                              <img 
-                                src={qrCodeUrl} 
-                                alt="QR Code" 
-                                className="w-48 h-48"
-                              />
+                            <div className="inline-flex justify-center">
+                              <div className="p-3 bg-muted rounded-lg border border-border">
+                                <img 
+                                  src={qrCodeUrl} 
+                                  alt="QR Code" 
+                                  className="w-48 h-48"
+                                />
+                              </div>
                             </div>
                           </div>
                         )}

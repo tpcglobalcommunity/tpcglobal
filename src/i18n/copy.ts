@@ -527,9 +527,9 @@ export const copy = {
         title: "Konfirmasi Pembayaran",
         subtitle: "Upload bukti pembayaran dari HP (foto/screenshot/PDF)",
         steps: {
-          upload: "Upload Bukti",
-          review: "Periksa Ringkasan", 
-          submit: "Kirim Konfirmasi"
+          upload: "Upload bukti",
+          review: "Periksa invoice", 
+          submit: "Kirim konfirmasi"
         },
         method: "Metode Pembayaran",
         wallet: "Wallet Penerima (Solana)",
@@ -546,16 +546,16 @@ export const copy = {
         maxSize: "Maksimal file: 10MB",
         destination: {
           title: "Rekening Resmi TPC",
-          subtitle: "Gunakan data resmi ini. Jangan transfer ke DM.",
-          bankName: "Nama Bank",
+          subtitle: "Gunakan data resmi ini. Jangan transfer ke DM atau pihak lain.",
+          bankName: "Bank",
           accountName: "Nama Rekening",
           accountNumber: "Nomor Rekening",
           walletAddress: "Alamat Wallet",
           copy: "Salin",
-          copied: "Disalin ke clipboard",
-          qrLabel: "Scan untuk copy alamat",
-          usdcLabel: "USDC (Solana)",
-          solLabel: "SOL (Solana)"
+          copied: "Disalin",
+          qrLabel: "Scan untuk menyalin alamat",
+          usdcLabel: "USDC (SPL)",
+          solLabel: "Solana (SOL)"
         }
       },
       // Invoice status
@@ -1491,9 +1491,9 @@ export const copy = {
         title: "Confirm Payment",
         subtitle: "Upload payment proof from your phone (photo/screenshot/PDF)",
         steps: {
-          upload: "Upload Proof",
-          review: "Review Summary", 
-          submit: "Submit Confirmation"
+          upload: "Upload proof",
+          review: "Review invoice", 
+          submit: "Submit confirmation"
         },
         method: "Payment Method",
         wallet: "Receiver Wallet (Solana)",
@@ -1510,16 +1510,16 @@ export const copy = {
         maxSize: "Max file size: 10MB",
         destination: {
           title: "Official TPC Payment Details",
-          subtitle: "Use official data only. Do not transfer to DM.",
-          bankName: "Bank Name",
+          subtitle: "Use these official details only. Never send funds to DMs or third parties.",
+          bankName: "Bank",
           accountName: "Account Name",
           accountNumber: "Account Number",
           walletAddress: "Wallet Address",
           copy: "Copy",
-          copied: "Copied to clipboard",
+          copied: "Copied",
           qrLabel: "Scan to copy address",
-          usdcLabel: "USDC (Solana)",
-          solLabel: "SOL (Solana)"
+          usdcLabel: "USDC (SPL)",
+          solLabel: "Solana (SOL)"
         }
       },
       // Invoice status
