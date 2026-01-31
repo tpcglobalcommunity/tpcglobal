@@ -69,7 +69,7 @@ const InvoiceDetailPage = () => {
     } else {
       setQrCodeUrl("");
     }
-  }, [paymentMethod]);
+  }, [paymentMethod]); // Only depend on paymentMethod
 
   useEffect(() => {
     const loadInvoice = async () => {
@@ -226,17 +226,23 @@ const InvoiceDetailPage = () => {
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      console.log("File selected:", { name: file.name, size: file.size, type: file.type });
       setProofFile(file);
+    } else {
+      console.log("No file selected");
     }
   };
 
   const copyToClipboard = async (text: string) => {
     try {
+      console.log("Copying to clipboard:", text);
       await navigator.clipboard.writeText(text);
       toast.success(t("confirm.destination.copied"));
       setCopiedText(text);
       setTimeout(() => setCopiedText(""), 2000);
+      console.log("Text copied successfully");
     } catch (error) {
+      console.error("Failed to copy to clipboard:", error);
       // Fallback for browsers that don't support clipboard API
       const textArea = document.createElement("textarea");
       textArea.value = text;
@@ -247,11 +253,13 @@ const InvoiceDetailPage = () => {
       toast.success(t("confirm.destination.copied"));
       setCopiedText(text);
       setTimeout(() => setCopiedText(""), 2000);
+      console.log("Text copied successfully (fallback)");
     }
   };
 
   const generateQRCode = async (text: string) => {
     try {
+      console.log("Generating QR code for:", text);
       const url = await QRCode.toDataURL(text, {
         width: 200,
         margin: 2,
@@ -260,9 +268,12 @@ const InvoiceDetailPage = () => {
           light: '#0b0f14'
         }
       });
+      console.log("QR code generated successfully");
       setQrCodeUrl(url);
     } catch (error) {
+      console.error("Failed to generate QR code:", error);
       logger.error('Failed to generate QR code', error);
+      setQrCodeUrl(""); // Reset on error
     }
   };
 
@@ -300,6 +311,8 @@ const InvoiceDetailPage = () => {
   const isUnpaid = invoice.status === 'UNPAID';
   const isPendingReview = invoice.status === 'PENDING_REVIEW';
   const isPaid = invoice.status === 'PAID';
+
+  console.log("Invoice status:", { status: invoice.status, isUnpaid, isPendingReview, isPaid });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
