@@ -346,7 +346,7 @@ export type Database = {
         }[]
       }
       create_invoice: {
-        Args: { p_tpc_amount: number; p_referral_code?: string }
+        Args: { p_email: string; p_tpc_amount: number; p_referral_code?: string }
         Returns: {
           invoice_no: string;
           stage: string;

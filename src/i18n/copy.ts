@@ -496,8 +496,6 @@ export const copy = {
         riskTab: "Risiko",
         educationTab: "Disklaimer"
       },
-      // Trust bullets
-      trust: {
       // Order summary
       summary: {
         title: "Ringkasan Pesanan",
@@ -571,6 +569,75 @@ export const copy = {
         OVO: "OVO",
         DANA: "DANA",
         GOPAY: "GoPay"
+      }
+    },
+    
+    // Buy TPC New (Clean Rebuild)
+    buyTpcNew: {
+      title: "Beli TPC",
+      subtitle: "Bergabung dengan presale TPC Global - Aman & Terpercaya",
+      trust: {
+        title: "Kenapa Beli Melalui Halaman Ini?",
+        b1: "Treasury resmi & terverifikasi",
+        b2: "Invoice system transparan",
+        b3: "Education-only, no profit guarantee"
+      },
+      form: {
+        title: "Form Pembelian TPC",
+        description: "Isi data dengan benar untuk membuat invoice pembayaran",
+        email: {
+          label: "Email",
+          placeholder: "your@email.com",
+          error: "Email tidak valid"
+        },
+        amount: {
+          label: "Jumlah TPC",
+          placeholder: "1000",
+          error: "Jumlah TPC harus lebih dari 0"
+        },
+        ref: {
+          label: "Kode Referral (Opsional)",
+          placeholder: "TPC000001"
+        },
+        terms: {
+          label: "Saya menyetujui Syarat & Ketentuan dan memahami bahwa ini adalah pembelian token utilitas, bukan investasi.",
+          error: "Anda harus menyetujui syarat dan ketentuan"
+        }
+      },
+      summary: {
+        title: "Ringkasan Pesanan",
+        pricePerTpc: "Harga per TPC",
+        totalUsd: "Total USD",
+        totalIdr: "Total IDR",
+        rate: "Kurs USD/IDR",
+        treasury: "Alamat Treasury",
+        copy: "Disalin!"
+      },
+      cta: {
+        create: "Buat Invoice",
+        creating: "Membuat Invoice..."
+      },
+      toast: {
+        invoiceCreated: "Invoice berhasil dibuat!",
+        invoiceFailed: "Gagal membuat invoice. Coba lagi."
+      },
+      modal: {
+        title: "Invoice Berhasil Dibuat!",
+        desc: "Invoice Anda telah berhasil dibuat. Silakan lakukan pembayaran sesuai jumlah yang tertera.",
+        invoiceNo: "No. Invoice",
+        status: "Status",
+        expires: "Kadaluarsa",
+        viewInvoice: "Lihat Detail Invoice",
+        close: "Tutup"
+      },
+      faq: {
+        title: "Pertanyaan Umum",
+        q1: "Bagaimana proses pembelian TPC?",
+        a1: "Anda membuat invoice, transfer ke alamat treasury resmi, lalu upload bukti pembayaran. Admin akan memverifikasi dan mengirim TPC ke wallet Anda.",
+        q2: "Berapa lama verifikasi pembayaran?",
+        a2: "Biasanya 1-24 jam pada jam kerja. Pastikan transfer sesuai jumlah yang tertera di invoice.",
+        q3: "Apakah ada jaminan profit?",
+        a3: "TIDAK. TPC adalah token utilitas untuk edukasi dan komunitas, bukan instrumen investasi. Tidak ada jaminan profit atau nilai di masa depan."
       }
     },
     
@@ -1401,6 +1468,75 @@ export const copy = {
       }
     },
     
+    // Buy TPC New (Clean Rebuild)
+    buyTpcNew: {
+      title: "Buy TPC",
+      subtitle: "Join TPC Global presale - Safe & Trusted",
+      trust: {
+        title: "Why Buy Through This Page?",
+        b1: "Official & verified treasury",
+        b2: "Transparent invoice system",
+        b3: "Education-only, no profit guarantee"
+      },
+      form: {
+        title: "TPC Purchase Form",
+        description: "Fill in correct data to create payment invoice",
+        email: {
+          label: "Email",
+          placeholder: "your@email.com",
+          error: "Invalid email address"
+        },
+        amount: {
+          label: "TPC Amount",
+          placeholder: "1000",
+          error: "TPC amount must be greater than 0"
+        },
+        ref: {
+          label: "Referral Code (Optional)",
+          placeholder: "TPC000001"
+        },
+        terms: {
+          label: "I agree to Terms & Conditions and understand this is a utility token purchase, not an investment.",
+          error: "You must accept the terms and conditions"
+        }
+      },
+      summary: {
+        title: "Order Summary",
+        pricePerTpc: "Price per TPC",
+        totalUsd: "Total USD",
+        totalIdr: "Total IDR",
+        rate: "USD/IDR Rate",
+        treasury: "Treasury Address",
+        copy: "Copied!"
+      },
+      cta: {
+        create: "Create Invoice",
+        creating: "Creating Invoice..."
+      },
+      toast: {
+        invoiceCreated: "Invoice created successfully!",
+        invoiceFailed: "Failed to create invoice. Please try again."
+      },
+      modal: {
+        title: "Invoice Created Successfully!",
+        desc: "Your invoice has been successfully created. Please make payment according to the specified amount.",
+        invoiceNo: "Invoice No",
+        status: "Status",
+        expires: "Expires",
+        viewInvoice: "View Invoice Detail",
+        close: "Close"
+      },
+      faq: {
+        title: "Frequently Asked Questions",
+        q1: "How does the TPC purchase process work?",
+        a1: "You create an invoice, transfer to the official treasury address, then upload payment proof. Admin will verify and send TPC to your wallet.",
+        q2: "How long does payment verification take?",
+        a2: "Usually 1-24 hours during business hours. Make sure to transfer the exact amount shown in the invoice.",
+        q3: "Is there any profit guarantee?",
+        a3: "NO. TPC is a utility token for education and community, not an investment instrument. There is no profit guarantee or future value guarantee."
+      }
+    },
+    
     // Verified Page
     verified: {
       // 1. Verified Page Hero (Trust Statement)
@@ -2120,8 +2256,6 @@ export const copy = {
       referralDescription: "Use official referral code to join TPC presale. Super Admin code: TPC000001",
       referralCode: "TPC000001",
       referralNote: "Referral code is required for all presale purchases. Use Super Admin official code if you don't have one from a member."
-    },
-    
     },
     
     // Footer

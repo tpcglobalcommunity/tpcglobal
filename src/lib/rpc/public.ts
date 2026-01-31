@@ -11,9 +11,9 @@ export interface InvoicePublic {
   tpc_amount: number;
   total_usd: number;
   total_idr: number;
-  created_at: string;
-  paid_at: string | null;
   treasury_address: string;
+  created_at: string;
+  expires_at: string;
 }
 
 export interface PresaleStage {
@@ -71,8 +71,9 @@ export const getInvoicePublic = async (invoiceNo: string): Promise<InvoicePublic
       return null;
     }
 
-    // RPC returns array, take first element or null
-    return data && data.length > 0 ? data[0] : null;
+    // RPC may return array or single row, handle both
+    const result = Array.isArray(data) ? (data[0] ?? null) : (data ?? null);
+    return result;
   } catch (error) {
     logger.error('Unexpected error getting invoice public', error);
     return null;
@@ -185,7 +186,7 @@ export const createInvoicePublic = async (request: CreateInvoiceRequest): Promis
     total_usd: request.tpc_amount * (request.stage === 'stage1' ? 0.001 : 0.002),
     total_idr: request.tpc_amount * (request.stage === 'stage1' ? 0.001 : 0.002) * 17000,
     created_at: new Date().toISOString(),
-    paid_at: null,
+    expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     treasury_address: '5AeayrU2pdy6yNBeiUpTXkfMxw3VpDQGUHC6kXrBt5vw',
     status: 'PENDING'
   };

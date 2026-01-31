@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
 
 export interface CreateInvoiceRequest {
+  email: string;
   tpc_amount: number;
   referral_code?: string;
 }
@@ -21,6 +22,7 @@ export interface CreateInvoiceResponse {
 export async function createInvoice(request: CreateInvoiceRequest): Promise<CreateInvoiceResponse> {
   try {
     const { data, error } = await supabase.rpc('create_invoice', {
+      p_email: request.email,
       p_tpc_amount: request.tpc_amount,
       p_referral_code: request.referral_code || null
     });

@@ -1,37 +1,7 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { copy, Lang } from "./copy";
-
-const SUPPORTED_LANGS: Lang[] = ["id", "en"];
-const DEFAULT_LANG: Lang = "id";
-
-// Normalize language to supported values
-export const normalizeLang = (lang: string | null | undefined): Lang => {
-  if (!lang) return DEFAULT_LANG;
-  const normalized = lang.toLowerCase();
-  if (SUPPORTED_LANGS.includes(normalized as Lang)) {
-    return normalized as Lang;
-  }
-  return DEFAULT_LANG;
-};
-
-// Add language prefix to path
-export const withLang = (path: string, lang: Lang): string => {
-  const cleanPath = path.startsWith("/") ? path : `/${path}`;
-  return `/${lang}${cleanPath === "/" ? "" : cleanPath}`;
-};
-
-// Extract language from pathname
-export const extractLang = (pathname: string): { lang: Lang; path: string } => {
-  const parts = pathname.split("/").filter(Boolean);
-  if (parts.length > 0 && SUPPORTED_LANGS.includes(parts[0] as Lang)) {
-    return {
-      lang: parts[0] as Lang,
-      path: "/" + parts.slice(1).join("/") || "/",
-    };
-  }
-  return { lang: DEFAULT_LANG, path: pathname };
-};
+import { copy } from "./copy";
+import { Lang, extractLang, withLang } from "./lang";
 
 // Get nested value from object by dot notation
 const getNestedValue = (obj: Record<string, unknown>, path: string): string | string[] => {
@@ -47,7 +17,14 @@ const getNestedValue = (obj: Record<string, unknown>, path: string): string | st
     }
   }
   
-  return current as string | string[];
+  // Ensure we return a string, not an object or other type
+  if (typeof current === 'string') {
+    return current;
+  } else if (Array.isArray(current)) {
+    return current.join(', ');
+  } else {
+    return String(current || path);
+  }
 };
 
 interface I18nContextValue {
@@ -62,30 +39,59 @@ const I18nContext = createContext<I18nContextValue | null>(null);
 export const I18nProvider = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { lang: extractedLang, path: currentPath } = extractLang(location.pathname);
-  const [lang, setLangState] = useState<Lang>(extractedLang);
+  const [lang, setLangState] = useState<Lang>('id'); // Default to 'id', will be updated in useEffect
+  const [currentPath, setCurrentPath] = useState<string>('');
 
-  // Sync lang with URL
+  // Sync lang with URL - use ref to prevent infinite loops
+  const isInitialMount = useRef(true);
+  
   useEffect(() => {
-    const { lang: urlLang } = extractLang(location.pathname);
+    const { lang: extractedLang, path: extractedPath } = extractLang(location.pathname);
+    
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      setLangState(extractedLang); // Set initial lang from URL
+      setCurrentPath(extractedPath); // Set initial path
+      return;
+    }
+    
+    const { lang: urlLang, path: urlPath } = extractLang(location.pathname);
     if (urlLang !== lang) {
       setLangState(urlLang);
     }
-  }, [location.pathname, lang]);
+    if (urlPath !== currentPath) {
+      setCurrentPath(urlPath);
+    }
+  }, [location.pathname, lang, currentPath]);
 
   const setLang = useCallback(
     (newLang: Lang) => {
       if (newLang !== lang) {
         setLangState(newLang);
-        navigate(withLang(currentPath, newLang), { replace: true });
       }
     },
-    [lang, currentPath, navigate]
+    [lang]
   );
+
+  // Handle navigation when lang changes (pure effect, no callbacks)
+  useEffect(() => {
+    if (currentPath && currentPath !== '' && !isInitialMount.current) {
+      navigate(withLang(currentPath, lang), { replace: true });
+    }
+  }, [lang, currentPath, navigate]);
 
   const t = useCallback(
     (key: string): string | string[] => {
-      return getNestedValue(copy[lang] as unknown as Record<string, unknown>, key);
+      try {
+        const result = getNestedValue(copy[lang] as unknown as Record<string, unknown>, key);
+        return result;
+      } catch (error) {
+        // Log error in development but don't throw during render
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`Translation key not found: ${key}`, error);
+        }
+        return key; // Fallback to key name
+      }
     },
     [lang]
   );

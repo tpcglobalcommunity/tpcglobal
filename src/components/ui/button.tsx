@@ -1,4 +1,5 @@
 import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
 import { cn } from "@/lib/utils"
 
 export interface ButtonProps
@@ -6,6 +7,7 @@ export interface ButtonProps
   variant?: "default" | "secondary" | "outline" | "ghost" | "destructive"
   size?: "sm" | "md" | "lg" | "icon"
   loading?: boolean
+  asChild?: boolean
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -17,12 +19,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       loading = false,
       disabled,
       children,
+      asChild = false,
       ...props
     },
     ref
   ) => {
+    const Comp = asChild ? Slot : "button"
+    
     return (
-      <button
+      <Comp
         ref={ref}
         disabled={disabled || loading}
         className={cn(
@@ -53,7 +58,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {loading ? "Loading..." : children}
-      </button>
+      </Comp>
     )
   }
 )
