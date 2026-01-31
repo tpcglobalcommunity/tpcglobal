@@ -495,13 +495,6 @@ const BuyTpcPage = () => {
                   <ExternalLink className="h-4 w-4 mr-2" />
                   {t("buyTpcNew.modal.viewInvoice")}
                 </Button>
-                <Button 
-                  variant="outline"
-                  onClick={() => setShowInvoiceModal(false)}
-                  className="w-full"
-                >
-                  {t("buyTpcNew.modal.close")}
-                </Button>
               </div>
             </div>
           )}
