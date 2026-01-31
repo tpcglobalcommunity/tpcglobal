@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
 import { AuthProvider } from "@/lib/auth";
 import { RequireAuth } from "@/components/guards/RequireAuth";
 import { RequireAdmin } from "@/components/guards/RequireAdmin";
@@ -37,37 +36,25 @@ import AdminSettingsPage from "@/pages/admin/AdminSettingsPage";
 // System
 import NotFound from "@/pages/NotFound";
 
-// HomeRedirect component for dynamic /:lang/home routes
-const HomeRedirect = () => {
-  const { lang } = useParams<{ lang: string }>();
-  
-  // Only redirect for valid languages, fallback to /id
-  const validLangs = ['en', 'id'];
-  const targetLang = validLangs.includes(lang || '') ? lang : 'id';
-  
-  return <Navigate to={`/${targetLang}`} replace />;
-};
-
-export default function AppRoutes() {
+const AppRoutes = () => {
   return (
     <AuthProvider>
       <Routes>
-        {/* Root redirect to default language */}
+        {/* Root redirects */}
         <Route path="/" element={<Navigate to="/id" replace />} />
-        
-        {/* Root transparency redirect */}
-        <Route path="/transparency" element={<Navigate to="/id/transparency" replace />} />
-        
-        {/* Root DAO routes (redirect to default language) */}
-        <Route path="/dao" element={<Navigate to="/id/dao" replace />} />
-        <Route path="/dao/snapshot" element={<Navigate to="/id/dao/snapshot" replace />} />
-        
-        {/* Root member redirect */}
-        <Route path="/member" element={<Navigate to="/id/member" replace />} />
+        <Route path="/login" element={<Navigate to="/id/login" replace />} />
+        <Route path="/auth/callback" element={<Navigate to="/id/auth/callback" replace />} />
+        <Route path="/callback" element={<Navigate to="/id/auth/callback" replace />} />
         <Route path="/dashboard" element={<Navigate to="/id/dashboard" replace />} />
-        
-        {/* Language-prefixed routes */}
-        <Route path="/:lang" element={<PublicLayout />}>
+        <Route path="/member" element={<Navigate to="/id/member" replace />} />
+        <Route path="/admin" element={<Navigate to="/id/admin" replace />} />
+        <Route path="/admin/*" element={<Navigate to="/id/admin" replace />} />
+
+        {/* EN redirects to ID */}
+        <Route path="/en/*" element={<Navigate to="/id" replace />} />
+
+        {/* ID-only routes */}
+        <Route path="/id" element={<PublicLayout />}>
           <Route index element={<HomePage />} />
           <Route path="verified" element={<VerifiedPage />} />
           <Route path="buytpc" element={<BuyTpcPage />} />
@@ -77,6 +64,7 @@ export default function AppRoutes() {
           <Route path="education" element={<EducationPage />} />
           <Route path="dao" element={<DaoLitePage />} />
           <Route path="dao/snapshot" element={<DaoSnapshotPage />} />
+          <Route path="invoice/:invoiceNo" element={<InvoiceDetailPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="auth/callback" element={<AuthCallbackPage />} />
 
@@ -90,7 +78,7 @@ export default function AppRoutes() {
               <Route path="test" element={<MemberTestPage />} />
             </Route>
 
-            {/* Legacy member routes (lang-aware) */}
+            {/* Legacy member routes */}
             <Route path="member" element={<Navigate to="dashboard" replace />} />
             <Route path="member/*" element={<Navigate to="../dashboard" replace />} />
           </Route>
@@ -105,31 +93,11 @@ export default function AppRoutes() {
           </Route>
         </Route>
 
-        {/* Non-lang redirects */}
-        <Route path="/login" element={<Navigate to="/id/login" replace />} />
-        <Route path="/auth/callback" element={<Navigate to="/id/auth/callback" replace />} />
-        <Route path="/callback" element={<Navigate to="/id/auth/callback" replace />} />
-
-        {/* Admin non-lang redirects */}
-        <Route path="/admin" element={<Navigate to="/id/admin" replace />} />
-        <Route path="/admin/*" element={<Navigate to="/id/admin" replace />} />
-
-        {/* Member non-lang redirects */}
-        <Route path="/dashboard" element={<Navigate to="/id/dashboard" replace />} />
-        <Route path="/member" element={<Navigate to="/id/member" replace />} />
-
-        {/* Legacy /home redirects - MUST be before catch-all */}
-        <Route path="/en/home" element={<Navigate to="/en" replace />} />
-        <Route path="/id/home" element={<Navigate to="/id" replace />} />
-        <Route path="/:lang/home" element={<HomeRedirect />} />
-        
-        {/* Non-lang auth callback redirect */}
-        <Route path="/auth/callback" element={<Navigate to="/id/auth/callback" replace />} />
-        <Route path="/auth/callback-page" element={<Navigate to="/id/auth/callback" replace />} />
-
         {/* Catch-all */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AuthProvider>
   );
-}
+};
+
+export default AppRoutes;

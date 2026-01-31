@@ -80,19 +80,15 @@ export const RequireAuth = ({ children }: RequireAuthProps) => {
 
   // Unauthenticated state - redirect to login
   if (authState === "unauthed") {
-    const pathSegments = location.pathname.split("/");
-    const currentLang = pathSegments[1] || "id";
-    const validLang = ["en", "id"].includes(currentLang) ? currentLang : "id";
-
     const isLoginPage = location.pathname.includes("/login");
     const isCallbackPage = location.pathname.includes("/auth/callback");
 
     if (isLoginPage || isCallbackPage) {
-      return <Navigate to={`/${validLang}/login`} replace />;
+      return <Navigate to="/id/login" replace />;
     }
 
     const next = encodeURIComponent(location.pathname + location.search);
-    return <Navigate to={`/${validLang}/login?next=${next}`} replace />;
+    return <Navigate to={`/id/login?next=${next}`} replace />;
   }
 
   // ✅ Authenticated - render children OR nested routes (Outlet)

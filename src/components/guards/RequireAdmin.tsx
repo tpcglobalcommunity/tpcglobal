@@ -15,8 +15,8 @@ export const RequireAdmin = ({ children, redirectTo }: RequireAdminProps) => {
   const location = useLocation();
   const { t, lang } = useI18n();
 
-  // Default redirect to dashboard in current language
-  const defaultRedirect = `/${lang || 'id'}/dashboard`;
+  // Default redirect to dashboard
+  const defaultRedirect = "/id/dashboard";
   const finalRedirectTo = redirectTo || defaultRedirect;
 
   if (loading) {
@@ -34,7 +34,7 @@ export const RequireAdmin = ({ children, redirectTo }: RequireAdminProps) => {
   }
 
   if (!user) {
-    return <Navigate to={`/${lang || 'id'}/login`} replace />;
+    return <Navigate to="/id/login" replace />;
   }
 
   // Use the auth context's isAdmin which is already validated

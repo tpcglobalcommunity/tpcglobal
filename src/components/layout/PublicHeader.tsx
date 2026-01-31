@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useI18n } from "@/i18n/i18n";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { Menu, Globe, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 
@@ -18,16 +18,12 @@ const navItems = [
 ];
 
 export const PublicHeader = () => {
-  const { t, lang, setLang, withLang } = useI18n();
+  const { t } = useI18n();
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
-  const toggleLang = () => {
-    setLang(lang === "id" ? "en" : "id");
-  };
-
   const isActive = (path: string) => {
-    const currentPath = location.pathname.replace(`/${lang}`, "") || "/";
+    const currentPath = location.pathname.replace("/id", "") || "/";
     return currentPath === path;
   };
 
@@ -43,7 +39,7 @@ export const PublicHeader = () => {
             {navItems.map((item) => (
               <Link
                 key={item.path}
-                to={withLang(item.path)}
+                to={`/id${item.path}`}
                 className={`px-3 py-2 text-sm rounded-lg transition-colors ${
                   isActive(item.path)
                     ? "bg-primary/10 text-primary"
@@ -57,18 +53,8 @@ export const PublicHeader = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleLang}
-              className="gap-2"
-            >
-              <Globe className="h-4 w-4" />
-              <span className="uppercase">{lang}</span>
-            </Button>
-
             <Button variant="outline" size="sm" asChild className="hidden sm:flex">
-              <Link to={withLang("/login")}>{t("nav.login")}</Link>
+              <Link to="/id/login">{t("nav.login")}</Link>
             </Button>
 
             {/* Mobile Menu */}
@@ -80,12 +66,8 @@ export const PublicHeader = () => {
               </SheetTrigger>
               <SheetContent side="right" className="w-80 p-0">
                 <SheetHeader className="sr-only">
-                  <SheetTitle>
-                    {lang === "en" ? "Navigation Menu" : "Menu Navigasi"}
-                  </SheetTitle>
-                  <SheetDescription>
-                    {lang === "en" ? "Choose a page to continue." : "Pilih halaman untuk melanjutkan."}
-                  </SheetDescription>
+                  <SheetTitle>Menu Navigasi</SheetTitle>
+                  <SheetDescription>Pilih halaman untuk melanjutkan.</SheetDescription>
                 </SheetHeader>
                 <div className="flex flex-col h-full">
                   <div className="flex items-center justify-between p-4 border-b border-border">
@@ -98,7 +80,7 @@ export const PublicHeader = () => {
                     {navItems.map((item) => (
                       <Link
                         key={item.path}
-                        to={withLang(item.path)}
+                        to={`/id${item.path}`}
                         onClick={() => setOpen(false)}
                         className={`block px-4 py-3 rounded-lg transition-colors ${
                           isActive(item.path)
@@ -111,7 +93,7 @@ export const PublicHeader = () => {
                     ))}
                     <div className="pt-4 border-t border-border mt-4">
                       <Link
-                        to={withLang("/login")}
+                        to="/id/login"
                         onClick={() => setOpen(false)}
                         className="block px-4 py-3 rounded-lg bg-primary text-primary-foreground text-center font-medium"
                       >

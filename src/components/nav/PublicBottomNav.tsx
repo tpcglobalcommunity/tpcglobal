@@ -1,25 +1,14 @@
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { Home, Info, ShoppingCart, Eye, LogIn, User } from "lucide-react";
 
 export const PublicBottomNav = () => {
-  const params = useParams();
-  
-  // Get current language from URL params, fallback to "id"
-  const lang = params.lang === "en" ? "en" : "id";
-  
-  // Helper to build language-aware URLs
-  const to = (path: string) => {
-    if (path === "") return `/${lang}`;
-    return `/${lang}${path}`;
-  };
-
   const menuItems = [
-    { icon: Home, label: "Home", path: "" },
-    { icon: Info, label: "About", path: "/about" },
-    { icon: ShoppingCart, label: "Buy TPC", path: "/buytpc" },
-    { icon: Eye, label: "Transparency", path: "/transparency" },
-    { icon: User, label: "Member", path: "/member" },
-    { icon: LogIn, label: "Login", path: "/login" },
+    { icon: Home, label: "Home", path: "/id" },
+    { icon: Info, label: "About", path: "/id/about" },
+    { icon: ShoppingCart, label: "Buy TPC", path: "/id/buytpc" },
+    { icon: Eye, label: "Transparency", path: "/id/transparency" },
+    { icon: User, label: "Member", path: "/id/member" },
+    { icon: LogIn, label: "Login", path: "/id/login" },
   ];
 
   return (
@@ -31,8 +20,8 @@ export const PublicBottomNav = () => {
           return (
             <NavLink
               key={item.path}
-              to={to(item.path)}
-              end={item.path === ""}
+              to={item.path}
+              end={item.path === "/id"}
               className={({ isActive }) =>
                 `flex flex-col items-center p-2 rounded-lg transition-colors ${
                   isActive 
