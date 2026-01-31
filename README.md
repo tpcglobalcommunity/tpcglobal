@@ -19,9 +19,14 @@ npm run build
 ### Environment Setup
 Create `.env` file with:
 ```bash
-VITE_SUPABASE_PROJECT_ID=your_project_id
+# Supabase Configuration (Canonical)
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_anon_key
+
+# Legacy fallback (optional, for backward compatibility)
 VITE_SUPABASE_PUBLISHABLE_KEY=your_publishable_key
-VITE_SUPABASE_URL=your_supabase_url
+
+# Application Configuration
 VITE_USD_IDR_RATE=17000
 ```
 
@@ -33,10 +38,12 @@ VITE_USD_IDR_RATE=17000
 **Output Directory**: `dist`  
 
 ### Required Environment Variables
-- `VITE_SUPABASE_PROJECT_ID`
-- `VITE_SUPABASE_PUBLISHABLE_KEY` 
-- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_URL` (required)
+- `VITE_SUPABASE_ANON_KEY` (required)
+- `VITE_SUPABASE_PUBLISHABLE_KEY` (legacy fallback, optional)
 - `VITE_USD_IDR_RATE=17000`
+
+⚠️ **Important**: Environment changes require redeploy because Vite embeds env at build time.
 
 ### SPA Configuration
 - `public/_redirects` ensures React Router works: `/* /index.html 200`
