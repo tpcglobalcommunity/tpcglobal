@@ -40,6 +40,26 @@ const BuyTpcPage = () => {
   // Modal state
   const [showInvoiceModal, setShowInvoiceModal] = useState<boolean>(false);
   const [invoiceData, setInvoiceData] = useState<any>(null);
+  
+  // Toast state (to prevent render-time calls)
+  const [invoiceCreated, setInvoiceCreated] = useState<boolean>(false);
+  const [invoiceError, setInvoiceError] = useState<string | null>(null);
+
+  // Handle success toast after state commit
+  useEffect(() => {
+    if (invoiceCreated) {
+      toast.success(t("buyTpcNew.toast.invoiceCreated"));
+      setInvoiceCreated(false);
+    }
+  }, [invoiceCreated, t]);
+
+  // Handle error toast after state commit
+  useEffect(() => {
+    if (invoiceError) {
+      toast.error(t("buyTpcNew.toast.invoiceFailed"));
+      setInvoiceError(null);
+    }
+  }, [invoiceError, t]);
 
   // Constants
   const MAX_TPC_AMOUNT = 100000000; // 100M TPC max per invoice
@@ -109,7 +129,7 @@ const BuyTpcPage = () => {
   const handleCreateInvoice = async () => {
     const validationError = validateForm();
     if (validationError) {
-      toast.error(validationError);
+      setInvoiceError(validationError);
       return;
     }
 
@@ -129,7 +149,7 @@ const BuyTpcPage = () => {
           hint: error.hint, 
           code: error.code 
         });
-        toast.error(t("buyTpcNew.toast.invoiceFailed"));
+        setInvoiceError("invoiceFailed");
         return;
       }
 
@@ -138,7 +158,7 @@ const BuyTpcPage = () => {
       
       if (!invoiceResult?.invoice_no) {
         logger.error('create_invoice returned unexpected shape', { data });
-        toast.error(String(t("buyTpcNew.toast.invoiceFailed")));
+        setInvoiceError("invoiceFailed");
         return;
       }
 
@@ -157,7 +177,7 @@ const BuyTpcPage = () => {
       logger.info("Opening invoice modal", { invoice_no: invoiceResult.invoice_no });
 
       setShowInvoiceModal(true);
-      toast.success(t("buyTpcNew.toast.invoiceCreated"));
+      setInvoiceCreated(true);
       
       // Send invoice email
       try {
@@ -172,7 +192,7 @@ const BuyTpcPage = () => {
       
     } catch (error) {
       logger.error('Unexpected error creating invoice', error);
-      toast.error(t("buyTpcNew.toast.invoiceFailed"));
+      setInvoiceError("invoiceFailed");
     } finally {
       setIsSubmitting(false);
     }
@@ -181,6 +201,7 @@ const BuyTpcPage = () => {
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
+      // Note: This toast is user-triggered, so it's safe to call directly
       toast.success(t("buyTpcNew.summary.copy"));
     } catch (error) {
       logger.error('Failed to copy to clipboard', error);
