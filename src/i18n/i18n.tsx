@@ -55,14 +55,14 @@ export const I18nProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     
-    const { lang: urlLang, path: urlPath } = extractLang(location.pathname);
-    if (urlLang !== lang) {
-      setLangState(urlLang);
+    // Only update if different to prevent unnecessary re-renders
+    if (extractedLang !== lang) {
+      setLangState(extractedLang);
     }
-    if (urlPath !== currentPath) {
-      setCurrentPath(urlPath);
+    if (extractedPath !== currentPath) {
+      setCurrentPath(extractedPath);
     }
-  }, [location.pathname, lang, currentPath]);
+  }, [location.pathname]); // Remove lang and currentPath from deps to prevent render loop
 
   const setLang = useCallback(
     (newLang: Lang) => {

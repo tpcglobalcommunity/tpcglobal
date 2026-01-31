@@ -10,7 +10,14 @@ const NotFound = () => {
   }, []);
 
   const handleGoHome = () => {
-    navigate('/id');
+    // Detect language preference and redirect accordingly
+    const pathname = window.location.pathname;
+    if (pathname.startsWith('/en') || pathname.startsWith('/id')) {
+      navigate(pathname.startsWith('/en') ? '/en' : '/id');
+    } else {
+      // Default to Indonesian
+      navigate('/id');
+    }
   };
 
   return (

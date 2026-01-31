@@ -19,11 +19,14 @@ import {
   ExternalLink,
   Copy,
   Mail,
-  Upload
+  Upload,
+  Image,
+  File
 } from "lucide-react";
 import { getInvoicePublic, type InvoicePublic } from "@/lib/rpc/public";
 import { submitPaymentConfirmation } from "@/lib/rpc/paymentConfirmation";
 import { formatIdr } from "@/lib/tokenSale";
+import { uploadInvoiceProof, validateProofFile } from "@/lib/storage/uploadInvoiceProof";
 
 const InvoiceDetailPage = () => {
   const { t, lang, withLang } = useI18n();
@@ -43,6 +46,9 @@ const InvoiceDetailPage = () => {
   const [payerRef, setPayerRef] = useState<string>("");
   const [txSignature, setTxSignature] = useState<string>("");
   const [proofUrl, setProofUrl] = useState<string>("");
+  
+  // Refs
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Prevent double fetch in StrictMode
   const hasFetchedRef = useRef<string | null>(null);
@@ -98,6 +104,10 @@ const InvoiceDetailPage = () => {
       toast.error("Payment method is required");
       return;
     }
+    if (!proofUrl) {
+      toast.error(lang === 'en' ? 'Proof of payment is required' : 'Bukti pembayaran wajib diisi');
+      return;
+    }
 
     setConfirming(true);
     try {
@@ -124,6 +134,7 @@ const InvoiceDetailPage = () => {
       setPayerRef("");
       setTxSignature("");
       setProofUrl("");
+      setProofFile(null);
     } catch (error) {
       logger.error('Failed to submit payment confirmation', { error });
       toast.error("Failed to submit payment confirmation");
@@ -135,22 +146,39 @@ const InvoiceDetailPage = () => {
   const handleProofUpload = async () => {
     if (!proofFile || !invoice) return;
 
+    // Validate file before upload
+    const validation = validateProofFile(proofFile);
+    if (!validation.isValid) {
+      toast.error(validation.error);
+      return;
+    }
+
     setUploadingProof(true);
     try {
-      // Mock upload - in real implementation, upload to Supabase storage
-      toast.success(lang === 'en' ? '✅ Proof received. Admin will check during operational hours.' : '✅ Bukti diterima. Admin akan mengecek dalam jam operasional.');
-      setProofFile(null);
-      
-      // Reload invoice to get updated status
-      const updatedInvoice = await getInvoicePublic(invoice.invoice_no);
-      if (updatedInvoice) {
-        setInvoice(updatedInvoice);
+      const result = await uploadInvoiceProof({
+        file: proofFile,
+        invoiceNo: invoice.invoice_no
+      });
+
+      if (result.success && result.proofUrl) {
+        setProofUrl(result.proofUrl);
+        setProofFile(null);
+        toast.success(lang === 'en' ? '✅ Proof uploaded successfully!' : '✅ Bukti berhasil diunggah!');
+      } else {
+        toast.error(result.error || (lang === 'en' ? 'Failed to upload proof' : 'Gagal mengunggah bukti'));
       }
     } catch (error) {
       logger.error('Failed to upload proof', { error });
-      toast.error(lang === 'en' ? 'Failed to upload proof' : 'Gagal mengupload bukti');
+      toast.error(lang === 'en' ? 'Failed to upload proof' : 'Gagal mengunggah bukti');
     } finally {
       setUploadingProof(false);
+    }
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setProofFile(file);
     }
   };
 

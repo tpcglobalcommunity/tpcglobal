@@ -43,6 +43,10 @@ export default function AppRoutes() {
         <Route path="/dao" element={<Navigate to="/id/dao" replace />} />
         <Route path="/dao/snapshot" element={<Navigate to="/id/dao/snapshot" replace />} />
         
+        {/* Invalid /home routes - redirect to canonical language root */}
+        <Route path="/en/home" element={<Navigate to="/en" replace />} />
+        <Route path="/id/home" element={<Navigate to="/id" replace />} />
+        
         {/* Language-prefixed routes */}
         <Route path="/:lang" element={<PublicLayout />}>
           <Route index element={<HomePage />} />

@@ -9,11 +9,21 @@ export interface InvoicePublic {
   status: string;
   stage: string;
   tpc_amount: number;
+  unit_price_usd: number;
   total_usd: number;
   total_idr: number;
+  usd_idr_rate: number;
   treasury_address: string;
+  payment_method: string | null;
+  payer_name: string | null;
+  payer_ref: string | null;
+  tx_signature: string | null;
+  proof_url: string | null;
+  receiver_wallet: string | null;
   created_at: string;
   expires_at: string;
+  reviewed_at: string | null;
+  review_note: string | null;
 }
 
 export interface PresaleStage {
@@ -183,12 +193,22 @@ export const createInvoicePublic = async (request: CreateInvoiceRequest): Promis
     invoice_no: 'TPC' + new Date().getTime().toString().slice(-8),
     stage: request.stage,
     tpc_amount: request.tpc_amount,
+    unit_price_usd: request.stage === 'stage1' ? 0.001 : 0.002,
     total_usd: request.tpc_amount * (request.stage === 'stage1' ? 0.001 : 0.002),
     total_idr: request.tpc_amount * (request.stage === 'stage1' ? 0.001 : 0.002) * 17000,
+    usd_idr_rate: 17000,
+    treasury_address: 'At5nA9pw2ukSoAQj5vxqBmNbfk6UYF89UBsXtoFrf8t7',
+    status: 'UNPAID',
+    payment_method: null,
+    payer_name: null,
+    payer_ref: null,
+    tx_signature: null,
+    proof_url: null,
+    receiver_wallet: null,
     created_at: new Date().toISOString(),
     expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    treasury_address: '5AeayrU2pdy6yNBeiUpTXkfMxw3VpDQGUHC6kXrBt5vw',
-    status: 'PENDING'
+    reviewed_at: null,
+    review_note: null
   };
   
   // Send invoice email

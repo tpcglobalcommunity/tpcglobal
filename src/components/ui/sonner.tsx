@@ -8,11 +8,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Prevent hydration mismatch
+  // Prevent hydration mismatch - only run on client
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Don't render until mounted to prevent hydration issues
   if (!mounted) {
     return null;
   }
