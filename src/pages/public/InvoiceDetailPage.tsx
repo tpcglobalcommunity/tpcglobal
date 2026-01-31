@@ -24,12 +24,15 @@ import {
   Image,
   File,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  QrCode
 } from "lucide-react";
 import { getInvoicePublic, type InvoicePublic } from "@/lib/rpc/public";
 import { submitPaymentConfirmation } from "@/lib/rpc/paymentConfirmation";
 import { formatIdr } from "@/lib/tokenSale";
 import { uploadInvoiceProof, validateProofFile } from "@/lib/storage/uploadInvoiceProof";
+import { PAYMENT_DESTINATIONS } from "@/config/paymentDestinations";
+import QRCode from "qrcode";
 
 const InvoiceDetailPage = () => {
   const { t, lang, withLang } = useI18n();
@@ -48,12 +51,26 @@ const InvoiceDetailPage = () => {
   const [payerName, setPayerName] = useState<string>("");
   const [payerRef, setPayerRef] = useState<string>("");
   const [proofUrl, setProofUrl] = useState<string>("");
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
+  const [copiedText, setCopiedText] = useState<string>("");
   
   // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Prevent double fetch in StrictMode
   const hasFetchedRef = useRef<string | null>(null);
+
+  // Generate QR code when payment method changes to crypto
+  useEffect(() => {
+    if (paymentMethod && PAYMENT_DESTINATIONS[paymentMethod]?.type === 'crypto') {
+      const destination = PAYMENT_DESTINATIONS[paymentMethod];
+      if (destination.details.address) {
+        generateQRCode(destination.details.address);
+      }
+    } else {
+      setQrCodeUrl("");
+    }
+  }, [paymentMethod]);
 
   useEffect(() => {
     const loadInvoice = async () => {
@@ -183,9 +200,40 @@ const InvoiceDetailPage = () => {
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast.success("Copied to clipboard");
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(t("confirm.destination.copied"));
+      setCopiedText(text);
+      setTimeout(() => setCopiedText(""), 2000);
+    } catch (error) {
+      // Fallback for browsers that don't support clipboard API
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      toast.success(t("confirm.destination.copied"));
+      setCopiedText(text);
+      setTimeout(() => setCopiedText(""), 2000);
+    }
+  };
+
+  const generateQRCode = async (text: string) => {
+    try {
+      const url = await QRCode.toDataURL(text, {
+        width: 200,
+        margin: 2,
+        color: {
+          dark: '#fbbf24',
+          light: '#0b0f14'
+        }
+      });
+      setQrCodeUrl(url);
+    } catch (error) {
+      logger.error('Failed to generate QR code', error);
+    }
   };
 
   const formatDate = (dateString: string | null) => {
@@ -320,6 +368,92 @@ const InvoiceDetailPage = () => {
                 <option value="SOL" className="bg-popover text-popover-foreground hover:bg-primary hover:text-primary-foreground">SOL</option>
               </select>
             </div>
+            
+            {/* Payment Destination Card */}
+            {paymentMethod && PAYMENT_DESTINATIONS[paymentMethod] && (
+              <Card className="card-premium border-primary/20">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <QrCode className="h-5 w-5 text-primary" />
+                    {t("confirm.destination.title")}
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    {t("confirm.destination.subtitle")}
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {PAYMENT_DESTINATIONS[paymentMethod].type === 'bank' ? (
+                    // Bank Details
+                    <>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium">{t("confirm.destination.bankName")}:</span>
+                          <span className="text-sm text-foreground">{PAYMENT_DESTINATIONS[paymentMethod].details.bankName}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium">{t("confirm.destination.accountName")}:</span>
+                          <span className="text-sm text-foreground">{PAYMENT_DESTINATIONS[paymentMethod].details.accountName}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium">{t("confirm.destination.accountNumber")}:</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-sm bg-muted px-2 py-1 rounded">{PAYMENT_DESTINATIONS[paymentMethod].details.accountNumber}</span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => copyToClipboard(PAYMENT_DESTINATIONS[paymentMethod].details.accountNumber!)}
+                              className="h-8 px-3"
+                            >
+                              <Copy className="h-3 w-3 mr-1" />
+                              {copiedText === PAYMENT_DESTINATIONS[paymentMethod].details.accountNumber ? t("confirm.destination.copied") : t("confirm.destination.copy")}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    // Crypto Details (USDC/SOL)
+                    <>
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium">
+                            {paymentMethod === 'USDC' ? t("confirm.destination.usdcLabel") : t("confirm.destination.solLabel")}:
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-sm bg-muted px-2 py-1 rounded max-w-[200px] truncate">
+                              {PAYMENT_DESTINATIONS[paymentMethod].details.address}
+                            </span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => copyToClipboard(PAYMENT_DESTINATIONS[paymentMethod].details.address!)}
+                              className="h-8 px-3"
+                            >
+                              <Copy className="h-3 w-3 mr-1" />
+                              {copiedText === PAYMENT_DESTINATIONS[paymentMethod].details.address ? t("confirm.destination.copied") : t("confirm.destination.copy")}
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        {/* QR Code */}
+                        {qrCodeUrl && (
+                          <div className="text-center space-y-2">
+                            <p className="text-xs text-muted-foreground">{t("confirm.destination.qrLabel")}</p>
+                            <div className="inline-block p-2 bg-muted rounded-lg border border-border">
+                              <img 
+                                src={qrCodeUrl} 
+                                alt="QR Code" 
+                                className="w-48 h-48"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            )}
             
             {/* Optional Fields */}
             <div className="grid md:grid-cols-2 gap-4">

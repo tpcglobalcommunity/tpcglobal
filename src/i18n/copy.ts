@@ -543,7 +543,20 @@ export const copy = {
         pending: "Pembayaran sedang ditinjau",
         alreadySubmitted: "Konfirmasi sudah dikirim",
         changeFile: "Ganti File",
-        maxSize: "Maksimal file: 10MB"
+        maxSize: "Maksimal file: 10MB",
+        destination: {
+          title: "Rekening Resmi TPC",
+          subtitle: "Gunakan data resmi ini. Jangan transfer ke DM.",
+          bankName: "Nama Bank",
+          accountName: "Nama Rekening",
+          accountNumber: "Nomor Rekening",
+          walletAddress: "Alamat Wallet",
+          copy: "Salin",
+          copied: "Disalin ke clipboard",
+          qrLabel: "Scan untuk copy alamat",
+          usdcLabel: "USDC (Solana)",
+          solLabel: "SOL (Solana)"
+        }
       },
       // Invoice status
       status: {
@@ -1494,7 +1507,20 @@ export const copy = {
         pending: "Payment is under review",
         alreadySubmitted: "Confirmation already submitted",
         changeFile: "Change File",
-        maxSize: "Max file size: 10MB"
+        maxSize: "Max file size: 10MB",
+        destination: {
+          title: "Official TPC Payment Details",
+          subtitle: "Use official data only. Do not transfer to DM.",
+          bankName: "Bank Name",
+          accountName: "Account Name",
+          accountNumber: "Account Number",
+          walletAddress: "Wallet Address",
+          copy: "Copy",
+          copied: "Copied to clipboard",
+          qrLabel: "Scan to copy address",
+          usdcLabel: "USDC (Solana)",
+          solLabel: "SOL (Solana)"
+        }
       },
       // Invoice status
       status: {
