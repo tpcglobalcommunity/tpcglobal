@@ -33,6 +33,7 @@ import { formatIdr } from "@/lib/tokenSale";
 import { uploadInvoiceProof, validateProofFile } from "@/lib/storage/uploadInvoiceProof";
 import { PAYMENT_DESTINATIONS } from "@/config/paymentDestinations";
 import QRCode from "qrcode";
+import { supabase } from "@/integrations/supabase/client";
 
 const InvoiceDetailPage = () => {
   const { t, lang, withLang } = useI18n();
@@ -44,6 +45,7 @@ const InvoiceDetailPage = () => {
   const [confirming, setConfirming] = useState<boolean>(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
   const [proofFile, setProofFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   
   // Payment confirmation form state
   const [paymentMethod, setPaymentMethod] = useState<string>("");
@@ -52,6 +54,7 @@ const InvoiceDetailPage = () => {
   const [proofUrl, setProofUrl] = useState<string>("");
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   const [copiedText, setCopiedText] = useState<string>("");
+  const [uploadError, setUploadError] = useState<string>("");
   
   // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -122,41 +125,18 @@ const InvoiceDetailPage = () => {
       toast.error(t("confirm.methodRequired") || "Payment method is required");
       return;
     }
-    if (!proofFile) {
+    if (!proofUrl) {
       toast.error(t("confirm.proofRequired") || "Proof of payment is required");
       return;
     }
 
     setConfirming(true);
     try {
-      // Step 1: Upload proof first
-      console.log("Starting proof upload...", { fileName: proofFile.name, fileSize: proofFile.size });
-      
-      const validation = validateProofFile(proofFile);
-      if (!validation.isValid) {
-        toast.error(validation.error);
-        setConfirming(false);
-        return;
-      }
-
-      const uploadResult = await uploadInvoiceProof({
-        file: proofFile,
-        invoiceNo: invoice.invoice_no
-      });
-
-      console.log("Upload result:", uploadResult);
-
-      if (!uploadResult.success || !uploadResult.proofUrl) {
-        toast.error(uploadResult.error || (lang === 'en' ? 'Failed to upload proof' : 'Gagal mengunggah bukti'));
-        setConfirming(false);
-        return;
-      }
-
-      // Step 2: Submit confirmation with uploaded proof
+      // Submit confirmation with uploaded proof
       console.log("Submitting confirmation...", { 
         invoice_no: invoice.invoice_no, 
         payment_method: paymentMethod,
-        proof_url: uploadResult.proofUrl 
+        proof_url: proofUrl 
       });
 
       await submitPaymentConfirmation({
@@ -165,7 +145,7 @@ const InvoiceDetailPage = () => {
         payer_name: payerName || null,
         payer_ref: payerRef || null,
         tx_signature: null, // Removed - upload only flow
-        proof_url: uploadResult.proofUrl
+        proof_url: proofUrl
       });
       
       // Success flow
@@ -228,8 +208,72 @@ const InvoiceDetailPage = () => {
     if (file) {
       console.log("File selected:", { name: file.name, size: file.size, type: file.type });
       setProofFile(file);
+      setUploadError("");
     } else {
       console.log("No file selected");
+      setProofFile(null);
+      setProofUrl("");
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!proofFile || !invoice) {
+      toast.error(t("confirm.selectFileFirst") || "Please select a file first");
+      return;
+    }
+
+    console.log("[upload] clicked", { hasFile: !!proofFile, invoiceNo: invoice.invoice_no });
+    
+    setIsUploading(true);
+    setUploadError("");
+
+    try {
+      // Validate file
+      const validation = validateProofFile(proofFile);
+      if (!validation.isValid) {
+        toast.error(validation.error);
+        setUploadError(validation.error);
+        setIsUploading(false);
+        return;
+      }
+
+      // Upload to Supabase Storage
+      const timestamp = Date.now();
+      const fileExt = proofFile.name.split('.').pop()?.toLowerCase() || '';
+      const fileName = `${timestamp}-${proofFile.name}`;
+      const filePath = `invoice-proofs/${invoice.invoice_no}/${fileName}`;
+
+      console.log("Uploading to path:", filePath);
+      console.log("Using bucket name: invoice-proofs");
+
+      const { data, error } = await supabase.storage
+        .from('invoice-proofs')
+        .upload(filePath, proofFile, { 
+          upsert: true, 
+          contentType: proofFile.type 
+        });
+
+      if (error) {
+        console.error("Upload error:", error);
+        setUploadError(error.message);
+        toast.error(t("confirm.uploadFailed") || "Failed to upload proof");
+        setIsUploading(false);
+        return;
+      }
+
+      console.log("Upload successful:", data);
+
+      // Store proof_url as path (consistent approach)
+      const proofUrl = data.path;
+      setProofUrl(proofUrl);
+      toast.success(t("confirm.uploadSuccess") || "Proof uploaded successfully!");
+      
+    } catch (error) {
+      console.error("Upload error:", error);
+      setUploadError("Failed to upload. Please try again.");
+      toast.error(t("confirm.uploadFailed") || "Failed to upload proof");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -312,7 +356,9 @@ const InvoiceDetailPage = () => {
   const isPendingReview = invoice.status === 'PENDING_REVIEW';
   const isPaid = invoice.status === 'PAID';
 
-  console.log("Invoice status:", { status: invoice.status, isUnpaid, isPendingReview, isPaid });
+  if (import.meta.env.DEV) {
+    console.log("Invoice status:", { status: invoice.status, isUnpaid, isPendingReview, isPaid });
+  }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -551,14 +597,14 @@ const InvoiceDetailPage = () => {
                 </div>
               ) : (
                 <div className="bg-muted rounded-lg p-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                         <FileText className="h-5 w-5 text-primary" />
                       </div>
                       <div>
                         <p className="text-sm font-medium text-foreground">{proofFile.name}</p>
-                        <p className="text-xs text-green-600">{t("confirm.proofSuccess")}</p>
+                        <p className="text-xs text-green-600">{proofUrl ? t("confirm.uploadSuccess") : t("confirm.proofSuccess")}</p>
                       </div>
                     </div>
                     <Button
@@ -569,15 +615,45 @@ const InvoiceDetailPage = () => {
                       {t("confirm.changeFile")}
                     </Button>
                   </div>
+                  
+                  {/* Upload Button */}
+                  {!proofUrl && (
+                    <Button
+                      type="button"
+                      onClick={handleUpload}
+                      disabled={isUploading}
+                      className="w-full"
+                      size="lg"
+                    >
+                      {isUploading ? (
+                        <>
+                          <div className="animate-spin h-4 w-4 mr-2" />
+                          {t("confirm.uploading")}
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-4 w-4 mr-2" />
+                          {t("confirm.upload")}
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  
+                  {/* Upload Error */}
+                  {uploadError && (
+                    <p className="text-sm text-destructive text-center mt-2">
+                      {uploadError}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
             
-            {/* Submit Button - Integrated Upload + Submit */}
+            {/* Submit Button */}
             <div className="space-y-3">
               <Button
                 onClick={handleSubmitConfirmation}
-                disabled={confirming || !paymentMethod || !proofFile}
+                disabled={confirming || !paymentMethod || !proofUrl}
                 className="w-full"
                 size="lg"
               >
@@ -595,7 +671,7 @@ const InvoiceDetailPage = () => {
               </Button>
               
               {/* Validation Error */}
-              {!proofFile && (
+              {!proofUrl && proofFile && (
                 <p className="text-sm text-destructive text-center">
                   {t("confirm.proofRequired")}
                 </p>
