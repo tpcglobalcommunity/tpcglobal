@@ -44,7 +44,6 @@ const InvoiceDetailPage = () => {
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [payerName, setPayerName] = useState<string>("");
   const [payerRef, setPayerRef] = useState<string>("");
-  const [txSignature, setTxSignature] = useState<string>("");
   const [proofUrl, setProofUrl] = useState<string>("");
   
   // Refs
@@ -116,8 +115,8 @@ const InvoiceDetailPage = () => {
         payment_method: paymentMethod,
         payer_name: payerName || null,
         payer_ref: payerRef || null,
-        tx_signature: txSignature || null,
-        proof_url: proofUrl || null
+        tx_signature: null, // Removed - upload only flow
+        proof_url: proofUrl
       });
       
       toast.success("Payment confirmation submitted successfully!");
@@ -132,7 +131,6 @@ const InvoiceDetailPage = () => {
       setPaymentMethod("");
       setPayerName("");
       setPayerRef("");
-      setTxSignature("");
       setProofUrl("");
       setProofFile(null);
     } catch (error) {
@@ -285,67 +283,82 @@ const InvoiceDetailPage = () => {
                 />
               </div>
               
+              {/* Upload Bukti Pembayaran - REQUIRED */}
               <div>
-                <Label htmlFor="txSignature">Tanda Tangan Transaksi (Opsional)</Label>
-                <Input
-                  id="txSignature"
-                  type="text"
-                  value={txSignature}
-                  onChange={(e) => setTxSignature(e.target.value)}
-                  placeholder="Tanda tangan digital"
+                <Label htmlFor="proofFile">Upload Bukti Pembayaran *</Label>
+                <input
+                  id="proofFile"
+                  type="file"
+                  accept="image/*,application/pdf"
+                  capture="environment"
+                  onChange={handleFileSelect}
+                  className="w-full p-2 border rounded-md bg-popover text-popover-foreground border-border"
+                  required
                 />
-              </div>
-              
-              <div>
-                <Label htmlFor="proofUrl">URL Bukti Pembayaran</Label>
-                <Input
-                  id="proofUrl"
-                  type="url"
-                  value={proofUrl}
-                  onChange={(e) => setProofUrl(e.target.value)}
-                  placeholder="https://example.com/proof.jpg"
-                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Upload foto/screenshot bukti pembayaran dari HP Anda
+                </p>
+                
+                {/* File Preview */}
+                {proofFile && (
+                  <div className="mt-2 p-2 bg-muted rounded-md">
+                    <p className="text-sm text-foreground">📎 {proofFile.name}</p>
+                    {proofUrl && (
+                      <p className="text-xs text-green-600 mt-1">✅ Upload berhasil</p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <Button
-                onClick={handleSubmitConfirmation}
-                disabled={confirming || !paymentMethod}
-                className="flex-1"
-                size="lg"
-              >
-                {confirming ? (
-                  <>
-                    <div className="animate-spin h-4 w-4 mr-2" />
-                    Mengirim...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="h-4 w-4 mr-2" />
-                    Kirim Konfirmasi
-                  </>
-                )}
-              </Button>
+            {/* Upload & Submit Button - Combined Flow */}
+            <div className="space-y-4">
+              {!proofUrl ? (
+                <Button
+                  onClick={handleProofUpload}
+                  disabled={uploadingProof || !proofFile}
+                  className="w-full"
+                  size="lg"
+                >
+                  {uploadingProof ? (
+                    <>
+                      <div className="animate-spin h-4 w-4 mr-2" />
+                      Upload Bukti...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload Bukti Pembayaran
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleSubmitConfirmation}
+                  disabled={confirming || !paymentMethod || !proofUrl}
+                  className="w-full"
+                  size="lg"
+                >
+                  {confirming ? (
+                    <>
+                      <div className="animate-spin h-4 w-4 mr-2" />
+                      Mengirim Konfirmasi...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Kirim Konfirmasi Pembayaran
+                    </>
+                  )}
+                </Button>
+              )}
               
-              <Button
-                onClick={handleProofUpload}
-                disabled={uploadingProof || !proofFile}
-                variant="outline"
-                className="flex-1"
-              >
-                {uploadingProof ? (
-                  <>
-                    <div className="animate-spin h-4 w-4 mr-2" />
-                    Upload...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="h-4 w-4 mr-2" />
-                    Upload Bukti
-                  </>
-                )}
-              </Button>
+              {/* Validation Error */}
+              {!proofUrl && proofFile && (
+                <p className="text-sm text-destructive">
+                  Silakan upload bukti pembayaran terlebih dahulu
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
