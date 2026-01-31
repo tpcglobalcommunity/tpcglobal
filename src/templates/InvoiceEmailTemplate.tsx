@@ -8,6 +8,12 @@ interface InvoiceEmailTemplateProps {
 const InvoiceEmailTemplate = ({ invoice, lang }: InvoiceEmailTemplateProps) => {
   const isIndonesian = lang === 'id';
   
+  // Build confirm URL for localhost
+  const baseUrl = typeof window !== 'undefined' && window.location.host.includes('localhost') 
+    ? 'http://localhost:8084'
+    : 'https://tpcglobal.io';
+  const confirmUrl = `${baseUrl}/${lang}/invoice/${invoice.invoice_no}`;
+  
   const translations = {
     id: {
       title: 'INVOICE PEMBELIAN TPC',
@@ -454,9 +460,8 @@ const InvoiceEmailTemplate = ({ invoice, lang }: InvoiceEmailTemplateProps) => {
                 </div>
                 <div class="invoice-meta">
                     <div><strong>${isIndonesian ? 'Tanggal' : 'Date'}:</strong> ${formatDate(invoice.created_at)}</div>
-                    <div><strong>${isIndonesian ? 'Email' : 'Email'}:</strong> ${invoice.buyer_email}</div>
                     <div><strong>${t.stage}:</strong> ${invoice.stage.toUpperCase()}</div>
-                    <div><strong>${isIndonesian ? 'Metode' : 'Method'}:</strong> ${getPaymentMethodIcon(invoice.payment_method)} ${invoice.payment_method}</div>
+                    ${invoice.payment_method ? `<div><strong>${isIndonesian ? 'Metode' : 'Method'}:</strong> ${getPaymentMethodIcon(invoice.payment_method)} ${invoice.payment_method}</div>` : ''}
                 </div>
             </div>
             
@@ -473,7 +478,7 @@ const InvoiceEmailTemplate = ({ invoice, lang }: InvoiceEmailTemplateProps) => {
                 <tbody>
                     <tr>
                         <td>${invoice.tpc_amount.toLocaleString()} TPC</td>
-                        <td>${formatUSD(invoice.price_usd)}</td>
+                        <td>${formatUSD(invoice.unit_price_usd)}</td>
                         <td class="amount-cell">${formatUSD(invoice.total_usd)}</td>
                         <td class="amount-cell">${formatIDR(invoice.total_idr)}</td>
                     </tr>
@@ -524,12 +529,24 @@ const InvoiceEmailTemplate = ({ invoice, lang }: InvoiceEmailTemplateProps) => {
             
             <!-- Action Buttons -->
             <div class="action-buttons">
-                <a href="https://tpcglobal.io/${lang}/invoice/${invoice.invoice_no}" class="action-button">
-                    ${t.viewInvoice}
-                </a>
-                <a href="https://tpcglobal.io/${lang}/invoice/${invoice.invoice_no}" class="action-button secondary">
+                <a href="${confirmUrl}" class="action-button primary">
                     ${t.confirmPayment}
                 </a>
+                <a href="${confirmUrl}" class="action-button secondary">
+                    ${t.viewInvoice}
+                </a>
+            </div>
+            
+            <!-- Security Warning -->
+            <div class="security-warning">
+                <p style="color: #dc2626; font-weight: bold; margin-bottom: 8px;">
+                    ⚠️ ${isIndonesian ? 'PERINGATAN KEAMANAN' : 'SECURITY WARNING'}
+                </p>
+                <p style="font-size: 14px;">
+                    ${isIndonesian 
+                        ? 'Gunakan hanya halaman resmi ini. Jangan transfer lewat DM atau pihak lain.' 
+                        : 'Use only this official page. Do not transfer via DM or third parties.'}
+                </p>
             </div>
         </div>
         

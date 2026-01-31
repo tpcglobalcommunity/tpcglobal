@@ -41,6 +41,14 @@ class MockEmailService implements EmailService {
         return false;
       }
 
+      // Build confirm URL for localhost
+      const baseUrl = window.location.host.includes('localhost') 
+        ? 'http://localhost:8084'
+        : 'https://tpcglobal.io';
+      const confirmUrl = `${baseUrl}/${lang}/invoice/${invoiceNo}`;
+      
+      console.log('🔗 [MOCK EMAIL] Confirm URL:', confirmUrl);
+
       const template = InvoiceEmailTemplate({ invoice, lang });
       const subject = lang === 'id' 
         ? `Invoice TPC - ${invoiceNo}` 

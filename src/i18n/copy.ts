@@ -579,7 +579,9 @@ export const copy = {
       // Toast messages
       toast: {
         invoiceCreated: "Invoice berhasil dibuat!",
-        invoiceFailed: "Gagal membuat invoice. Coba lagi."
+        invoiceFailed: "Gagal membuat invoice. Coba lagi.",
+        emailSent: "Email dikirim",
+        emailFailed: "Email gagal dikirim"
       },
       // Validation messages
       validation: {
@@ -1568,7 +1570,9 @@ export const copy = {
       // Toast messages
       toast: {
         invoiceCreated: "Invoice created successfully!",
-        invoiceFailed: "Failed to create invoice. Please try again."
+        invoiceFailed: "Failed to create invoice. Please try again.",
+        emailSent: "Email sent",
+        emailFailed: "Email failed to send"
       },
       // Validation messages
       validation: {

@@ -188,10 +188,15 @@ const BuyTpcPage = () => {
         await emailService.sendInvoiceEmail(email, invoiceResult.invoice_no, lang);
         console.log('✅ Invoice email sent successfully to:', email);
         logger.info('Invoice email sent successfully', { email, invoice_no: invoiceResult.invoice_no });
+        
+        // Show success toast with email confirmation
+        toast.success(t("buyTpcNew.toast.invoiceCreated") + " - " + t("buyTpcNew.toast.emailSent"));
       } catch (emailError) {
         console.error('❌ Failed to send invoice email:', emailError);
         logger.error('Failed to send invoice email', { error: emailError, email, invoice_no: invoiceResult.invoice_no });
-        // Don't show error to user since invoice was created successfully
+        
+        // Show warning toast but don't fail the flow
+        toast.warning(t("buyTpcNew.toast.invoiceCreated") + " - " + t("buyTpcNew.toast.emailFailed"));
       }
       
     } catch (error) {
